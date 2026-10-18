@@ -4,7 +4,7 @@ The Windows edition keeps Unreal Engine 5, Nanite, Lumen and Niagara. The indepe
 
 ## Repository layout and branches
 
-Keep both editions in one repository, with `main` holding `Source/`, `Plugins/`, `Content/`, `Config/` for Windows and `Web/` for the browser. This separates the implementations without forking the tuning. When releases need separate stabilization, create `release/windows` and `release/web` from `main`; do normal shared development on `main` and merge fixes back. No GitHub repository or public deployment has been created by this local implementation.
+Keep both editions in one repository, with `main` holding the native source/configuration and `Web/` for the browser. This separates the implementations without forking the tuning. When releases need separate stabilization, create `release/windows` and `release/web` from `main`; do normal shared development on `main` and merge fixes back. The public repository is https://github.com/ATritle/Forbidden-Code-Survivor and the browser deployment is https://ATritle.github.io/Forbidden-Code-Survivor/. Large native asset folders remain local for this publication; see `GitHubPublishing.md`.
 
 `GameData/gameplay.json` and its browser copy contain the current sixteen card definitions, ten enemy profiles, seven contracts and essence/wave tuning. Run `python Scripts/export_browser_rules.py` after changing the native authored definitions. The exporter validates library counts and records source hashes. UE C++ remains the balance source; browser mechanics interpret the exported snapshot. Changes to a spell's C++ behavior still need an equivalent JavaScript change; sharing numbers does not automatically translate implementations.
 
