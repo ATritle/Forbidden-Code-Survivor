@@ -1,0 +1,464 @@
+{
+  "schemaVersion": 1,
+  "title": "Forbidden Code: Survivor",
+  "source": "UE5 authored C++ tuning; regenerate with Scripts/export_browser_rules.py",
+  "sourceHashes": {
+    "MVPGame.cpp": "56f8dff83f51cc69f0de867f25ffb9d7f5df3c51ebacc7bfd490d4287be83262",
+    "NeonArsenal.cpp": "8518d17e144904110e59dee25de08e9da3e04ef76d77ae0e0a584205d7c839be",
+    "CyberEnemyRoster.cpp": "05a0a40d3386cd1b957e424c7fec291ff908db87268f58c511cab96536fd1ca4",
+    "NeonChallenge.cpp": "886721696cfe9afc49d1548cf2646ce466718ad409bc160d030b9974d2ee62ae"
+  },
+  "cards": [
+    {
+      "id": "PulseDart",
+      "name": "PULSE DART",
+      "description": "Rapid neon energy bolts.\nA precise, compact kinetic spark.",
+      "school": "Pulse",
+      "damage": 30.0,
+      "cooldown": 0.55,
+      "range": 11,
+      "radius": 0,
+      "count": 1,
+      "mode": "bolt",
+      "color": "#36ff93",
+      "art": "assets/art/PulseDart.webp"
+    },
+    {
+      "id": "PrismBurst",
+      "name": "PRISM BURST",
+      "description": "Three pink plasma charges.\nColliding sparks bloom on impact.",
+      "school": "Prism",
+      "damage": 20.0,
+      "cooldown": 1.15,
+      "range": 11,
+      "radius": 0,
+      "count": 3,
+      "mode": "spread",
+      "color": "#ff258c",
+      "art": "assets/art/PrismBurst.webp"
+    },
+    {
+      "id": "HaloNova",
+      "name": "HALO NOVA",
+      "description": "Eight radiant energy shards.\nA piercing 360-degree pulse.",
+      "school": "Prism",
+      "damage": 18.0,
+      "cooldown": 1.5,
+      "range": 11,
+      "radius": 2.3,
+      "count": 8,
+      "mode": "nova",
+      "color": "#a449ff",
+      "art": "assets/art/HaloNova.webp"
+    },
+    {
+      "id": "KineticCards",
+      "name": "KINETIC CARDS",
+      "description": "Spin electric-gold holographic cards.\nShatter into charged geometric sparks.",
+      "school": "Kinetic",
+      "damage": 36.0,
+      "cooldown": 0.85,
+      "range": 11,
+      "radius": 0,
+      "count": 1,
+      "mode": "card",
+      "color": "#ffb52f",
+      "art": "assets/art/KineticCards.webp"
+    },
+    {
+      "id": "PhotonLance",
+      "name": "PHOTON LANCE",
+      "description": "A focused cyan energy lance.\nPasses through four enemies.",
+      "school": "Pulse",
+      "damage": 32.0,
+      "cooldown": 0.75,
+      "range": 11,
+      "radius": 0,
+      "count": 1,
+      "mode": "pierce",
+      "color": "#22baff",
+      "art": "assets/art/PhotonLance.webp"
+    },
+    {
+      "id": "TalismanGuard",
+      "name": "TALISMAN GUARD",
+      "description": "Gain 3 protective orbiting cards.\nContact kills a foe and consumes a card.\nRepeat drafts add 2; no auto recharge.",
+      "school": "Barrier",
+      "damage": 0.0,
+      "cooldown": 1.0,
+      "range": 11,
+      "radius": 0,
+      "count": 3,
+      "mode": "guard",
+      "color": "#20ffca",
+      "art": "assets/art/TalismanGuard.webp"
+    },
+    {
+      "id": "ArcRelay",
+      "name": "ARC RELAY",
+      "description": "22 damage. Chains to 4 targets.\n320cm jumps; 18% decay per hop.",
+      "school": "Pulse",
+      "damage": 22.0,
+      "cooldown": 1.3,
+      "range": 11.0,
+      "radius": 3.2,
+      "count": 4,
+      "mode": "chain",
+      "color": "#058cff",
+      "art": "assets/art/ArcRelay.webp"
+    },
+    {
+      "id": "GhostLink",
+      "name": "GHOST LINK",
+      "description": "14 damage. Six linked targets.\n240cm jumps; 10% decay per hop.",
+      "school": "Barrier",
+      "damage": 14.0,
+      "cooldown": 1.9,
+      "range": 10.0,
+      "radius": 2.4,
+      "count": 6,
+      "mode": "chain",
+      "color": "#a633ff",
+      "art": "assets/art/GhostLink.webp"
+    },
+    {
+      "id": "NeonCataclysm",
+      "name": "NEON CATACLYSM",
+      "description": "78 area damage within 300cm.\nA pink charge detonates after 0.45s.",
+      "school": "Prism",
+      "damage": 78.0,
+      "cooldown": 3.8,
+      "range": 10.0,
+      "radius": 3.0,
+      "count": 1,
+      "mode": "charge",
+      "color": "#ff0361",
+      "art": "assets/art/NeonCataclysm.webp"
+    },
+    {
+      "id": "OrbitRazor",
+      "name": "ORBIT RAZOR",
+      "description": "Two returning crescent blades.\n28 damage; each pierces 4 targets.",
+      "school": "Kinetic",
+      "damage": 28.0,
+      "cooldown": 1.5,
+      "range": 10.0,
+      "radius": 0.0,
+      "count": 2,
+      "mode": "return",
+      "color": "#d9ff14",
+      "art": "assets/art/OrbitRazor.webp"
+    },
+    {
+      "id": "RicochetSeal",
+      "name": "RICOCHET SEAL",
+      "description": "24 damage per impact.\nA jade seal rebounds to 3 more foes.",
+      "school": "Kinetic",
+      "damage": 24.0,
+      "cooldown": 0.95,
+      "range": 11.0,
+      "radius": 3.5,
+      "count": 1,
+      "mode": "ricochet",
+      "color": "#1fff4c",
+      "art": "assets/art/RicochetSeal.webp"
+    },
+    {
+      "id": "StrobeRail",
+      "name": "STROBE RAIL",
+      "description": "46 damage along a 1200cm rail.\nA 32cm wide flash pierces the line.",
+      "school": "Pulse",
+      "damage": 46.0,
+      "cooldown": 2.2,
+      "range": 12.0,
+      "radius": 0.32,
+      "count": 1,
+      "mode": "rail",
+      "color": "#a6e6ff",
+      "art": "assets/art/StrobeRail.webp"
+    },
+    {
+      "id": "EchoPetals",
+      "name": "ECHO PETALS",
+      "description": "Six spiraling coral petals.\n16 damage each; one target per petal.",
+      "school": "Prism",
+      "damage": 16.0,
+      "cooldown": 1.4,
+      "range": 10.0,
+      "radius": 0.0,
+      "count": 6,
+      "mode": "petal",
+      "color": "#ff381f",
+      "art": "assets/art/EchoPetals.webp"
+    },
+    {
+      "id": "EventHorizon",
+      "name": "EVENT HORIZON",
+      "description": "Four 16-damage pulses over 1.4s.\nA 230cm violet energy field.",
+      "school": "Barrier",
+      "damage": 16.0,
+      "cooldown": 3.2,
+      "range": 10.0,
+      "radius": 2.3,
+      "count": 4,
+      "mode": "field",
+      "color": "#4c0aff",
+      "art": "assets/art/EventHorizon.webp"
+    },
+    {
+      "id": "ShatterSigil",
+      "name": "SHATTER SIGIL",
+      "description": "34 damage. Splits on contact\ninto five 12-damage amber fragments.",
+      "school": "Kinetic",
+      "damage": 34.0,
+      "cooldown": 1.8,
+      "range": 11.0,
+      "radius": 0.0,
+      "count": 5,
+      "mode": "shatter",
+      "color": "#ff6106",
+      "art": "assets/art/ShatterSigil.webp"
+    },
+    {
+      "id": "SatelliteChoir",
+      "name": "SATELLITE CHOIR",
+      "description": "Three homing aquamarine orbs.\n18 damage each after a short orbit.",
+      "school": "Pulse",
+      "damage": 18.0,
+      "cooldown": 1.6,
+      "range": 11.5,
+      "radius": 0.0,
+      "count": 3,
+      "mode": "homing",
+      "color": "#04ffb8",
+      "art": "assets/art/SatelliteChoir.webp"
+    }
+  ],
+  "enemies": [
+    {
+      "id": "WireThrall",
+      "name": "WIRE THRALL",
+      "tier": 0,
+      "health": 36.0,
+      "height": 1.5,
+      "speed": 2.1,
+      "unlock": 0.0,
+      "contactDamage": 10.0,
+      "radius": 0.34,
+      "essence": 1,
+      "model": "assets/models/WireThrall.glb"
+    },
+    {
+      "id": "RelayRunner",
+      "name": "RELAY RUNNER",
+      "tier": 0,
+      "health": 28.0,
+      "height": 1.45,
+      "speed": 3.1,
+      "unlock": 0.0,
+      "contactDamage": 9.0,
+      "radius": 0.34,
+      "essence": 1,
+      "model": "assets/models/RelayRunner.glb"
+    },
+    {
+      "id": "ChromeVagrant",
+      "name": "CHROME VAGRANT",
+      "tier": 0,
+      "health": 58.0,
+      "height": 1.75,
+      "speed": 1.7,
+      "unlock": 20.0,
+      "contactDamage": 14.0,
+      "radius": 0.38,
+      "essence": 2,
+      "model": "assets/models/ChromeVagrant.glb"
+    },
+    {
+      "id": "GlitchAcolyte",
+      "name": "GLITCH ACOLYTE",
+      "tier": 0,
+      "health": 44.0,
+      "height": 1.65,
+      "speed": 1.9,
+      "unlock": 35.0,
+      "contactDamage": 12.0,
+      "radius": 0.34,
+      "essence": 2,
+      "model": "assets/models/GlitchAcolyte.glb"
+    },
+    {
+      "id": "RiotBulwark",
+      "name": "RIOT BULWARK",
+      "tier": 1,
+      "health": 240.0,
+      "height": 2.35,
+      "speed": 1.5,
+      "unlock": 75.0,
+      "contactDamage": 22.0,
+      "radius": 0.48,
+      "essence": 5,
+      "model": "assets/models/RiotBulwark.glb"
+    },
+    {
+      "id": "CoilHarrier",
+      "name": "COIL HARRIER",
+      "tier": 1,
+      "health": 180.0,
+      "height": 2.15,
+      "speed": 2.75,
+      "unlock": 105.0,
+      "contactDamage": 20.0,
+      "radius": 0.42,
+      "essence": 5,
+      "model": "assets/models/CoilHarrier.glb"
+    },
+    {
+      "id": "NullBishop",
+      "name": "NULL BISHOP",
+      "tier": 2,
+      "health": 720.0,
+      "height": 2.95,
+      "speed": 1.55,
+      "unlock": 180.0,
+      "contactDamage": 30.0,
+      "radius": 0.58,
+      "essence": 10,
+      "model": "assets/models/NullBishop.glb"
+    },
+    {
+      "id": "RazorSeraph",
+      "name": "RAZOR SERAPH",
+      "tier": 2,
+      "health": 560.0,
+      "height": 2.8,
+      "speed": 2.6,
+      "unlock": 210.0,
+      "contactDamage": 28.0,
+      "radius": 0.52,
+      "essence": 10,
+      "model": "assets/models/RazorSeraph.glb"
+    },
+    {
+      "id": "FurnaceOni",
+      "name": "FURNACE ONI",
+      "tier": 2,
+      "health": 1100.0,
+      "height": 3.25,
+      "speed": 1.25,
+      "unlock": 240.0,
+      "contactDamage": 38.0,
+      "radius": 0.65,
+      "essence": 14,
+      "model": "assets/models/FurnaceOni.glb"
+    },
+    {
+      "id": "BroadcastSovereign",
+      "name": "BROADCAST SOVEREIGN",
+      "tier": 3,
+      "health": 6000.0,
+      "height": 5.2,
+      "speed": 1.15,
+      "unlock": 360.0,
+      "contactDamage": 48.0,
+      "radius": 0.9,
+      "essence": 40,
+      "model": "assets/models/BroadcastSovereign.glb"
+    }
+  ],
+  "challenges": [
+    {
+      "id": "OverloadOrb",
+      "title": "OVERLOAD ORB",
+      "reward": "TRIPLE outgoing spell damage for 45 seconds.",
+      "risk": "A vulnerable neon orb circles you. Enemy contact ruptures it: lose 50% of MAXIMUM health and the damage bonus. This CAN KILL you at half health or below. Orb arms after 1 second.",
+      "duration": 45.0
+    },
+    {
+      "id": "UnstableEcho",
+      "title": "UNSTABLE ECHO",
+      "reward": "Every third spell hit creates a blast dealing TWICE that hit's damage within 180 cm. Active for 40 seconds.",
+      "risk": "The marked blast detonates after 1 second. Standing inside costs 20% of MAXIMUM health, even during ordinary hit immunity. Keep moving! At most one echo every 0.5 seconds.",
+      "duration": 40.0
+    },
+    {
+      "id": "HostileBroadcast",
+      "title": "HOSTILE BROADCAST",
+      "reward": "DOUBLE essence dropped by enemies defeated during this 60-second contract.",
+      "risk": "Your location is broadcast. TWO ELITE HUNTERS arrive at 15, 30 and 45 seconds. Watch the reinforcement countdown. Hunters remain until defeated; normal enemy limits still apply.",
+      "duration": 60.0
+    },
+    {
+      "id": "DeadmanBattery",
+      "title": "DEADMAN BATTERY",
+      "reward": "DOUBLE outgoing spell damage for 30 seconds. Every confirmed enemy kill restores 4% of maximum health.",
+      "risk": "The battery drains 2% of MAXIMUM health per second, even during hit immunity. The drain CAN KILL you. Keep defeating enemies to stay charged.",
+      "duration": 30.0
+    },
+    {
+      "id": "GlassProtocol",
+      "title": "GLASS PROTOCOL",
+      "reward": "75% more outgoing damage and TWO extra penetrations for attacks that support piercing. Active for 45 seconds.",
+      "risk": "ALL incoming damage is DOUBLED for the same 45 seconds. A fractured holographic shell marks your vulnerability. Previously fired shots keep their launch-time penetration count.",
+      "duration": 45.0
+    },
+    {
+      "id": "JackpotCourier",
+      "title": "JACKPOT COURIER",
+      "reward": "Collect the marked volatile data cache and return to THIS sign within 35 seconds to earn ONE bonus three-card upgrade selection.",
+      "risk": "While carrying the cache, pursuing enemies move 25% FASTER. Missing the delivery deadline causes 35% MAXIMUM-HP backlash. Follow the objective marker back to this sign.",
+      "duration": 35.0
+    },
+    {
+      "id": "LockdownDuel",
+      "title": "LOCKDOWN DUEL",
+      "reward": "Defeat the marked elite INSIDE the 9-meter-radius ring within 40 seconds. Earn ONE bonus three-card draft and 24 essence.",
+      "risk": "Stay inside the visible ring. More than 2 seconds outside, leaving its elevation, or running out of time fails the contract and costs 35% MAXIMUM health. Normal enemies can enter. No invisible walls.",
+      "duration": 40.0
+    }
+  ],
+  "progression": {
+    "xpBase": 18,
+    "xpLinear": 8,
+    "xpQuadratic": 2,
+    "waveInterval": 1.4,
+    "waveBase": 8,
+    "waveStepSeconds": 30,
+    "waveStepCount": 2,
+    "waveMax": 22
+  },
+  "browser": {
+    "enemyCap": 90,
+    "projectileCap": 384,
+    "sparkCap": 3000
+  },
+  "world": {
+    "bounds": 54,
+    "roads": [
+      {
+        "x": 0,
+        "z": -4.5,
+        "w": 103,
+        "d": 9
+      },
+      {
+        "x": 0,
+        "z": -12,
+        "w": 9,
+        "d": 78
+      },
+      {
+        "x": -32.5,
+        "z": -10.5,
+        "w": 9,
+        "d": 31
+      },
+      {
+        "x": 23.5,
+        "z": -22.5,
+        "w": 6.2,
+        "d": 31
+      }
+    ]
+  }
+}

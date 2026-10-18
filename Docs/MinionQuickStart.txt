@@ -1,0 +1,21 @@
+RAISE SKELETONS
+
+Run Play-MVP.ps1. In the Codex, click NECROMANCY and select RAISE SKELETONS.
+Enter the arena. After its 3-second summon cooldown, two allies appear even if
+no enemy is nearby. Cyan ground markers distinguish allies from enemies.
+
+Allies follow the player, pursue enemies within 750 cm of the player, and strike
+in melee. Level-ups can offer Bone Archers (ranged bolts), Grave Guard (orbit and
+280 cm defensive pursuit), and Grave Burst (splash attacks). All three combine.
+Returning to the Codex clears these run-only behaviors; the starter card stays saved.
+
+The existing Gravebound model and idle/walk/run clips are reused. The strike lean
+is procedural. Dedicated skeleton/attack art has not been generated in this pass.
+
+CINEMATIC FRAMEWORK
+
+Run Play-CinematicTest.ps1 -Enemies 300 for the separate Lumen graphics experiment.
+Press F in combat for a large flash. The default is pooled prototype pulses and
+real flash lights. The full fluid/spark system is an explicit authoring pipeline,
+not a finished Niagara asset. See Docs/CinematicFramework.md for all four pillars,
+code entry points, material parameters, Niagara graphs, budgets and test gates.

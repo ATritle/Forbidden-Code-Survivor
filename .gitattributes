@@ -1,0 +1,11 @@
+# Unreal binary assets belong in LFS. Browser files stay ordinary Git files so Pages can serve them.
+Content/**/*.uasset filter=lfs diff=lfs merge=lfs -text
+Content/**/*.umap filter=lfs diff=lfs merge=lfs -text
+ContentSource/**/*.fbx filter=lfs diff=lfs merge=lfs -text
+ContentSource/**/*.glb filter=lfs diff=lfs merge=lfs -text
+ContentSource/**/*.blend filter=lfs diff=lfs merge=lfs -text
+ContentSource/**/*.png filter=lfs diff=lfs merge=lfs -text
+ContentSource/**/*.wav filter=lfs diff=lfs merge=lfs -text
+SFX/*.mp3 filter=lfs diff=lfs merge=lfs -text
+Web/** -filter text=auto
+Web/assets/**/*.glb -filter -text

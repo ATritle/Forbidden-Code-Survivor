@@ -1,0 +1,216 @@
+{
+  "images": [
+    {
+      "id": "HaloNova",
+      "path": "assets/art/HaloNova.webp",
+      "source": "ContentSource/UI/NeonEnergy/HaloNova.png",
+      "bytes": 70838
+    },
+    {
+      "id": "KineticCards",
+      "path": "assets/art/KineticCards.webp",
+      "source": "ContentSource/UI/NeonEnergy/KineticCards.png",
+      "bytes": 56306
+    },
+    {
+      "id": "PhotonLance",
+      "path": "assets/art/PhotonLance.webp",
+      "source": "ContentSource/UI/NeonEnergy/PhotonLance.png",
+      "bytes": 54006
+    },
+    {
+      "id": "PrismBurst",
+      "path": "assets/art/PrismBurst.webp",
+      "source": "ContentSource/UI/NeonEnergy/PrismBurst.png",
+      "bytes": 58666
+    },
+    {
+      "id": "PulseDart",
+      "path": "assets/art/PulseDart.webp",
+      "source": "ContentSource/UI/NeonEnergy/PulseDart.png",
+      "bytes": 49072
+    },
+    {
+      "id": "School_Barrier",
+      "path": "assets/art/School_Barrier.webp",
+      "source": "ContentSource/UI/NeonEnergy/School_Barrier.png",
+      "bytes": 72692
+    },
+    {
+      "id": "School_Kinetic",
+      "path": "assets/art/School_Kinetic.webp",
+      "source": "ContentSource/UI/NeonEnergy/School_Kinetic.png",
+      "bytes": 56306
+    },
+    {
+      "id": "School_Prism",
+      "path": "assets/art/School_Prism.webp",
+      "source": "ContentSource/UI/NeonEnergy/School_Prism.png",
+      "bytes": 70838
+    },
+    {
+      "id": "School_Pulse",
+      "path": "assets/art/School_Pulse.webp",
+      "source": "ContentSource/UI/NeonEnergy/School_Pulse.png",
+      "bytes": 49072
+    },
+    {
+      "id": "TalismanGuard",
+      "path": "assets/art/TalismanGuard.webp",
+      "source": "ContentSource/UI/NeonEnergy/TalismanGuard.png",
+      "bytes": 72692
+    },
+    {
+      "id": "ArcRelay",
+      "path": "assets/art/ArcRelay.webp",
+      "source": "ContentSource/UI/NeonArsenal/ArcRelay.png",
+      "bytes": 80204
+    },
+    {
+      "id": "EchoPetals",
+      "path": "assets/art/EchoPetals.webp",
+      "source": "ContentSource/UI/NeonArsenal/EchoPetals.png",
+      "bytes": 63336
+    },
+    {
+      "id": "EventHorizon",
+      "path": "assets/art/EventHorizon.webp",
+      "source": "ContentSource/UI/NeonArsenal/EventHorizon.png",
+      "bytes": 87098
+    },
+    {
+      "id": "GhostLink",
+      "path": "assets/art/GhostLink.webp",
+      "source": "ContentSource/UI/NeonArsenal/GhostLink.png",
+      "bytes": 86252
+    },
+    {
+      "id": "NeonCataclysm",
+      "path": "assets/art/NeonCataclysm.webp",
+      "source": "ContentSource/UI/NeonArsenal/NeonCataclysm.png",
+      "bytes": 89016
+    },
+    {
+      "id": "OrbitRazor",
+      "path": "assets/art/OrbitRazor.webp",
+      "source": "ContentSource/UI/NeonArsenal/OrbitRazor.png",
+      "bytes": 89816
+    },
+    {
+      "id": "RicochetSeal",
+      "path": "assets/art/RicochetSeal.webp",
+      "source": "ContentSource/UI/NeonArsenal/RicochetSeal.png",
+      "bytes": 94092
+    },
+    {
+      "id": "SatelliteChoir",
+      "path": "assets/art/SatelliteChoir.webp",
+      "source": "ContentSource/UI/NeonArsenal/SatelliteChoir.png",
+      "bytes": 60468
+    },
+    {
+      "id": "ShatterSigil",
+      "path": "assets/art/ShatterSigil.webp",
+      "source": "ContentSource/UI/NeonArsenal/ShatterSigil.png",
+      "bytes": 68064
+    },
+    {
+      "id": "StrobeRail",
+      "path": "assets/art/StrobeRail.webp",
+      "source": "ContentSource/UI/NeonArsenal/StrobeRail.png",
+      "bytes": 81514
+    },
+    {
+      "id": "NeonDistrict-Menu",
+      "path": "assets/art/NeonDistrict-Menu.webp",
+      "source": "ContentSource/UI/NeonGlass/NeonDistrict-Menu.png",
+      "bytes": 560004
+    }
+  ],
+  "audio": [
+    {
+      "id": "GameplayMusic",
+      "path": "assets/audio/GameplayMusic.mp3",
+      "seconds": 162.34666666666666,
+      "bytes": 5194752,
+      "source": "SFX\\music\\humanstudioed-cyberpunk-edm-525044.mp3"
+    },
+    {
+      "id": "MenuMusic",
+      "path": "assets/audio/MenuMusic.mp3",
+      "seconds": 73.93308333333333,
+      "bytes": 2365649,
+      "source": "SFX\\music\\monume-cyberpunk-519219.mp3"
+    },
+    {
+      "id": "Pulse",
+      "path": "assets/audio/Pulse.mp3",
+      "seconds": 0.9866666666666667,
+      "bytes": 31488,
+      "source": "SFX\\weapons\\rescopicsound-sci-fi-weapon-shoot-firing-pulse-tm-01-233821.mp3"
+    },
+    {
+      "id": "Plasma",
+      "path": "assets/audio/Plasma.mp3",
+      "seconds": 1.2586666666666666,
+      "bytes": 39936,
+      "source": "SFX\\weapons\\rescopicsound-sci-fi-weapon-shoot-firing-plasma-pp-05-233829.mp3"
+    },
+    {
+      "id": "Impact",
+      "path": "assets/audio/Impact.mp3",
+      "seconds": 1.1786666666666668,
+      "bytes": 37632,
+      "source": "SFX\\weapons\\rescopicsound-sci-fi-weapon-shoot-firing-plasma-pp-01-233828.mp3"
+    },
+    {
+      "id": "Laser",
+      "path": "assets/audio/Laser.mp3",
+      "seconds": 1.5893333333333333,
+      "bytes": 50688,
+      "source": "SFX\\weapons\\daviddumaisaudio-sci-fi-weapon-laser-shot-04-316416.mp3"
+    },
+    {
+      "id": "Blaster",
+      "path": "assets/audio/Blaster.mp3",
+      "seconds": 0.8746666666666667,
+      "bytes": 27648,
+      "source": "SFX\\weapons\\universfield-sci-fi-blaster-shot-229313.mp3"
+    },
+    {
+      "id": "UI_Deny",
+      "path": "assets/audio/UI_Deny.mp3",
+      "seconds": 0.5173333333333333,
+      "bytes": 16128,
+      "source": "SFX\\menu\\rescopicsound-ui-alert-menu-modern-interface-deny-small-230476.mp3"
+    },
+    {
+      "id": "UI_Confirm",
+      "path": "assets/audio/UI_Confirm.mp3",
+      "seconds": 1.3706666666666667,
+      "bytes": 43776,
+      "source": "SFX\\menu\\rescopicsound-ui-beep-menu-positive-228336.mp3"
+    },
+    {
+      "id": "UI_Select",
+      "path": "assets/audio/UI_Select.mp3",
+      "seconds": 0.6826666666666666,
+      "bytes": 21504,
+      "source": "SFX\\menu\\rescopicsound-ui-click-menu-modern-interface-select-medium-230477.mp3"
+    },
+    {
+      "id": "UI_Click",
+      "path": "assets/audio/UI_Click.mp3",
+      "seconds": 0.37866666666666665,
+      "bytes": 11520,
+      "source": "SFX\\menu\\rescopicsound-ui-click-menu-modern-interface-select-small-01-230473.mp3"
+    },
+    {
+      "id": "LowHealth",
+      "path": "assets/audio/LowHealth.mp3",
+      "seconds": 9.898666666666667,
+      "bytes": 316416,
+      "source": "SFX\\menu\\rescopicsound-ui-alert-alarm-modern-interface-warning-01-230492.mp3"
+    }
+  ]
+}

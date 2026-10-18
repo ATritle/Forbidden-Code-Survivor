@@ -1,0 +1,341 @@
+{
+  "format": "glTF 2.0",
+  "units": "meters",
+  "up": "+Y",
+  "forward": "+Z",
+  "models": [
+    {
+      "id": "NeonExorcist",
+      "path": "assets/models/NeonExorcist.glb",
+      "bytes": 3038488,
+      "heightMeters": 1.8,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 20130,
+      "animations": [
+        {
+          "name": "HoverIdle",
+          "duration": 1.9999999999999998
+        },
+        {
+          "name": "Cruise",
+          "duration": 1.5
+        },
+        {
+          "name": "Cast",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack135",
+          "duration": 0.8
+        },
+        {
+          "name": "Cast133",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack250",
+          "duration": 4.0
+        },
+        {
+          "name": "Hit",
+          "duration": 0.4666666666666667
+        },
+        {
+          "name": "Land",
+          "duration": 0.4666666666666667
+        },
+        {
+          "name": "Fall",
+          "duration": 1.0
+        }
+      ],
+      "source": "ContentSource/Meshy/NeonExorcist/assembled/NeonExorcist-RidingRig.blend",
+      "textureSize": 1024
+    },
+    {
+      "id": "WireThrall",
+      "path": "assets/models/WireThrall.glb",
+      "bytes": 434024,
+      "heightMeters": 1.5,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 3500,
+      "animations": [
+        {
+          "name": "Walk",
+          "duration": 1.0333333333333332
+        },
+        {
+          "name": "Run",
+          "duration": 0.6333333333333333
+        }
+      ],
+      "source": "ContentSource/Meshy/WireThrall/rig.fbx + walk.fbx + run.fbx",
+      "textureSize": 512
+    },
+    {
+      "id": "RelayRunner",
+      "path": "assets/models/RelayRunner.glb",
+      "bytes": 459764,
+      "heightMeters": 1.45,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 3500,
+      "animations": [
+        {
+          "name": "Walk",
+          "duration": 1.0333333333333332
+        },
+        {
+          "name": "Run",
+          "duration": 0.6333333333333333
+        }
+      ],
+      "source": "ContentSource/Meshy/RelayRunner/rig.fbx + walk.fbx + run.fbx",
+      "textureSize": 512
+    },
+    {
+      "id": "ChromeVagrant",
+      "path": "assets/models/ChromeVagrant.glb",
+      "bytes": 524304,
+      "heightMeters": 1.75,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 3500,
+      "animations": [
+        {
+          "name": "Walk",
+          "duration": 1.0333333333333332
+        },
+        {
+          "name": "Run",
+          "duration": 0.6333333333333333
+        }
+      ],
+      "source": "ContentSource/Meshy/ChromeVagrant/rig.fbx + walk.fbx + run.fbx",
+      "textureSize": 512
+    },
+    {
+      "id": "GlitchAcolyte",
+      "path": "assets/models/GlitchAcolyte.glb",
+      "bytes": 436752,
+      "heightMeters": 1.65,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 3500,
+      "animations": [
+        {
+          "name": "Walk",
+          "duration": 1.0333333333333332
+        },
+        {
+          "name": "Run",
+          "duration": 0.6333333333333333
+        }
+      ],
+      "source": "ContentSource/Meshy/GlitchAcolyte/rig.fbx + walk.fbx + run.fbx",
+      "textureSize": 512
+    },
+    {
+      "id": "RiotBulwark",
+      "path": "assets/models/RiotBulwark.glb",
+      "bytes": 401688,
+      "heightMeters": 2.35,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 3500,
+      "animations": [
+        {
+          "name": "Walk",
+          "duration": 1.0333333333333332
+        },
+        {
+          "name": "Run",
+          "duration": 0.6333333333333333
+        }
+      ],
+      "source": "ContentSource/Meshy/RiotBulwark/rig.fbx + walk.fbx + run.fbx",
+      "textureSize": 512
+    },
+    {
+      "id": "CoilHarrier",
+      "path": "assets/models/CoilHarrier.glb",
+      "bytes": 448868,
+      "heightMeters": 2.15,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 3498,
+      "animations": [
+        {
+          "name": "Walk",
+          "duration": 1.0333333333333332
+        },
+        {
+          "name": "Run",
+          "duration": 0.6333333333333333
+        }
+      ],
+      "source": "ContentSource/Meshy/CoilHarrier/rig.fbx + walk.fbx + run.fbx",
+      "textureSize": 512
+    },
+    {
+      "id": "NullBishop",
+      "path": "assets/models/NullBishop.glb",
+      "bytes": 487036,
+      "heightMeters": 2.95,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 3500,
+      "animations": [
+        {
+          "name": "Walk",
+          "duration": 1.0333333333333332
+        },
+        {
+          "name": "Run",
+          "duration": 0.6333333333333333
+        }
+      ],
+      "source": "ContentSource/Meshy/NullBishop/rig.fbx + walk.fbx + run.fbx",
+      "textureSize": 512
+    },
+    {
+      "id": "RazorSeraph",
+      "path": "assets/models/RazorSeraph.glb",
+      "bytes": 500024,
+      "heightMeters": 2.8,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 3499,
+      "animations": [
+        {
+          "name": "Walk",
+          "duration": 1.0333333333333332
+        },
+        {
+          "name": "Run",
+          "duration": 0.6333333333333333
+        }
+      ],
+      "source": "ContentSource/Meshy/RazorSeraph/rig.fbx + walk.fbx + run.fbx",
+      "textureSize": 512
+    },
+    {
+      "id": "FurnaceOni",
+      "path": "assets/models/FurnaceOni.glb",
+      "bytes": 545224,
+      "heightMeters": 3.25,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 3500,
+      "animations": [
+        {
+          "name": "Walk",
+          "duration": 1.0333333333333332
+        },
+        {
+          "name": "Run",
+          "duration": 0.6333333333333333
+        }
+      ],
+      "source": "ContentSource/Meshy/FurnaceOni/rig.fbx + walk.fbx + run.fbx",
+      "textureSize": 512
+    },
+    {
+      "id": "BroadcastSovereign",
+      "path": "assets/models/BroadcastSovereign.glb",
+      "bytes": 738396,
+      "heightMeters": 5.2,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 6000,
+      "animations": [
+        {
+          "name": "Walk",
+          "duration": 1.0333333333333332
+        },
+        {
+          "name": "Run",
+          "duration": 0.6333333333333333
+        }
+      ],
+      "source": "ContentSource/Meshy/BroadcastSovereign/rig.fbx + walk.fbx + run.fbx",
+      "textureSize": 512
+    },
+    {
+      "id": "ShoppingBlock",
+      "kind": "environment",
+      "path": "assets/models/ShoppingBlock.glb",
+      "bytes": 785576,
+      "dimensionsMeters": {
+        "x": 24.0,
+        "y": 21.359808683395386,
+        "z": 14.752681016921997
+      },
+      "maxHorizontalWidthMeters": 24.0,
+      "heightMeters": 21.359808683395386,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "bottom at Y0, centered XZ",
+      "triangles": 13528,
+      "source": "ContentSource/City/Meshy/ShoppingBlock/model.fbx",
+      "animations": [],
+      "textureSize": 512,
+      "collision": "visual mesh only; use independent simplified collision boxes"
+    },
+    {
+      "id": "MarketKiosk",
+      "kind": "environment",
+      "path": "assets/models/MarketKiosk.glb",
+      "bytes": 338128,
+      "dimensionsMeters": {
+        "x": 4.2,
+        "y": 2.9856832802295687,
+        "z": 4.18989492058754
+      },
+      "maxHorizontalWidthMeters": 4.2,
+      "heightMeters": 2.9856832802295687,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "bottom at Y0, centered XZ",
+      "triangles": 5632,
+      "source": "ContentSource/City/Meshy/MarketKiosk/model.fbx",
+      "animations": [],
+      "textureSize": 512,
+      "collision": "visual mesh only; use independent simplified collision boxes"
+    },
+    {
+      "id": "RooftopShrine",
+      "kind": "environment",
+      "path": "assets/models/RooftopShrine.glb",
+      "bytes": 388380,
+      "dimensionsMeters": {
+        "x": 4.6,
+        "y": 5.678633740705146,
+        "z": 4.56123757040881
+      },
+      "maxHorizontalWidthMeters": 4.6,
+      "heightMeters": 5.678633740705146,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "bottom at Y0, centered XZ",
+      "triangles": 5991,
+      "source": "ContentSource/City/Meshy/RooftopShrine/model.fbx",
+      "animations": [],
+      "textureSize": 512,
+      "collision": "visual mesh only; use independent simplified collision boxes"
+    }
+  ]
+}

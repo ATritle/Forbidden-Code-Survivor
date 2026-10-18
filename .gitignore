@@ -1,0 +1,13 @@
+/Binaries/
+/Intermediate/
+/Saved/
+/DerivedDataCache/
+/Artifacts/
+/Tools/
+/Web/node_modules/
+__pycache__/
+*.pyc
+/.vs/
+*.sln
+/Plugins/*/Binaries/
+/Plugins/*/Intermediate/

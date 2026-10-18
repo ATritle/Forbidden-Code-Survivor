@@ -1,0 +1,10 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.0",
+  "FriendlyName": "Codex Runtime",
+  "Description": "Pooled enemies, card decks, and automatic mutable spells.",
+  "Category": "Gameplay",
+  "CanContainContent": true,
+  "Modules": [{ "Name": "CodexRuntime", "Type": "Runtime", "LoadingPhase": "Default" }]
+}

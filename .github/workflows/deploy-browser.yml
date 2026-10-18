@@ -1,0 +1,36 @@
+name: Deploy Forbidden Code browser edition
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['Web/**', 'GameData/**', 'Scripts/export_browser_rules.py', 'Source/DeckBuilder/MVPGame.cpp', 'Source/DeckBuilder/NeonArsenal.cpp', 'Source/DeckBuilder/CyberEnemyRoster.cpp', 'Source/DeckBuilder/NeonChallenge.cpp', '.github/workflows/deploy-browser.yml']
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check browser rules
+        run: |
+          python3 Scripts/export_browser_rules.py
+          git diff --exit-code -- GameData/gameplay.json Web/data/gameplay.json
+          node --test Web/tests/*.test.mjs
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: Web
+      - name: Publish browser edition
+        id: deployment
+        uses: actions/deploy-pages@v4
