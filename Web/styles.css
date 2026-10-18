@@ -5,3 +5,5 @@
 .modal select,.modal input[type=number]{padding:10px;background:#091a29;border:1px solid #4acdbd66;color:#dcf7ff;margin:6px}.modal select{max-width:100%}.modal input[type=number]{width:100px}
 
 .windows-download{display:block;width:fit-content;max-width:100%;margin:14px 0 0;padding:11px 14px;border:1px solid #ff3ca76b;background:#160e25ba;color:#f7d8ed;text-decoration:none;font-size:10px;font-weight:750;letter-spacing:1px;transition:background .16s,box-shadow .16s}.windows-download span{display:block;margin-top:5px;font-size:8px;letter-spacing:1px;color:#b7a1bd}.windows-download:hover{background:#38102fc9;box-shadow:0 0 20px #ff3ca72b}@media(max-width:850px){.windows-download{width:100%;text-align:center}}
+
+body.playing .glass,body.low-quality .glass{backdrop-filter:none;background:linear-gradient(135deg,#112333ed,#070e1bf5)}.performance-toggle{display:block;margin:18px 0;font-size:11px;line-height:1.8;color:#b8d7df}.performance-toggle input{accent-color:var(--cyan)}

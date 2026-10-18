@@ -4,14 +4,14 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="description" content="Forbidden Code: Survivor. Build forbidden energy decks and survive cyborg hordes in a rain-soaked neon city.">
   <meta name="theme-color" content="#070b17"><title>Forbidden Code: Survivor</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=0.2.1">
   <script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}</script>
 </head>
 <body>
   <canvas id="world" aria-label="Forbidden Code: Survivor 3D city game"></canvas>
   <div id="health-edge" aria-hidden="true"></div>
   <main id="menu" class="screen">
-    <header><a class="brand" href="./">FORBIDDEN CODE<span>: SURVIVOR</span></a><nav><button id="codex-tab" class="active">CODEX</button><button id="help-button">HOW TO PLAY</button><button class="settings-open">SETTINGS</button></nav><span class="edition">WEBGL EDITION / 0.2</span></header>
+    <header><a class="brand" href="./">FORBIDDEN CODE<span>: SURVIVOR</span></a><nav><button id="codex-tab" class="active">CODEX</button><button id="help-button">HOW TO PLAY</button><button class="settings-open">SETTINGS</button></nav><span class="edition">WEBGL EDITION / 0.2.1</span></header>
     <section class="intro"><p class="eyebrow"><i></i> NEON DISTRICT · SIGNAL DETECTED</p><h1>FORBIDDEN<br><span>CODE</span><em>SURVIVOR</em></h1><p class="tagline">THE CITY WANTS YOUR SOUL.<br>REWRITE THE RULES.</p><p class="copy">Ride the rain. Capture digital spirits. Build an energy deck powerful enough to break the city's cyborg protocol.</p><div class="menu-meta"><span>16<span>ENERGY SPELLS</span></span><span>10<span>CYBORG TYPES</span></span><span>7<span>RISK CONTRACTS</span></span></div><p id="load-status" role="status">Establishing neural link…</p><button id="start" class="primary" disabled>ENTER NEON DISTRICT <b>↗</b></button><a class="windows-download" href="https://github.com/ATritle/Forbidden-Code-Survivor/releases/download/v0.2.0/ForbiddenCode-Survivor-Setup.exe">DOWNLOAD FOR WINDOWS <span>UE5 EDITION · 464 MiB ↓</span></a><p class="control-hint">WASD / ARROWS MOVE · WHEEL ZOOM · E INTERACT · ESC SETTINGS</p></section>
     <section class="deck-panel glass"><div class="panel-heading"><div><p class="eyebrow">PRE-RUN CODEX</p><h2>BUILD YOUR SIGNAL</h2></div><span id="slots">0 / 2 SLOTS</span></div><p class="muted">Install up to two spells. Your loadout is saved automatically.</p><div id="schools" class="tabs" role="group" aria-label="Filter cards by magic school"></div><div id="library"></div><div id="loadout"></div></section>
     <footer><span>FORBIDDEN SOFTWARE. CAPTURED SPIRITS. LIMITLESS ENERGY.</span><span>BROWSER NATIVE · NO STREAMING REQUIRED</span></footer>
@@ -19,6 +19,6 @@
   <section id="hud" hidden><div class="vitals glass"><div class="small-brand">FORBIDDEN CODE: SURVIVOR</div><div><b id="health">100</b><span> / 100 VITALITY</span></div><div class="meter"><i id="health-fill"></i></div><small id="contract-tracker"></small></div><div class="run glass"><b id="clock">00:00</b><span id="kills">0 BANISHED</span><button class="settings-open" aria-label="Open settings">⚙ SETTINGS</button></div><div id="interact" class="glass" hidden><kbd>E</kbd> <span>NO PAIN — NO GAIN</span></div><div class="bottom glass"><div><b id="level">LV 01</b><span id="essence">0 / 18 ESSENCE</span></div><div id="weapons"></div><div class="xp-meter"><i id="xp-fill"></i></div></div></section>
   <div id="overlay" class="modal-screen" hidden><section class="glass modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"></section></div>
   <div id="toast" role="status" hidden></div><div id="touch-pad" aria-label="Touch movement control"><i></i></div>
-  <script type="module" src="src/main.js"></script>
+  <script type="module" src="src/main.js?v=0.2.1"></script>
 </body>
 </html>

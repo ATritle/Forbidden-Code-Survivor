@@ -26,3 +26,7 @@ Run `node --test Web/tests/rules.test.mjs`. After changing native authored tunin
 This repository includes browser assets and native source/configuration. Large native Unreal assets and original source art/audio remain in the development workspace, so a fresh clone cannot rebuild the Windows game without those folders. The Windows installer contains the cooked assets needed to play. See [publishing notes](Docs/GitHubPublishing.md).
 
 Three.js is vendored under its MIT license in `Web/vendor/three/LICENSE`. Game art provenance is recorded in `Web/assets/model-manifest.json` and `Web/assets/art-manifest.json`. No license for the original game code or art is granted by the bundled third-party license.
+
+## Browser performance update (0.2.1)
+
+Use **Low + Adaptive Resolution** for responsiveness. Settings now displays gameplay FPS and render resolution. The renderer batches the city, uses animated low LODs and lightweight shading on Low, pools chain effects, and fixes slow motion caused by low frame rates. See [measurements and quality budgets](Docs/BrowserPerformance.md). The Windows download remains the UE5 v0.2.0 build.

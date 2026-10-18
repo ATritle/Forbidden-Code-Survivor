@@ -1,0 +1,92 @@
+{
+  "models": [
+    {
+      "id": "NeonExorcist",
+      "path": "assets/models/low/NeonExorcist.glb",
+      "bytes": 304440,
+      "triangles": 2930,
+      "sourceSha256": "8f4137088148d91ac90e2c22f43e49b45073b4facc0f2b39f0571e94aac1cc9f",
+      "sourcePath": "assets/models/NeonExorcist.glb"
+    },
+    {
+      "id": "WireThrall",
+      "path": "assets/models/low/WireThrall.glb",
+      "bytes": 87588,
+      "triangles": 980,
+      "sourceSha256": "df4775522c1a4e8efe77ae9c57404d00ad8d0c70625a2f709f8c52ef80caf503",
+      "sourcePath": "assets/models/WireThrall.glb"
+    },
+    {
+      "id": "RelayRunner",
+      "path": "assets/models/low/RelayRunner.glb",
+      "bytes": 100836,
+      "triangles": 980,
+      "sourceSha256": "b6f8af8d5cc37a68aa12648babf2fd7395412cc0cf92207ee97845cfb4eafbea",
+      "sourcePath": "assets/models/RelayRunner.glb"
+    },
+    {
+      "id": "ChromeVagrant",
+      "path": "assets/models/low/ChromeVagrant.glb",
+      "bytes": 110876,
+      "triangles": 980,
+      "sourceSha256": "586d467c493ab66408388c2b5483673bb70d86508f2d8430b21e5cdf9337a5fb",
+      "sourcePath": "assets/models/ChromeVagrant.glb"
+    },
+    {
+      "id": "GlitchAcolyte",
+      "path": "assets/models/low/GlitchAcolyte.glb",
+      "bytes": 94616,
+      "triangles": 980,
+      "sourceSha256": "de34b6132586d0cd7d36dc4646887f03a8caa27c831e41402bd92eda98ed0b54",
+      "sourcePath": "assets/models/GlitchAcolyte.glb"
+    },
+    {
+      "id": "RiotBulwark",
+      "path": "assets/models/low/RiotBulwark.glb",
+      "bytes": 95456,
+      "triangles": 980,
+      "sourceSha256": "f26ced67126d2f63a7ca4c9b496a5f98d0f9ed4f6a4b89a6ae79d238d726672e",
+      "sourcePath": "assets/models/RiotBulwark.glb"
+    },
+    {
+      "id": "CoilHarrier",
+      "path": "assets/models/low/CoilHarrier.glb",
+      "bytes": 96424,
+      "triangles": 980,
+      "sourceSha256": "c7216ceced6157950730ea39453a18abfa725b7758d0101d6ab08c5562eab776",
+      "sourcePath": "assets/models/CoilHarrier.glb"
+    },
+    {
+      "id": "NullBishop",
+      "path": "assets/models/low/NullBishop.glb",
+      "bytes": 100704,
+      "triangles": 980,
+      "sourceSha256": "c4388fb8b29eb9f5cf66ee4dabe148118c99f3b0311bd11d3819a80d4978456e",
+      "sourcePath": "assets/models/NullBishop.glb"
+    },
+    {
+      "id": "RazorSeraph",
+      "path": "assets/models/low/RazorSeraph.glb",
+      "bytes": 90860,
+      "triangles": 979,
+      "sourceSha256": "b13a2295c80896dc774a71eda15cddf0a00a2160a680ebf8866eb3d3b022f587",
+      "sourcePath": "assets/models/RazorSeraph.glb"
+    },
+    {
+      "id": "FurnaceOni",
+      "path": "assets/models/low/FurnaceOni.glb",
+      "bytes": 112664,
+      "triangles": 980,
+      "sourceSha256": "acbe619216fc60123a4973efd29b731dd6f7df725741f21142b2c26669941194",
+      "sourcePath": "assets/models/FurnaceOni.glb"
+    },
+    {
+      "id": "BroadcastSovereign",
+      "path": "assets/models/low/BroadcastSovereign.glb",
+      "bytes": 184476,
+      "triangles": 1880,
+      "sourceSha256": "048ae41dee3b9380c563abdc7ecf267cc48341cc87a2bf74520a2725f2087757",
+      "sourcePath": "assets/models/BroadcastSovereign.glb"
+    }
+  ]
+}
