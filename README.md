@@ -21,7 +21,7 @@ With Node.js installed, run `node Web/serve.mjs`, then open http://127.0.0.1:417
 
 ## Development and publishing
 
-Run `node --test Web/tests/rules.test.mjs`. After changing native authored tuning, run `python Scripts/export_browser_rules.py` and commit both generated snapshots. Push relevant changes to `main` to deploy the browser game through GitHub Actions.
+Run `node --test Web/tests/*.test.mjs`. After changing native authored tuning, run `python Scripts/export_browser_rules.py` and commit both generated snapshots. Push relevant changes to `main` to deploy the browser game through GitHub Actions.
 
 This repository includes browser assets and native source/configuration. Large native Unreal assets and original source art/audio remain in the development workspace, so a fresh clone cannot rebuild the Windows game without those folders. The Windows installer contains the cooked assets needed to play. See [publishing notes](Docs/GitHubPublishing.md).
 
