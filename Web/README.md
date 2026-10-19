@@ -9,3 +9,5 @@ Controls: WASD/arrows, wheel zoom, E contracts, Esc settings. A touch stick appe
 Run `node --test tests/rules.test.mjs`. See `../Docs/TwoEditions.md` for shared tuning, asset rebuilding, release steps and current parity limits. Three.js licensing is in `vendor/three/LICENSE`; asset provenance is in the model/art manifests.
 
 Performance controls: use Low with Adaptive Resolution enabled. Settings displays gameplay FPS and render resolution. The browser 0.2.1 pass batches scenery, uses animated low LODs, pools chain effects, and fixes frame-dependent slow motion. See `../Docs/BrowserPerformance.md` for measured results and preset tradeoffs.
+
+Browser 0.2.2 adds the shared leaderboard and optional end-of-run username submission. See `../Docs/Leaderboard.md`.

@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['Web/**', 'GameData/**', 'Scripts/export_browser_rules.py', 'Source/DeckBuilder/MVPGame.cpp', 'Source/DeckBuilder/NeonArsenal.cpp', 'Source/DeckBuilder/CyberEnemyRoster.cpp', 'Source/DeckBuilder/NeonChallenge.cpp', '.github/workflows/deploy-browser.yml']
+    paths: ['Web/**', 'GameData/**', 'Services/Leaderboard/**', 'Scripts/export_browser_rules.py', 'Source/DeckBuilder/MVPGame.cpp', 'Source/DeckBuilder/NeonArsenal.cpp', 'Source/DeckBuilder/CyberEnemyRoster.cpp', 'Source/DeckBuilder/NeonChallenge.cpp', '.github/workflows/deploy-browser.yml']
 permissions:
   contents: read
   pages: write
@@ -21,12 +21,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
       - name: Check browser rules
         run: |
           python3 Scripts/export_browser_rules.py
           git diff --exit-code -- GameData/gameplay.json Web/data/gameplay.json
           node --test Web/tests/*.test.mjs
+          node --test Services/Leaderboard/tests/*.test.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

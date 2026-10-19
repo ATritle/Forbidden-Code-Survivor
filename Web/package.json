@@ -1,6 +1,6 @@
 {
   "name": "forbidden-code-survivor-web",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "type": "module",
   "description": "Browser-native WebGL edition of Forbidden Code: Survivor",

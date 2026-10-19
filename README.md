@@ -30,3 +30,7 @@ Three.js is vendored under its MIT license in `Web/vendor/three/LICENSE`. Game a
 ## Browser performance update (0.2.1)
 
 Use **Low + Adaptive Resolution** for responsiveness. Settings now displays gameplay FPS and render resolution. The renderer batches the city, uses animated low LODs and lightweight shading on Low, pools chain effects, and fixes slow motion caused by low frame rates. See [measurements and quality budgets](Docs/BrowserPerformance.md). The Windows download remains the UE5 v0.2.0 build.
+
+## Shared leaderboard (browser 0.2.2)
+
+Open **LEADERBOARD** in the top navigation or HUD. After a run ends, enter a username to publish the result or choose **SKIP & RETURN**. Scores reward kills, survival, levels, completed contracts and victory. The top fifty rank each browser profile's personal best. Testing runs are excluded. [Details and score rules](Docs/Leaderboard.md).

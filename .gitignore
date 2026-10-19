@@ -5,6 +5,9 @@
 /Artifacts/
 /Tools/
 /Web/node_modules/
+/Services/Leaderboard/node_modules/
+/Services/Leaderboard/.sites-runtime/
+/Services/Leaderboard/dist/
 __pycache__/
 *.pyc
 /.vs/
