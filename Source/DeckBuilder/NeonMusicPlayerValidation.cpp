@@ -1,5 +1,6 @@
 #include "MVPGame.h"
 #include "NeonAudioDirector.h"
+#include "NeonMusicPlayerLayout.h"
 #include "EnemySpawner.h"
 #include "Components/AudioComponent.h"
 #include "Sound/SoundWave.h"
@@ -61,12 +62,12 @@ void InstallMusicPlayerValidation(AMVPController* PC)
             Next(11);
         }
         else if(S->Phase==11 && Age>.4)
-        {H->ClickAt(675,860);S->Position=A->GetMusicElapsed();if(!A->IsMusicPaused()) return End(false,TEXT("Pause button failed"));Next(2);}
+        {H->ClickAt(724,866);S->Position=A->GetMusicElapsed();if(!A->IsMusicPaused()) return End(false,TEXT("Pause button failed"));Next(2);}
         else if(S->Phase==2 && Age>.8)
         {
             if(!FMath::IsNearlyEqual(A->GetMusicElapsed(),S->Position,.03f)) return End(false,TEXT("Pause lost the playback position"));
             for(float Band:A->GetMusicSpectrum()) if(Band>.001f) return End(false,TEXT("Spectrum moved while paused"));
-            H->ClickAt(675,860);if(A->IsMusicPaused()) return End(false,TEXT("Play button did not resume"));Next(3);
+            H->ClickAt(724,866);if(A->IsMusicPaused()) return End(false,TEXT("Play button did not resume"));Next(3);
         }
         else if(S->Phase==3 && Age>.65)
         {
@@ -74,23 +75,23 @@ void InstallMusicPlayerValidation(AMVPController* PC)
             if(!A->HasMusicSpectrum()) return End(false,TEXT("Spectrum did not resume"));
             for(int32 I=0;I<S->FirstSpectrum.Num();++I) S->SpectrumChange+=FMath::Abs(S->FirstSpectrum[I]-A->GetMusicSpectrum()[I]);
             if(S->SpectrumChange<.001f) return End(false,TEXT("Spectrum was a static decoration"));
-            S->Position=A->GetMusicDuration()*.5f;H->ClickAt(899,872);Next(12);
+            S->Position=A->GetMusicDuration()*.5f;H->ClickAt(NeonMusicLayout::SeekLeft+NeonMusicLayout::SeekWidth*.5f,878);Next(12);
         }
         else if(S->Phase==12 && Age>.4)
         {
             if(FMath::Abs(A->GetMusicElapsed()-S->Position)>1)
                 return End(false,*FString::Printf(TEXT("Playing seek failed: actual=%.2f expected=%.2f track=%d"),A->GetMusicElapsed(),S->Position,A->GetMusicTrackIndex()));
-            A->PauseMusic();H->ClickAt(846.5f,872);Next(13);
+            A->PauseMusic();H->ClickAt(NeonMusicLayout::SeekLeft+NeonMusicLayout::SeekWidth*.25f,878);Next(13);
         }
         else if(S->Phase==13 && Age>.4)
         {
             if(!A->IsMusicPaused() || FMath::Abs(A->GetMusicElapsed()-A->GetMusicDuration()*.25f)>.1f) return End(false,TEXT("Paused seek failed"));
-            H->ClickAt(675,860);
-            H->ClickAt(744,860);if(A->GetMusicTrackIndex()!=1) return End(false,TEXT("Next button failed"));
-            H->ClickAt(590,870);if(A->GetMusicTrackIndex()!=0) return End(false,TEXT("Previous button failed"));
+            H->ClickAt(724,866);
+            H->ClickAt(778,866);if(A->GetMusicTrackIndex()!=1) return End(false,TEXT("Next button failed"));
+            H->ClickAt(676,866);if(A->GetMusicTrackIndex()!=0) return End(false,TEXT("Previous button failed"));
             A->PreviousMusic();if(A->GetMusicTrackIndex()!=3) return End(false,TEXT("Previous wrap failed"));
             A->NextMusic();if(A->GetMusicTrackIndex()!=0) return End(false,TEXT("Next wrap failed"));
-            H->ClickAt(1440,870);C->SetMouseLocation(1100,750);Next(4);
+            H->ClickAt(1240,866);C->SetMouseLocation(1100,750);Next(4);
         }
         else if(S->Phase==4 && Age>.5)
         {
@@ -103,7 +104,7 @@ void InstallMusicPlayerValidation(AMVPController* PC)
         else if(S->Phase==6 && Age>.5)
         {
             H->ClickAt(1100,790);if(A->GetMusicTrackIndex()!=3) return End(false,TEXT("Scrolled track selection failed"));
-            H->ClickAt(1440,870);H->ClickAt(1130.8889f,860);H->ClickAt(1260,860);
+            H->ClickAt(1240,866);H->ClickAt(NeonMusicLayout::VolumeLeft+NeonMusicLayout::VolumeWidth*50.f/135,867);H->ClickAt(1146,866);
             if(!A->IsMusicMuted() || !FMath::IsNearlyEqual(A->GetMusicVolume(),50.f/135,.001f)) return End(false,TEXT("Volume or mute control failed"));
             if(!A->SaveAudioSettings()) return End(false,TEXT("Could not save music preferences"));
             UAudioMixerBlueprintLibrary::StopRecordingOutput(C,EAudioRecordingExportType::WavFile,TEXT("MusicPlayback"),Directory);Next(7);
@@ -119,7 +120,7 @@ void InstallMusicPlayerValidation(AMVPController* PC)
         }
         else if(S->Phase==71 && Age>.4)
         {
-            H->ClickAt(1260,866);if(A->IsMusicMuted()) return End(false,TEXT("Mute button did not return to its unslashed state"));
+            H->ClickAt(1146,866);if(A->IsMusicMuted()) return End(false,TEXT("Mute button did not return to its unslashed state"));
             Next(72);
         }
         else if(S->Phase==72 && Age>.4)
@@ -128,7 +129,7 @@ void InstallMusicPlayerValidation(AMVPController* PC)
         }
         else if(S->Phase==73 && Age>.4)
         {
-            H->ClickAt(1260,866);if(!A->IsMusicMuted() || !A->SaveAudioSettings()) return End(false,TEXT("Mute state was not restored and saved"));
+            H->ClickAt(1146,866);if(!A->IsMusicMuted() || !A->SaveAudioSettings()) return End(false,TEXT("Mute state was not restored and saved"));
             G->StartingCards={TEXT("PulseDart"),TEXT("PrismBurst")};if(!G->StartSelectedRun()) return End(false,TEXT("Run did not start"));Next(8);
         }
         else if(S->Phase==8 && Age>.9)

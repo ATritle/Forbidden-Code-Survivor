@@ -1,0 +1,20 @@
+Forbidden Code: Survivor - Windows 0.3.6 / Compact Signal Dock
+
+Reduced the bottom music player from 1460 to 1060 logical pixels wide (27.4%)
+and centered it, leaving 270 pixels of space on either side at 1600 x 900.
+The frame height remains 78 pixels. Cover artwork remains square at 38 x 38;
+controls keep readable sizes instead of uniformly shrinking the entire UI.
+The spectrum, progress and volume bars are compacted to fit the narrower frame.
+
+TRACKS now opens a 400 x 200 panel instead of 580 x 200 (31.0% narrower).
+Each row puts the artist directly below the song title next to the thumbnail,
+rather than leaving a wide empty column between the title and artist.
+
+Rendering, click/drag regions and playlist hover blocking share layout geometry.
+Playback verification uses the new control positions and still checks seeking,
+play/pause, previous/next, track selection, saved volume/mute across restart,
+the changing music-derived spectrum and uninterrupted music during card drafts.
+
+The new package and installer use separate 0.3.6 directories. The current
+Play-Forbidden-Routines.cmd opens this version. Play-Windows-0.3.5.cmd keeps
+the previous build available; all earlier packages and the baseline remain.
