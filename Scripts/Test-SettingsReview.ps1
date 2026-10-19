@@ -1,4 +1,4 @@
-param([string]$Executable='',[string]$UserDirectory='Saved/QA/SettingsReview',[switch]$LayoutOnly)
+param([string]$Executable='',[string]$UserDirectory='Saved/QA/SettingsReview',[switch]$LayoutOnly,[switch]$DisplayOnly)
 $ErrorActionPreference='Stop'
 $projectRoot=Split-Path -Parent $PSScriptRoot
 $editor=-not $Executable
@@ -12,6 +12,7 @@ $cases=@(
     @{Name='Display';Flag='SettingsDisplayReload';Width=1280;Height=720;Report='display-reload.json';Hidden=$true}
 )
 if($LayoutOnly){$cases=@($cases|Where-Object {$_.Flag -eq "SettingsReviewSmoke"})}
+if($DisplayOnly){$cases=@($cases|Where-Object {$_.Flag -like "SettingsDisplay*"})}
 foreach($case in $cases){
     $caseRoot=Join-Path $root $case.Name
     $report=Join-Path $caseRoot ('Saved/Review/SettingsReview/'+$case.Report)

@@ -17,6 +17,9 @@
 #include "Containers/Ticker.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Engine/GameViewportClient.h"
+#include "Framework/Application/SlateApplication.h"
+#include "Widgets/SWindow.h"
 
 using namespace NeonSettingsUI;
 namespace
@@ -34,6 +37,22 @@ namespace
     FIntPoint Desktop(UGameUserSettings* Settings)
     {const auto Size=Settings->GetDesktopResolution();return Size.X>0 && Size.Y>0 ? Size : FIntPoint(1920,1080);}
     FString ResolutionName(FIntPoint Size) {return FString::Printf(TEXT("%d x %d"),Size.X,Size.Y);}
+    FSlateRect WorkArea(UGameUserSettings* Settings)
+    {
+        if(FSlateApplication::IsInitialized())
+        {
+            if(const auto Window=GEngine && GEngine->GameViewport ? GEngine->GameViewport->GetWindow() : nullptr;Window.IsValid())
+                return FSlateApplication::Get().GetWorkArea(FSlateRect::FromPointAndExtent(Window->GetPositionInScreen(),Window->GetSizeInScreen()));
+            return FSlateApplication::Get().GetPreferredWorkArea();
+        }
+        const auto Native=Desktop(Settings);return FSlateRect(0,0,Native.X,Native.Y);
+    }
+    bool Committed(ESelectInfo::Type Type) {return Type==ESelectInfo::OnMouseClick || Type==ESelectInfo::OnKeyPress;}
+    void ReturnCaption(UUserWidget* Widget,bool Pending)
+    {
+        if(auto* B=Cast<UButton>(Widget->WidgetTree->FindWidget(TEXT("CloseSettings"))))
+            if(auto* L=Cast<UTextBlock>(B->GetContent())) L->SetText(FText::FromString(Pending ? TEXT("REVERT & RETURN") : TEXT("RETURN / ESC")));
+    }
 }
 UWidget* UNeonSettingsWidget::ComboEntry(FString Option) {return Text(this,NAME_None,Option,15,White);}
 void UNeonSettingsWidget::BuildDisplay(UVerticalBox* Column)
@@ -60,15 +79,15 @@ void UNeonSettingsWidget::BuildDisplay(UVerticalBox* Column)
     RenderScaleLabel=Row(this,Graphics,TEXT("RenderScaleLabel"),TEXT(""),TEXT("Lower the 3D render resolution. Menus remain sharp."),RenderScale);
     VSyncButton=Button(this,TEXT("VSyncToggle"),TEXT(""),[this](int32){ToggleVSync();});
     Row(this,Graphics,NAME_None,TEXT("Vertical sync"),TEXT("Synchronize frames with the monitor to reduce tearing."),VSyncButton);
-    Heading(this,Display,TEXT("SCREEN & WINDOW"),TEXT("Preview a display change, then keep it within 15 seconds. Escape reverts it."));
+    Heading(this,Display,TEXT("SCREEN & WINDOW"),TEXT("Selecting a mode previews it immediately. Keep within 15 seconds, or Escape to revert."));
     WindowMode=Combo(this,TEXT("WindowModeCombo"));WindowMode->OnGenerateWidgetEvent.BindDynamic(this,&ThisClass::ComboEntry);
     for(const TCHAR* Name:ModeNames) WindowMode->AddOption(Name);WindowMode->SetSelectedIndex(int32(Settings->GetFullscreenMode()));
     Row(this,Display,NAME_None,TEXT("Window mode"),TEXT("Fullscreen, borderless desktop, or a movable window."),WindowMode);
     Resolution=Combo(this,TEXT("ResolutionCombo"));Resolution->OnGenerateWidgetEvent.BindDynamic(this,&ThisClass::ComboEntry);
     Row(this,Display,NAME_None,TEXT("Output resolution"),TEXT("Borderless uses the desktop resolution automatically."),Resolution);
     Display->AddChildToVerticalBox(Button(this,TEXT("ApplyDisplay"),TEXT("APPLY DISPLAY CHANGES"),[this](int32){ApplyDisplay();}))->SetPadding(FMargin(0,4,0,12));
-    Display->AddChildToVerticalBox(Text(this,NAME_None,TEXT("Quality and render scale apply immediately. Window mode and output resolution change only after Apply."),12,Muted));
-    WindowMode->OnSelectionChanged.AddDynamic(this,&ThisClass::WindowModeChanged);RenderScale->OnValueChanged.AddDynamic(this,&ThisClass::RenderScaleChanged);
+    Display->AddChildToVerticalBox(Text(this,NAME_None,TEXT("Windowed opens a smaller, movable window. Mode and resolution selections preview immediately; KEEP CHANGES saves them."),12,Muted));
+    WindowMode->OnSelectionChanged.AddDynamic(this,&ThisClass::WindowModeChanged);Resolution->OnSelectionChanged.AddDynamic(this,&ThisClass::ResolutionChanged);RenderScale->OnValueChanged.AddDynamic(this,&ThisClass::RenderScaleChanged);
     RefreshDisplayOptions();RefreshGraphics();
 }
 void UNeonSettingsWidget::RefreshGraphics()
@@ -92,16 +111,52 @@ void UNeonSettingsWidget::RefreshDisplayOptions()
     else if(Mode==2)
     {
         UKismetSystemLibrary::GetConvenientWindowedResolutions(Sizes);
-        for(FIntPoint Size:{FIntPoint(1280,720),FIntPoint(1600,900),FIntPoint(1920,1080)}) if(Size.X<=Native.X && Size.Y<=Native.Y) Sizes.AddUnique(Size);
+        for(FIntPoint Size:{FIntPoint(800,600),FIntPoint(1024,768),FIntPoint(1280,720),FIntPoint(1600,900),FIntPoint(1920,1080)}) Sizes.AddUnique(Size);
     }
     Sizes.AddUnique(Native);if(Mode==1) Sizes={Native};else Sizes.AddUnique(Settings->GetScreenResolution());
-    Sizes.RemoveAll([](FIntPoint Size){return Size.X<800 || Size.Y<600;});Sizes.Sort([](FIntPoint A,FIntPoint B){return A.X==B.X ? A.Y<B.Y : A.X<B.X;});
+    const auto Area=WorkArea(Settings);const FIntPoint Limit(FMath::Max(800,FMath::FloorToInt(Area.GetSize().X)-32),FMath::Max(600,FMath::FloorToInt(Area.GetSize().Y)-64));
+    Sizes.RemoveAll([Mode,Limit](FIntPoint Size){return Size.X<800 || Size.Y<600 || (Mode==2 && (Size.X>Limit.X || Size.Y>Limit.Y));});
+    if(Sizes.IsEmpty()) Sizes.Add(FIntPoint(FMath::Min(1280,Limit.X),FMath::Min(720,Limit.Y)));
+    Sizes.Sort([](FIntPoint A,FIntPoint B){return A.X==B.X ? A.Y<B.Y : A.X<B.X;});
     Resolution->ClearOptions();for(FIntPoint Size:Sizes) if(Resolution->FindOptionIndex(ResolutionName(Size))==INDEX_NONE) Resolution->AddOption(ResolutionName(Size));
     const FString Preferred=Previous.IsEmpty() ? ResolutionName(Settings->GetScreenResolution()) : Previous;
-    Resolution->SetSelectedOption(Resolution->FindOptionIndex(Preferred)!=INDEX_NONE ? Preferred : ResolutionName(Native));Resolution->SetIsEnabled(Mode!=1);
+    FString Fallback=ResolutionName(Native);
+    if(Mode==2)
+    {
+        const FIntPoint Saved(FMath::RoundToInt(ForbiddenSettings::Get(this,"WindowedWidth",1600)),FMath::RoundToInt(ForbiddenSettings::Get(this,"WindowedHeight",900)));
+        Fallback=Resolution->FindOptionIndex(ResolutionName(Saved))!=INDEX_NONE ? ResolutionName(Saved) : Resolution->FindOptionIndex(TEXT("1280 x 720"))!=INDEX_NONE ? TEXT("1280 x 720") : ResolutionName(Sizes.Last());
+    }
+    Resolution->SetSelectedOption(Resolution->FindOptionIndex(Preferred)!=INDEX_NONE ? Preferred : Fallback);Resolution->SetIsEnabled(Mode!=1);
 }
 void UNeonSettingsWidget::WindowModeChanged(FString Selected,ESelectInfo::Type SelectionType)
-{if(!bRefreshing) {RefreshDisplayOptions();if(SelectionType!=ESelectInfo::Direct) NeonMenuAudio::Input(this);}}
+{if(!bRefreshing) {RefreshDisplayOptions();if(Committed(SelectionType)) {NeonMenuAudio::Input(this);QueueDisplayPreview();}}}
+void UNeonSettingsWidget::ResolutionChanged(FString Selected,ESelectInfo::Type SelectionType)
+{if(!bRefreshing && Committed(SelectionType)) {NeonMenuAudio::Input(this);QueueDisplayPreview();}}
+void UNeonSettingsWidget::QueueDisplayPreview()
+{
+    const uint32 Request=++DisplayRequestRevision;const TWeakObjectPtr<UNeonSettingsWidget> Weak(this);
+    // Resize after the combo popup has closed, rather than inside its Slate callback.
+    FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([Weak,Request](float)
+    {if(auto* Widget=Weak.Get();Widget && Widget->DisplayRequestRevision==Request && !Widget->bDisplayPending) Widget->ApplyDisplay();return false;}),.05f);
+}
+void UNeonSettingsWidget::RestoreWindowedFrame(FIntPoint Size)
+{
+    const double Until=FPlatformTime::Seconds()+2;
+    const TWeakPtr<SWindow> WeakWindow=GEngine && GEngine->GameViewport ? GEngine->GameViewport->GetWindow() : nullptr;
+    FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([WeakWindow,Size,Until](float)
+    {
+        auto* Settings=UGameUserSettings::GetGameUserSettings();
+        if(!Settings || Settings->GetFullscreenMode()!=EWindowMode::Windowed || Settings->GetScreenResolution()!=Size) return false;
+        const auto Window=WeakWindow.Pin();
+        if(!Window.IsValid() || Window->GetWindowMode()!=EWindowMode::Windowed) return FPlatformTime::Seconds()<Until;
+        const bool WasVisible=Window->IsVisible();
+        Window->Restore();Window->Resize(FVector2D(Size.X,Size.Y));
+        const auto Area=WorkArea(Settings);const FVector2D Extent=Window->GetSizeInScreen();
+        Window->MoveWindowTo(FVector2D(Area.Left+FMath::Max(8.f,(float(Area.GetSize().X)-float(Extent.X))*.5f),Area.Top+FMath::Max(8.f,(float(Area.GetSize().Y)-float(Extent.Y))*.5f)));
+        if(!WasVisible) Window->HideWindow();
+        return false;
+    }),.05f);
+}
 void UNeonSettingsWidget::ApplyDisplay()
 {
     auto* Settings=UGameUserSettings::GetGameUserSettings();if(!Settings) return;
@@ -113,18 +168,24 @@ void UNeonSettingsWidget::ApplyDisplay()
         Size=FIntPoint(FCString::Atoi(*X),FCString::Atoi(*Y));if(Size.X<800 || Size.Y<600) return;
     }
     PreviousMode=Settings->GetFullscreenMode();PreviousResolution=Settings->GetScreenResolution();
-    if(PreviousMode==Mode && PreviousResolution==Size) {StatusLabel->SetText(FText::FromString(TEXT("This display mode is already active.")));return;}
+    const auto Window=GEngine && GEngine->GameViewport ? GEngine->GameViewport->GetWindow() : nullptr;
+    const bool ActualMatches=Window.IsValid() && Window->GetWindowMode()==Mode && GEngine->GameViewport->Viewport->GetWindowMode()==Mode;
+    if(PreviousMode==Mode && PreviousResolution==Size && ActualMatches) {if(Mode==2) RestoreWindowedFrame(Size);StatusLabel->SetText(FText::FromString(TEXT("This display mode is already active.")));return;}
+    ++DisplayRequestRevision;
     Settings->SetFullscreenMode(EWindowMode::Type(Mode));Settings->SetScreenResolution(Size);Settings->ApplyResolutionSettings(false);
     bDisplayPending=true;DisplayDeadline=FPlatformTime::Seconds()+15;DisplayConfirmation->SetVisibility(ESlateVisibility::Visible);
+    if(Mode==2) RestoreWindowedFrame(Size);
     Pages->SetIsEnabled(false);for(UForbiddenChoiceButton* Tab:Tabs) Tab->SetIsEnabled(false);SetKeyboardFocus();
-    DisplayCountdown->SetText(FText::FromString(TEXT("Keep this display mode? Reverting in 15 seconds.")));
+    ReturnCaption(this,true);
+    DisplayCountdown->SetText(FText::FromString(FString::Printf(TEXT("%s / %d x %d. Keep changes? Reverting in 15 seconds."),ModeNames[Mode],Size.X,Size.Y)));
     const TWeakObjectPtr<UNeonSettingsWidget> Weak(this);
     FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([Weak](float)
     {
         auto* Widget=Weak.Get();if(!Widget || !Widget->bDisplayPending) return false;
         const int32 Seconds=FMath::CeilToInt(Widget->DisplayDeadline-FPlatformTime::Seconds());
         if(Seconds<=0) {Widget->RevertUnconfirmedDisplay();return false;}
-        Widget->DisplayCountdown->SetText(FText::FromString(FString::Printf(TEXT("Keep this display mode? Reverting in %d seconds."),Seconds)));return true;
+        const auto* ActiveSettings=UGameUserSettings::GetGameUserSettings();const auto ActiveSize=ActiveSettings->GetScreenResolution();
+        Widget->DisplayCountdown->SetText(FText::FromString(FString::Printf(TEXT("%s / %d x %d. Keep changes? Reverting in %d seconds."),ModeNames[int32(ActiveSettings->GetFullscreenMode())],ActiveSize.X,ActiveSize.Y,Seconds)));return true;
     }));
     // No unconfirmed display state is written to disk.
 }
@@ -132,15 +193,21 @@ void UNeonSettingsWidget::KeepDisplay()
 {
     if(!bDisplayPending) return;auto* Settings=UGameUserSettings::GetGameUserSettings();if(!Settings) return;
     Settings->ConfirmVideoMode();Settings->SaveSettings();bDisplayPending=false;DisplayConfirmation->SetVisibility(ESlateVisibility::Collapsed);
+    if(Settings->GetFullscreenMode()==EWindowMode::Windowed)
+        if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();Profile && Profile->Data)
+        {const auto Size=Settings->GetScreenResolution();Profile->Data->Settings.Add("WindowedWidth",Size.X);Profile->Data->Settings.Add("WindowedHeight",Size.Y);Profile->Save();}
     Pages->SetIsEnabled(true);for(UForbiddenChoiceButton* Tab:Tabs) Tab->SetIsEnabled(true);
+    ReturnCaption(this,false);bRefreshing=true;RefreshDisplayOptions();bRefreshing=false;
     StatusLabel->SetText(FText::FromString(TEXT("Display mode saved.")));
 }
 void UNeonSettingsWidget::RevertUnconfirmedDisplay()
 {
-    if(!bDisplayPending) return;bDisplayPending=false;
+    ++DisplayRequestRevision;if(!bDisplayPending) return;bDisplayPending=false;
     if(auto* Settings=UGameUserSettings::GetGameUserSettings())
     {Settings->SetFullscreenMode(PreviousMode);Settings->SetScreenResolution(PreviousResolution);Settings->ApplyResolutionSettings(false);Settings->SaveSettings();}
+    if(PreviousMode==EWindowMode::Windowed) RestoreWindowedFrame(PreviousResolution);
     if(DisplayConfirmation) DisplayConfirmation->SetVisibility(ESlateVisibility::Collapsed);
+    ReturnCaption(this,false);
     if(Pages) Pages->SetIsEnabled(true);for(UForbiddenChoiceButton* Tab:Tabs) Tab->SetIsEnabled(true);
     if(WindowMode) {bRefreshing=true;WindowMode->SetSelectedIndex(int32(PreviousMode));bRefreshing=false;RefreshDisplayOptions();Resolution->SetSelectedOption(ResolutionName(PreviousResolution));}
     if(StatusLabel) StatusLabel->SetText(FText::FromString(TEXT("Display change reverted. Your previous mode is restored.")));

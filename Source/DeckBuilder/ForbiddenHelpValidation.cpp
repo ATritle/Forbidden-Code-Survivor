@@ -14,6 +14,7 @@
 #include "Engine/Texture.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "Containers/Ticker.h"
 #include "UnrealClient.h"
 #include "Misc/CommandLine.h"
@@ -78,6 +79,9 @@ struct FGuideQA
         }
         else if(Phase==2 && Age>.7)
         {
+            auto* Body=Cast<UTextBlock>(PC->HelpWidget->WidgetTree->FindWidget(TEXT("HelpBody")));auto* Title=Cast<UTextBlock>(PC->HelpWidget->WidgetTree->FindWidget(TEXT("HelpTitle")));
+            if(!Body || Body->GetFont().Size!=13 || !Title || Title->GetFont().Size!=28) return End(false,TEXT("Help typography does not match Settings"));
+            Check(TEXT("Guide uses Settings typography: 28-point heading and 13-point explanatory text"));
             Capture(TEXT("Guide-Overview"));TArray<int32> Counts;Counts.Init(0,7);
             for(const auto& E:PC->HelpWidget->GetEntries())
             {
@@ -99,7 +103,8 @@ struct FGuideQA
         {Capture(TEXT("Guide-District"));Next(23);}
         else if(Phase==23 && Age>.4)
         {
-            PC->CloseHelp();if(!PC->IsPaused()) return End(false,TEXT("Closing guide unpaused the main menu"));
+            auto* ReturnButton=Cast<UButton>(PC->HelpWidget->WidgetTree->FindWidget(TEXT("HelpReturn")));if(!ReturnButton) return End(false,TEXT("Guide Return button missing"));ReturnButton->OnClicked.Broadcast();
+            if(PC->HelpWidget || !PC->IsPaused()) return End(false,TEXT("Guide Return button did not close safely"));
             PC->ToggleSettings();PC->OpenHelp();if(!PC->HelpWidget || !PC->SettingsWidget || PC->SettingsWidget->GetVisibility()!=ESlateVisibility::Collapsed) return End(false,TEXT("Settings guide did not suspend parent"));
             PC->CloseHelp();if(!PC->SettingsWidget || !PC->IsPaused() || PC->SettingsWidget->GetVisibility()!=ESlateVisibility::Visible) return End(false,TEXT("Guide did not restore settings"));
             Check(TEXT("Guide returns to the same settings widget, focus and pause owner"));PC->CloseSettings();

@@ -37,14 +37,18 @@ private:
     UPROPERTY() TObjectPtr<UTextBlock> RenderScaleLabel;
     bool bDisplayPending=false,bRefreshing=false;
     double DisplayDeadline=0;
+    uint32 DisplayRequestRevision=0;
     FIntPoint PreviousResolution;
     EWindowMode::Type PreviousMode=EWindowMode::Windowed;
     void SelectPage(int32 Index);
     void RefreshGraphics();
     void RefreshDisplayOptions();
+    void QueueDisplayPreview();
+    void RestoreWindowedFrame(FIntPoint Size);
     void BuildDisplay(class UVerticalBox* Column);
     void BuildAudio(class UVerticalBox* Column);
     UFUNCTION() void WindowModeChanged(FString Selected,ESelectInfo::Type SelectionType);
+    UFUNCTION() void ResolutionChanged(FString Selected,ESelectInfo::Type SelectionType);
     UFUNCTION() void ApplyDisplay();
     UFUNCTION() void KeepDisplay();
     UFUNCTION() void ToggleVSync();

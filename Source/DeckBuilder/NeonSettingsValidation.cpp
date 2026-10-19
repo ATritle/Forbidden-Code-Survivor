@@ -15,6 +15,8 @@
 #include "Engine/GameViewportClient.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Widgets/SWindow.h"
+#include "Framework/Application/SlateApplication.h"
+#include "GenericPlatform/GenericWindow.h"
 #include "HAL/IConsoleManager.h"
 #include "Containers/Ticker.h"
 #include "Dom/JsonObject.h"
@@ -73,8 +75,8 @@ void InstallSettingsReviewValidation(AMVPController* Controller)
             }
             if(DisplayReload)
             {
-                if(Settings->GetFullscreenMode()!=EWindowMode::WindowedFullscreen || Settings->GetLastConfirmedFullscreenMode()!=EWindowMode::WindowedFullscreen) return End(false,TEXT("Confirmed borderless mode did not survive fresh-process restart"));
-                Check(TEXT("Fresh process restored confirmed borderless mode from GameUserSettings.ini"));return End(true,TEXT("Saved display mode restored"));
+                if(Settings->GetFullscreenMode()!=EWindowMode::Windowed || Settings->GetLastConfirmedFullscreenMode()!=EWindowMode::Windowed || Settings->GetScreenResolution()!=FIntPoint(1280,720)) return End(false,TEXT("Confirmed windowed mode and size did not survive fresh-process restart"));
+                Check(TEXT("Fresh process restored confirmed Windowed mode and 1280 x 720 client size from GameUserSettings.ini"));return End(true,TEXT("Saved display mode restored"));
             }
             if(Native)
             {Settings->SetFullscreenMode(EWindowMode::Windowed);Settings->SetScreenResolution(FIntPoint(1280,720));Settings->ApplyResolutionSettings(false);Settings->ConfirmVideoMode();Settings->SaveSettings();}
@@ -177,7 +179,51 @@ void InstallSettingsReviewValidation(AMVPController* Controller)
         else if(Native && S->Phase==26 && Age>1)
         {
             if(!ActualMode(1) || !Click(TEXT("KeepDisplay"))) return End(false,TEXT("Final borderless preference did not confirm"));C->CloseSettings();
-            return End(true,TEXT("Native fullscreen, borderless, windowed, timeout rollback, close rollback and confirmed save verified"));
+            auto* Profile=C->GetGameInstance()->GetSubsystem<UForbiddenProfile>();Profile->Data->Settings.Remove("WindowedWidth");Profile->Data->Settings.Remove("WindowedHeight");Profile->Save();
+            C->ToggleSettings();auto* Combo=Cast<UComboBoxString>(C->SettingsWidget->WidgetTree->FindWidget(TEXT("WindowModeCombo")));
+            Combo->SetSelectedIndex(2);Combo->OnSelectionChanged.Broadcast(Combo->GetSelectedOption(),ESelectInfo::OnMouseClick);Next(27);
+        }
+        else if(Native && S->Phase==27 && Age>1)
+        {
+            if(!ActualMode(2) || !C->SettingsWidget->IsDisplayConfirmationPending()) return End(false,TEXT("Selecting Windowed did not auto-preview without Apply"));
+            const auto Area=FSlateApplication::Get().GetWorkArea(FSlateRect::FromPointAndExtent(Window->GetPositionInScreen(),Window->GetSizeInScreen()));
+            const FVector2D Position=Window->GetPositionInScreen(),Extent=Window->GetSizeInScreen();
+            if(Window->GetNativeWindow()->IsMaximized() || Extent.X>=Area.GetSize().X || Extent.Y>=Area.GetSize().Y || Position.X<Area.Left || Position.Y<Area.Top || Position.X+Extent.X>Area.Right+2 || Position.Y+Extent.Y>Area.Bottom+2)
+                return End(false,TEXT("Windowed mode did not produce a smaller restored native window inside the desktop work area"));
+            Check(FString::Printf(TEXT("Committed Windowed selection automatically restored a non-maximized %.0f x %.0f native window inside %.0f x %.0f work area"),Extent.X,Extent.Y,Area.GetSize().X,Area.GetSize().Y));
+            Click(TEXT("KeepDisplay"));
+            // Reproduce a native/fullscreen override while the settings object still says Windowed.
+            const auto DesktopSize=Settings->GetDesktopResolution();UGameUserSettings::RequestResolutionChange(DesktopSize.X,DesktopSize.Y,EWindowMode::WindowedFullscreen,false);Next(28);
+        }
+        else if(Native && S->Phase==28 && Age>1)
+        {
+            if(Settings->GetFullscreenMode()!=EWindowMode::Windowed || Window->GetWindowMode()!=EWindowMode::WindowedFullscreen) return End(false,TEXT("Could not reproduce cached/native mode mismatch"));
+            Click(TEXT("ApplyDisplay"));Next(29);
+        }
+        else if(Native && S->Phase==29 && Age>1)
+        {
+            if(!ActualMode(2) || !C->SettingsWidget->IsDisplayConfirmationPending()) return End(false,TEXT("Reapplying Windowed ignored the native/fullscreen mismatch"));
+            Click(TEXT("KeepDisplay"));Check(TEXT("Windowed reapplied successfully when cached settings said Windowed but the real window was borderless"));
+            Window->Maximize();Window->HideWindow();Next(30);
+        }
+        else if(Native && S->Phase==30 && Age>.5)
+        {
+            if(!Window->GetNativeWindow()->IsMaximized()) return End(false,TEXT("Native maximized-window baseline was not established"));
+            Check(TEXT("Native window confirmed maximized before testing restore"));Click(TEXT("ApplyDisplay"));Next(31);
+        }
+        else if(Native && S->Phase==31 && Age>1)
+        {
+            if(!ActualMode(2) || Window->GetNativeWindow()->IsMaximized()) return End(false,TEXT("Windowed restore left the native window maximized"));
+            if(C->SettingsWidget->IsDisplayConfirmationPending()) Click(TEXT("KeepDisplay"));
+            Check(TEXT("Reapplying the active Windowed setting restores a maximized native window"));
+            auto* Combo=Cast<UComboBoxString>(C->SettingsWidget->WidgetTree->FindWidget(TEXT("ResolutionCombo")));
+            Combo->SetSelectedOption(TEXT("1280 x 720"));Combo->OnSelectionChanged.Broadcast(Combo->GetSelectedOption(),ESelectInfo::OnMouseClick);Next(32);
+        }
+        else if(Native && S->Phase==32 && Age>1)
+        {
+            if(!ActualMode(2) || Settings->GetScreenResolution()!=FIntPoint(1280,720) || GEngine->GameViewport->Viewport->GetSizeXY()!=FIntPoint(1280,720) || !C->SettingsWidget->IsDisplayConfirmationPending()) return End(false,TEXT("Resolution selection did not auto-preview the actual 1280 x 720 window"));
+            Click(TEXT("KeepDisplay"));C->CloseSettings();Check(TEXT("Committed resolution selection auto-previewed and saved a 1280 x 720 native viewport"));
+            return End(true,TEXT("Native modes, physical window bounds, automatic previews, maximized restore, cached-mode mismatch, rollback and saved Windowed preference verified"));
         }
         return true;
     }));
