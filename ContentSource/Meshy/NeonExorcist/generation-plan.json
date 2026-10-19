@@ -1,0 +1,110 @@
+{
+  "status": "Complete: generated, assembled, imported as main player, rendered gameplay and 11-clip contact validation passed",
+  "approvedDesign": "ContentSource/Concepts/NeonExorcist/Player-Concept-v8.png",
+  "maximumCredits": 59,
+  "paidRetries": 0,
+  "outputFormats": [
+    "fbx",
+    "glb"
+  ],
+  "references": [
+    {
+      "image": "ContentSource/Concepts/NeonExorcist/Rider-RigReference-v1.png",
+      "tool": "Built-in image_gen",
+      "prompt": "Edit the approved Neon Exorcist Concept v8 into a clean production reference for Meshy humanoid auto-rigging. Preserve exactly the same adult male character design, face identity, high black topknot with magenta accents, fitted hip-length black technical jacket, black layered trousers, narrow tabi ninja footwear, neon orange/yellow/cyan/magenta circuit trim, belt accessories, and smooth single panoramic mirrored orange-magenta visor covering both eyes AND the whole nose, mouth and jaw exposed.\nChange pose to a symmetrical straight-on T-pose: stand upright with legs straight and feet shoulder width apart, arms extended horizontally straight out at shoulder height, palms facing down, fingers relaxed and clearly separated. Entire head, both hands, feet completely in frame with generous margins. Natural anatomy and clear separation between limbs and torso. No board anywhere in this image. Remove ALL detached floating talismans, orbiting paper strips and hovering spirit trails around the body. Keep the small physically attached belt/jacket talismans already part of the clothing. No particle effects or trails. Do not redesign clothing or visor. Slightly reduce bloom and use neutral even studio light so base material color and surface detail can be reconstructed, keeping neon colored trim visibly colorful.\nOne single full-body character only on a plain light neutral gray background, no labels, no multiple views or panels, no logos or watermark. High quality physically believable character reference render for a 3D game."
+    },
+    {
+      "image": "ContentSource/Concepts/NeonExorcist/Hoverboard-Reference-v1.png",
+      "tool": "Built-in image_gen",
+      "prompt": "Use the hoverboard in the provided approved Neon Exorcist Concept v8 as the precise design reference. Create a clean standalone 3D modeling reference of ONLY that hoverboard, with no rider, no shoes, no human body parts, no talismans.\nOne single slim aerodynamic black carbon-composite hoverboard, long narrow oval surf/skate deck with smoothly tapered rounded upturned ends, continuous thin monocoque shell, recessed dark textured grip pads on the top, narrow neon orange and magenta edge strips, and flush cyan levitation strips along the underside. Preserve the premium sleek lightweight design and neon color placement of the source. Maintain a low-profile deck approximately 110 cm long and 30 cm wide, only 5 cm thick. No wheels, no handlebars, no external bulky engine pods. Top deck and sidewall details are clearly visible.\nOne object shown from an elevated three-quarter product view, fully visible with generous margins, long axis diagonal across the frame so the complete nose and tail and the deck's grip-pad surface are clear. Neutral light gray studio background. Even neutral light, physically believable high-detail carbon/rubber/metal surface materials, controlled glow so construction details remain readable. No floor fog, no propulsion trails, no dramatic colored floor reflections, no text labels, no logos, no multiple views or panels, no watermark. This image is for image-to-3D reconstruction in Meshy."
+    }
+  ],
+  "stages": [
+    {
+      "asset": "NeonExorcist",
+      "kind": "image-to-3d",
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "standard",
+      "target_polycount": 60000,
+      "should_remesh": true,
+      "texture_resolution": "4k",
+      "enable_pbr": true,
+      "pose_mode": "t-pose",
+      "credits": 30
+    },
+    {
+      "asset": "NeonHoverboard",
+      "kind": "image-to-3d",
+      "ai_model": "meshy-t2",
+      "model_type": "smart-topology",
+      "target_polycount": 4000,
+      "texture_resolution": "2k",
+      "enable_pbr": true,
+      "credits": 15
+    },
+    {
+      "asset": "NeonExorcist",
+      "kind": "rigging",
+      "height_meters": 1.8,
+      "credits": 5,
+      "includedAnimations": [
+        "Walk",
+        "Run"
+      ]
+    },
+    {
+      "asset": "NeonExorcist",
+      "kind": "animation",
+      "sourceActions": [
+        {
+          "id": 0,
+          "name": "Idle"
+        },
+        {
+          "id": 129,
+          "name": "mage_soell_cast"
+        },
+        {
+          "id": 391,
+          "name": "Head_Hold_in_Pain"
+        }
+      ],
+      "credits": 9
+    }
+  ],
+  "assembly": {
+    "rider": "Humanoid Meshy skeleton; generate and rig without board or detached floating talismans",
+    "board": "Rigid board part added to player animation hierarchy after humanoid auto-rigging; retain board across all riding clips; no leg weighting on board",
+    "ridingSet": [
+      "HoverIdle",
+      "Cruise",
+      "Accelerate",
+      "Brake",
+      "TurnLeft",
+      "TurnRight",
+      "Cast",
+      "Hit",
+      "Fall",
+      "Land"
+    ],
+    "animationWork": "Adapt Meshy source animation with custom rider stance and fixed board foot contacts locally; Meshy generic walk/run are source files, not final riding animations",
+    "vfx": [
+      "Separate orbiting animated talismans",
+      "Board hover glow and trails",
+      "Neon emissive character/visor material"
+    ],
+    "validation": [
+      "Inspect topology and skeleton",
+      "Check foot contact and board rigidity throughout animations",
+      "Import as main player",
+      "Rendered gameplay regression"
+    ]
+  },
+  "validation": {
+    "importedMaxFootContactErrorCm": 0.6482,
+    "build": "Saved/NeonRiderBuild.log",
+    "gameplay": "Saved/NeonAttackSmoke.log",
+    "preview": "Saved/Screenshots/NeonExorcist-InGame.png",
+    "notes": "Physical centimeter measurement after component scaling; expanded 14-clip set."
+  }
+}

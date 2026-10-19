@@ -1,0 +1,10 @@
+{
+  "result": "PACKAGED_RELEASE_PASS",
+  "menuScreenshot": true,
+  "gameplayScreenshot": true,
+  "artAndDeckReady": true,
+  "sidewalks": 372,
+  "curbs": 331,
+  "lamps": 27,
+  "activeEnemies": 37
+}

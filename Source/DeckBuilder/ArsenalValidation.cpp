@@ -30,6 +30,7 @@ void RunArsenalSmoke(AMVPController* C)
     {
         if(!A->IsReady() || P->Deck->UnlockedCards.Num()!=16 || G->GetXPRequirement()!=18) {Fail(TEXT("Missing authored arsenal or balance data"));return;}
         TSet<FName> IDs;
+        P->Deck->MaximumActiveWeapons=0;
         for(UCardDataAsset* Card:P->Deck->UnlockedCards) {if(!Card->Icon || IDs.Contains(Card->CardID)) {Fail(TEXT("Missing icon or duplicate ID"));return;}IDs.Add(Card->CardID);}
         C->SetMouseLocation(800,390);Advance(1);
     }

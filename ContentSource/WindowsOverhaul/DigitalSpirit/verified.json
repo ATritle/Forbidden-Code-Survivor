@@ -1,0 +1,14 @@
+{
+  "rig.fbx": {
+    "bytes": 4002908,
+    "sha256": "799dfc5901a882929eba616a2ea859908e9e8b31e3d3e47679b0e6ec7262b6b4"
+  },
+  "walk.fbx": {
+    "bytes": 4040812,
+    "sha256": "83d134af4e2995a24574039fe4e4fbdf46c4e8c8f06dd7a88889118fb8976d85"
+  },
+  "run.fbx": {
+    "bytes": 4023692,
+    "sha256": "d774a3b7141cb1ccf179d3ecd36e6a3992f640ff1dae5e6e356a13053f1a4b48"
+  }
+}

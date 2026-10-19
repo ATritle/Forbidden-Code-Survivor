@@ -1,0 +1,8 @@
+{
+  "generator": "OpenAI built-in image generation",
+  "prompt": "Generate one production game texture atlas of luminous fictional cyberpunk storefront signs. Flat front elevation, no perspective, no physical signs or buildings, no people. Exactly 4 columns by 4 rows equal square tiles, flush grid with no gaps. Each tile has deep near-black navy background and one beautiful crisp neon graphic, designed for a rainy industrial Japanese inspired night market. Mostly warm ivory/amber/orange lettering with accents of cyan, magenta, lime, violet. Tile row1: ramen bowl with chopsticks and NEON NOODLES; concentric portal circle and GHOSTLINK; vertical geometric futuristic glyphs and SOULWARE; bright cyan square maze glyph and 24H. Row2: stylized koi fish in neon pink; retro game controller and ARCADE; orange noodle steam glyph; lime technological pharmacy cross. Row3: magenta outlined spirit mask glyph; ivory futuristic vertical invented script; cyan subway M icon and METRO; orange wrench icon and REPAIR. Row4: bright cream tea cup and NIGHT TEA; stacked white futuristic square invented characters; purple triangle within a circle and SHRINE NET; amber ring planet and ORBIT. Painterly crisp digital neon tube artwork with narrow saturated glow, high contrast, professional readable logos. Original fictional brands. Avoid imagery of Marvel or existing brands. The image is an emissive texture atlas for a 3D neon industrial city game, strictly a flat graphic sheet.",
+  "asset": "NeonSigns.png",
+  "layout": "4 by 4 original neon store signs",
+  "reference": "CityReference.png, user-provided",
+  "meshy_credits": 0
+}

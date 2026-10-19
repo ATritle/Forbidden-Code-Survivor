@@ -1,4 +1,5 @@
 #include "NeonChallenge.h"
+#include "ForbiddenWorldQueries.h"
 #include "NeonChallengeWidget.h"
 #include "MVPGame.h"
 #include "SpellBase.h"
@@ -13,7 +14,8 @@
 
 float UNeonChallengeComponent::GetIncomingDamageMultiplier() const
 {
-    return IsGameplayRunning() && ActiveStation && ActiveStation->Definition ? FMath::Clamp(ActiveStation->Definition->IncomingDamageMultiplier,1.f,10.f) : 1.f;
+    const auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());
+    return (G ? G->PerkIncomingMultiplier() : 1.f)*(IsGameplayRunning() && ActiveStation && ActiveStation->Definition ? FMath::Clamp(ActiveStation->Definition->IncomingDamageMultiplier,1.f,10.f) : 1.f);
 }
 float UNeonChallengeComponent::GetPursuerSpeedMultiplier() const
 {
@@ -48,6 +50,7 @@ bool UNeonChallengeComponent::FindTrialGround(FVector Origin,float MinRadius,flo
 AMVPEnemy* UNeonChallengeComponent::SpawnTrialElite(FVector Position,int32 Archetype)
 {
     auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());if(!G || !G->Spawner) return nullptr;
+    TGuardValue<bool> SuppressBoss(G->bSuppressBossSelection,true);
     const bool bBossSpawned=G->bBroadcastBossSpawned;
     auto* Elite=Cast<AMVPEnemy>(G->Spawner->SpawnEnemyFromPool(Position+FVector(0,0,90)));
     G->bBroadcastBossSpawned=bBossSpawned;
@@ -78,12 +81,12 @@ bool UNeonChallengeComponent::PrepareTrial(ANeonChallengeStation* Station)
         auto* Nav=FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());FNavLocation Start;
         if(!Nav || !Nav->ProjectPointToNavigation(Player->GetActorLocation(),Start,FVector(100,100,200)))
         {if(OfferWidget) OfferWidget->ShowOfferError(TEXT("No navigable duel site here. Move onto the ground and retry."));return false;}
-        DuelCenter=Start.Location;
+        const bool bFlat=ForbiddenWorldQueries::FindDuelSite(GetWorld(),Start.Location,DuelCenter);
         bool bSiteFound=false;
         for(int32 I=0;I<8 && !bSiteFound;++I)
-            bSiteFound=FindTrialGround(DuelCenter,300,600,ObjectiveLocation) && FMath::Abs(ObjectiveLocation.Z-DuelCenter.Z)<100 && FVector::DistSquared2D(ObjectiveLocation,DuelCenter)<FMath::Square(Station->Definition->DuelRadius*0.8f);
+            bSiteFound=bFlat && FindTrialGround(DuelCenter,300,600,ObjectiveLocation) && FMath::Abs(ObjectiveLocation.Z-DuelCenter.Z)<45 && FVector::DistSquared2D(ObjectiveLocation,DuelCenter)<FMath::Square(Station->Definition->DuelRadius*0.8f);
         if(!bSiteFound)
-        {if(OfferWidget) OfferWidget->ShowOfferError(TEXT("No clear elite spawn inside the ring. Try Accept again or Decline."));return false;}
+        {if(OfferWidget) OfferWidget->ShowOfferError(TEXT("This location has no flat connected duel space. Decline and approach from the street side; the sign is not consumed."));return false;}
         AMVPEnemy* Elite=SpawnTrialElite(ObjectiveLocation,FMath::RandRange(6,8));
         if(!Elite) {if(OfferWidget) OfferWidget->ShowOfferError(TEXT("No enemy slot available for the duel. Decline and retry after clearing enemies."));return false;}
         DuelTarget=Elite;DuelTargetGeneration=Elite->Generation;
@@ -99,7 +102,8 @@ void UNeonChallengeComponent::OnEnemyKilled(AMVPEnemy* Enemy,uint32 Generation)
     auto* D=ActiveStation->Definition.Get();
     if(D->HealthRestoredPerKill>0)
     {
-        Player->Health=FMath::Min(Player->MaxHealth,Player->Health+Player->MaxHealth*FMath::Clamp(D->HealthRestoredPerKill,0.f,1.f));KillFlash=1;
+        const int32 Second=FMath::FloorToInt(Elapsed);if(HealingSecond!=Second) {HealingSecond=Second;HealsThisSecond=0;}
+        if(HealsThisSecond<3) {++HealsThisSecond;Player->Health=FMath::Min(Player->MaxHealth,Player->Health+Player->MaxHealth*FMath::Clamp(D->HealthRestoredPerKill,0.f,0.01f));KillFlash=1;}
         if(auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());G && G->SpellImpactDirector) G->SpellImpactDirector->PlayFlightTrail(ENeonSpellStyle::Barrier,Player->GetActorLocation()+FVector(0,0,45));
     }
     if(D->Contract==ENeonChallenge::LockdownDuel && DuelTarget.Get()==Enemy && DuelTargetGeneration==Generation)
@@ -120,8 +124,10 @@ void UNeonChallengeComponent::ResolveTrialFailure(const FString& Message)
 {
     if(!ActiveStation || !ActiveStation->Definition || !Player.IsValid()) return;
     const float Damage=Player->MaxHealth*FMath::Clamp(ActiveStation->Definition->PenaltyHealthFraction,0.f,1.f);
+    const FString Cause=ActiveStation->Definition->Title.ToString()+TEXT(" / contract failure");
     FinishContract(ENeonContractState::Failed,Message);
     if(auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());G && G->SpellImpactDirector) G->SpellImpactDirector->PlayImpact(ENeonSpellStyle::Prism,Player->GetActorLocation());
+    if(auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode())) G->LastDamageCause=Cause;
     Player->ReceiveChallengeDamage(Damage);
 }
 void UNeonChallengeComponent::UpdateTrial(float Dt)
@@ -133,6 +139,7 @@ void UNeonChallengeComponent::UpdateTrial(float Dt)
     {
     case ENeonChallenge::DeadmanBattery:
         if(TrialVisual) TrialVisual->ShowPlayerShell(P,false,KillFlash);
+        if(auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode())) G->LastDamageCause=TEXT("Deadman Battery / health drain");
         Player->ReceiveChallengeDamage(Player->MaxHealth*FMath::Clamp(D->HealthDrainPerSecond,0.f,1.f)*Dt,false);break;
     case ENeonChallenge::GlassProtocol:
         if(TrialVisual) TrialVisual->ShowPlayerShell(P,true,Elapsed);break;

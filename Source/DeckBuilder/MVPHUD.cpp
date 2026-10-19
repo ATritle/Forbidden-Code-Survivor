@@ -13,6 +13,10 @@
 #include "MortisTestingDirector.h"
 #include "CyberEnemyRoster.h"
 #include "TestingCardInfo.h"
+#include "ForbiddenDistrictDirector.h"
+#include "ForbiddenCombatSubsystem.h"
+#include "ForbiddenEnemyBrain.h"
+#include "ForbiddenSettingsControls.h"
 
 namespace Palette
 {
@@ -131,7 +135,13 @@ void AMVPHUD::DrawHUD()
     if (Game->bInCodex) { DrawCodex(Game);DrawSettingsButton();return; }
     DrawHealthAlert(Player);
     DrawChallengeHUD(Player);
+    if(Game->DistrictDirector)
+    {
+        Text(Game->DistrictDirector->GetTracker(),460,28,0.6f,Palette::Mint);
+        Text(Game->DistrictDirector->GetPrompt(),570,666,0.85f,Palette::White);
+    }
     DrawSettingsButton();
+    if(!Game->bRunEnded) {Glass(TEXT("CombatBoard"),1360,186,210,34,Palette::Mint,Hover(TEXT("CombatBoard"),1360,186,210,34));Text(TEXT("LEADERBOARD [L]"),1375,194,0.67f,Palette::Mint);}
 
     Box(28, 24, 400, 132, Palette::Ink);
     Box(28, 24, 4, 132, Palette::Mint);
@@ -150,17 +160,54 @@ void AMVPHUD::DrawHUD()
     Text(FString::Printf(TEXT("ESSENCE  %d / %d"), Game->XP, Game->GetXPRequirement()), 182, 806, 0.82f, Palette::White);
     Box(50, 850, 1500, 5, Palette::Panel);
     Box(50, 850, 1500.f * Game->XP / Game->GetXPRequirement(), 5, Palette::Mint);
-    Text(TEXT("WASD / ARROWS  move     |     Spells fire automatically     |     Collect green essence"), 580, 807, 0.75f, Palette::Muted);
-    Text(FString::Printf(TEXT("TALISMAN CHARGES  %d / 16"),Player->GetTalismanCount()),50,165,0.8f,Palette::Gold);
+    Text(TEXT("MOVE / LEFT STICK   |   BOOST / SHIFT / A   |   T: PRIORITY   |   TAB: INSPECT"), 580, 807, 0.65f, Palette::Muted);
+    if(Player->Deck->FindOwnedSpell("TalismanGuard")) Text(FString::Printf(TEXT("TALISMAN CHARGES  %d / 8"),Player->GetTalismanCount()),50,165,0.8f,Palette::Gold);
+    const TCHAR* Priorities[]={TEXT("NEAREST"),TEXT("STRONGEST"),TEXT("MARKED")};
+    Text(FString::Printf(TEXT("BOOST %s  /  TARGET %s"),Player->BoostCooldown>0 ? *FString::Printf(TEXT("%.1fs"),Player->BoostCooldown) : TEXT("READY"),Priorities[FMath::Clamp(Player->TargetPriority,0,2)]),50,200,0.62f,Palette::Mint);
     int32 WeaponIndex = 0;
+    const auto* Profile=Game->GetGameInstance()->GetSubsystem<UForbiddenProfile>();
+    const FKey InspectKey=Profile && Profile->Data && Profile->Data->Bindings.Contains("Inspect") ? Profile->Data->Bindings["Inspect"] : EKeys::Tab;
+    const bool Inspect=PlayerOwner->IsInputKeyDown(InspectKey) && !Game->bChoosingCard && !Game->bRunEnded;
+    if(Inspect) Box(400,240,800,445,FLinearColor(0.005f,0.012f,0.025f,0.97f));
     for (UCardDataAsset* Card : Player->Deck->EquippedDeck)
     {
-        if (!Card || !Player->Deck->FindOwnedSpell(Card->CardID)) continue;
-        const int32 Column=WeaponIndex%8,Row=WeaponIndex/8;
-        const float X=28+Column*194.f,Y=742-Row*39.f;
-        Box(X,Y,182,32,Palette::Ink);
-        Text(Card->Name.ToString(),X+10,Y+8,0.65f,NeonSpellPalette::Color(NeonSpellPalette::ForCard(Card->CardID)));
+        ASpellBase* Spell=Card ? Player->Deck->FindOwnedSpell(Card->CardID) : nullptr;if(!Spell) continue;
+        const float X=500+WeaponIndex*158.f,Y=712.f;
+        const FLinearColor Accent=NeonSpellPalette::Color(NeonSpellPalette::ForCard(Card->CardID));
+        const float H=Hover(Card->CardID,X,Y,146,64);Glass(Card->CardID,X,Y,146,64,Accent,H);
+        SpellArt(*FString::Printf(TEXT("CombatArt%d"),WeaponIndex),Card->Icon,X+4,Y+5,46,46,Accent,H);
+        Text(Card->Name.ToString(),X+52,Y+12,0.43f,Accent);Text(FString::Printf(TEXT("R%d %s"),Spell->Modifiers.Rank,Spell->Modifiers.Evolution>0 ? TEXT("EVOLVED") : TEXT("")),X+52,Y+32,0.48f,Palette::White);
+        Box(X+5,Y+58,136*Spell->GetCooldownFraction(),3,Accent);
+        if(Inspect)
+        {
+            const FString Branch=Spell->Modifiers.Evolution==1 ? Card->EvolutionA.ToString() : Spell->Modifiers.Evolution==2 ? Card->EvolutionB.ToString() : TEXT("NO EVOLUTION");
+            Text(FString::Printf(TEXT("%s / R%d / %s"),*Card->Name.ToString(),Spell->Modifiers.Rank,*Branch),425,258+WeaponIndex*65,0.72f,Accent);
+            Text(FString::Printf(TEXT("%.1f DAMAGE  /  %.2fs  /  %d VOLLEY MOD  /  %d PIERCE  /  %.2fx FIELD"),Spell->Damage*Game->PerkDamageMultiplier(),Spell->Cooldown*Player->Deck->GlobalCooldownScale,Spell->Modifiers.ProjectileCount,Spell->Modifiers.PiercingCount,Spell->Modifiers.RadiusMultiplier),425,285+WeaponIndex*65,0.58f,Palette::White);
+        }
         ++WeaponIndex;
+    }
+    if(!Game->bChoosingCard && !Game->bRunEnded && !Game->DecisionWidget && Game->Spawner)
+    {
+        if(const auto* Combat=GetWorld()->GetSubsystem<UForbiddenCombatSubsystem>();Combat && ForbiddenSettings::Get(this,"DamageNumbers",1)>0.01f)
+        {
+            const int32 Stride=FMath::Max(1,FMath::RoundToInt(1.f/FMath::Max(0.01f,ForbiddenSettings::Get(this,"DamageNumbers",1))));int32 N=0;
+            for(const auto& Number:Combat->GetNumbers()) if(Number.Age>=0 && N++%Stride==0)
+            {
+                FVector2D Screen;if(!PlayerOwner->ProjectWorldLocationToScreen(Number.Position+FVector(0,0,40+Number.Age*85),Screen)) continue;
+                const float X=(Screen.X-OffsetX)/UIScale,Y=(Screen.Y-OffsetY)/UIScale;
+                if(X>30 && X<1550 && Y>230 && Y<690) Text(FString::Printf(TEXT("%.0f"),Number.Amount),X,Y,0.65f,FLinearColor(Number.Color.R,Number.Color.G,Number.Color.B,1-Number.Age/0.8f));
+            }
+        }
+        for(APooledEnemy* A:Game->Spawner->GetActiveEnemies()) if(auto* E=Cast<AMVPEnemy>(A);E && E->IsPoolActive() && (E->EnemyTier>=2 || E->Tags.Contains("BroadcastNode") || Player->MarkedEnemy.Get()==E))
+        {
+            FVector2D Screen;const auto& P=CyberEnemies::Roster()[FMath::Clamp(E->EnemyArchetype,0,9)];
+            if(!PlayerOwner->ProjectWorldLocationToScreen(E->GetCombatVFXLocation()+FVector(0,0,P.Height*.45f),Screen)) continue;
+            const float X=(Screen.X-OffsetX)/UIScale-44,Y=(Screen.Y-OffsetY)/UIScale;
+            if(X<20 || X>1480 || Y<200 || Y>680) continue;
+            Box(X,Y,88,5,Palette::Ink);Box(X,Y,88*FMath::Clamp(E->Health/E->MaxHealth,0.f,1.f),5,E->EnemyTier==3 ? Palette::Gold : Palette::Mint);
+            if(E->EnemyTier==3) Text(FString::Printf(TEXT("SOVEREIGN / %.0f HP"),E->Health),X-42,Y-24,0.6f,Palette::Gold);
+            else if(E->Tags.Contains("BroadcastNode")) Text(TEXT("SHIELD TRANSMITTER"),X-25,Y-20,0.5f,Palette::Mint);
+        }
     }
 
     if (Game->bRunEnded)
@@ -169,9 +216,13 @@ void AMVPHUD::DrawHUD()
         DrawSettingsButton();
         Box(440, 240, 720, 390, Palette::Ink);
         Box(440, 240, 720, 3, Palette::Gold);
-        Text(TEXT("THE CODEX FALLS SILENT"), 505, 290, 1.7f, Palette::White);
+        Text(Game->bVictory ? TEXT("TRANSMISSION TERMINATED") : TEXT("SIGNAL LOST"), 505, 290, 1.45f, Palette::White);
         Text(FString::Printf(TEXT("Level %d    /    %d enemies banished"), Game->Level, Game->Kills), 505, 362, 1.f, Palette::Muted);
         Text(FString::Printf(TEXT("Survived %02d:%02d"), static_cast<int32>(Game->RunSeconds) / 60, static_cast<int32>(Game->RunSeconds) % 60), 505, 409, 1.f, Palette::Gold);
+        Text(FString::Printf(TEXT("SCORE %d  /  +%d CODE FRAGMENTS  /  %d CONTRACTS"),Game->RunRecord.Score,Game->RunRecord.Currency,Game->CompletedContracts),505,455,0.68f,Palette::Mint);
+        Text(Game->RunRecord.DeathCause,505,486,0.65f,Palette::Muted);
+        Glass(TEXT("SubmitScore"),490,580,620,36,Palette::Mint,Hover(TEXT("SubmitScore"),490,580,620,36));
+        Text(TEXT("POST SCORE / WINDOWS TOP 10  [L]"),550,590,0.72f,Palette::Mint);
         Box(490, 510, 620, 60, Palette::Panel);
         Text(TEXT("RETURN TO CODEX  /  Click or press R"), 505, 524, 1.05f, Palette::Mint);
         return;
@@ -232,12 +283,13 @@ void AMVPHUD::DrawHUD()
 void AMVPHUD::ClickAt(float X, float Y)
 {
     auto* PC=Cast<AMVPController>(PlayerOwner);
-    if(PC && (PC->IsSettingsOpen() || PC->IsChallengeOpen())) return;
+    if(PC && (PC->IsSettingsOpen() || PC->IsChallengeOpen() || PC->ScoreWidget)) return;
     AMVPArenaGameMode* Game = Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this));
-    if (!Game || UIScale <= 0.f) return;
+    if (!Game || Game->DecisionWidget || UIScale <= 0.f) return;
     const float LocalX = (X - OffsetX) / UIScale;
     const float LocalY = (Y - OffsetY) / UIScale;
     if(InChamfer(LocalX,LocalY,1360,142,190,36)) {if(PC) PC->ToggleSettings();return;}
+    if(InChamfer(LocalX,LocalY,1360,186,190,36) || (Game->bInCodex && InChamfer(LocalX,LocalY,920,182,230,46)) || (Game->bRunEnded && InChamfer(LocalX,LocalY,490,580,620,36))) {if(PC) PC->OpenLeaderboard();return;}
     if (Game->bInCodex)
     {
         if (LocalY >= 182 && LocalY <= 228)
@@ -252,13 +304,14 @@ void AMVPHUD::ClickAt(float X, float Y)
         }
         if (LocalY >= 270 && LocalY <= 570)
             for (int32 I=0; I<3 && Library.IsValidIndex(Game->LibraryPage*3+I); ++I)
-                if (LocalX >= 80+I*485 && LocalX <= 540+I*485) { Game->ToggleStartingCard(Library[Game->LibraryPage*3+I]->CardID); return; }
+                if (LocalX >= 80+I*485 && LocalX <= 540+I*485) { Game->OpenProgramEditor(Library[Game->LibraryPage*3+I]->CardID); return; }
         if (LocalY >= 640 && LocalY <= 696)
             for (int32 I=0; I<Game->StartingCards.Num(); ++I)
-                if (LocalX >= 80+I*400 && LocalX <= 460+I*400) { Game->ToggleStartingCard(Game->StartingCards[I]); return; }
+                if (LocalX >= 80+I*400 && LocalX <= 460+I*400) { Game->OpenProgramEditor(Game->StartingCards[I]); return; }
         if (LocalY >= 776 && LocalY <= 840)
         {
             if (InChamfer(LocalX,LocalY,80,776,290,64)) Game->SaveStartingDeck();
+            if (InChamfer(LocalX,LocalY,410,776,330,64)) Game->OpenHideout();
             if (InChamfer(LocalX,LocalY,1080,776,440,64)) Game->StartSelectedRun();
         }
         return;

@@ -9,7 +9,18 @@ A cyberpunk deckbuilding survivor. Ride a hoverboard through rain-soaked neon st
 - **Browser:** Complete self-contained WebGL 2 game. Sixteen energy spells, ten cyborg types, seven risk contracts, structural mutations, a saved pre-run loadout, a multi-spell testing range, settings and animated Meshy models. Rendering and navigation are adapted for the browser, with a 90-enemy cap.
 - **Windows:** Unreal Engine 5 Shipping edition with Nanite, Lumen, Niagara and the full native city. Download the 464 MiB installer from Releases and launch using the Start Menu shortcut. The installer is an early playable test release.
 
-Both editions share authored card/enemy tuning. Their saved games are separate. See [architecture and parity limits](Docs/TwoEditions.md).
+The editions share the energy-spell catalog and cyberpunk theme. Native 0.3.0 has its own balance and progression rules. Their saved games are separate. See [architecture and parity limits](Docs/TwoEditions.md).
+
+
+## Windows 0.3.0: Forbidden Routines
+
+The native source now includes an eight-program draft pool, two starters, six active slots, finite ranks and 32 exclusive evolution branches. Relay hacks, a three-phase boss, captured enemy code, corrupted contract rewards, persistent hideout unlocks, new Meshy art/animations, accessibility controls and an independent Windows leaderboard extend the run loop.
+
+Build with UE 5.8.2 using `Scripts/Package-Windows.ps1 -Installer`. The package and installer use separate `Windows-0.3.0` and `Installer-0.3.0` folders. `Play-Forbidden-Routines.cmd` launches that local package. The published v0.2.0 download above remains available as the earlier release.
+
+[Change notes](Docs/WindowsOverhaul/RELEASE-NOTES.txt) · [Card and enemy tuning](Docs/WindowsOverhaul/CARDS-AND-ENEMIES.txt) · [61-item implementation record](Docs/WindowsOverhaul/implementation-status.json) · [Validation evidence](Docs/WindowsOverhaul/Validation) · [Baseline restore instructions](Docs/WindowsOverhaul/RESTORE.txt). The verified full baseline archive is retained in the development workspace; its checksum receipt is committed here.
+
+The packaged test completed a 6:42 boss-victory run with six programs and earned XP/drafts. Offscreen Shipping stress tests at 1600×900/High sustained roughly 157–159 FPS on a Ryzen 7900X3D/Radeon 7900 XTX with 15 evolved attacks and 177–178 active enemies, with zero gameplay admission drops. These are local test results; see the recorded configuration and limitations.
 
 ## Controls
 

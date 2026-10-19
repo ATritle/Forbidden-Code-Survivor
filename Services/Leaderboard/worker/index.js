@@ -7,6 +7,7 @@ const ORDER='score DESC,recorded_at ASC,id ASC';
 const BOARD_LIMIT=10,PLAYER_LIMIT=3;
 const tokenPattern=/^[a-f0-9]{64}$/;
 const uuidPattern=/^[a-f0-9-]{36}$/;
+function editionOf(value){const edition=value??'browser';if(edition!=='browser'&&edition!=='windows')throw new HttpError(400,'Invalid game edition.');return edition;}
 
 class HttpError extends Error{constructor(status,message){super(message);this.status=status;}}
 const randomToken=()=>Array.from(crypto.getRandomValues(new Uint8Array(32)),n=>n.toString(16).padStart(2,'0')).join('');
@@ -32,16 +33,17 @@ export default{
    if(request.method==='GET'&&path==='/')return response(request,{service:'Forbidden Code: Survivor leaderboard',season:SCORE_SEASON,game:'https://atritle.github.io/Forbidden-Code-Survivor/'});
    if(!env.DB)throw new HttpError(503,'Score storage is unavailable.');
    if(request.method==='GET'&&path==='/v1/leaderboard'){
-    const result=await env.DB.prepare(`SELECT ${PUBLIC_FIELDS} FROM scores ORDER BY ${ORDER} LIMIT ${BOARD_LIMIT}`).all();
-    return response(request,{season:SCORE_SEASON,limit:BOARD_LIMIT,perPlayerLimit:PLAYER_LIMIT,entries:result.results.map((row,i)=>({...row,rank:i+1,won:!!row.won}))});
+    const edition=editionOf(url.searchParams.get('edition')??undefined);
+    const result=await env.DB.prepare(`SELECT ${PUBLIC_FIELDS} FROM scores WHERE edition=?1 ORDER BY ${ORDER} LIMIT ${BOARD_LIMIT}`).bind(edition).all();
+    return response(request,{season:SCORE_SEASON,edition,limit:BOARD_LIMIT,perPlayerLimit:PLAYER_LIMIT,entries:result.results.map((row,i)=>({...row,rank:i+1,won:!!row.won}))});
    }
    if(request.method!=='POST')throw new HttpError(404,'Route not found.');
    if(!originAllowed(request))throw new HttpError(403,'Origin is not allowed.');
    const input=await body(request),now=Date.now();
    if(path==='/v1/runs'){
     if(!tokenPattern.test(input?.playerToken??''))throw new HttpError(400,'Invalid player identity.');
-    const playerHash=await digest(input.playerToken),id=crypto.randomUUID(),token=randomToken(),tokenHash=await digest(token),expiresAt=now+2*60*60*1000;
-    const inserted=await env.DB.prepare('INSERT INTO runs(id,player_hash,token_hash,created_at,expires_at) SELECT ?1,?2,?3,?4,?5 WHERE (SELECT COUNT(*) FROM runs WHERE player_hash=?2 AND created_at>?6)<6 RETURNING id').bind(id,playerHash,tokenHash,now,expiresAt,now-60000).first();
+    const edition=editionOf(input.edition),playerHash=await digest(input.playerToken),id=crypto.randomUUID(),token=randomToken(),tokenHash=await digest(token),expiresAt=now+2*60*60*1000;
+    const inserted=await env.DB.prepare('INSERT INTO runs(id,player_hash,token_hash,created_at,expires_at,edition) SELECT ?1,?2,?3,?4,?5,?6 WHERE (SELECT COUNT(*) FROM runs WHERE player_hash=?2 AND created_at>?7)<6 RETURNING id').bind(id,playerHash,tokenHash,now,expiresAt,edition,now-60000).first();
     if(!inserted)throw new HttpError(429,'Too many new runs. Wait a minute and try again.');
     // Expired sessions are separate from durable high scores.
     await env.DB.prepare('DELETE FROM runs WHERE expires_at<?1').bind(now-86400000).run();
@@ -53,15 +55,15 @@ export default{
     if(!run||run.token_hash!==await digest(input.runToken))throw new HttpError(403,'This run is not registered.');
     if(!run.submitted_at){
      if(run.expires_at<now)throw new HttpError(410,'This run has expired.');
-     let stats;try{stats=validateRun(input,(now-run.created_at)/1000);}catch(error){throw new HttpError(400,error.message);}
+     let stats;try{stats=validateRun(input,(now-run.created_at)/1000,run.edition);}catch(error){throw new HttpError(400,error.message);}
      await env.DB.batch([
       env.DB.prepare('UPDATE runs SET submitted_at=?1,username=?2,score=?3,kills=?4,level=?5,seconds=?6,challenges=?7,won=?8 WHERE id=?9 AND submitted_at IS NULL').bind(now,stats.username,stats.score,stats.kills,stats.level,stats.seconds,stats.challenges,stats.won?1:0,run.id),
-      env.DB.prepare(`INSERT INTO scores(player_hash,id,username,score,kills,level,seconds,challenges,won,recorded_at,run_id) SELECT player_hash,?1,username,score,kills,level,seconds,challenges,won,submitted_at,id FROM runs WHERE id=?2 AND submitted_at IS NOT NULL ON CONFLICT(run_id) DO NOTHING`).bind(crypto.randomUUID(),run.id),
-      env.DB.prepare(`DELETE FROM scores WHERE player_hash=?1 AND id NOT IN (SELECT id FROM scores WHERE player_hash=?1 ORDER BY ${ORDER} LIMIT ${PLAYER_LIMIT})`).bind(run.player_hash)
+      env.DB.prepare(`INSERT INTO scores(player_hash,id,username,score,kills,level,seconds,challenges,won,recorded_at,run_id,edition) SELECT player_hash,?1,username,score,kills,level,seconds,challenges,won,submitted_at,id,edition FROM runs WHERE id=?2 AND submitted_at IS NOT NULL ON CONFLICT(run_id) DO NOTHING`).bind(crypto.randomUUID(),run.id),
+      env.DB.prepare(`DELETE FROM scores WHERE player_hash=?1 AND edition=?2 AND id NOT IN (SELECT id FROM scores WHERE player_hash=?1 AND edition=?2 ORDER BY ${ORDER} LIMIT ${PLAYER_LIMIT})`).bind(run.player_hash,run.edition)
      ]);
      run=await env.DB.prepare('SELECT * FROM runs WHERE id=?1').bind(run.id).first();
     }
-    const personal=await env.DB.prepare(`SELECT ${PUBLIC_FIELDS},run_id,rank FROM (SELECT *,ROW_NUMBER() OVER (ORDER BY ${ORDER}) AS rank FROM scores) WHERE player_hash=?1 ORDER BY ${ORDER}`).bind(run.player_hash).all();
+    const personal=await env.DB.prepare(`SELECT ${PUBLIC_FIELDS},run_id,rank FROM (SELECT *,ROW_NUMBER() OVER (ORDER BY ${ORDER}) AS rank FROM scores WHERE edition=?2) WHERE player_hash=?1 ORDER BY ${ORDER}`).bind(run.player_hash,run.edition).all();
     const personalScores=personal.results.map(({run_id,...entry},i)=>({...entry,won:!!entry.won,personalRank:i+1,onLeaderboard:entry.rank<=BOARD_LIMIT}));
     const personalIndex=personal.results.findIndex(entry=>entry.run_id===run.id);
     return response(request,{accepted:true,score:run.score,personalBest:personalScores[0],improved:personalIndex===0,personalScores,retained:personalIndex>=0,personalRank:personalIndex>=0?personalIndex+1:null,entry:personalScores[personalIndex]??null,limit:BOARD_LIMIT,perPlayerLimit:PLAYER_LIMIT});

@@ -23,6 +23,7 @@ public:
     /** Explicit hook for the future enemy that owns these reserved recordings. */
     UFUNCTION(BlueprintCallable,Category="Audio|Reserved Enemy") void PlayEnemy(FVector Location, bool bDeath);
     void PlayUI(FName Cue);
+    void PlayWarning(FName Cue,FVector Location);
     /** Call after changing game state; Tick also reconciles external pause changes. */
     void UpdateMusicState();
     UFUNCTION(BlueprintCallable,Category="Audio") void SetMusicVolume(float Value);
@@ -51,6 +52,7 @@ private:
     UPROPERTY() TObjectPtr<UAudioComponent> GameplayMusic;
     UPROPERTY() TObjectPtr<UAudioComponent> MenuMusic;
     UPROPERTY() TObjectPtr<UAudioComponent> CriticalAlarm;
+    UPROPERTY() TObjectPtr<UAudioComponent> DangerWarning;
     UPROPERTY() TArray<TObjectPtr<UAudioComponent>> Voices;
     TArray<EVoiceGroup> Groups;
     TArray<float> VoiceGains;
@@ -70,5 +72,7 @@ private:
     float HealthAlarmAge=0.f;
     float HealthAlarmGain=0.f;
     double LastHealthAlarmUpdate=0;
+    double LastWarning=-100;
+    bool bDangerDucking=false;
     void UpdateHealthAlarm(double Now);
 };

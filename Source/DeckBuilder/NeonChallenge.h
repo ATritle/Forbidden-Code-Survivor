@@ -181,6 +181,7 @@ private:
     bool bOrbPositionValid=false;
     int32 ConfirmedHitCount=0,PendingHunters=0;
     float KillFlash=0;
+    int32 HealingSecond=INDEX_NONE,HealsThisSecond=0;
     TMap<TWeakObjectPtr<AMVPEnemy>,uint32> RewardedLives;
     bool bResolvingEcho=false,bOwnPause=false,bSuspended=false,bRunStarted=false;
     void CreateDefaultDefinitions();

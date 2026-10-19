@@ -1,0 +1,13 @@
+{
+  "approved_budget": 45,
+  "consumed_credits": 45,
+  "model": "meshy-t2",
+  "formats": ["fbx"],
+  "texture_resolution": "4k",
+  "paid_retries": 0,
+  "assets": [
+    {"name":"ShoppingBlock","task":"01a14ca3-2776-763e-bf4f-04095adf97d7","type":"image-to-3d","reference":"../../CityReference.png","target_triangles":15000,"credits":15},
+    {"name":"MarketKiosk","preview":"01a14ca3-3450-70eb-a8a2-af2dffc32e2a","refine":"01a14ca7-19ad-754f-9733-cc22f7f58174","type":"text-to-3d","target_triangles":6000,"credits":15},
+    {"name":"RooftopShrine","preview":"01a14ca3-44c0-76d0-89b2-6c41963d0150","refine":"01a14ca7-2b33-736f-bbd3-a7126088d2c2","type":"text-to-3d","target_triangles":6000,"credits":15}
+  ]
+}

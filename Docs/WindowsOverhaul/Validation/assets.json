@@ -1,0 +1,342 @@
+{
+  "result": "OVERHAUL_ASSET_AUDIT_PASS",
+  "assets": [
+    {
+      "id": "WireThrall",
+      "mesh": "/Game/Art/Characters/WireThrall/SK_WireThrall.SK_WireThrall",
+      "lod_count": 3,
+      "source_height": 150.0,
+      "materials": [
+        "/Game/Art/Characters/WireThrall/M_WireThrall.M_WireThrall"
+      ],
+      "animations": [
+        {
+          "clip": "Walk",
+          "seconds": 1.0
+        },
+        {
+          "clip": "Run",
+          "seconds": 0.6000000238418579
+        },
+        {
+          "clip": "Attack",
+          "seconds": 3.1666667461395264
+        }
+      ]
+    },
+    {
+      "id": "RelayRunner",
+      "mesh": "/Game/Art/Characters/RelayRunner/SK_RelayRunner.SK_RelayRunner",
+      "lod_count": 3,
+      "source_height": 145.0,
+      "materials": [
+        "/Game/Art/Characters/RelayRunner/M_RelayRunner.M_RelayRunner"
+      ],
+      "animations": [
+        {
+          "clip": "Walk",
+          "seconds": 1.0
+        },
+        {
+          "clip": "Run",
+          "seconds": 0.6000000238418579
+        },
+        {
+          "clip": "Attack",
+          "seconds": 9.300000190734863
+        }
+      ]
+    },
+    {
+      "id": "ChromeVagrant",
+      "mesh": "/Game/Art/Characters/ChromeVagrant/SK_ChromeVagrant.SK_ChromeVagrant",
+      "lod_count": 3,
+      "source_height": 175.0,
+      "materials": [
+        "/Game/Art/Characters/ChromeVagrant/M_ChromeVagrant.M_ChromeVagrant"
+      ],
+      "animations": [
+        {
+          "clip": "Walk",
+          "seconds": 1.0
+        },
+        {
+          "clip": "Run",
+          "seconds": 0.6000000238418579
+        },
+        {
+          "clip": "Attack",
+          "seconds": 1.0
+        }
+      ]
+    },
+    {
+      "id": "GlitchAcolyte",
+      "mesh": "/Game/Art/Characters/GlitchAcolyte/SK_GlitchAcolyte.SK_GlitchAcolyte",
+      "lod_count": 3,
+      "source_height": 165.0,
+      "materials": [
+        "/Game/Art/Characters/GlitchAcolyte/M_GlitchAcolyte.M_GlitchAcolyte"
+      ],
+      "animations": [
+        {
+          "clip": "Walk",
+          "seconds": 1.0
+        },
+        {
+          "clip": "Run",
+          "seconds": 0.6000000238418579
+        },
+        {
+          "clip": "Attack",
+          "seconds": 2.200000047683716
+        }
+      ]
+    },
+    {
+      "id": "RiotBulwark",
+      "mesh": "/Game/Art/Characters/RiotBulwark/SK_RiotBulwark.SK_RiotBulwark",
+      "lod_count": 3,
+      "source_height": 234.99998474121094,
+      "materials": [
+        "/Game/Art/Characters/RiotBulwark/M_RiotBulwark.M_RiotBulwark"
+      ],
+      "animations": [
+        {
+          "clip": "Walk",
+          "seconds": 1.0
+        },
+        {
+          "clip": "Run",
+          "seconds": 0.6000000238418579
+        },
+        {
+          "clip": "Attack",
+          "seconds": 2.366666555404663
+        }
+      ]
+    },
+    {
+      "id": "CoilHarrier",
+      "mesh": "/Game/Art/Characters/CoilHarrier/SK_CoilHarrier.SK_CoilHarrier",
+      "lod_count": 3,
+      "source_height": 215.00001525878906,
+      "materials": [
+        "/Game/Art/Characters/CoilHarrier/M_CoilHarrier.M_CoilHarrier"
+      ],
+      "animations": [
+        {
+          "clip": "Walk",
+          "seconds": 1.0
+        },
+        {
+          "clip": "Run",
+          "seconds": 0.6000000238418579
+        },
+        {
+          "clip": "Attack",
+          "seconds": 3.0
+        }
+      ]
+    },
+    {
+      "id": "NullBishop",
+      "mesh": "/Game/Art/Characters/NullBishop/SK_NullBishop.SK_NullBishop",
+      "lod_count": 3,
+      "source_height": 295.0,
+      "materials": [
+        "/Game/Art/Characters/NullBishop/M_NullBishop.M_NullBishop"
+      ],
+      "animations": [
+        {
+          "clip": "Walk",
+          "seconds": 1.0
+        },
+        {
+          "clip": "Run",
+          "seconds": 0.6000000238418579
+        },
+        {
+          "clip": "Attack",
+          "seconds": 2.6666667461395264
+        }
+      ]
+    },
+    {
+      "id": "RazorSeraph",
+      "mesh": "/Game/Art/Characters/RazorSeraph/SK_RazorSeraph.SK_RazorSeraph",
+      "lod_count": 3,
+      "source_height": 279.9999855637352,
+      "materials": [
+        "/Game/Art/Characters/RazorSeraph/M_RazorSeraph.M_RazorSeraph"
+      ],
+      "animations": [
+        {
+          "clip": "Walk",
+          "seconds": 1.0
+        },
+        {
+          "clip": "Run",
+          "seconds": 0.6000000238418579
+        },
+        {
+          "clip": "Attack",
+          "seconds": 5.633333206176758
+        }
+      ]
+    },
+    {
+      "id": "FurnaceOni",
+      "mesh": "/Game/Art/Characters/FurnaceOni/SK_FurnaceOni.SK_FurnaceOni",
+      "lod_count": 3,
+      "source_height": 325.0,
+      "materials": [
+        "/Game/Art/Characters/FurnaceOni/M_FurnaceOni.M_FurnaceOni"
+      ],
+      "animations": [
+        {
+          "clip": "Walk",
+          "seconds": 1.0
+        },
+        {
+          "clip": "Run",
+          "seconds": 0.6000000238418579
+        },
+        {
+          "clip": "Attack",
+          "seconds": 3.0
+        }
+      ]
+    },
+    {
+      "id": "BroadcastSovereign",
+      "mesh": "/Game/Art/Characters/BroadcastSovereign/SK_BroadcastSovereign.SK_BroadcastSovereign",
+      "lod_count": 3,
+      "source_height": 519.9999361207394,
+      "materials": [
+        "/Game/Art/Characters/BroadcastSovereign/M_BroadcastSovereign.M_BroadcastSovereign"
+      ],
+      "animations": [
+        {
+          "clip": "Walk",
+          "seconds": 1.0
+        },
+        {
+          "clip": "Run",
+          "seconds": 0.6000000238418579
+        },
+        {
+          "clip": "Attack",
+          "seconds": 2.2666666507720947
+        }
+      ]
+    },
+    {
+      "id": "DigitalSpirit",
+      "mesh": "/Game/Art/Characters/DigitalSpirit/SK_DigitalSpirit.SK_DigitalSpirit",
+      "lod_count": 3,
+      "source_height": 170.0,
+      "materials": [
+        "/Game/Art/Characters/DigitalSpirit/M_DigitalSpirit.M_DigitalSpirit"
+      ],
+      "animations": [
+        {
+          "clip": "Walk",
+          "seconds": 1.0
+        },
+        {
+          "clip": "Run",
+          "seconds": 0.6000000238418579
+        }
+      ]
+    },
+    {
+      "id": "NeonExorcist",
+      "mesh": "/Game/Art/Characters/NeonExorcist/SK_NeonExorcist.SK_NeonExorcist",
+      "lod_count": 1,
+      "source_height": 179.999988217176,
+      "materials": [
+        "/Game/Art/Characters/NeonExorcist/M_NeonHoverboard.M_NeonHoverboard",
+        "/Game/Art/Characters/NeonExorcist/M_NeonExorcist.M_NeonExorcist"
+      ],
+      "animations": [
+        {
+          "clip": "HoverIdle",
+          "seconds": 2.0
+        },
+        {
+          "clip": "Cruise",
+          "seconds": 1.5
+        },
+        {
+          "clip": "Accelerate",
+          "seconds": 0.5
+        },
+        {
+          "clip": "Brake",
+          "seconds": 0.5
+        },
+        {
+          "clip": "TurnLeft",
+          "seconds": 1.2000000476837158
+        },
+        {
+          "clip": "TurnRight",
+          "seconds": 1.2000000476837158
+        },
+        {
+          "clip": "Cast",
+          "seconds": 0.800000011920929
+        },
+        {
+          "clip": "Hit",
+          "seconds": 0.46666666865348816
+        },
+        {
+          "clip": "Fall",
+          "seconds": 1.0
+        },
+        {
+          "clip": "Land",
+          "seconds": 0.46666666865348816
+        },
+        {
+          "clip": "Defeat",
+          "seconds": 1.2000000476837158
+        },
+        {
+          "clip": "CastBlood",
+          "seconds": 0.800000011920929
+        },
+        {
+          "clip": "CastStorm",
+          "seconds": 0.800000011920929
+        },
+        {
+          "clip": "HoverIdleAlt",
+          "seconds": 4.0
+        }
+      ]
+    },
+    {
+      "id": "Shopfront",
+      "mesh": "/Game/Art/City/Overhaul/Shopfront/SM_Shopfront.SM_Shopfront",
+      "nanite": true,
+      "pbr_channels": 4,
+      "runtime_collision": "separate simple proxy; decorative mesh is NoCollision"
+    },
+    {
+      "id": "ServiceCabinet",
+      "mesh": "/Game/Art/City/Overhaul/ServiceCabinet/SM_ServiceCabinet.SM_ServiceCabinet",
+      "nanite": true,
+      "pbr_channels": 4,
+      "runtime_collision": "separate simple proxy; decorative mesh is NoCollision"
+    }
+  ],
+  "notes": [
+    "Runtime normalizes enemy height from 145cm to 520cm using imported bounds.",
+    "All new clips use existing matching skeletons with root motion disabled.",
+    "Crowd pose significance: near 900cm/full, 1700cm/30Hz, beyond/15Hz; bosses always full.",
+    "World movement, collision and damage are independent of pose update frequency."
+  ]
+}

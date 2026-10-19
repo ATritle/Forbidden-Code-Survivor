@@ -6,6 +6,6 @@ public class DeckBuilderVFXEditor : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         PrivateIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory,"../DeckBuilder")));
-        PrivateDependencyModuleNames.AddRange(new[] {"Core", "CoreUObject", "Engine", "UnrealEd", "NavigationSystem", "Niagara", "NiagaraCore", "NiagaraEditor", "AssetRegistry", "DeckBuilder"});
+        PrivateDependencyModuleNames.AddRange(new[] {"Core", "CoreUObject", "Engine", "UnrealEd", "NavigationSystem", "Niagara", "NiagaraCore", "NiagaraEditor", "AssetRegistry", "DeckBuilder", "AnimGraph", "AnimGraphRuntime", "BlueprintGraph", "KismetCompiler", "AssetTools"});
     }
 }

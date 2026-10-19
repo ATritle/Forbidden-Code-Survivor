@@ -1,0 +1,20 @@
+[
+  {
+    "name": "ShoppingBlock",
+    "objects": 1,
+    "vertices": 8216,
+    "triangles": 13528
+  },
+  {
+    "name": "MarketKiosk",
+    "objects": 1,
+    "vertices": 3264,
+    "triangles": 5632
+  },
+  {
+    "name": "RooftopShrine",
+    "objects": 1,
+    "vertices": 3405,
+    "triangles": 5991
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "result": "FORBIDDEN_SYSTEMS_PASS",
+  "detail": "Structural card/enemy/objective/settings and live native score-read checks",
+  "phase": 6,
+  "runSeconds": 182.50234985351562,
+  "kills": 0,
+  "level": 1000,
+  "activePrograms": 0,
+  "checks": [
+    "Swept boost respects solid walls and cooldown; weighted landing staggers with anti-farming limit",
+    "Street clinic and spirit cache have real salvage/healing/essence effects",
+    "Isolated profile save roundtrip, unique run banking, deck presets and shared score formula",
+    "Saved targeting mode",
+    "Chain damage respects physical jump spacing",
+    "One physical wall bounce, amplified return hit, finite lifetime",
+    "Returning blade hits once per leg with reduced return damage",
+    "Boss phase two sweeps a persistent telegraphed lane and changes district markers",
+    "Null Bishop interruption exposes a recovery window",
+    "Two navigable relay hacks trigger early boss admission even at a full active cap",
+    "Rooftop ward spawns opposition, completes its hold and awards salvage plus a real draft",
+    "Captured-code popup activates the Meshy support spirit and its damage is attributed to the stolen routine",
+    "Native Windows HTTPS board reads successfully; QA public submission refused"
+  ]
+}

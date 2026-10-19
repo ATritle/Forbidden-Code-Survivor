@@ -6,6 +6,8 @@
 #include "CardDataAsset.h"
 #include "CinematicExplosionDirector.h"
 #include "NeonSpellImpactDirector.h"
+#include "NeonArsenal.h"
+#include "ForbiddenCombatSubsystem.h"
 #include "Engine/World.h"
 #include "Engine/GameViewportClient.h"
 #include "Engine/Engine.h"
@@ -42,12 +44,19 @@ void AExplosionBenchmark::Tick(float Dt)
         Player->bBenchmarkInvulnerable=true;
         if(FParse::Param(FCommandLine::Get(),TEXT("BenchAllSpells")))
         {
+            Player->Deck->MaximumActiveWeapons=0; // Explicit stress mode; ordinary runs retain six slots.
             for(UCardDataAsset* Card:Player->Deck->UnlockedCards)
                 if(Card->CardID!=TEXT("TalismanGuard") && !Player->Deck->FindOwnedSpell(Card->CardID))
                 {
                     Player->Deck->EquippedDeck={Card};Player->Deck->DiscardHand();Player->Deck->DrawLevelUpHand();Player->Deck->AddSelectedCardSpell(Card);
                 }
             Player->Deck->EquippedDeck=Player->Deck->UnlockedCards;
+            if(FParse::Param(FCommandLine::Get(),TEXT("BenchEvolved")))
+                for(ASpellBase* Spell:Player->Deck->ActiveWeapons)
+                {
+                    const auto Rank=FGameplayTag::RequestGameplayTag(TEXT("Mutation.Program.Rank"));Spell->ApplyMutation(Rank,1);Spell->ApplyMutation(Rank,1);
+                    Spell->ApplyMutation(FGameplayTag::RequestGameplayTag(FParse::Param(FCommandLine::Get(),TEXT("BenchBranchB")) ? TEXT("Mutation.Program.EvolutionB") : TEXT("Mutation.Program.EvolutionA")),1);
+                }
         }
         else for(ASpellBase* Spell:Player->Deck->ActiveWeapons) Spell->StopCasting();
         Game->Spawner->StopWaves();
@@ -118,6 +127,11 @@ void AExplosionBenchmark::Tick(float Dt)
         if(!FFileHelper::SaveStringToFile(Rows,*(Directory/(OutputName+TEXT(".csv")))))
         { UE_LOG(LogTemp,Error,TEXT("EXPLOSION_BENCH_FAIL could not save CSV")); FPlatformMisc::RequestExitWithStatus(false,1); }
         bFinished=true;
+        // Shipping engines omit stat/log categories. Keep admission telemetry in a normal
+        // report file so performance validation never depends on development logging.
+        const FString Admission=FString::Printf(TEXT("{\"result\":\"EXPLOSION_BENCH_SAMPLED\",\"enemies\":%d,\"weapons\":%d,\"projectileDrops\":%llu,\"arsenalDrops\":%d,\"fieldDrops\":%d,\"cosmeticDrops\":%d,\"warmupSeconds\":%.1f,\"sampleSeconds\":%.1f}"),Game->Spawner->GetActiveEnemyCount(),Player->Deck->ActiveWeapons.Num(),Game->DroppedProjectiles,Game->ArsenalDirector ? Game->ArsenalDirector->DroppedGameplay : 0,GetWorld()->GetSubsystem<UForbiddenCombatSubsystem>()->DroppedFields,Game->SpellImpactDirector ? Game->SpellImpactDirector->Dropped : 0,Warmup,Duration);
+        FFileHelper::SaveStringToFile(Admission,*(Directory/(OutputName+TEXT(".json"))));
+        UE_LOG(LogTemp,Display,TEXT("GAMEPLAY_ADMISSION projectile_drops=%llu arsenal_drops=%d fields_drops=%d"),Game->DroppedProjectiles,Game->ArsenalDirector ? Game->ArsenalDirector->DroppedGameplay : 0,GetWorld()->GetSubsystem<UForbiddenCombatSubsystem>()->DroppedFields);
         if(auto* FX=Game->SpellImpactDirector.Get())
         {
             for(int32 I=0;I<16;++I) UE_LOG(LogTemp,Display,TEXT("FEEDBACK_BENCH style=%d hits=%d damage=%.2f impact_bursts=%d flight_bursts=%d"),I,FX->ConfirmedHits[I],FX->ConfirmedDamage[I],FX->ImpactBursts[I],FX->FlightBursts[I]);

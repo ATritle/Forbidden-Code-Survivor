@@ -95,6 +95,7 @@ void AMVPHUD::DrawCodex(AMVPArenaGameMode* Game)
         }
     }
     auto Library=Game->GetLibraryCards();const int32 Pages=FMath::Max(1,(Library.Num()+2)/3);Game->LibraryPage=FMath::Clamp(Game->LibraryPage,0,Pages-1);
+    Glass(TEXT("LeaderboardTab"),920,182,230,46,Cyan,Hover(TEXT("LeaderboardTab"),920,182,230,46));Text(TEXT("LEADERBOARD [L]"),942,197,0.72f,Cyan);
     for(int32 I=0;I<2;++I)
     {
         const float X=I==0 ? 1240.f : 1380.f;
@@ -121,7 +122,7 @@ void AMVPHUD::DrawCodex(AMVPArenaGameMode* Game)
         for(const FString& Word:Words) {if(Wrapped.Len()+Word.Len()>27 && !Wrapped.IsEmpty()) {if(Row<7) Text(Wrapped,X+224,Y+118+Row++*16,0.64f,Muted);Wrapped.Empty();}Wrapped+=Wrapped.IsEmpty() ? Word : TEXT(" ")+Word;}
         if(!Wrapped.IsEmpty() && Row<7) Text(Wrapped,X+224,Y+118+Row*16,0.64f,Muted);
         Glass(*FString::Printf(TEXT("Select_%d"),I),X+20,Y+260,420,31,Accent,H,Selected,2);
-        Text(Selected ? TEXT("INSTALLED  /  CLICK TO REMOVE") : TEXT("+ INSTALL IN STARTING DECK"),X+46,Y+269,0.7f,Selected ? Accent : White);
+        Text(Selected ? TEXT("STARTER / EDIT PROGRAM") : Game->DraftPool.Contains(Card->CardID) ? TEXT("DRAFT POOL / EDIT PROGRAM") : TEXT("VIEW / UNLOCK / INSTALL"),X+46,Y+269,0.7f,Selected ? Accent : White);
     }
     if(Library.IsEmpty()) {Glass(TEXT("EmptyLibrary"),80,270,1430,300,Cyan);Text(TEXT("No unlocked spells in this school."),130,395,1.25f,White);}
     Text(FString::Printf(TEXT("STARTING LOADOUT  /  %d OF 2 SLOTS"),Game->StartingCards.Num()),80,606,0.8f,Cyan);
@@ -134,10 +135,11 @@ void AMVPHUD::DrawCodex(AMVPArenaGameMode* Game)
         Glass(Key,X,640-H*2,380,56,Accent,H,Game->StartingCards.IsValidIndex(I),2);Text(Name,X+22,659-H*2,0.78f,Accent);
     }
     Glass(TEXT("LoadoutHint"),900,634,610,68,Cyan);
-    Text(TEXT("START WITH 1-2 SPELLS. ADAPT WITH EVERY LEVEL-UP."),925,660,0.68f,Muted);
+    Text(TEXT("2 STARTERS / 8 DRAFT PROGRAMS / 6 ACTIVE SLOTS"),925,660,0.68f,Muted);
     Glass(TEXT("DeckMessage"),80,716,1430,43,Pink);Text(Game->DeckMessage,100,731,0.72f,White);
     const bool Valid=!Game->StartingCards.IsEmpty();
     float H=Hover(TEXT("SaveDeck"),80,776,290,64);Glass(TEXT("SaveDeck"),80,776,290,64,Cyan,H,false,2);Text(TEXT("SAVE DECK"),150,798-H*2,0.95f,Cyan);
+    H=Hover(TEXT("Hideout"),410,776,330,64);Glass(TEXT("Hideout"),410,776,330,64,Pink,H,false,2);Text(TEXT("HIDEOUT / PRESETS [H]"),438,798-H*2,0.85f,White);
     H=Hover(TEXT("EnterArena"),1080,776,440,64);Glass(TEXT("EnterArena"),1080,776,440,64,Cyan,H,Valid,2);
     NeonTitle(TEXT("ENTER ARENA  >>"),1134,794-H*2,1.2f,Valid ? White : Muted);
     Text(TEXT("ENTER"),1433,822,0.54f,Cyan);

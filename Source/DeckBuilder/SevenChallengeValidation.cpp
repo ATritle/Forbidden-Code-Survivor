@@ -1,4 +1,5 @@
 #include "MVPGame.h"
+#include "ForbiddenChoiceWidget.h"
 #include "NeonChallenge.h"
 #include "NeonChallengeWidget.h"
 #include "NeonSpellImpactDirector.h"
@@ -29,6 +30,8 @@ void RunSevenChallengeSmoke(AMVPController* C)
     {auto* B=H->OfferWidget ? Cast<UButton>(H->OfferWidget->WidgetTree->FindWidget(Name)) : nullptr;if(!B) return false;B->OnClicked.Broadcast();return true;};
     auto Configure=[&](ENeonChallenge Kind)
     {
+        if(G->PendingCorruptRewards>0) G->ChooseCorruptPerk();
+        if(G->DecisionWidget) G->DecisionWidget->Select(3);
         if(H->Stations.IsEmpty()) return false;auto* S=H->Stations[0].Get();
         for(UNeonChallengeDefinition* D:H->Definitions) if(D && D->Contract==Kind) {S->Configure(D);S->SetContractState(ENeonContractState::Ready);}
         P->SetActorLocation(S->GetActorLocation()+FVector(-230,0,55));P->VerticalSpeed=0;return H->Interact();
@@ -38,6 +41,8 @@ void RunSevenChallengeSmoke(AMVPController* C)
     auto FinishDrafts=[&]()
     {
         for(int32 I=0;I<12 && G->bChoosingCard;++I) if(!G->ChooseCard(0)) return false;
+        if(G->PendingCorruptRewards>0) G->ChooseCorruptPerk();
+        if(G->DecisionWidget) G->DecisionWidget->Select(3);
         for(ASpellBase* S:P->Deck->ActiveWeapons) if(S) S->StopCasting();
         return !G->bChoosingCard && !C->IsPaused();
     };
@@ -70,9 +75,12 @@ void RunSevenChallengeSmoke(AMVPController* C)
         if(!FMath::IsNearlyEqual(P->Health,47,.01f) || H->GetDamageMultiplier()!=2) {Fail(TEXT("Battery did not drain through immunity or grant double damage"));return;}
         Victim=Cast<AMVPEnemy>(G->Spawner->SpawnEnemyFromPool(P->GetActorLocation()+FVector(-300,0,0)));Victim->SetActorTickEnabled(false);Victim->Health=10;
         Victim->TakeSpellDamage(5,FVector::ZeroVector);H->OnEnemyKilled(Victim.Get(),Victim->Generation);
-        if(!FMath::IsNearlyEqual(P->Health,51,.01f)) {Fail(TEXT("Real kill healing was not exactly once"));return;}
+        if(!FMath::IsNearlyEqual(P->Health,48,.01f)) {Fail(TEXT("Real kill healing was not exactly once at 1% max HP"));return;}
         auto* Dummy=Cast<AMVPEnemy>(G->Spawner->SpawnEnemyFromPool(P->GetActorLocation()+FVector(-400,0,0)));Dummy->bTrainingTarget=true;Dummy->Health=10;Dummy->TakeSpellDamage(10,FVector::ZeroVector);Dummy->bTrainingTarget=false;
-        if(!FMath::IsNearlyEqual(P->Health,51,.01f)) {Fail(TEXT("Training dummy paid battery healing"));return;}
+        if(!FMath::IsNearlyEqual(P->Health,48,.01f)) {Fail(TEXT("Training dummy paid battery healing"));return;}
+        for(int32 I=0;I<5;++I)
+        {auto* Extra=Cast<AMVPEnemy>(G->Spawner->SpawnEnemyFromPool(P->GetActorLocation()+FVector(-500,0,0)));Extra->SetActorTickEnabled(false);Extra->Health=1;Extra->TakeSpellDamage(5,FVector::ZeroVector);}
+        if(!FMath::IsNearlyEqual(P->Health,50,.01f)) {Fail(TEXT("Battery exceeded its three-heals-per-second cap"));return;}
         Capture(TEXT("Challenge-DeadmanBattery.png"));Next(2);
     }
     else if(Phase==2 && Age>.3)

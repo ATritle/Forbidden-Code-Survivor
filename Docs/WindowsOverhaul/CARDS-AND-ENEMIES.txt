@@ -1,0 +1,115 @@
+WINDOWS 0.3.0 / PROGRAM TUNING AND EVOLUTIONS
+Generated from native source tables. Damage is per hit/pulse/projectile, not total volley DPS.
+Rank 2: base damage x1.12, cooldown x0.96. Rank 3: x1.24 and x0.92.
+One evolution follows rank 3. Its authored structural rules replace the indicated pattern; branches never stack.
+Global contract/perk bonuses and target armor are applied separately. Exact branch geometry/caps live in source and are included in rendered validation.
+
+PULSE DART / Pulse
+Base: 30 damage / 0.55s. Rank 3 before evolution: 37.20 / 0.506s.
+Rapid neon energy bolts. A precise, compact kinetic spark.
+A: WEAKPOINT COMPILER / Repeated hits on the same living target build up to 3 precision stacks, +15% damage each.
+B: PACKET NOVA / Eight radial darts share a 1.5x volley damage budget. Each dart deals 18.75% damage; maximum 6 pierces.
+
+PRISM BURST / Prism
+Base: 20 damage / 1.15s. Rank 3 before evolution: 24.80 / 1.058s.
+Three pink plasma charges. Colliding sparks bloom on impact.
+A: AURA CASCADE / Pink impact bursts leave a short damaging aura. Secondary damage cannot trigger itself.
+B: PRISM NOVA / Eight compact charges form a circle. Each deals 50% volley damage; area remains capped.
+
+HALO NOVA / Prism
+Base: 18 damage / 1.5s. Rank 3 before evolution: 22.32 / 1.380s.
+Eight radiant energy shards. A piercing 360-degree pulse.
+A: RETURNING HALO / Shards return to the rider and can hit once again on their return leg.
+B: SANCTUARY RING / An expanding ring briefly slows enemies it reaches. Boss slow is reduced.
+
+KINETIC CARDS / Kinetic
+Base: 36 damage / 0.85s. Rank 3 before evolution: 44.64 / 0.782s.
+Spin electric-gold holographic cards. Shatter into charged geometric sparks.
+A: LOADED DECK / Cards lodge energy marks. The third mark detonates for 90% card damage in 150cm.
+B: HOUSE EDGE / Three cards ricochet between nearby targets. Each card uses 60% damage; 3 hits maximum.
+
+PHOTON LANCE / Pulse
+Base: 32 damage / 0.75s. Rank 3 before evolution: 39.68 / 0.690s.
+A focused cyan energy lance. Passes through four enemies.
+A: ARMOR DECODER / Lances deal 50% bonus damage against elites and bosses and bypass directional armor.
+B: CROSS COMPILER / Fire a perpendicular cross through the target. Each lance deals 60% damage.
+
+TALISMAN GUARD / Barrier
+Consumable contact ward; event-driven rather than an automatic firing cooldown.
+Gain 3 protective orbiting cards. Contact kills a foe and consumes a card. Repeat drafts add 2; no auto recharge.
+A: RECOVERY SIGILS / Gain 4 charges. Recover one charge every 18s while at least one charge remains. Maximum 8.
+B: REACTIVE WARD / Gain 4 charges. A consumed charge emits a 100cm pulse for 45 damage. No recursive echoes.
+
+ARC RELAY / Pulse
+Base: 22 damage / 1.3s. Rank 3 before evolution: 27.28 / 1.196s.
+22 damage. Chains to 4 targets. 320cm jumps; 18% decay per hop.
+A: LONG NETWORK / Chain reach grows to 500cm; damage falls 18% each hop. Maximum 8 targets.
+B: RETURN SIGNAL / A final bolt returns to the first surviving target for 60% initial damage.
+
+GHOST LINK / Barrier
+Base: 14 damage / 1.9s. Rank 3 before evolution: 17.36 / 1.748s.
+14 damage. Six linked targets. 240cm jumps; 10% decay per hop.
+A: SOUL CACHE / Linked enemies are slowed 25% for 1.5s and yield research toward a stolen routine.
+B: GHOST DECOY / Create a digital decoy at the final link for 2s. Basic enemies investigate it.
+
+NEON CATACLYSM / Prism
+Base: 78 damage / 3.8s. Rank 3 before evolution: 96.72 / 3.496s.
+78 area damage within 300cm. A pink charge detonates after 0.45s.
+A: AFTERSHOCK / A second 50% damage burst follows the clearly marked primary blast after 0.35s.
+B: DENSE CORE / Shrink the blast to 230cm and deal 80% extra damage. Maximum two simultaneous charges.
+
+ORBIT RAZOR / Kinetic
+Base: 28 damage / 1.5s. Rank 3 before evolution: 34.72 / 1.380s.
+Two returning crescent blades. 28 damage; each pierces 4 targets.
+A: RECALL EDGE / Returning blades may hit each enemy once per leg. Return damage is 70%.
+B: CLOSE ORBIT / Blades orbit the rider before release, covering nearby enemies. Maximum 4 blades.
+
+RICOCHET SEAL / Kinetic
+Base: 24 damage / 0.95s. Rank 3 before evolution: 29.76 / 0.874s.
+24 damage per impact. A jade seal rebounds to 3 more foes.
+A: BANK SHOT / Rebound off one wall and gain 35% damage after the wall bounce.
+B: JADE NETWORK / Ricochet to 6 distinct enemies within 420cm; damage falls 12% each hop.
+
+STROBE RAIL / Pulse
+Base: 46 damage / 2.2s. Rank 3 before evolution: 57.04 / 2.024s.
+46 damage along a 1200cm rail. A 32cm wide flash pierces the line.
+A: PERFECT ALIGNMENT / Each successive enemy on the rail takes 12% more damage, capped at +60%.
+B: TWIN TRACKS / Fire two parallel 24cm rails, each dealing 70% damage. Walls stop both rails.
+
+ECHO PETALS / Prism
+Base: 16 damage / 1.4s. Rank 3 before evolution: 19.84 / 1.288s.
+Six spiraling coral petals. 16 damage each; one target per petal.
+A: BLOOM ORBIT / Petals orbit for 0.5s before curving outward. Maximum 8 petals.
+B: PETAL REPRISE / Petals curve back toward the rider and may hit once on each leg at 65% return damage.
+
+EVENT HORIZON / Barrier
+Base: 16 damage / 3.2s. Rank 3 before evolution: 19.84 / 2.944s.
+Four 16-damage pulses over 1.4s. A 230cm violet energy field.
+A: GRAVITY WELL / Four pulses pull basic enemies toward the center. Elite pull is reduced; bosses resist it.
+B: COLLAPSE / The final pulse implodes for 3x pulse damage within the same capped field.
+
+SHATTER SIGIL / Kinetic
+Base: 34 damage / 1.8s. Rank 3 before evolution: 42.16 / 1.656s.
+34 damage. Splits on contact into five 12-damage amber fragments.
+A: SHAPED CHARGE / Seven fragments fan forward from impact. Each deals 14 damage and pierces one enemy.
+B: AMBER RING / Eight fragments radiate from impact for 10 damage each. Fragments cannot split again.
+
+SATELLITE CHOIR / Pulse
+Base: 18 damage / 1.6s. Rank 3 before evolution: 22.32 / 1.472s.
+Three homing aquamarine orbs. 18 damage each after a short orbit.
+A: HUNTER CHOIR / Orbs prioritize the marked target, then the strongest visible enemy; +35% elite damage.
+B: FINISHER CHOIR / Orbs seek the lowest health fraction and gain +60% damage against targets below 30% HP.
+
+CYBORG ROSTER
+Health / height cm / speed cm/s / first eligible second / contact damage / essence. Boss timing is objective-controlled.
+
+WIRE THRALL / tier 0: 36 HP / 150cm / 210cm/s / 0s / 10 contact / 1 essence / 34cm collision radius
+RELAY RUNNER / tier 0: 28 HP / 145cm / 310cm/s / 0s / 9 contact / 1 essence / 34cm collision radius
+CHROME VAGRANT / tier 0: 58 HP / 175cm / 170cm/s / 20s / 14 contact / 2 essence / 38cm collision radius
+GLITCH ACOLYTE / tier 0: 44 HP / 165cm / 190cm/s / 35s / 12 contact / 2 essence / 34cm collision radius
+RIOT BULWARK / tier 1: 240 HP / 235cm / 150cm/s / 75s / 22 contact / 5 essence / 48cm collision radius
+COIL HARRIER / tier 1: 180 HP / 215cm / 275cm/s / 105s / 20 contact / 5 essence / 42cm collision radius
+NULL BISHOP / tier 2: 720 HP / 295cm / 155cm/s / 180s / 30 contact / 10 essence / 58cm collision radius
+RAZOR SERAPH / tier 2: 560 HP / 280cm / 260cm/s / 210s / 28 contact / 10 essence / 52cm collision radius
+FURNACE ONI / tier 2: 1100 HP / 325cm / 125cm/s / 240s / 38 contact / 14 essence / 65cm collision radius
+BROADCAST SOVEREIGN / tier 3: 6000 HP / 520cm / 115cm/s / 360s / 32 contact / 40 essence / 90cm collision radius

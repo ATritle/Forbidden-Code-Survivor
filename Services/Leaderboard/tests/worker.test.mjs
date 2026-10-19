@@ -57,9 +57,32 @@ test('schema upgrade preserves existing personal bests and permits multiple rows
  const row=['player','existing-id','Existing Player',5000,20,3,100,1,0,123,'existing-run'];
  sqlite.prepare('INSERT INTO scores VALUES(?,?,?,?,?,?,?,?,?,?,?)').run(...row);
  for(const sql of schema.slice(1))sqlite.exec(sql);
- assert.deepEqual(Object.values(sqlite.prepare('SELECT * FROM scores').get()),row);
- sqlite.prepare('INSERT INTO scores VALUES(?,?,?,?,?,?,?,?,?,?,?)').run('player','new-id','Existing Player',4000,10,2,100,1,0,456,'new-run');
+ const migrated=sqlite.prepare('SELECT * FROM scores').get();assert.deepEqual(Object.values(migrated).slice(0,row.length),row);assert.equal(migrated.edition,'browser');
+ sqlite.prepare('INSERT INTO scores(player_hash,id,username,score,kills,level,seconds,challenges,won,recorded_at,run_id) VALUES(?,?,?,?,?,?,?,?,?,?,?)').run('player','new-id','Existing Player',4000,10,2,100,1,0,456,'new-run');
  assert.equal(sqlite.prepare('SELECT COUNT(*) AS n FROM scores').get().n,2);sqlite.close();
 });
 test('forged credentials, implausible timing and unsafe names are rejected',async()=>{const db=database(),session=await run(db);assert.equal((await call(db.env,'/v1/scores',{...session,...stats,runToken:'b'.repeat(64)})).status,403);assert.equal((await call(db.env,'/v1/scores',{...session,...stats,seconds:500})).status,400);assert.equal((await call(db.env,'/v1/scores',{...session,...stats,username:'<script>alert(1)</script>'})).status,400);assert.equal((await call(db.env,'/v1/scores',{...session,...stats,won:true})).status,400);assert.equal((await call(db.env,'/v1/runs',{playerToken:'a'.repeat(64),extra:'x'.repeat(5000)})).status,413);});
 test('run creation is bounded and expired sessions cannot submit',async()=>{const db=database();for(let i=0;i<6;i++)assert.equal((await call(db.env,'/v1/runs',{playerToken:'a'.repeat(64)})).status,201);assert.equal((await call(db.env,'/v1/runs',{playerToken:'a'.repeat(64)})).status,429);const session=await run(db,'b');db.sqlite.prepare('UPDATE runs SET expires_at=? WHERE id=?').run(Date.now()-1,session.runId);assert.equal((await call(db.env,'/v1/scores',{...session,...stats})).status,410);});
+test('Windows has an independent top three per identity and does not displace browser scores',async()=>{
+ const db=database();
+ for(const edition of ['browser','windows'])for(const kills of [5,10,20,30]){
+  const session=await call(db.env,'/v1/runs',{playerToken:'a'.repeat(64),edition});assert.equal(session.status,201);
+  db.sqlite.prepare('UPDATE runs SET created_at=? WHERE id=?').run(Date.now()-60000,session.data.runId);
+  assert.equal((await call(db.env,'/v1/scores',{...session.data,...stats,kills,username:edition})).status,200);
+ }
+ assert.equal(db.sqlite.prepare('SELECT COUNT(*) n FROM scores').get().n,6);
+ const browser=(await call(db.env,'/v1/leaderboard')).data,windows=(await call(db.env,'/v1/leaderboard?edition=windows')).data;
+ assert.equal(browser.edition,'browser');assert.equal(windows.edition,'windows');
+ assert.equal(browser.entries.length,3);assert.equal(windows.entries.length,3);
+ assert.ok(browser.entries.every(e=>e.username==='browser'));assert.ok(windows.entries.every(e=>e.username==='windows'));
+ assert.equal((await call(db.env,'/v1/leaderboard?edition=unknown')).status,400);
+});
+test('only registered Windows runs may submit an early relay-boss victory',async()=>{
+ const db=database();
+ for(const edition of ['browser','windows']){
+  const session=await call(db.env,'/v1/runs',{playerToken:'b'.repeat(64),edition});assert.equal(session.status,201);
+  db.sqlite.prepare('UPDATE runs SET created_at=? WHERE id=?').run(Date.now()-200000,session.data.runId);
+  const result=await call(db.env,'/v1/scores',{...session.data,...stats,seconds:180,won:true,edition:'windows'});
+  assert.equal(result.status,edition==='windows'?200:400);
+ }
+});

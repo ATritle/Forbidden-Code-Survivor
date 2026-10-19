@@ -1,5 +1,6 @@
 #include "MVPGame.h"
 #include "CyberEnemyRoster.h"
+#include "ForbiddenEnemyBrain.h"
 #include "NecromancyVisualComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
@@ -28,6 +29,7 @@ void AMVPEnemy::ApplyEnemyArchetype(int32 Index)
     CastChecked<USphereComponent>(RootComponent)->SetSphereRadius(P.CollisionRadius);
     Visual->SetWorldScale3D(FVector(P.Height/150.f));
     Visual->SetVisibility(!CharacterArt->IsArtReady());
+    if(auto* Brain=FindComponentByClass<UForbiddenEnemyBrain>()) Brain->ResetLife();
 }
 FVector AMVPEnemy::GetCombatVFXLocation() const
 {

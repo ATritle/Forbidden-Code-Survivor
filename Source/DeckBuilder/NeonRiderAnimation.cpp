@@ -6,7 +6,7 @@ void UNecromancyVisualComponent::SetRiderState(FName State,float Duration)
 {
     UAnimSequence* Clip=RiderClips.FindRef(State);
     if(!Clip) return;
-    if(RiderState!=State) { RiderState=State;PlayAnimation(Clip,Duration<=0.f);SetPlayRate(1.f); }
+    if(RiderState!=State) { RiderState=State;RiderPlayRate=1.f;if(!bBlendedRider) {PlayAnimation(Clip,Duration<=0.f);SetPlayRate(1.f);} }
     RiderTimer=Duration;
 }
 void UNecromancyVisualComponent::TriggerRiderCast(FName Style)
@@ -19,7 +19,7 @@ void UNecromancyVisualComponent::TriggerRiderCast(FName Style)
         if(!Clip) return;
         const float Duration=Style==TEXT("HoverIdleAlt") ? 1.2f : 0.8f;
         SetRiderState(Style,Duration);
-        SetPlayRate(Clip->GetPlayLength()/Duration);
+        RiderPlayRate=Clip->GetPlayLength()/Duration;if(!bBlendedRider) SetPlayRate(RiderPlayRate);
         CastCooldown=Duration;RiderIdleTime=0.f;
     }
 }

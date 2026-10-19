@@ -7,14 +7,15 @@
 
 FString AMVPPlayer::CameraSaveSlot() const
 {
-    return FParse::Param(FCommandLine::Get(), TEXT("MVPSmoke")) ? TEXT("CodexPreferences_Automation") : TEXT("CodexPreferences");
+    return FParse::Param(FCommandLine::Get(), TEXT("MVPSmoke")) || FParse::Param(FCommandLine::Get(),TEXT("ForbiddenQA")) || FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) ? TEXT("ForbiddenCamera_v3_Automation") : TEXT("ForbiddenCamera_v3");
 }
 void AMVPPlayer::LoadCameraPreference()
 {
     PreferredCameraDistance = 2100.f;
     bool bMigrate=false;
-    if (!FParse::Param(FCommandLine::Get(), TEXT("ExplosionBenchmark")) && UGameplayStatics::DoesSaveGameExist(CameraSaveSlot(), 0))
-        if (const auto* Save = Cast<UCodexPreferencesSave>(UGameplayStatics::LoadGameFromSlot(CameraSaveSlot(), 0));
+    const FString LoadSlot=UGameplayStatics::DoesSaveGameExist(CameraSaveSlot(),0) || CameraSaveSlot().EndsWith("Automation") ? CameraSaveSlot() : TEXT("CodexPreferences");
+    if (!FParse::Param(FCommandLine::Get(), TEXT("ExplosionBenchmark")) && UGameplayStatics::DoesSaveGameExist(LoadSlot, 0))
+        if (const auto* Save = Cast<UCodexPreferencesSave>(UGameplayStatics::LoadGameFromSlot(LoadSlot, 0));
             Save && (Save->Version == 1 || Save->Version == 2) && FMath::IsFinite(Save->CameraDistance))
         {
             bMigrate=Save->Version==1;

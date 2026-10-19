@@ -28,8 +28,9 @@ void RunCombatFeedbackSmoke(AMVPController* Controller)
     if(Phase==0)
     {
         if(!FX->IsReady()) {Fail(TEXT("Missing authored feedback assets"));return;}
-        Game->StartingCards={TEXT("PulseDart")};if(!Game->StartSelectedRun()) {Fail(TEXT("Run did not start"));return;}
+        Game->StartingCards={TEXT("PulseDart"),TEXT("PrismBurst")};if(!Game->StartSelectedRun()) {Fail(TEXT("Run did not start"));return;}
         Game->Spawner->StopWaves();Player->bBenchmarkInvulnerable=true;
+        Player->Deck->MaximumActiveWeapons=0;
         for(UCardDataAsset* Card:Player->Deck->UnlockedCards)
             if(!Player->Deck->FindOwnedSpell(Card->CardID))
             {

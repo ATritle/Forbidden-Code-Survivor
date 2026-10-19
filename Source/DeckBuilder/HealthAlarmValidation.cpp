@@ -20,7 +20,7 @@ void RunHealthAlarmSmoke(AMVPController* Controller)
     if(Elapsed>12) {Fail(TEXT("Timeout"));return;}
     if(Phase==0)
     {
-        Game->StartingCards={TEXT("PulseDart")};if(!Game->StartSelectedRun() || !Audio->IsReady()) {Fail(TEXT("Run or audio unavailable"));return;}
+        Game->StartingCards={TEXT("PulseDart"),TEXT("PrismBurst")};if(!Game->StartSelectedRun() || !Audio->IsReady()) {Fail(TEXT("Run or audio unavailable"));return;}
         Game->Spawner->StopWaves();for(ASpellBase* Spell:Player->Deck->ActiveWeapons) Spell->StopCasting();Player->bBenchmarkInvulnerable=true;
         Player->Health=30;Audio->SetMusicVolume(0);Audio->SetSFXVolume(0.5f);
         UAudioMixerBlueprintLibrary::StartRecordingOutput(Controller,15.f);Next(1);

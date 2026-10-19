@@ -4,6 +4,8 @@
 #include "MortisProgressionManager.h"
 #include "EngineUtils.h"
 #include "CodexLoadoutSave.h"
+#include "ForbiddenProfile.h"
+#include "ForbiddenScoreService.h"
 #include "CardDataAsset.h"
 #include "CodexDeckComponent.h"
 #include "EnemySpawner.h"
@@ -14,7 +16,7 @@
 FString AMVPArenaGameMode::DeckSaveSlot() const
 {
     // Automated runs must never overwrite a player's deck.
-    return FParse::Param(FCommandLine::Get(), TEXT("MVPSmoke")) ? TEXT("CodexDeck_Automation") : TEXT("CodexDeck");
+    return FParse::Param(FCommandLine::Get(), TEXT("MVPSmoke")) ? TEXT("ForbiddenDeck_v3_Automation") : TEXT("ForbiddenDeck_v3");
 }
 
 TArray<UCardDataAsset*> AMVPArenaGameMode::GetLibraryCards() const
@@ -30,6 +32,12 @@ TArray<UCardDataAsset*> AMVPArenaGameMode::GetLibraryCards() const
 void AMVPArenaGameMode::LoadStartingDeck()
 {
     if (!bInCodex) return;
+    if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>())
+    {
+        const auto Preset=Profile->GetDeck();StartingCards=Preset.Starters;DraftPool=Preset.DraftPool;
+        DeckMessage=TEXT("Eight programs in the draft pool. Choose two starters; six active slots per run.");
+        return;
+    }
     StartingCards.Reset();
     const bool Exists = UGameplayStatics::DoesSaveGameExist(DeckSaveSlot(), 0);
     UCodexLoadoutSave* Save = Exists ? Cast<UCodexLoadoutSave>(UGameplayStatics::LoadGameFromSlot(DeckSaveSlot(), 0)) : nullptr;
@@ -55,6 +63,8 @@ bool AMVPArenaGameMode::ToggleStartingCard(FName ID)
 {
     AMVPPlayer* Player = GetArenaPlayer();
     if (!bInCodex || !Player || !Player->Deck->UnlockedCards.ContainsByPredicate([ID](const UCardDataAsset* C) { return C && C->CardID == ID && C->SpellClass; })) return false;
+    if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();Profile && !Profile->IsUnlocked(ID)) {DeckMessage=TEXT("Unlock this program in the hideout for 30 code fragments.");return false;}
+    if(!DraftPool.Contains(ID)) {DeckMessage=TEXT("Add this program to the eight-card draft pool first.");return false;}
     if (StartingCards.Contains(ID)) StartingCards.Remove(ID);
     else if (StartingCards.Num() < 2) StartingCards.Add(ID);
     else { DeckMessage = TEXT("Two starting slots are full. Remove a spell first."); if(AudioDirector) AudioDirector->PlayUI(TEXT("UI_Deny")); return false; }
@@ -66,6 +76,14 @@ bool AMVPArenaGameMode::ToggleStartingCard(FName ID)
 bool AMVPArenaGameMode::SaveStartingDeck()
 {
     if(FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark"))) return true;
+    if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>())
+    {
+        if(!bInCodex) return false;
+        FForbiddenDeckPreset Preset=Profile->GetDeck();Preset.Starters=StartingCards;Preset.DraftPool=DraftPool;
+        const bool OK=Profile->SaveDeck(Profile->Data->SelectedDeck,Preset);
+        DeckMessage=OK ? TEXT("Deck saved. Eight draft programs / two starting programs / six active slots.") : Profile->LastError;
+        return OK;
+    }
     if (!bInCodex || StartingCards.IsEmpty() || StartingCards.Num() > 2)
     { DeckMessage = TEXT("Choose one or two starting spells before saving."); return false; }
     if(!StartingCards.ContainsByPredicate([](FName ID){return ID!=TEXT("TalismanGuard");}))
@@ -88,7 +106,7 @@ bool AMVPArenaGameMode::SaveStartingDeck()
 
 bool AMVPArenaGameMode::StartSelectedRun()
 {
-    if(const auto* PC=Cast<AMVPController>(UGameplayStatics::GetPlayerController(this,0)); PC && PC->IsSettingsOpen()) return false;
+    if(const auto* PC=Cast<AMVPController>(UGameplayStatics::GetPlayerController(this,0)); PC && (PC->IsSettingsOpen() || PC->ScoreWidget || DecisionWidget)) return false;
     AMVPPlayer* Player = GetArenaPlayer();
     if (!bInCodex || !bRunInitialized || !Player || !SaveStartingDeck()) return false;
     // Reuse validated offer/equip logic one card at a time; never mutate authored data.
@@ -103,8 +121,11 @@ bool AMVPArenaGameMode::StartSelectedRun()
         if (!Player->Deck->AddSelectedCardSpell(Card))
         { DeckMessage = TEXT("Spell could not be equipped. Retry entering the arena."); return false; }
     }
-    Player->Deck->EquippedDeck = Player->Deck->UnlockedCards;
+    Player->Deck->EquippedDeck.Reset();
+    for(UCardDataAsset* Card:Player->Deck->UnlockedCards) if(Card && DraftPool.Contains(Card->CardID)) Player->Deck->EquippedDeck.Add(Card);
     bInCodex = false;
+    RunRecord.ID=FGuid::NewGuid().ToString(EGuidFormats::Digits);
+    if(auto* Scores=GetGameInstance()->GetSubsystem<UForbiddenScoreService>()) Scores->BeginRun();
     if(Player->Challenges) Player->Challenges->BeginRun();
     if (auto* PC = Cast<AMVPController>(Player->GetController()))
     {

@@ -1,0 +1,39 @@
+{
+  "succeeded": 2,
+  "succeededWithWarnings": 0,
+  "failed": 0,
+  "notRun": 0,
+  "totalDuration": 0.023451298475265503,
+  "tests": [
+    {
+      "testDisplayName": "DeckAndMutations",
+      "fullTestPath": "Codex.Runtime.DeckAndMutations",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "0FDD99674FCE9D8CA9D2B893E49EE094"
+      ],
+      "duration": 0.01228019967675209,
+      "dateTime": "2026.10.19-03.56.28",
+      "entries": [],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "PoolLifecycle",
+      "fullTestPath": "Codex.Runtime.PoolLifecycle",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "0FDD99674FCE9D8CA9D2B893E49EE094"
+      ],
+      "duration": 0.011171098798513412,
+      "dateTime": "2026.10.19-03.56.28",
+      "entries": [],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    }
+  ]
+}

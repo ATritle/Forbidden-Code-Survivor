@@ -19,6 +19,12 @@ class CODEXRUNTIME_API UCardDataAsset : public UPrimaryDataAsset
 {
     GENERATED_BODY()
 public:
+    /** Finite program ranks and one mutually exclusive evolution, enabled by the Windows game. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Program") bool bUseProgramProgression = false;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Program") FText EvolutionA;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Program") FText EvolutionB;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Program", meta=(MultiLine=true)) FText EvolutionDescriptionA;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Program", meta=(MultiLine=true)) FText EvolutionDescriptionB;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Card")
     FName CardID;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Card")

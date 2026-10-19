@@ -14,3 +14,5 @@ __pycache__/
 *.sln
 /Plugins/*/Binaries/
 /Plugins/*/Intermediate/
+# Blender autosave backups remain in the local snapshot; authoring .blend files use LFS.
+ContentSource/**/*.blend[0-9]

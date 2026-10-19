@@ -57,6 +57,7 @@ void ANeonAudioDirector::BeginPlay()
     MenuMusic->SetSound(Sounds.FindRef(TEXT("Music_Menu")));
     CriticalAlarm=MakeAudio(TEXT("CriticalHealthAlarm"),false,false);
     CriticalAlarm->SetSound(Sounds.FindRef(TEXT("LowHealth")));CriticalAlarm->SetVolumeMultiplier(0.65f*SFXVolume);
+    DangerWarning=MakeAudio(TEXT("PriorityDangerWarning"),false,true);
     // Prewarm all components; mutations/crowds can never allocate more voices.
     const int32 Counts[]={4,8,4,2};
     for(int32 Group=0;Group<4;++Group)
@@ -103,6 +104,7 @@ void ANeonAudioDirector::Tick(float Dt)
     const float RealDt=FMath::Clamp(float(Now-LastMusicUpdate),0.f,0.1f);LastMusicUpdate=Now;
     MusicBlend=FMath::FInterpConstantTo(MusicBlend,bMenuMusic ? 1.f : 0.f,RealDt,1.f/0.65f);
     ApplyVolumes(false);
+    const bool Duck=DangerWarning && DangerWarning->IsPlaying();if(Duck!=bDangerDucking) {bDangerDucking=Duck;ApplyVolumes(true);}
     UpdateHealthAlarm(Now);
     if(bSettingsDirty && Now>=SaveAfter) SaveAudioSettings();
 }
@@ -123,7 +125,7 @@ bool ANeonAudioDirector::PlayEffect(FName Cue,EVoiceGroup Group,FVector Location
         if(Groups[I]==Group && !Voices[I]->IsPlaying())
         {
             UAudioComponent* Voice=Voices[I];Voice->SetWorldLocation(Location);Voice->SetSound(Sound);
-            VoiceGains[I]=Volume;Voice->SetVolumeMultiplier(Volume*SFXVolume);Voice->SetPitchMultiplier(Pitch);Voice->Play();return true;
+            VoiceGains[I]=Volume;Voice->SetVolumeMultiplier(Volume*SFXVolume*(bDangerDucking && (Group==EVoiceGroup::Attack || Group==EVoiceGroup::Impact) ? 0.35f : 1.f));Voice->SetPitchMultiplier(Pitch);Voice->Play();return true;
         }
     return false;
 }
@@ -153,6 +155,12 @@ void ANeonAudioDirector::PlayUI(FName Cue)
     if(Now-LastUI<0.05) return;
     if(PlayEffect(Cue,EVoiceGroup::UI,FVector::ZeroVector,0.7f)) {LastUI=Now;++UIPlays;}
 }
+void ANeonAudioDirector::PlayWarning(FName Cue,FVector Location)
+{
+    const double Now=FPlatformTime::Seconds();if(!DangerWarning || (Now-LastWarning<0.35 && Cue!="Boss")) return;
+    DangerWarning->Stop();DangerWarning->SetWorldLocation(Location);DangerWarning->SetSound(Sounds.FindRef(TEXT("UI_Deny")));
+    DangerWarning->SetVolumeMultiplier(SFXVolume*0.85f);DangerWarning->SetPitchMultiplier(Cue=="Boss" ? 0.7f : 1.25f);DangerWarning->Play();LastWarning=Now;
+}
 bool ANeonAudioDirector::IsReady() const
 {
     const USoundWave* Game=Sounds.FindRef(TEXT("Music_Gameplay"));const USoundWave* Menu=Sounds.FindRef(TEXT("Music_Menu"));
@@ -170,19 +178,21 @@ void ANeonAudioDirector::EndPlay(const EEndPlayReason::Type Reason)
     for(UAudioComponent* Voice:Voices) if(Voice) Voice->Stop();
     if(GameplayMusic) GameplayMusic->Stop();if(MenuMusic) MenuMusic->Stop();
     if(CriticalAlarm) CriticalAlarm->Stop();
+    if(DangerWarning) DangerWarning->Stop();
     Super::EndPlay(Reason);
 }
 
 FString ANeonAudioDirector::SettingsSlot() const
 {
-    return FParse::Param(FCommandLine::Get(),TEXT("MVPSmoke")) || FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark"))
-        ? TEXT("CodexAudio_Automation") : TEXT("CodexAudio");
+    return FParse::Param(FCommandLine::Get(),TEXT("MVPSmoke")) || FParse::Param(FCommandLine::Get(),TEXT("ForbiddenQA")) || FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark"))
+        ? TEXT("ForbiddenAudio_v3_Automation") : TEXT("ForbiddenAudio_v3");
 }
 void ANeonAudioDirector::ApplyVolumes(bool bEffects)
 {
     if(MenuMusic) MenuMusic->SetVolumeMultiplier(MusicVolume*0.38f*FMath::Sin(MusicBlend*HALF_PI));
     if(GameplayMusic) GameplayMusic->SetVolumeMultiplier(MusicVolume*0.18f*FMath::Cos(MusicBlend*HALF_PI));
-    if(bEffects) for(int32 I=0;I<Voices.Num();++I) Voices[I]->SetVolumeMultiplier(VoiceGains[I]*SFXVolume);
+    if(bEffects) for(int32 I=0;I<Voices.Num();++I) Voices[I]->SetVolumeMultiplier(VoiceGains[I]*SFXVolume*(bDangerDucking && (Groups[I]==EVoiceGroup::Attack || Groups[I]==EVoiceGroup::Impact) ? 0.35f : 1.f));
+    if(DangerWarning) DangerWarning->SetVolumeMultiplier(SFXVolume*0.85f);
     if(bEffects && CriticalAlarm) CriticalAlarm->SetVolumeMultiplier(0.65f*SFXVolume*HealthAlarmGain);
 }
 
@@ -240,8 +250,9 @@ bool ANeonAudioDirector::SaveAudioSettings()
 void ANeonAudioDirector::LoadAudioSettings()
 {
     MusicVolume=SFXVolume=1.f;
-    if(!FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) && UGameplayStatics::DoesSaveGameExist(SettingsSlot(),0))
-        if(const auto* Save=Cast<UCodexAudioSettingsSave>(UGameplayStatics::LoadGameFromSlot(SettingsSlot(),0)); Save && Save->Version==1)
+    const FString LoadSlot=UGameplayStatics::DoesSaveGameExist(SettingsSlot(),0) || SettingsSlot().EndsWith("Automation") ? SettingsSlot() : TEXT("CodexAudio");
+    if(!FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) && UGameplayStatics::DoesSaveGameExist(LoadSlot,0))
+        if(const auto* Save=Cast<UCodexAudioSettingsSave>(UGameplayStatics::LoadGameFromSlot(LoadSlot,0)); Save && Save->Version==1)
         {
             MusicVolume=FMath::IsFinite(Save->MusicVolume) ? FMath::Clamp(Save->MusicVolume,0.f,1.f) : 1.f;
             SFXVolume=FMath::IsFinite(Save->SFXVolume) ? FMath::Clamp(Save->SFXVolume,0.f,1.f) : 1.f;

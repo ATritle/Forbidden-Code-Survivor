@@ -1,0 +1,65 @@
+FORBIDDEN CODE: SURVIVOR
+Windows 0.3.0 - Forbidden Routines
+
+PLAY AND REVERT
+Play-Forbidden-Routines.cmd starts the new packaged game.
+Play-Original-Windows.cmd starts the verified pre-overhaul package.
+Restore-Original-Windows.cmd restores the preserved source, assets and binaries into a new empty folder.
+The original ZIP, extracted project and installer are retained under Artifacts/Baselines/Windows-PreOverhaul-20261019T021817Z.
+The new package and installer have separate 0.3.0 output folders. Installation uses a versioned directory and shortcuts.
+Profile, audio, camera and VFX saves have new v3 slot names. Old normal preferences are imported read-only when no new save exists.
+The profile retains a previous-revision recovery save. Practice and validation do not bank run rewards or post leaderboard scores.
+
+RUN STRUCTURE
+Two optional elevated relay hacks permit the Sovereign broadcast at 03:00. Otherwise it arrives at 06:00.
+Defeat the Sovereign to win. Victory and defeat show the build, confirmed damage contribution, contracts and final score.
+Recovered code buys horizontal program unlocks. Wins unlock a spectral board and Blackout district variant.
+Three researched captures unlock a spectral board without the Blackout difficulty modifier.
+Blackout adds elite patrols after 03:00, dims street lights by 25% and awards 20% extra essence. Character readability fills remain enabled.
+
+MAP AND MOVEMENT
+Second approaches connect the market, promenade and rooftop shrine. Lower camera-facing buildings and larger visual cutaways reveal combat approaches.
+Simple collision proxies remain separate from decorative Meshy geometry. The largest enemy is included in terrain-route validation.
+Explore caches, a salvage-funded clinic, the shrine ward defense and telegraphed subway power surges.
+New textured shopfront and service modules add recessed doors, shutters, equipment and city detail. Animated digital pedestrians replace the primitive spirits.
+Puddles favor gutters and smaller patches, with rougher aggregate between reflections.
+Boost provides a short swept hoverboard acceleration burst on a three-second cooldown.
+Large landings stagger nearby enemies, with reduced boss stagger and an eight-second anti-farming cooldown.
+The rider uses a blended Animation Blueprint for riding, turning, casting, falling, landing, hits and defeat.
+
+DECK AND DRAFTS
+Choose an eight-program draft pool and two starters. A run holds six active programs.
+Taking a seventh program requires an explicit replacement. Replacement removes the old weapon and its talisman charges where relevant.
+Three saved presets, two rerolls and one banish support curated builds.
+Programs have three finite ranks followed by one of two mutually exclusive structural evolutions.
+Fully evolved programs leave the offer pool; consumable talismans can still receive effective refills below the eight-charge cap.
+Card previews show current and next damage/cooldown and the structural change. Rarity is independent of magic school.
+Talisman charges execute basic/medium/elite enemies at costs 1/2/3. Four charges deal 8% boss max HP and a brief stagger. They cannot execute bosses or trigger execute-derived Echo damage.
+
+ENEMIES AND CONTRACTS
+The ten cyborgs have matching Meshy combat clips. Roles include swarm, intercept, directional armor, disruption zones, directional ally shielding, charges, interruptible support, crossing dashes, area denial and a three-phase boss.
+The Sovereign begins with destructible shielding nodes, sweeps broadcast lanes in phase two, then breaches digital spirits in phase three. District markers react to the broadcast.
+Telegraphs and recovery windows remain visible regardless of cosmetic particle density. Defensive mechanics reduce damage rather than invalidating entire builds.
+All seven No Pain - No Gain contracts remain in the random offer bag.
+Echo is bounded and non-recursive. Battery heals 1% max HP per kill, at most three times per second. Broadcast difficulty scales with time and loadout. Glass explicitly warns about doubled incoming damage.
+Courier objectives use reachable routes and directional guidance. Duel placement validates a flat, connected fighting space before consuming a sign.
+Success offers a run-long corrupt perk with an explicit downside, or the option to bank salvage without corruption.
+Capture enemy code for twenty seconds of assault or slowing support, or research it for permanent unlock progress.
+
+CONTROLS AND READABILITY
+WASD moves; Shift boosts; wheel zooms; T cycles nearest/strongest/marked targeting; middle click marks; E interacts; Tab inspects; Escape opens settings; L opens the Windows leaderboard.
+Movement, boost, marking, interaction and inspect keys can be rebound. Target preference and zoom persist.
+Controller left stick moves, right stick zooms, A boosts/selects, X interacts, Start opens settings, Back opens the leaderboard. D-pad/Enter/A navigate decision surfaces.
+Flash, bloom, camera shake, damage-number density and impact-particle density are separate settings. Reduced Flashes limits light flashes and bloom while preserving danger information.
+Priority warnings use a reserved audio voice and duck routine attack/impact sounds. The low-health sound fades after five seconds; the edge warning remains until recovery.
+The compact six-slot HUD shows cooldowns, with detailed inspection on demand. Card art stays square and the updated draft surface uses glass/neon styling.
+
+PERFORMANCE AND SCORES
+Gameplay pools and cosmetic admission are measured separately. Cosmetic saturation never removes confirmed damage feedback or changes damage calculations.
+Crowd pose evaluation is full rate nearby, 30Hz at medium distance and 15Hz farther away; bosses remain full rate. Movement, collision and AI are independent of pose frequency.
+The public Windows leaderboard is separate from the browser board. Each local player identity retains its three highest runs; the board displays ten scores.
+Posting requires an explicit username submission after a registered online run. Offline runs remain in local history.
+
+VALIDATION
+See implementation-status.json and Saved/Review for actual results and evidence. Benchmarks use the local RX 7900 XTX / Ryzen 7900X3D and do not establish a universal frame-rate guarantee.
+The preserved baseline is local. Copy the entire baseline folder to another physical drive for disk-failure protection.

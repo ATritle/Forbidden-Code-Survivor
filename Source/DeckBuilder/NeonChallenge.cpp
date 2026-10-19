@@ -1,6 +1,8 @@
 #include "NeonChallenge.h"
+#include "ForbiddenWorldQueries.h"
 #include "NeonChallengeWidget.h"
 #include "MVPGame.h"
+#include "CodexDeckComponent.h"
 #include "EnemySpawner.h"
 #include "MortisTestingDirector.h"
 #include "MortisTerrain.h"
@@ -35,11 +37,11 @@ void UNeonChallengeComponent::CreateDefaultDefinitions()
         TEXT("The marked blast detonates after 1 second. Standing inside costs 20% of MAXIMUM health, even during ordinary hit immunity. Keep moving! At most one echo every 0.5 seconds."),40,FLinearColor(1,0.35f,0.04f));
     Echo->PenaltyHealthFraction=0.2f;
     auto* Hunt=Make(ENeonChallenge::HostileBroadcast,TEXT("HOSTILE BROADCAST"),TEXT("DOUBLE essence dropped by enemies defeated during this 60-second contract."),
-        TEXT("Your location is broadcast. TWO ELITE HUNTERS arrive at 15, 30 and 45 seconds. Watch the reinforcement countdown. Hunters remain until defeated; normal enemy limits still apply."),60,FLinearColor(0.05f,0.8f,1));
+        TEXT("Two hunters arrive at 15, 30 and 45 seconds. Medium patrols early; elites after 180s with a developed loadout. A three-second warning precedes each wave. Hunters remain until defeated."),60,FLinearColor(0.05f,0.8f,1));
     Hunt->EssenceMultiplier=2;
-    auto* Battery=Make(ENeonChallenge::DeadmanBattery,TEXT("DEADMAN BATTERY"),TEXT("DOUBLE outgoing spell damage for 30 seconds. Every confirmed enemy kill restores 4% of maximum health."),
+    auto* Battery=Make(ENeonChallenge::DeadmanBattery,TEXT("DEADMAN BATTERY"),TEXT("DOUBLE outgoing spell damage for 30 seconds. Kills restore 1% maximum health, limited to three heals per second."),
         TEXT("The battery drains 2% of MAXIMUM health per second, even during hit immunity. The drain CAN KILL you. Keep defeating enemies to stay charged."),30,FLinearColor(0.25f,1,0.35f));
-    Battery->DamageMultiplier=2;Battery->HealthDrainPerSecond=0.02f;Battery->HealthRestoredPerKill=0.04f;
+    Battery->DamageMultiplier=2;Battery->HealthDrainPerSecond=0.02f;Battery->HealthRestoredPerKill=0.01f;
     auto* Glass=Make(ENeonChallenge::GlassProtocol,TEXT("GLASS PROTOCOL"),TEXT("75% more outgoing damage and TWO extra penetrations for attacks that support piercing. Active for 45 seconds."),
         TEXT("ALL incoming damage is DOUBLED for the same 45 seconds. A fractured holographic shell marks your vulnerability. Previously fired shots keep their launch-time penetration count."),45,FLinearColor(0.4f,0.8f,1));
     Glass->DamageMultiplier=1.75f;Glass->IncomingDamageMultiplier=2;Glass->ExtraPiercing=2;
@@ -115,7 +117,10 @@ void UNeonChallengeComponent::TryPlaceStations()
     for(UNeonChallengeDefinition* D:RunOffers)
     {
         if(!D || Stations.ContainsByPredicate([D](const auto& S){return S && S->Definition==D;})) continue;
-        FVector Position;if(!FindStationGround(Random,Position)) continue;
+        FVector Position;bool Site=false;
+        for(int32 Attempt=0;Attempt<4 && !Site;++Attempt)
+        {FVector DuelSite;Site=FindStationGround(Random,Position) && (D->Contract!=ENeonChallenge::LockdownDuel || ForbiddenWorldQueries::FindDuelSite(GetWorld(),Position+FVector(-230,0,55),DuelSite));}
+        if(!Site) continue;
         FActorSpawnParameters Params;Params.Owner=GetOwner();Params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
         if(auto* S=GetWorld()->SpawnActor<ANeonChallengeStation>(ANeonChallengeStation::StaticClass(),Position,FRotator(0,180,0),Params))
         {S->Configure(D);Stations.Add(S);UE_LOG(LogTemp,Display,TEXT("CHALLENGE_STATION %s at %s seed=%d"),*D->Title.ToString(),*Position.ToString(),PlacementSeed);}
@@ -150,7 +155,7 @@ bool UNeonChallengeComponent::AcceptOffer()
     ActiveStation=OfferedStation;ActiveStation->SetContractState(ENeonContractState::Active);
     Elapsed=0;RemainingTime=FMath::Max(1.f,ActiveStation->Definition->Duration);ConfirmedHitCount=0;HitCooldown=0;PendingHunters=0;bOrbPositionValid=false;
     NextHunterWave=FMath::Max(1.f,ActiveStation->Definition->HunterInterval);HuntersSpawned=0;HuntWarnings=0;HunterRetry=0;LastResult.Reset();
-    OutsideTime=0;bCarryingCache=false;KillFlash=0;
+    OutsideTime=0;bCarryingCache=false;KillFlash=0;HealingSecond=INDEX_NONE;HealsThisSecond=0;
     CloseOffer();
     if(G->AudioDirector) G->AudioDirector->PlayUI(TEXT("UI_Confirm"));
     UE_LOG(LogTemp,Display,TEXT("CHALLENGE_ACCEPT %s"),*ActiveStation->Definition->Title.ToString());return true;
@@ -175,8 +180,9 @@ void UNeonChallengeComponent::CloseOffer()
 }
 float UNeonChallengeComponent::GetDamageMultiplier() const
 {
-    return IsGameplayRunning() && ActiveStation && ActiveStation->Definition && !bResolvingEcho
-        ? FMath::Clamp(ActiveStation->Definition->DamageMultiplier,1.f,20.f) : 1.f;
+    if(bResolvingEcho) return 1.f;
+    const auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());
+    return (G ? G->PerkDamageMultiplier() : 1.f)*(IsGameplayRunning() && ActiveStation && ActiveStation->Definition ? FMath::Clamp(ActiveStation->Definition->DamageMultiplier,1.f,20.f) : 1.f);
 }
 int32 UNeonChallengeComponent::ModifyEssenceReward(int32 BaseReward) const
 {
@@ -196,6 +202,7 @@ void UNeonChallengeComponent::ResolveOrbContact(AMVPEnemy* Enemy,bool bSweepConf
     const float Damage=Player->MaxHealth*FMath::Clamp(ActiveStation->Definition->PenaltyHealthFraction,0.f,1.f);
     ++OrbRuptures;FinishContract(ENeonContractState::Failed,TEXT("ORB RUPTURED / LOST 50% MAX HP"));
     if(auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());G && G->SpellImpactDirector) G->SpellImpactDirector->PlayImpact(ENeonSpellStyle::Prism,Orb);
+    if(auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode())) G->LastDamageCause=TEXT("Overload Orb / core rupture");
     Player->ReceiveChallengeDamage(Damage);
 }
 void UNeonChallengeComponent::OnConfirmedSpellHit(FVector Position,float Damage)
@@ -226,13 +233,13 @@ void UNeonChallengeComponent::DetonateEcho(FEcho& Echo)
     {
         Seen.Add(E);FHitResult Wall;
         if(GetWorld()->LineTraceSingleByObjectType(Wall,Echo.Position+FVector(0,0,25),E->GetActorLocation(),FCollisionObjectQueryParams(ECC_WorldStatic))) continue;
-        const float Before=E->Health;E->TakeSpellDamage(Echo.Damage,FVector::UpVector*350);
+        const float Before=E->Health;E->TakeSpellDamage(Echo.Damage,FVector::UpVector*350,"UnstableEcho",false);
         if(G && G->SpellImpactDirector) G->SpellImpactDirector->ConfirmDamage(ENeonSpellStyle::Prism,E,FMath::Min(Before,Echo.Damage));
     }
     if(Player.IsValid() && FVector::DistSquared2D(Player->GetActorLocation(),Echo.Position)<=FMath::Square(Echo.Radius) && FMath::Abs(Player->GetActorLocation().Z-Echo.Position.Z)<160)
     {
         FHitResult Wall;
-        if(!GetWorld()->LineTraceSingleByObjectType(Wall,Echo.Position+FVector(0,0,25),Player->GetActorLocation(),FCollisionObjectQueryParams(ECC_WorldStatic))) Player->ReceiveChallengeDamage(Player->MaxHealth*Echo.PlayerPenalty);
+        if(!GetWorld()->LineTraceSingleByObjectType(Wall,Echo.Position+FVector(0,0,25),Player->GetActorLocation(),FCollisionObjectQueryParams(ECC_WorldStatic))) {if(G) G->LastDamageCause=TEXT("Unstable Echo / own marked blast");Player->ReceiveChallengeDamage(Player->MaxHealth*Echo.PlayerPenalty);}
     }
 }
 bool UNeonChallengeComponent::TrySpawnHunter()
@@ -259,6 +266,7 @@ bool UNeonChallengeComponent::TrySpawnHunter()
         SpawnPoint=Ground.Location+FVector(0,0,90);bPoint=true;break;
     }
     if(!bPoint) return false;
+    TGuardValue<bool> SuppressBoss(G->bSuppressBossSelection,true);
     const bool bBossAlreadySpawned=G->bBroadcastBossSpawned;
     AMVPEnemy* Hunter=Cast<AMVPEnemy>(S->SpawnEnemyFromPool(SpawnPoint));
     G->bBroadcastBossSpawned=bBossAlreadySpawned;
@@ -274,7 +282,8 @@ bool UNeonChallengeComponent::TrySpawnHunter()
         }
     }
     if(!Hunter) return false;
-    Hunter->SetActorLocation(SpawnPoint);Hunter->ApplyEnemyArchetype(6+(HuntersSpawned%3));
+    const bool Elite=G->RunSeconds>=180.f && Player->Deck->ActiveWeapons.Num()>=3;
+    Hunter->SetActorLocation(SpawnPoint);Hunter->ApplyEnemyArchetype(Elite ? 6+(HuntersSpawned%3) : 4+(HuntersSpawned%2));
     Hunter->SetCombatHitFlash(FLinearColor::Black,0);Hunter->SetActorTickEnabled(true);
     if(auto* Terrain=Hunter->FindComponentByClass<UMortisTerrain>()) Terrain->ResetPath();
     // Existing timed-boss state belongs to the normal wave spawner, not this contract.
@@ -286,7 +295,7 @@ void UNeonChallengeComponent::UpdateHunters(float Dt)
     auto* D=ActiveStation->Definition.Get();
     const float Duration=FMath::Max(1.f,D->Duration);
     if(NextHunterWave<Duration && Elapsed>=NextHunterWave-3 && HuntWarnings<FMath::RoundToInt(NextHunterWave/FMath::Max(1.f,D->HunterInterval)))
-    {++HuntWarnings;if(auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());G && G->AudioDirector) G->AudioDirector->PlayUI(TEXT("UI_Deny"));}
+    {++HuntWarnings;if(auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());G && G->AudioDirector) G->AudioDirector->PlayWarning("Contract",Player->GetActorLocation());}
     if(Elapsed>=NextHunterWave && NextHunterWave<Duration)
     {PendingHunters+=FMath::Clamp(D->HuntersPerWave,1,8);NextHunterWave+=FMath::Max(1.f,D->HunterInterval);}
     // Bounded retries; accumulated work waits for pool space rather than losing reinforcements.
@@ -335,6 +344,8 @@ void UNeonChallengeComponent::TickComponent(float Dt,ELevelTick Type,FActorCompo
 void UNeonChallengeComponent::FinishContract(ENeonContractState State,const FString& Message)
 {
     if(!ActiveStation) return;
+    if(State==ENeonContractState::Succeeded)
+        if(auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode())) G->ContractSucceeded(*ActiveStation->Definition->Title.ToString());
     ActiveStation->SetContractState(State);ActiveStation=nullptr;RemainingTime=0;PendingHunters=0;
     bCarryingCache=false;OutsideTime=0;DuelTarget.Reset();DuelTargetGeneration=0;
     if(GoalVisual) GoalVisual->HideEffect();if(TrialVisual) TrialVisual->HideEffect();

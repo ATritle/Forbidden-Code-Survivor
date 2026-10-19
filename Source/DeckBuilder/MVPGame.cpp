@@ -1,4 +1,13 @@
 #include "MVPGame.h"
+#include "ForbiddenPrograms.h"
+#include "ForbiddenDistrictDirector.h"
+#include "ForbiddenEnemyBrain.h"
+#include "ForbiddenChoiceWidget.h"
+#include "ForbiddenSpirit.h"
+#include "ForbiddenCombatSubsystem.h"
+#include "ForbiddenSettingsControls.h"
+#include "ForbiddenScoreService.h"
+#include "ForbiddenScoreWidget.h"
 #include "ForbiddenCodeBranding.h"
 #include "Engine/GameViewportClient.h"
 #include "Widgets/SWindow.h"
@@ -46,6 +55,8 @@
 #include "NeonChallenge.h"
 
 void InstallReleaseValidation(AMVPController* Controller);
+void InstallForbiddenValidation(AMVPController* Controller);
+void InstallForbiddenSystemsValidation(AMVPController* Controller);
 
 namespace MVP
 {
@@ -136,7 +147,10 @@ void AMVPPlayer::BeginPlay()
     MVP::Tint(Visual, FLinearColor(0.55f, 1.f, 0.82f));
     MaxHealth = FMath::IsFinite(MaxHealth) ? FMath::Max(1.f, MaxHealth) : 100.f;
     Health = MaxHealth;
+    ForbiddenSettings::Apply(this);
     LoadCameraPreference();
+    if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();Profile && Profile->Data)
+        TargetPriority=FMath::Clamp(FMath::RoundToInt(Profile->Data->Settings.FindRef("TargetPriority")),0,2);
     for(TActorIterator<ANeonCityDirector> City(GetWorld());City;++City)
     {CameraBoom->SetRelativeRotation(FRotator(-55.f,-35.f,0));break;}
     LandingDust->SetAsset(LoadObject<UNiagaraSystem>(nullptr,TEXT("/Game/Art/Spells/NS_LandingDust.NS_LandingDust")));
@@ -151,6 +165,14 @@ void AMVPPlayer::SetupPlayerInputComponent(UInputComponent* Input)
     Input->BindAxis(TEXT("MoveForward"), this, &AMVPPlayer::MoveForward);
     Input->BindAxis(TEXT("MoveRight"), this, &AMVPPlayer::MoveRight);
     Input->BindAxis(TEXT("CameraZoom"), this, &AMVPPlayer::ZoomCamera);
+    auto Bindings=ForbiddenSettings::DefaultBindings();
+    if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();Profile && Profile->Data) for(const auto& Pair:Profile->Data->Bindings) Bindings.Add(Pair.Key,Pair.Value);
+    Input->BindKey(Bindings["Boost"],IE_Pressed,this,&AMVPPlayer::Boost);
+    Input->BindKey(EKeys::Gamepad_FaceButton_Bottom,IE_Pressed,this,&AMVPPlayer::Boost);
+    Input->BindKey(Bindings["Mark"],IE_Pressed,this,&AMVPPlayer::MarkTarget);
+    if(auto* PC=Cast<AMVPController>(Controller)) Input->BindKey(Bindings["Interact"],IE_Pressed,PC,&AMVPController::InteractChallenge);
+    Input->BindKey(EKeys::Gamepad_RightThumbstick,IE_Pressed,this,&AMVPPlayer::MarkTarget);
+    Input->BindKey(EKeys::T,IE_Pressed,this,&AMVPPlayer::CycleTargetPriority);
 }
 void AMVPPlayer::MoveForward(float Value) { AddMovementInput(FRotator(0,CameraBoom->GetComponentRotation().Yaw,0).Vector(),Value); }
 void AMVPPlayer::MoveRight(float Value) { AddMovementInput(FRotationMatrix(FRotator(0,CameraBoom->GetComponentRotation().Yaw,0)).GetUnitAxis(EAxis::Y),Value); }
@@ -161,6 +183,17 @@ void AMVPPlayer::Tick(float DeltaSeconds)
     CameraBoom->TargetArmLength = FMath::FInterpTo(CameraBoom->TargetArmLength, PreferredCameraDistance, DeltaSeconds, 10.f);
     if (bZoomDirty && (ZoomSaveDelay -= DeltaSeconds) <= 0.f) { SaveCameraPreference(); ZoomSaveDelay = 5.f; }
     InvulnerabilityRemaining = FMath::Max(0.f, InvulnerabilityRemaining - DeltaSeconds);
+    BoostCooldown=FMath::Max(0.f,BoostCooldown-DeltaSeconds);
+    LandingRewardCooldown=FMath::Max(0.f,LandingRewardCooldown-DeltaSeconds);
+    LandingCharge=FMath::Max(0.f,LandingCharge-DeltaSeconds);
+    if(const auto* Guard=Deck->FindOwnedSpell("TalismanGuard");Guard && Guard->Modifiers.Evolution==1 && GetTalismanCount()>0 && (TalismanRecoveryRemaining-=DeltaSeconds)<=0)
+    {AddTalismans(1);TalismanRecoveryRemaining=18.f;}
+    if(BoostRemaining>0)
+    {
+        const float Step=FMath::Min(BoostRemaining,DeltaSeconds);BoostRemaining-=Step;
+        FHitResult Hit;AddActorWorldOffset(BoostDirection*1050.f*Step,true,&Hit);
+        if(Hit.bBlockingHit) BoostRemaining=0;
+    }
     // A finite arena keeps both the player and follow camera on the floor.
     FVector Position = GetActorLocation();
     const auto* ArenaGame=MVP::Mode(this);
@@ -170,7 +203,7 @@ void AMVPPlayer::Tick(float DeltaSeconds)
 
     SetActorLocation(Position,true);
     UpdateGroundPhysics(DeltaSeconds);
-    const bool bVisible = InvulnerabilityRemaining <= 0.f || FMath::Fmod(InvulnerabilityRemaining, 0.15f) < 0.09f;
+    const bool bVisible = InvulnerabilityRemaining <= 0.f || ForbiddenSettings::Get(this,"ReducedFlashes",0)>0.5f || FMath::Fmod(InvulnerabilityRemaining, 0.15f) < 0.09f;
     Visual->SetVisibility(!CharacterArt->IsArtReady() && bVisible);
     if (CharacterArt->IsArtReady())
     {
@@ -185,7 +218,7 @@ void AMVPPlayer::ReceiveContactDamage(float Amount)
 {
     if(bBenchmarkInvulnerable) return;
     AMVPArenaGameMode* Game = MVP::Mode(this);
-    if (!Game || Game->bInCodex || Game->bRunEnded || Game->bChoosingCard || InvulnerabilityRemaining > 0.f || !FMath::IsFinite(Amount) || Amount <= 0.f) return;
+    if (!Game || Game->bInCodex || Game->bRunEnded || Game->bChoosingCard || UGameplayStatics::IsGamePaused(this) || InvulnerabilityRemaining > 0.f || !FMath::IsFinite(Amount) || Amount <= 0.f) return;
     Health = FMath::Max(0.f, Health - Amount*(Challenges ? Challenges->GetIncomingDamageMultiplier() : 1.f));
     InvulnerabilityRemaining = 0.8f;
     CharacterArt->TriggerRiderHit();
@@ -205,12 +238,25 @@ void AMVPPlayer::ReceiveChallengeDamage(float Amount,bool bPlayHitFeedback)
 
 AActor* AMVPPlayer::GetClosestEnemy(float ScanRadius) const
 {
-    return FMath::IsFinite(ScanRadius) && ScanRadius > 0.f && Deck && IsValid(Deck->EnemySpawner)
-        ? Deck->EnemySpawner->FindNearestEnemy(GetActorLocation(), ScanRadius) : nullptr;
+    if(!FMath::IsFinite(ScanRadius) || ScanRadius<=0 || !Deck || !IsValid(Deck->EnemySpawner)) return nullptr;
+    auto Visible=[&](AMVPEnemy* E)
+    {
+        if(!E || !E->IsPoolActive() || FVector::DistSquared(GetActorLocation(),E->GetActorLocation())>FMath::Square(ScanRadius)) return false;
+        FHitResult Wall;return !GetWorld()->LineTraceSingleByObjectType(Wall,GetActorLocation(),E->GetActorLocation(),FCollisionObjectQueryParams(ECC_WorldStatic));
+    };
+    if(TargetPriority==2 && MarkedEnemy.IsValid() && MarkedEnemy->Generation==MarkedGeneration && Visible(MarkedEnemy.Get())) return MarkedEnemy.Get();
+    if(TargetPriority==1)
+    {
+        AMVPEnemy* Best=nullptr;
+        for(APooledEnemy* A:Deck->EnemySpawner->GetActiveEnemies()) if(auto* E=Cast<AMVPEnemy>(A);Visible(E) && (!Best || E->MaxHealth>Best->MaxHealth)) Best=E;
+        if(Best) return Best;
+    }
+    return Deck->EnemySpawner->FindNearestEnemy(GetActorLocation(),ScanRadius,true);
 }
 
 AMVPEnemy::AMVPEnemy()
 {
+    CreateDefaultSubobject<UForbiddenEnemyBrain>(TEXT("CombatBrain"));
     PrimaryActorTick.bStartWithTickEnabled = true;
     USphereComponent* HitShape = CreateDefaultSubobject<USphereComponent>(TEXT("EnemyHitShape"));
     HitShape->InitSphereRadius(34.f);
@@ -242,10 +288,12 @@ void AMVPEnemy::OnPoolActivated_Implementation()
 {
     ++Generation;
     SetCombatHitFlash(FLinearColor::Black,0);
-    if(auto* Game=MVP::Mode(this);Game && !bTrainingTarget)
+    if(auto* Game=MVP::Mode(this);Game && !bTrainingTarget && !(Game->TestingDirector && Game->TestingDirector->IsActive()))
     {
-        const bool Boss=Game->RunSeconds>=360.f && !Game->bBroadcastBossSpawned;
-        ApplyEnemyArchetype(Boss ? 9 : CyberEnemies::Select(Game->RunSeconds,FMath::FRand()));
+        const bool Boss=(Game->RunSeconds>=360.f || Game->bBossRequested) && !Game->bBroadcastBossSpawned && !Game->bSuppressBossSelection;
+        int32 Choice=CyberEnemies::Select(Game->RunSeconds,FMath::FRand());
+        if(!Boss && Game->RunSeconds>=180.f && ForbiddenSettings::Get(this,"District",0)>0.5f && FMath::FRand()<0.12f) Choice=FMath::RandRange(6,8);
+        ApplyEnemyArchetype(Boss ? 9 : Choice);
         if(Boss) Game->bBroadcastBossSpawned=true;
     }
     Terrain->ResetPath();
@@ -253,15 +301,20 @@ void AMVPEnemy::OnPoolActivated_Implementation()
     Health = FMath::Max(1.f, MaxHealth);
     CachedChaseDirection = FVector::ZeroVector;
     DirectionUpdateRemaining = FMath::FRandRange(0.f, 0.05f);
+    StaggerRemaining=0;
     Target = Cast<AMVPPlayer>(UGameplayStatics::GetPlayerPawn(this, 0));
     if (Target.IsValid()) CachedChaseDirection = (Target->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
     MVP::Tint(Visual, FLinearColor(0.65f, 0.08f, 0.17f));
     Visual->SetVisibility(!CharacterArt->IsArtReady());
     CharacterArt->SetDormant(false);
+    if(auto* Brain=FindComponentByClass<UForbiddenEnemyBrain>()) Brain->ResetLife();
     SetActorTickEnabled(true);
 }
 void AMVPEnemy::OnPoolReturned_Implementation()
 {
+    bTrainingTarget=false;
+    Tags.Remove("BroadcastNode");
+    if(auto* Brain=FindComponentByClass<UForbiddenEnemyBrain>()) Brain->ResetLife();
     SetCombatHitFlash(FLinearColor::Black,0);
     Target.Reset();
     CharacterArt->SetDormant(true);
@@ -272,11 +325,14 @@ void AMVPEnemy::Tick(float DeltaSeconds)
     Super::Tick(DeltaSeconds);
     if(bTrainingTarget) return;
     if (!IsPoolActive()) return;
+    if(StaggerRemaining>0) {if(auto* Brain=FindComponentByClass<UForbiddenEnemyBrain>()) Brain->CancelChannel();StaggerRemaining=FMath::Max(0.f,StaggerRemaining-DeltaSeconds);return;}
     if (!Target.IsValid()) Target = Cast<AMVPPlayer>(UGameplayStatics::GetPlayerPawn(this, 0));
     if (!Target.IsValid()) return;
     if(Target->Challenges) Target->Challenges->ResolveOrbContact(this);
     if(Target->Health<=0) return;
     const FVector ToPlayer = Target->GetActorLocation() - GetActorLocation();
+    // Only pose evaluation is budgeted. Collision, targeting and enemy combat stay at actor rate.
+    CharacterArt->SetComponentTickInterval(EnemyTier>=3 || ToPlayer.SizeSquared2D()<FMath::Square(900.f) ? 0.f : ToPlayer.SizeSquared2D()<FMath::Square(1700.f) ? 1.f/30.f : 1.f/15.f);
     DirectionUpdateRemaining -= DeltaSeconds;
     if (DirectionUpdateRemaining <= 0.f || CachedChaseDirection.IsNearlyZero())
     {
@@ -284,28 +340,33 @@ void AMVPEnemy::Tick(float DeltaSeconds)
         DirectionUpdateRemaining = 0.05f;
     }
     const float ContactRange=CastChecked<USphereComponent>(RootComponent)->GetScaledSphereRadius()+34.f;
-    const float ChaseSpeed=BaseMovementSpeed*(Target->Challenges ? Target->Challenges->GetPursuerSpeedMultiplier() : 1.f);
+    float ChaseSpeed=BaseMovementSpeed*(Target->Challenges ? Target->Challenges->GetPursuerSpeedMultiplier() : 1.f);
+    FVector ChaseGoal=Target->GetActorLocation();
+    if(auto* Brain=FindComponentByClass<UForbiddenEnemyBrain>();Brain && Brain->Advance(DeltaSeconds,Target.Get(),ChaseGoal,ChaseSpeed)) return;
     CharacterArt->UpdateLocomotion(ToPlayer, ToPlayer.SizeSquared2D() <= FMath::Square(ContactRange) ? 0.f : ChaseSpeed);
     if (ToPlayer.SizeSquared2D() <= FMath::Square(ContactRange) && FMath::Abs(ToPlayer.Z)<150.f && UMortisTerrain::ClearSight(this,Target->GetActorLocation()))
     {
-        Target->ReceiveContactDamage(ContactDamage);
+        if(auto* G=MVP::Mode(this)) G->LastDamageCause=CyberEnemies::Roster()[FMath::Clamp(EnemyArchetype,0,9)].Name;
+        if(EnemyArchetype>=3) Target->ReceiveContactDamage(ContactDamage);
     }
     else
-        Terrain->MoveTowards(Target->GetActorLocation(),ChaseSpeed,DeltaSeconds);
+        Terrain->MoveTowards(ChaseGoal,ChaseSpeed,DeltaSeconds);
 }
 
 void AMVPEnemy::ReceiveSpellDamage(float Amount) { TakeSpellDamage(Amount, FVector::ZeroVector); }
-void AMVPEnemy::TakeSpellDamage(float Amount, FVector ImpactVelocity)
+void AMVPEnemy::TakeSpellDamage(float Amount, FVector ImpactVelocity, FName ProgramID,bool TriggerEcho)
 {
     if (!IsPoolActive() || !FMath::IsFinite(Amount) || Amount <= 0.f) return;
     auto* ArenaMode=MVP::Mode(this);
     auto* Contracts=ArenaMode && ArenaMode->GetArenaPlayer() ? ArenaMode->GetArenaPlayer()->Challenges.Get() : nullptr;
-    if(!bTrainingTarget && Contracts) Amount*=Contracts->GetDamageMultiplier();
+    if(!bTrainingTarget && Contracts && ProgramID!="TalismanGuard") Amount*=Contracts->GetDamageMultiplier();
+    if(auto* Brain=FindComponentByClass<UForbiddenEnemyBrain>()) Amount=Brain->ModifyIncoming(Amount,ImpactVelocity,ProgramID);
+    const float Actual=FMath::Min(Amount,FMath::Max(0.f,Health));
+    if(ArenaMode) ArenaMode->RecordProgramDamage(ProgramID,Actual);
     Health -= Amount;
-    if(!bTrainingTarget && Contracts) Contracts->OnConfirmedSpellHit(GetActorLocation(),Amount);
+    if(!bTrainingTarget && Contracts && TriggerEcho) Contracts->OnConfirmedSpellHit(GetActorLocation(),FMath::Min(Actual,250.f));
     if(bTrainingTarget)
     {
-        const float Actual=FMath::Max(0.f,FMath::Min(Amount,Health+Amount));
         if(auto* Game=MVP::Mode(this);Game && Game->TestingDirector) Game->TestingDirector->RecordDamage(this,Actual,Health<=0);
         if(Health<=0) ReturnToPool();
         return;
@@ -315,7 +376,7 @@ void AMVPEnemy::TakeSpellDamage(float Amount, FVector ImpactVelocity)
     ReturnToPool(); // Inactivate before callbacks; death cannot pay twice.
     if(Contracts) Contracts->OnEnemyKilled(this,Generation);
     PlayHighDetailDeathVFX(DeathPosition, ImpactVelocity.ContainsNaN() ? FVector::ZeroVector : ImpactVelocity);
-    if (AMVPArenaGameMode* Game = MVP::Mode(this)) Game->EnemyDefeated(DeathPosition,EssenceReward);
+    if (AMVPArenaGameMode* Game = MVP::Mode(this)) {Game->EnemyDefeated(DeathPosition,EssenceReward);Game->OnArchetypeKilled(EnemyArchetype,DeathPosition);}
 }
 
 AMVPImpactPulse::AMVPImpactPulse()
@@ -444,11 +505,36 @@ void AMVPBoltSpell::FireSpell_Implementation(APooledEnemy* Target, const FSpellM
         Player->OnWeaponAim(Origin, Aim);
         Player->TriggerSpellCastVisual();
     }
-    for (int32 Index = 0; Index < Snapshot.ProjectileCount; ++Index)
+    if(Snapshot.ProgramID=="HaloNova" && Snapshot.Evolution==2)
     {
-        const float Angle = Snapshot.NovaPattern ? 360.f * Index / Snapshot.ProjectileCount : (Index - (Snapshot.ProjectileCount - 1) * 0.5f) * 9.f;
-        Game->EmitProjectile(Origin, Aim.RotateAngleAxis(Angle, FVector::UpVector), Damage, Snapshot, BoltColor, ShotType, bBlood,SpellStyle);
+        if(auto* Fields=GetWorld()->GetSubsystem<UForbiddenCombatSubsystem>()) Fields->QueueField("HaloNova",ENeonSpellStyle::Halo,Origin,Damage*1.8f,350.f*Snapshot.RadiusMultiplier,0,1,0.65f,true);
+        return;
     }
+    FSpellModifiers Pattern=Snapshot;float Power=Damage;
+    if(UsesProgramProgression())
+    {
+        if(Snapshot.ProgramID=="PulseDart" && Snapshot.Evolution==2) {Pattern.NovaPattern=true;Pattern.ProjectileCount=8;Power*=0.1875f;}
+        if(Snapshot.ProgramID=="PrismBurst" && Snapshot.Evolution==2) {Pattern.NovaPattern=true;Pattern.ProjectileCount=8;Power*=0.5f;}
+        if(Snapshot.ProgramID=="KineticCards" && Snapshot.Evolution==2) {Pattern.ProjectileCount=3;Power*=0.6f;Pattern.ExplodeOnImpact=false;Pattern.PiercingCount=2;}
+        if(Snapshot.ProgramID=="PhotonLance" && Snapshot.Evolution==2) {Pattern.ProjectileCount=2;Power*=0.6f;}
+    }
+    for (int32 Index = 0; Index < Pattern.ProjectileCount; ++Index)
+    {
+        const float Angle = Pattern.NovaPattern ? 360.f * Index / Pattern.ProjectileCount : Snapshot.ProgramID=="PhotonLance" && Snapshot.Evolution==2 ? Index*90.f : (Index - (Pattern.ProjectileCount - 1) * 0.5f) * 9.f;
+        FVector LaunchOrigin=Origin;
+        if(Snapshot.ProgramID=="PhotonLance" && Snapshot.Evolution==2 && Index==1)
+        {
+            const FVector Cross=Aim.RotateAngleAxis(90.f,FVector::UpVector);
+            LaunchOrigin=Target->GetActorLocation()-Cross*350.f;
+            FHitResult Wall;
+            if(GetWorld()->LineTraceSingleByObjectType(Wall,Target->GetActorLocation(),LaunchOrigin,FCollisionObjectQueryParams(ECC_WorldStatic))) LaunchOrigin=Wall.ImpactPoint+Cross*10.f;
+        }
+        Game->EmitProjectile(LaunchOrigin, Aim.RotateAngleAxis(Angle, FVector::UpVector), Power, Pattern, BoltColor, ShotType, bBlood,SpellStyle);
+    }
+}
+APooledEnemy* AMVPBoltSpell::ResolveTarget() const
+{
+    const auto* Player=Cast<AMVPPlayer>(GetOwner());return Player ? Cast<APooledEnemy>(Player->GetClosestEnemy(TargetRange)) : Super::ResolveTarget();
 }
 
 AMVPController::AMVPController()
@@ -465,6 +551,8 @@ void AMVPController::BeginPlay()
         if(TSharedPtr<SWindow> Window=Viewport->GetWindow()) Window->SetTitle(FText::FromString(ForbiddenCode::Title));
     SetMenuInput(false);
     InstallReleaseValidation(this);
+    InstallForbiddenValidation(this);
+    InstallForbiddenSystemsValidation(this);
 #if !UE_BUILD_SHIPPING
     bSmokeTest = FParse::Param(FCommandLine::Get(), TEXT("MVPSmoke"));
 #endif
@@ -496,7 +584,11 @@ void AMVPController::SetupInputComponent()
     InputComponent->BindKey(EKeys::R, IE_Pressed, this, &AMVPController::RestartRun).bExecuteWhenPaused = true;
     InputComponent->BindKey(EKeys::Enter, IE_Pressed, this, &AMVPController::BeginSelectedRun).bExecuteWhenPaused = true;
     InputComponent->BindKey(EKeys::F, IE_Pressed, this, &AMVPController::TestExplosion);
-    InputComponent->BindKey(EKeys::E, IE_Pressed, this, &AMVPController::InteractChallenge);
+    InputComponent->BindKey(EKeys::Gamepad_FaceButton_Left, IE_Pressed, this, &AMVPController::InteractChallenge);
+    InputComponent->BindKey(EKeys::H, IE_Pressed, this, &AMVPController::OpenHideout).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::L, IE_Pressed, this, &AMVPController::OpenLeaderboard).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::Gamepad_Special_Left, IE_Pressed, this, &AMVPController::OpenLeaderboard).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::Gamepad_Special_Right, IE_Pressed, this, &AMVPController::ToggleSettings).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::Escape, IE_Pressed, this, &AMVPController::ToggleSettings).bExecuteWhenPaused=true;
 }
 void AMVPController::TestExplosion()
@@ -508,7 +600,20 @@ bool AMVPController::IsChallengeOpen() const
 {
     const auto* ArenaPlayer=Cast<AMVPPlayer>(GetPawn());return ArenaPlayer && ArenaPlayer->Challenges && ArenaPlayer->Challenges->OfferWidget!=nullptr;
 }
-void AMVPController::InteractChallenge() {if(auto* ArenaPlayer=Cast<AMVPPlayer>(GetPawn());ArenaPlayer && ArenaPlayer->Challenges) ArenaPlayer->Challenges->Interact();}
+void AMVPController::InteractChallenge()
+{
+    if(auto* G=MVP::Mode(this);G && G->bInCodex) {G->OpenHideout();return;}
+    if(auto* G=MVP::Mode(this);G && G->DistrictDirector && G->DistrictDirector->Interact()) return;
+    if(auto* P=Cast<AMVPPlayer>(GetPawn());P && P->Challenges) P->Challenges->Interact();
+}
+void AMVPController::OpenHideout() {if(auto* G=MVP::Mode(this)) G->OpenHideout();}
+void AMVPController::OpenLeaderboard()
+{
+    auto* G=MVP::Mode(this);if(!G || ScoreWidget || IsSettingsOpen() || G->DecisionWidget || G->bChoosingCard || IsChallengeOpen()) return;
+    ScoreWidget=CreateWidget<UForbiddenScoreWidget>(this,UForbiddenScoreWidget::StaticClass());if(!ScoreWidget) return;
+    ScoreWidget->WasPaused=IsPaused();SetPause(true);SetMenuInput(true);ScoreWidget->AddToViewport(90);
+    FInputModeGameAndUI Input;Input.SetHideCursorDuringCapture(false);Input.SetWidgetToFocus(ScoreWidget->TakeWidget());SetInputMode(Input);
+}
 void AMVPController::BeginSelectedRun() { if (auto* Game = MVP::Mode(this)) Game->StartSelectedRun(); }
 void AMVPController::ChooseOne() { if (!IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(0); }
 void AMVPController::ChooseTwo() { if (!IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(1); }
@@ -520,7 +625,12 @@ void AMVPController::Click()
 }
 void AMVPController::RestartRun()
 {
-    const auto* Game = MVP::Mode(this);
+    auto* Game = MVP::Mode(this);
+    if(Game && Game->bChoosingCard && !Game->DecisionWidget)
+    {
+        UCodexDeckComponent* Deck=Game->GetArenaPlayer()->Deck;
+        if(Deck->RerollHand() && Game->SelectionWidget) Game->SelectionWidget->InitializeSelectionScreen(Deck->DrawLevelUpHand());return;
+    }
     if (IsSettingsOpen() || !Game || (!Game->bRunEnded && !Game->bChoosingCard)) return;
     SetPause(false);
     UGameplayStatics::OpenLevel(this, FName(*UGameplayStatics::GetCurrentLevelName(this)));
@@ -551,7 +661,7 @@ void AMVPArenaGameMode::InitializeRun()
     AMVPPlayer* Player = GetArenaPlayer();
     if (!Player || bRunInitialized) return;
     for(const auto& Profile:CyberEnemies::Roster())
-        for(const FString& Asset:{FString(TEXT("SK_"))+Profile.ID,FString(TEXT("A_Walk")),FString(TEXT("A_Run"))})
+        for(const FString& Asset:{FString(TEXT("SK_"))+Profile.ID,FString(TEXT("A_Walk")),FString(TEXT("A_Run")),FString(TEXT("A_Attack"))})
         {
             const FString Path=FString(TEXT("/Game/Art/Characters/"))+Profile.ID+TEXT("/")+Asset+TEXT(".")+Asset;
             if(auto* Loaded=LoadObject<UObject>(nullptr,*Path)) TierArtAssets.Add(Loaded);
@@ -573,6 +683,7 @@ void AMVPArenaGameMode::InitializeRun()
     Spawner->bAutoStart = false;
     Spawner->PoolSize = 240;
     Spawner->MaxActiveEnemies = 180;
+    Spawner->ReservedSlots = 1;
     int32 StressCount=0;
     if (FParse::Value(FCommandLine::Get(),TEXT("StressEnemies="),StressCount))
     {
@@ -589,6 +700,7 @@ void AMVPArenaGameMode::InitializeRun()
     Spawner->FinishSpawning(FTransform::Identity);
     Player->Deck->EnemySpawner = Spawner;
     Player->Deck->bOfferOwnedSpellUpgrades = true;
+    Player->Deck->MaximumActiveWeapons = 6;
     for (int32 Index = 0; Index < 256; ++Index) Projectiles.Add(GetWorld()->SpawnActor<AMVPProjectile>());
     for (int32 Index = 0; Index < 400; ++Index) Gems.Add(GetWorld()->SpawnActor<AMVPGem>());
     for (int32 Index = 0; Index < 32; ++Index) ImpactPulses.Add(GetWorld()->SpawnActor<AMVPImpactPulse>());
@@ -613,6 +725,7 @@ void AMVPArenaGameMode::InitializeRun()
         Card->SchoolIcon = LoadObject<UTexture>(nullptr, *FString::Printf(TEXT("/Game/UI/Codex/T_School_%s.T_School_%s"), Schools[int32(School)], Schools[int32(School)]));
         Card->Rarity = School == EMagicSchool::Barrier ? ECardRarity::Epic : School == EMagicSchool::Prism ? ECardRarity::Rare : ECardRarity::Common;
         Card->RarityColor = Card->Rarity == ECardRarity::Epic ? FLinearColor(0.65f,0.35f,0.95f) : Card->Rarity == ECardRarity::Rare ? FLinearColor(0.25f,0.6f,1.f) : FLinearColor(0.68f,0.62f,0.43f);
+        ForbiddenPrograms::Configure(Card);
         Cards.Add(Card);
     };
     AddCard(TEXT("PulseDart"),TEXT("PULSE DART"),TEXT("Rapid neon energy bolts.\nA precise, compact kinetic spark."),EMagicSchool::Pulse,30.f,0.55f,AMVPBoltSpell::StaticClass());
@@ -623,6 +736,14 @@ void AMVPArenaGameMode::InitializeRun()
     AddCard(TEXT("TalismanGuard"),TEXT("TALISMAN GUARD"),TEXT("Gain 3 protective orbiting cards.\nContact kills a foe and consumes a card.\nRepeat drafts add 2; no auto recharge."),EMagicSchool::Barrier,0.f,1.f,ATalismanGuardSpell::StaticClass());
     for(const auto& Profile:NeonArsenal::Profiles()) AddCard(*Profile.ID.ToString(),Profile.Name,Profile.Description,Profile.School,Profile.Damage,Profile.Cooldown,ANeonArsenalSpell::StaticClass());
     ArsenalDirector=GetWorld()->SpawnActor<ANeonArsenalDirector>();
+    DistrictDirector=GetWorld()->SpawnActor<AForbiddenDistrictDirector>();
+    SupportSpirit=GetWorld()->SpawnActor<AForbiddenSpirit>();DecoySpirit=GetWorld()->SpawnActor<AForbiddenSpirit>();
+    for(int32 I=0;I<8;++I)
+    {
+        auto* Spirit=GetWorld()->SpawnActor<AForbiddenSpirit>();
+        const float X=I<4 ? -1900.f : 1700.f;const float Y=-1200.f+(I%4)*620.f;
+        Spirit->SetPedestrianRoute(FVector(X,Y,55),FVector(X+750,Y,55));
+    }
     Player->Deck->UnlockedCards = Cards;
     Player->Deck->EquippedDeck = Cards;
     LoadStartingDeck();
@@ -639,6 +760,9 @@ void AMVPArenaGameMode::Tick(float DeltaSeconds)
     Super::Tick(DeltaSeconds);
     if (!bRunInitialized || bInCodex || bRunEnded || bChoosingCard || (TestingDirector && TestingDirector->IsActive())) return;
     RunSeconds += DeltaSeconds;
+    CapturedRoutineRemaining=FMath::Max(0.f,CapturedRoutineRemaining-DeltaSeconds);
+    if(CapturedRoutineRemaining<=0) CapturedRoutine=INDEX_NONE;
+    if(PendingCorruptRewards>0 && !DecisionWidget) ChooseCorruptPerk();
     if (Spawner) Spawner->EnemiesPerWave = FMath::Min(22, 8 + 2*FMath::FloorToInt(RunSeconds / 30.f));
 }
 
@@ -652,13 +776,14 @@ void AMVPArenaGameMode::EmitProjectile(FVector Origin, FVector Direction, float 
         if (IsValid(Projectile) && !Projectile->bActive)
         {
             Projectile->bBloodSpell=bBlood;
+            Projectile->SetOwner(GetArenaPlayer());
             Projectile->SetSpellStyle(Type==EProjectileType::PhysicalMesh ? ENeonSpellStyle::Kinetic : Style);
             Projectile->SetupProjectileVisuals(Type,SpearMesh,Type==EProjectileType::ContinuousBeam ? LightningFX : bBlood ? BloodFX : Type==EProjectileType::ConcentratedElemental ? FireballFX : nullptr);
             if(Type==EProjectileType::ContinuousBeam) Projectile->FireContinuousBeam(Origin,Origin+Direction.GetSafeNormal()*1200.f,Damage,Effective);
             else Projectile->Launch(Origin,Direction,Damage,Effective,Color);
             return;
         }
-    // Fixed capacity: drop excess shots instead of allocating during combat.
+    ++DroppedProjectiles;
 }
 
 void AMVPArenaGameMode::EnemyDefeated(FVector Position,int32 Reward)
@@ -685,6 +810,8 @@ void AMVPArenaGameMode::AddXP(int32 Amount)
 {
     if(TestingDirector && TestingDirector->IsActive()) return;
     if (bInCodex || bRunEnded || Amount <= 0) return;
+    const float BonusRate=(CorruptPerks.Contains("Collector") ? 0.25f : 0.f)+(ForbiddenSettings::Get(this,"District",0)>0.5f ? 0.2f : 0.f);
+    if(BonusRate>0) {EssenceRemainder+=Amount*BonusRate;const int32 Bonus=FMath::FloorToInt(EssenceRemainder);EssenceRemainder-=Bonus;Amount+=Bonus;}
     XP += Amount;
     while (XP >= GetXPRequirement())
     {
@@ -704,7 +831,7 @@ void AMVPArenaGameMode::AwardChallengeReward(int32 BonusEssence)
 
 void AMVPArenaGameMode::OpenNextOffer()
 {
-    if (bChoosingCard || bRunEnded || PendingLevels <= 0) return;
+    if (bChoosingCard || bRunEnded || DecisionWidget || PendingLevels <= 0) return;
     AMVPPlayer* Player = GetArenaPlayer();
     if (!Player) return;
     Player->Deck->DrawLevelUpHand(); // An exhausted library offers recovery instead of stalling progression.
@@ -733,10 +860,26 @@ bool AMVPArenaGameMode::ChooseCard(int32 Index)
 {
     if(const auto* PC=Cast<AMVPController>(UGameplayStatics::GetPlayerController(this,0)); PC && PC->IsSettingsOpen()) return false;
     AMVPPlayer* Player = GetArenaPlayer();
-    if (!bChoosingCard || bRunEnded || !Player) return false;
+    if (!bChoosingCard || bRunEnded || DecisionWidget || !Player) return false;
     if (Player->Deck->CurrentHand.IsEmpty()) { if (Index != 0) return false; }
     else
     {
+        if(Player->Deck->CurrentHand.IsValidIndex(Index))
+        {
+            UCardDataAsset* Selected=Player->Deck->CurrentHand[Index];
+            if(!Player->Deck->FindOwnedSpell(Selected->CardID) && Player->Deck->MaximumActiveWeapons>0 && Player->Deck->ActiveWeapons.Num()>=Player->Deck->MaximumActiveWeapons)
+            {
+                TArray<FName> IDs;TArray<FString> Choices;
+                for(ASpellBase* Spell:Player->Deck->ActiveWeapons) if(Spell && Spell->CardDefinition) {IDs.Add(Spell->CardDefinition->CardID);Choices.Add(TEXT("REPLACE ")+Spell->CardDefinition->Name.ToString());}
+                Choices.Add(TEXT("KEEP CURRENT LOADOUT / RETURN TO DRAFT"));
+                ShowDecision(TEXT("SIX ACTIVE PROGRAMS / CHOOSE A REPLACEMENT"),Choices,[this,IDs,Selected](int32 Pick)
+                {
+                    if(IDs.IsValidIndex(Pick) && GetArenaPlayer()->Deck->ReplaceSelectedSpell(Selected,IDs[Pick]))
+                    {if(IDs[Pick]=="TalismanGuard") GetArenaPlayer()->ClearTalismans();ChooseCard(0);}
+                });
+                return false;
+            }
+        }
         if (!Player->Deck->CurrentHand.IsValidIndex(Index)
             || !Player->Deck->AddSelectedCardSpell(Player->Deck->CurrentHand[Index])) return false;
     }
@@ -755,10 +898,27 @@ bool AMVPArenaGameMode::ChooseCard(int32 Index)
     return true;
 }
 
-void AMVPArenaGameMode::FinishRun()
+void AMVPArenaGameMode::FinishRun(bool Victory)
 {
     if (bRunEnded) return;
+    if(DecisionWidget) {DecisionWidget->RemoveFromParent();DecisionWidget=nullptr;}
+    bVictory=Victory;
+    RunRecord.ID=RunRecord.ID.IsEmpty() ? FGuid::NewGuid().ToString(EGuidFormats::Digits) : RunRecord.ID;
+    RunRecord.DateUTC=FDateTime::UtcNow().ToIso8601();RunRecord.Victory=Victory;
+    RunRecord.Seconds=RunSeconds;RunRecord.Kills=Kills;RunRecord.Level=Level;RunRecord.Contracts=CompletedContracts;
+    RunRecord.DeathCause=Victory ? TEXT("Broadcast Sovereign defeated") : LastDamageCause;
+    if(auto* P=GetArenaPlayer()) for(ASpellBase* Spell:P->Deck->ActiveWeapons) if(Spell && Spell->CardDefinition)
+    {
+        RunRecord.Programs.AddUnique(Spell->CardDefinition->CardID);
+        if(Spell->Modifiers.Evolution>0) RunRecord.Evolutions.AddUnique(*FString::Printf(TEXT("%s.%d"),*Spell->CardDefinition->CardID.ToString(),Spell->Modifiers.Evolution));
+    }
+    if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>())
+    {
+        Profile->RecordRun(RunRecord,(TestingDirector && TestingDirector->IsActive()) || FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) || FParse::Param(FCommandLine::Get(),TEXT("ForbiddenQA")));
+        if(Profile->Data && !Profile->Data->History.IsEmpty() && Profile->Data->History[0].ID==RunRecord.ID) RunRecord=Profile->Data->History[0];
+    }
     bRunEnded = true;
+    if(auto* Scores=GetGameInstance()->GetSubsystem<UForbiddenScoreService>()) Scores->FinishRun(RunRecord);
     if(auto* Player=GetArenaPlayer();Player && Player->Challenges) Player->Challenges->AbortContract();
     if (SelectionWidget) { SelectionWidget->RemoveFromParent(); SelectionWidget = nullptr; }
     for (ASkeletonMinion* Minion : Minions) if (IsValid(Minion)) Minion->Deactivate();

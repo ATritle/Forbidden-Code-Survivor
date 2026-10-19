@@ -16,7 +16,7 @@ UNecromancyVisualComponent::UNecromancyVisualComponent()
 bool UNecromancyVisualComponent::LoadCharacter(const FString& ID, float HeightCentimeters)
 {
     bArtReady=false;
-    bHoverRider=ID==TEXT("NeonExorcist");RiderClips.Reset();RiderState=NAME_None;RiderTimer=0.f;
+    bHoverRider=ID==TEXT("NeonExorcist");bBlendedRider=false;RiderClips.Reset();RiderState=NAME_None;RiderTimer=0.f;
     SetVisibility(false);
     const FString Folder = TEXT("/Game/Art/Characters/") + ID + TEXT("/");
     const FString MeshPackage = Folder + TEXT("SK_") + ID;
@@ -64,6 +64,11 @@ bool UNecromancyVisualComponent::LoadCharacter(const FString& ID, float HeightCe
     SetAnimationMode(EAnimationMode::AnimationSingleNode);
     if(bHoverRider) SetRiderState(TEXT("HoverIdle"));
     else UpdateLocomotion(FVector::ZeroVector, 0.f);
+    if(bHoverRider)
+    {
+        if(UClass* RiderClass=LoadClass<UAnimInstance>(nullptr,TEXT("/Game/Art/Characters/NeonExorcist/ABP_NeonRider.ABP_NeonRider_C")))
+        {bBlendedRider=true;SetAnimationMode(EAnimationMode::AnimationBlueprint);SetAnimInstanceClass(RiderClass);}
+    }
     return true;
 }
 

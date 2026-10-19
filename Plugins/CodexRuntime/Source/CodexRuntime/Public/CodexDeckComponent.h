@@ -26,6 +26,16 @@ public:
     /** Owned spells offer missing structural mutations, never flat stat upgrades. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Codex")
     bool bOfferOwnedSpellUpgrades = false;
+    /** Zero means unlimited for generic integration and the dedicated test range. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Codex") int32 MaximumActiveWeapons = 0;
+    float GlobalCooldownScale = 1.f;
+    UPROPERTY(BlueprintReadOnly, Category="Codex") int32 RerollsRemaining = 2;
+    UPROPERTY(BlueprintReadOnly, Category="Codex") int32 BanishesRemaining = 1;
+    UPROPERTY(BlueprintReadOnly, Category="Codex") TSet<FName> BanishedCards;
+    UFUNCTION(BlueprintCallable, Category="Codex") bool RerollHand();
+    UFUNCTION(BlueprintCallable, Category="Codex") bool BanishChoice(int32 Index);
+    UFUNCTION(BlueprintCallable, Category="Codex") bool SetOfferedEvolution(FName CardID, bool BranchB);
+    UFUNCTION(BlueprintCallable, Category="Codex") bool ReplaceSelectedSpell(UCardDataAsset* Card, FName ReplacedID);
     UFUNCTION(BlueprintPure, Category="Codex")
     ASpellBase* FindOwnedSpell(FName CardID) const;
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Codex")
@@ -59,4 +69,5 @@ private:
     bool bSelecting = false;
     UPROPERTY(Transient)
     TMap<FName, FGameplayTag> OfferedMutations;
+    FName PendingReplacement;
 };

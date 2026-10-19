@@ -1,0 +1,126 @@
+{
+  "approvedCredits": 200,
+  "consumedCredits": 200,
+  "tasks": [
+    {
+      "id": "WireThrall",
+      "modelTask": "01a14d46-9dcf-7644-8477-d5cb35ea03f4",
+      "rigTask": "01a14d48-9410-72fa-b042-cfe7cda9fb3e",
+      "status": "SUCCEEDED",
+      "modelCredits": 15,
+      "rigCredits": 5,
+      "meshModel": "meshy-t2",
+      "textureResolution": "2k",
+      "format": "fbx",
+      "targetTriangles": 6000
+    },
+    {
+      "id": "RelayRunner",
+      "modelTask": "01a14d46-a8de-74a9-83df-852f4fd4b85d",
+      "rigTask": "01a14d48-a87b-7111-903a-360872365050",
+      "status": "SUCCEEDED",
+      "modelCredits": 15,
+      "rigCredits": 5,
+      "meshModel": "meshy-t2",
+      "textureResolution": "2k",
+      "format": "fbx",
+      "targetTriangles": 6000
+    },
+    {
+      "id": "ChromeVagrant",
+      "modelTask": "01a14d46-b670-729a-85f9-ad7bc149308e",
+      "rigTask": "01a14d48-bd4a-769f-9c07-232a328b6054",
+      "status": "SUCCEEDED",
+      "modelCredits": 15,
+      "rigCredits": 5,
+      "meshModel": "meshy-t2",
+      "textureResolution": "2k",
+      "format": "fbx",
+      "targetTriangles": 6000
+    },
+    {
+      "id": "GlitchAcolyte",
+      "modelTask": "01a14d46-c44f-77a3-a5a4-88abff0366b3",
+      "rigTask": "01a14d48-d262-7491-aad7-a9d48ab0ba8b",
+      "status": "SUCCEEDED",
+      "modelCredits": 15,
+      "rigCredits": 5,
+      "meshModel": "meshy-t2",
+      "textureResolution": "2k",
+      "format": "fbx",
+      "targetTriangles": 6000
+    },
+    {
+      "id": "RiotBulwark",
+      "modelTask": "01a14d46-d42e-778e-b8b8-14c1f604214a",
+      "rigTask": "01a14d4b-bd79-77d1-bb90-f7dd90880a58",
+      "status": "SUCCEEDED",
+      "modelCredits": 15,
+      "rigCredits": 5,
+      "meshModel": "meshy-t2",
+      "textureResolution": "2k",
+      "format": "fbx",
+      "targetTriangles": 6000
+    },
+    {
+      "id": "CoilHarrier",
+      "modelTask": "01a14d46-df16-707c-ab5b-8b9b7e139d8f",
+      "rigTask": "01a14d48-ea52-719a-8662-b8082ccf5a49",
+      "status": "SUCCEEDED",
+      "modelCredits": 15,
+      "rigCredits": 5,
+      "meshModel": "meshy-t2",
+      "textureResolution": "2k",
+      "format": "fbx",
+      "targetTriangles": 6000
+    },
+    {
+      "id": "NullBishop",
+      "modelTask": "01a14d46-ea2f-712b-89c4-0a1ada1634ce",
+      "rigTask": "01a14d48-fee8-7033-9e62-63b47808737a",
+      "status": "SUCCEEDED",
+      "modelCredits": 15,
+      "rigCredits": 5,
+      "meshModel": "meshy-t2",
+      "textureResolution": "2k",
+      "format": "fbx",
+      "targetTriangles": 6000
+    },
+    {
+      "id": "RazorSeraph",
+      "modelTask": "01a14d46-fa68-76f6-8112-7afdd4941f3a",
+      "rigTask": "01a14d49-15e3-77e8-b1fc-d7db6da33896",
+      "status": "SUCCEEDED",
+      "modelCredits": 15,
+      "rigCredits": 5,
+      "meshModel": "meshy-t2",
+      "textureResolution": "2k",
+      "format": "fbx",
+      "targetTriangles": 6000
+    },
+    {
+      "id": "FurnaceOni",
+      "modelTask": "01a14d47-0a4b-75c1-935f-e9699fed1152",
+      "rigTask": "01a14d49-2c77-747c-8fee-bcc14e1adbbf",
+      "status": "SUCCEEDED",
+      "modelCredits": 15,
+      "rigCredits": 5,
+      "meshModel": "meshy-t2",
+      "textureResolution": "2k",
+      "format": "fbx",
+      "targetTriangles": 6000
+    },
+    {
+      "id": "BroadcastSovereign",
+      "modelTask": "01a14d47-18e1-70fd-b1a8-9f1a071f8b41",
+      "rigTask": "01a14d4b-d46b-73f6-bf48-68263d4510e0",
+      "status": "SUCCEEDED",
+      "modelCredits": 15,
+      "rigCredits": 5,
+      "meshModel": "meshy-t2",
+      "textureResolution": "2k",
+      "format": "fbx",
+      "targetTriangles": 12000
+    }
+  ]
+}

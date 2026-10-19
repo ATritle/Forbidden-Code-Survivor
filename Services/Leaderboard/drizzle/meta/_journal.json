@@ -15,6 +15,13 @@
       "when": 1792373152088,
       "tag": "0001_normal_tag",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1792380123964,
+      "tag": "0002_goofy_captain_stacy",
+      "breakpoints": true
     }
   ]
 }

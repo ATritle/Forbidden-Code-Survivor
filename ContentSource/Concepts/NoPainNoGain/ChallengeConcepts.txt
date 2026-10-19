@@ -1,0 +1,123 @@
+NO PAIN - NO GAIN: NEON EXORCIST CHALLENGE STATION
+Concept proposal v1. Balance values are starting points for playtesting.
+These are design options, not changes to the current playable build.
+
+PLAYER FLOW
+Approach the lit street shrine: [E] NO PAIN - NO GAIN.
+Open a glass-and-neon contract panel with the challenge's name, reward,
+explicit penalty, duration, and an animated preview of its danger.
+Buttons: ACCEPT CHALLENGE / DECLINE. Opening the panel pauses gameplay;
+closing it restores the previous pause/input state. No damage can occur
+behind the decision panel. Declining has no cost.
+Only one contract can be active. The station shows ACTIVE / COMPLETE / FAILED
+and cannot be used repeatedly to stack bonuses. A small HUD contract tracker
+shows the remaining duration and the condition that triggers the penalty.
+
+1. OVERLOAD ORB (the player's proposed mechanic)
+Reward: triple outgoing spell damage for up to 45 seconds.
+Risk: a visibly tethered neon orb circles the player. An active enemy touching
+the orb ruptures it, instantly dealing 50% of the player's MAXIMUM health to
+the player and immediately removing the damage bonus. The rupture can kill
+the player if their remaining health is 50% or less.
+Readability: bright pink core, cyan vulnerability ring, orbit-path preview.
+Rules: one rupture only, 1-second arming grace, no damage to the player from
+the orb simply touching walls. The orb must remain within camera framing.
+The contract penalty bypasses ordinary contact invulnerability. Talisman
+instant kills do not prevent an orb contact already confirmed that frame.
+Starting orbit radius: 180 cm; trial radius and enemy contacts in the range.
+
+2. UNSTABLE ECHO
+Reward: every third successful spell hit creates an additional energy blast
+dealing twice that hit's damage to enemies within 180 cm.
+Risk: the blast charges visibly for 1 second, then also deals 20% max HP to
+the player if they are inside its marked circle. Active for 40 seconds.
+Readability: cyan hit flash followed by an amber-to-magenta expanding danger
+ring. It rewards firing while moving rather than standing in a dense pack.
+Rules: at most one echo can be created every 0.5 seconds; echo damage cannot
+create more echoes. Show actual collision radius before detonation.
+
+3. HOSTILE BROADCAST
+Reward: double essence earned from enemies defeated during a 60-second trial.
+Risk: the player's location is broadcast to corporate hunters. Two additional
+elite hunters arrive every 15 seconds, with clear edge-of-screen warnings.
+Readability: orange holographic bounty marker above the hoverboard rider,
+cyan essence trails, visible countdown to each reinforcement.
+Rules: respect the existing active-enemy cap and pool; reserve/reassign spawn
+slots for the hunters. Do not silently expand the actor pool or stop combat.
+
+4. DEADMAN BATTERY
+Reward: double outgoing spell damage for 30 seconds.
+Risk: the contract continuously drains 2% max HP per second. Each confirmed
+enemy kill restores 4% max HP. Health drain can kill the player.
+Readability: yellow energy meter visibly drains; each kill sends a green-cyan
+charge back to the player. This favors a strong crowd-clearing loadout and
+becomes dangerous when fighting isolated high-health enemies.
+Rules: healing triggers once per real enemy death, never per hit, illusion,
+summon, respawned training dummy, or secondary damage event.
+
+5. GLASS PROTOCOL
+Reward: projectiles gain two extra enemy penetrations and all spell damage
+increases by 75% for 45 seconds.
+Risk: all damage the player receives is doubled for the same duration.
+Readability: a thin fractured holographic shell surrounds the player; hits
+send harmless visual cracks across it. Clear fixed reward and fixed penalty
+make this a straightforward first challenge for players to understand.
+Rules: damage multipliers are applied once through the central damage path.
+The two extra penetrations only affect spells that support piercing.
+
+6. JACKPOT COURIER
+Reward: collect an unstable data cache and return to this station within
+35 seconds to earn one bonus three-card upgrade selection.
+Risk: carrying the cache broadcasts the player and increases pursuing enemy
+movement speed by 25%. Failing to deliver triggers 35% max-HP backlash.
+Readability: amber route markers, a hovering pink cache behind the player,
+cyan station beacon, clear timer and delivery radius.
+Rules: select a reachable cache position using navigation distance, not a
+random point through a wall. The movement modifier is removed on every
+success, failure, death, or map-exit path. The reward obeys existing deck
+eligibility; it does not invent permanent card unlocks or alter saved loadouts.
+
+7. LOCKDOWN DUEL
+Reward: defeat a marked elite inside a 900 cm arena ring within 40 seconds
+to earn a guaranteed bonus upgrade draft and an essence cache.
+Risk: stepping outside the clearly marked ring for more than 2 seconds fails
+the contract and causes 35% max-HP backlash. Normal enemies still approach.
+Readability: cyan ring turns amber while the escape grace timer runs; the
+elite has a separate magenta contract marker and health bar.
+Rules: choose a navigable, unobstructed ring site. No invisible blocking wall;
+the player can deliberately escape and accept the cost. Bosses are excluded
+from the initial version. Apply reward or failure exactly once.
+
+RECOMMENDED FIRST PLAYTEST
+Overload Orb: vulnerable orbit and very high damage reward.
+Unstable Echo: movement and spatial awareness.
+Hostile Broadcast: escalating horde pressure and faster progression.
+Start with one offered contract per station; randomized three-contract offers
+can follow once each individual contract is readable and balanced.
+
+IMPLEMENTATION OUTLINE FOR A LATER APPROVED GAMEPLAY PASS
+Use an AChallengeStation interactable, data assets for contract definitions,
+and a player-owned UChallengeComponent. States: Available, Offered, Active,
+Succeeded, Failed. Apply temporary modifiers through removable handles rather
+than permanently changing saved card data. Centralize damage, kill and timer
+hooks; clear modifiers and spawned contract actors on every terminal state.
+Store a run identifier and activation identifier so repeated overlap/click
+callbacks cannot multiply effects, award duplicate drafts or duplicate damage.
+Use game time for trial countdowns so settings/draft pauses stop the challenge.
+Training targets cannot award contract kills or permanent rewards.
+Damage and danger telegraphs stay readable even at zero impact intensity.
+
+SIGN ART / MESHY HANDOFF
+Use the isolated three-quarter prop concept image as the model reference.
+Generate the solid housing, supports, weighted base, protective ring and cables.
+Rebuild the exact NO PAIN - NO GAIN lettering as separate emissive geometry
+or a clean masked emissive sign texture in UE; do not depend on generated
+geometry preserving letter shapes perfectly. Separate material slots:
+dark housing, pink tubes, amber tubes, cyan trim, energy core, touchpad.
+Animate emissive intensity in material instances: slow soft breathing, a
+short confirmation sweep on accept, and an amber failure flicker. Use a few
+controlled local lights for nearby illumination; emissive alone is not a
+guaranteed stable light source for every Lumen scene and camera distance.
+Keep collision simple on the base/housing. Lettering, cables and the neon
+core are visual-only. Provide a clear walk-up area and interaction trigger.
+No Meshy job has been started or charged for this concept pass.

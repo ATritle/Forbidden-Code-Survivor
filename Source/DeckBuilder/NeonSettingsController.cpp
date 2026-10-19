@@ -11,6 +11,8 @@
 
 void AMVPController::ToggleSettings()
 {
+    if(ScoreWidget) return;
+    if(auto* G=Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this));G && G->DecisionWidget) return;
     if(IsChallengeOpen()) {if(auto* P=Cast<AMVPPlayer>(GetPawn())) P->Challenges->DeclineOffer();return;}
     if(TestingWidget) {CloseTestingConfiguration();return;}
     if(IsSettingsOpen()) {CloseSettings();return;}

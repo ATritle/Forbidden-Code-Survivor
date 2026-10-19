@@ -48,9 +48,16 @@ private:
     UFUNCTION() void ClickA();
     UFUNCTION() void ClickB();
     UFUNCTION() void ClickC();
+    UFUNCTION() void Reroll();
+    UFUNCTION() void Banish();
+    UFUNCTION() void BranchA();
+    UFUNCTION() void BranchB();
+    UFUNCTION() void BranchC();
+    void SwitchBranch(int32 Index);
     UPROPERTY(Transient) TArray<TObjectPtr<UCardDataAsset>> Choices;
     bool bConsumed = false;
     bool bNativeLayout = false;
     double RevealStartTime = 0.0;
+    int32 FocusedChoice=0;
     void BuildCardFace(UButton* Button, const FCardDisplayData& Data, int32 Index);
 };

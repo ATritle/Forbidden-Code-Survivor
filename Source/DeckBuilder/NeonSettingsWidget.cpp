@@ -1,4 +1,6 @@
 #include "NeonSettingsWidget.h"
+#include "ForbiddenSettingsControls.h"
+#include "ForbiddenUI.h"
 #include "ForbiddenCodeBranding.h"
 #include "NeonAudioDirector.h"
 #include "NeonSpellImpactDirector.h"
@@ -34,7 +36,8 @@ void UNeonSettingsWidget::NativeOnInitialized()
     auto* Center=Root->AddChildToOverlay(Size);Center->SetHorizontalAlignment(HAlign_Center);Center->SetVerticalAlignment(VAlign_Center);
     auto* Rim=WidgetTree->ConstructWidget<UBorder>();Rim->SetBrushColor(FLinearColor(0.02f,0.8f,1.f));Rim->SetPadding(FMargin(2));Size->SetContent(Rim);
     auto* Panel=WidgetTree->ConstructWidget<UBorder>();Panel->SetBrushColor(FLinearColor(0.012f,0.022f,0.04f));Panel->SetPadding(FMargin(36));Rim->SetContent(Panel);
-    auto* Scroll=WidgetTree->ConstructWidget<UScrollBox>();Panel->SetContent(Scroll);
+    ForbiddenUI::Glass(Panel,FVector2D(640,790),FLinearColor(0.05f,0.8f,1));
+    auto* Scroll=WidgetTree->ConstructWidget<UScrollBox>();Scroll->SetScrollWhenFocusChanges(EScrollWhenFocusChanges::InstantScroll);Panel->SetContent(Scroll);
     auto* Column=WidgetTree->ConstructWidget<UVerticalBox>();Scroll->AddChild(Column);
     auto Text=[&](const TCHAR* Caption,int32 PointSize,FLinearColor Color)
     {
@@ -64,6 +67,7 @@ void UNeonSettingsWidget::NativeOnInitialized()
     ImpactSlider->SetValue(Game->SpellImpactDirector ? Game->SpellImpactDirector->GetImpactIntensity() : 1.f);
     ImpactLabel->SetText(FText::FromString(FString::Printf(TEXT("IMPACT PARTICLES   %d%%"),FMath::RoundToInt(ImpactSlider->GetValue()*100))));
     Text(TEXT("0–150% spark density. Hit markers and damage feedback remain visible."),11,Muted);
+    ForbiddenSettings::AddControls(this,Column);
     auto Button=[&](FName Name,const TCHAR* Caption)
     {
         auto* Control=WidgetTree->ConstructWidget<UButton>(UButton::StaticClass(),Name);
@@ -114,6 +118,7 @@ void UNeonSettingsWidget::Close()
 }
 FReply UNeonSettingsWidget::NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
 {
+    if(!Event.IsRepeat() && ForbiddenSettings::HandleKey(this,Event.GetKey())) return FReply::Handled();
     if(Event.GetKey()==EKeys::Escape) {if(!Event.IsRepeat()) Close();return FReply::Handled();}
     return Super::NativeOnKeyDown(Geometry,Event);
 }

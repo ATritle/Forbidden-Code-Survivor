@@ -1,0 +1,756 @@
+{
+  "target": "Forbidden Code: Survivor Windows 0.3.0 - Forbidden Routines",
+  "baseline": {
+    "path": "C:\\dev\\DeckBuilder\\Artifacts\\Baselines\\Windows-PreOverhaul-20261019T021817Z",
+    "result": "BASELINE_RESTORE_VERIFIED",
+    "snapshot_id": "Windows-PreOverhaul-20261019T021817Z",
+    "file_count": 2049,
+    "source_bytes": 4895309267,
+    "archive_bytes": 4015522901,
+    "archive_sha256": "f237b890ddaed08b508397b908774e273922549f4a5bacd458b469386fb775ae",
+    "manifest_sha256": "0c4d5ff77f0504a84c22322ee8a63593bdfd1c7eb7fd80e19c93ab9989bbce94",
+    "restored_project": "C:\\dev\\DeckBuilder\\Artifacts\\Baselines\\Windows-PreOverhaul-20261019T021817Z\\Project",
+    "verified_utc": "2026-10-19T02:20:45.454772+00:00"
+  },
+  "scope": "Every suggestion in the full Windows review, accepted by the user; browser gameplay remains its own edition. All items require implementation and verification, not documentation-only completion.",
+  "meshy": {
+    "approved_credits": 80,
+    "spent_credits": 80,
+    "batch": "10 enemy combat animations (30), 2 textured T2 street modules (30), 1 textured T2 rigged spirit (20); no paid retries/extras"
+  },
+  "features": [
+    {
+      "id": "S01",
+      "feature": "Verified pre-overhaul archive, extracted copy, source/assets/package/installer/saves, checksum receipt",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/baseline.json"
+      ],
+      "implementation": [
+        "Docs/WindowsOverhaul/RESTORE.txt"
+      ]
+    },
+    {
+      "id": "S02",
+      "feature": "Original build launcher, safe restore into empty folder, restore documentation",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/baseline.json"
+      ],
+      "implementation": [
+        "Docs/WindowsOverhaul/RESTORE.txt"
+      ]
+    },
+    {
+      "id": "R01",
+      "feature": "Boss death victory, defeat/result screens, replay/rewards and persistence",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenRun.cpp"
+      ]
+    },
+    {
+      "id": "R02",
+      "feature": "Two optional relay hacks trigger early boss; guaranteed six-minute arrival with reserved pool admission",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/systems.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenRun.cpp"
+      ]
+    },
+    {
+      "id": "M01",
+      "feature": "Lower camera-facing structures, enlarged cutaways covering combat approach, two-route elevated play spaces",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenDistrictDirector.cpp"
+      ]
+    },
+    {
+      "id": "M02",
+      "feature": "Shopping storefront hacks, night-market chain lanes, shrine ward defense, subway telegraphed hazards",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/full-run.json",
+        "Docs/WindowsOverhaul/Validation/regressions.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenDistrictDirector.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "M03",
+      "feature": "Meaningful exploration: spirit caches, contracts, route guidance and rewards",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/full-run.json",
+        "Docs/WindowsOverhaul/Validation/regressions.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenDistrictDirector.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "M04",
+      "feature": "Predictable small-prop collision and navigation across all enemy tiers",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenDistrictDirector.cpp"
+      ]
+    },
+    {
+      "id": "A01",
+      "feature": "Smaller gutter-based puddles, dry aggregate and restrained wet-pavement reflections",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/full-run.json",
+        "Docs/WindowsOverhaul/Validation/regressions.json"
+      ],
+      "implementation": [
+        "Scripts/import_overhaul_art.py"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "A02",
+      "feature": "Meshy shopfront/service modules: recessed doors, shutters, vents and damaged infrastructure",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/assets.json"
+      ],
+      "implementation": [
+        "Scripts/import_overhaul_art.py"
+      ]
+    },
+    {
+      "id": "A03",
+      "feature": "Animated digital-spirit pedestrians replacing primitive ghost bodies",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/assets.json"
+      ],
+      "implementation": [
+        "Scripts/import_overhaul_art.py"
+      ]
+    },
+    {
+      "id": "A04",
+      "feature": "Enemy silhouette/emissive consistency, asset scale/pivots/PBR/LOD audit",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/assets.json"
+      ],
+      "implementation": [
+        "Scripts/import_overhaul_art.py"
+      ]
+    },
+    {
+      "id": "P01",
+      "feature": "Cooldown hover boost with directional feedback and solid-world collision",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/systems.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenRun.cpp"
+      ]
+    },
+    {
+      "id": "P02",
+      "feature": "Height-gated landing stagger or next-attack charge with anti-farming cooldown",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/systems.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenRun.cpp"
+      ]
+    },
+    {
+      "id": "P03",
+      "feature": "Blended Animation Blueprint for ride/lean/cast/hit/fall/land and imported enemy combat clips",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenRun.cpp"
+      ]
+    },
+    {
+      "id": "P04",
+      "feature": "Saved nearest/strongest/marked targeting preferences and visible marking controls",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/systems.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenRun.cpp"
+      ]
+    },
+    {
+      "id": "D01",
+      "feature": "Eight-card curated draft pool; two starters; six active slots and replacement UI",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Plugins/CodexRuntime/Source/CodexRuntime/Private/CodexDeckComponent.cpp"
+      ]
+    },
+    {
+      "id": "D02",
+      "feature": "Limited rerolls, banishes, saved deck presets and profile migration",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/systems.json"
+      ],
+      "implementation": [
+        "Plugins/CodexRuntime/Source/CodexRuntime/Private/CodexDeckComponent.cpp"
+      ]
+    },
+    {
+      "id": "D03",
+      "feature": "Consistent finite program ranks, two exclusive structural evolutions per spell, meaningful caps",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Plugins/CodexRuntime/Source/CodexRuntime/Private/CodexDeckComponent.cpp"
+      ]
+    },
+    {
+      "id": "D04",
+      "feature": "Accurate before/after card stat previews, no ineffective offers; rarity independent of school",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Plugins/CodexRuntime/Source/CodexRuntime/Private/CodexDeckComponent.cpp"
+      ]
+    },
+    {
+      "id": "C01",
+      "feature": "Pulse Dart precision weak-point/repeated-hit branch and balanced radial branch",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C02",
+      "feature": "Prism Burst compact pink collision explosion identity/evolutions",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C03",
+      "feature": "Halo Nova expanding/returning defensive ring evolution",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C04",
+      "feature": "Kinetic Cards lodged marks and triggered detonations or ricocheting fan",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C05",
+      "feature": "Photon Lance line/elite weak-point specializations",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C06",
+      "feature": "Talismans normal executes, multi-charge elite execute, boss percentage damage/stagger; no execute Echo exploit",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C07",
+      "feature": "Arc Relay long-range network extensions and spacing rewards",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C08",
+      "feature": "Ghost Link slowing/extraction/decoy or captured-ghost support branches",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C09",
+      "feature": "Neon Cataclysm destination/charge telegraph and bounded area evolution",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C10",
+      "feature": "Orbit Razor meaningful return-hit positioning and evolutions",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C11",
+      "feature": "Ricochet Seal world-wall bounce evolution",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C12",
+      "feature": "Strobe Rail line alignment/target priority and corridor specialization",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C13",
+      "feature": "Echo Petals curved coverage/persistent orbit differentiation",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C14",
+      "feature": "Event Horizon controlled pull/slow or collapsing implosion",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C15",
+      "feature": "Shatter Sigil directional pack clearing, explicit fragment exclusion and mutation inheritance",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "C16",
+      "feature": "Satellite Choir marked/low-health target selection, finishing role",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenPrograms.cpp"
+      ]
+    },
+    {
+      "id": "E01",
+      "feature": "Wire Thrall baseline swarm; Relay Runner flank/intercept",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/full-run.json",
+        "Docs/WindowsOverhaul/Validation/regressions.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenEnemyBrain.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "E02",
+      "feature": "Chrome Vagrant front armor/rear weakness; Glitch Acolyte disruption zone",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/functional.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenEnemyBrain.cpp"
+      ]
+    },
+    {
+      "id": "E03",
+      "feature": "Riot Bulwark directional ally shield; Coil Harrier telegraphed charge/recovery",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/full-run.json",
+        "Docs/WindowsOverhaul/Validation/regressions.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenEnemyBrain.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "E04",
+      "feature": "Null Bishop support channel; Razor Seraph crossing dash/recovery; Furnace Oni area denial",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/full-run.json",
+        "Docs/WindowsOverhaul/Validation/regressions.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenEnemyBrain.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "E05",
+      "feature": "Sovereign screen shield/node phase, sweeping broadcast lanes, destabilized spirit phase and district reaction",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/systems.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenEnemyBrain.cpp"
+      ]
+    },
+    {
+      "id": "E06",
+      "feature": "Readable wind-up/recovery shapes, no complete build-invalidating immunities",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/full-run.json",
+        "Docs/WindowsOverhaul/Validation/regressions.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenEnemyBrain.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "N01",
+      "feature": "Overload readable core danger and collision; Unstable Echo safe non-execute bounded damage",
+      "status": "verified",
+      "evidence": [
+        "Saved/Review/OverhaulRegressions2.log",
+        "Saved/Review/HealthAlarmFinal.log",
+        "Saved/Review/TestingAreaFinal.log"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/NeonChallengeTrials.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "N02",
+      "feature": "Broadcast hunter difficulty scales with run time and build; warnings",
+      "status": "verified",
+      "evidence": [
+        "Saved/Review/OverhaulRegressions2.log",
+        "Saved/Review/HealthAlarmFinal.log",
+        "Saved/Review/TestingAreaFinal.log"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/NeonChallengeTrials.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "N03",
+      "feature": "Battery lower heal and per-second cap; Glass damage/piercing warning fidelity",
+      "status": "verified",
+      "evidence": [
+        "Saved/Review/OverhaulRegressions2.log",
+        "Saved/Review/HealthAlarmFinal.log",
+        "Saved/Review/TestingAreaFinal.log"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/NeonChallengeTrials.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "N04",
+      "feature": "Courier route guidance/alternate paths; flat viable Duel ring and nontrivial elite",
+      "status": "verified",
+      "evidence": [
+        "Saved/Review/OverhaulRegressions2.log",
+        "Saved/Review/HealthAlarmFinal.log",
+        "Saved/Review/TestingAreaFinal.log"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/NeonChallengeTrials.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "N05",
+      "feature": "Successful contracts award selectable run-long corrupted modifiers with drawbacks",
+      "status": "verified",
+      "evidence": [
+        "Saved/Review/OverhaulRegressions2.log",
+        "Saved/Review/HealthAlarmFinal.log",
+        "Saved/Review/TestingAreaFinal.log"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/NeonChallengeTrials.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "G01",
+      "feature": "Capture defeated enemy code into temporary support routines/spell modifiers",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/systems.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenRunUI.cpp"
+      ]
+    },
+    {
+      "id": "G02",
+      "feature": "Hideout recovered-code currency, horizontal sidegrade/recipe unlocks",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/full-run.json",
+        "Docs/WindowsOverhaul/Validation/regressions.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenRunUI.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "G03",
+      "feature": "Enemy research/capture rewards, alternate board protocols and district modifiers",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/full-run.json",
+        "Docs/WindowsOverhaul/Validation/regressions.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenRunUI.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "G04",
+      "feature": "Run history: build, real damage contribution, contracts, defeat cause and completion",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/systems.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenRunUI.cpp"
+      ]
+    },
+    {
+      "id": "U01",
+      "feature": "Compact six-slot icon HUD, cooldowns and inspectable mutation summaries",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/full-run.json",
+        "Docs/WindowsOverhaul/Validation/regressions.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenSettingsControls.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "U02",
+      "feature": "Separate flash/bloom/shake/numbers settings, reduced-flash options; danger cues remain readable",
+      "status": "verified",
+      "evidence": [
+        "Saved/Review/OverhaulRegressions2.log",
+        "Saved/Review/HealthAlarmFinal.log",
+        "Saved/Review/TestingAreaFinal.log"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenSettingsControls.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "U03",
+      "feature": "Priority audio warnings for charge/shield/contracts/boss phases above routine attacks",
+      "status": "verified",
+      "evidence": [
+        "Saved/Review/OverhaulRegressions2.log",
+        "Saved/Review/HealthAlarmFinal.log",
+        "Saved/Review/TestingAreaFinal.log"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenSettingsControls.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "U04",
+      "feature": "Graphics presets, input rebinding, controller gameplay/menu navigation",
+      "status": "verified",
+      "evidence": [
+        "Saved/Review/OverhaulRegressions2.log",
+        "Saved/Review/HealthAlarmFinal.log",
+        "Saved/Review/TestingAreaFinal.log"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ForbiddenSettingsControls.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "T01",
+      "feature": "Separate gameplay-shot/cosmetic telemetry, stress maximal evolved builds and pool saturation",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/performance.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ExplosionBenchmark.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "T02",
+      "feature": "Evaluate animation budget allocation and significance; retain near-player animation fidelity",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/performance.json",
+        "Docs/WindowsOverhaul/Validation/assets.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ExplosionBenchmark.cpp"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "T03",
+      "feature": "Native Windows leaderboard category, shared top-three/top-ten behavior, anonymous persistence and UI",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/systems.json"
+      ],
+      "implementation": [
+        "Source/DeckBuilder/ExplosionBenchmark.cpp"
+      ]
+    },
+    {
+      "id": "V01",
+      "feature": "Full native build, targeted unit/integration regressions, map and art inspections",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/full-run.json",
+        "Docs/WindowsOverhaul/Validation/regressions.json"
+      ],
+      "implementation": [
+        "Scripts/Test-WindowsOverhaul.ps1"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "V02",
+      "feature": "Complete real rendered run, all-card/evolution/contract validation and packaged release smoke",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/full-run.json",
+        "Docs/WindowsOverhaul/Validation/functional.json",
+        "Docs/WindowsOverhaul/Validation/release-smoke.json"
+      ],
+      "implementation": [
+        "Scripts/Test-WindowsOverhaul.ps1"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    },
+    {
+      "id": "V03",
+      "feature": "Longer packaged performance tests and new versioned installer alongside original",
+      "status": "verified",
+      "evidence": [
+        "Docs/WindowsOverhaul/Validation/performance.json",
+        "Docs/WindowsOverhaul/Validation/installer-roundtrip.json"
+      ],
+      "implementation": [
+        "Scripts/Test-WindowsOverhaul.ps1"
+      ],
+      "verification_method": "Source review and integrated rendered/regression coverage"
+    }
+  ],
+  "release_state": "Complete: Shipping package, full run, evolved stress tests and installer roundtrip verified",
+  "counts": {
+    "pending": 0,
+    "implemented": 0,
+    "verified": 61
+  },
+  "verification_definition": "Source review plus relevant automated integration, asset audit or rendered inspection. This records feature verification, not exhaustive difficulty/balance playtesting.",
+  "validation_notes": "The last change was visual-only support-caster telegraph placement/color. Final packaged systems checks and the installed launch/cleanup include that correction; the full-run and stress measurements cover the same damage, progression and spawning rules."
+}

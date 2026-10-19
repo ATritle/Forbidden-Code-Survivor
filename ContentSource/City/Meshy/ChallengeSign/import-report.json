@@ -1,0 +1,9 @@
+{
+  "asset": "/Game/Art/Challenges/Meshy/SM_ChallengeSign.SM_ChallengeSign",
+  "nanite": true,
+  "source_task": "01a15029-1807-72aa-b8cd-1d0b5da4bc3f",
+  "credits": 15,
+  "separate_runtime_neon": true,
+  "bounds_min": "<Struct 'Vector' (0x000001E699C4C210) {x: -46.400146, y: -182.500061, z: -0.000027}>",
+  "bounds_max": "<Struct 'Vector' (0x000001E699C4C228) {x: 85.819687, y: 182.499954, z: 480.000031}>"
+}

@@ -13,6 +13,9 @@ USTRUCT(BlueprintType)
 struct CODEXRUNTIME_API FSpellModifiers
 {
     GENERATED_BODY()
+    UPROPERTY(BlueprintReadOnly, Category="Program") FName ProgramID;
+    UPROPERTY(BlueprintReadOnly, Category="Program") int32 Rank = 1;
+    UPROPERTY(BlueprintReadOnly, Category="Program") int32 Evolution = 0;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Mutation")
     int32 ProjectileCount = 1;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Mutation")
@@ -51,6 +54,11 @@ public:
     bool bRequiresTarget = true;
     /** Specializations supply behavior-specific offers (e.g. summon spells). */
     virtual TArray<FGameplayTag> GetAvailableMutationTags() const;
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Program") TObjectPtr<UCardDataAsset> CardDefinition;
+    UFUNCTION(BlueprintPure, Category="Program") bool UsesProgramProgression() const;
+    UFUNCTION(BlueprintPure, Category="Program") FText DescribeMutation(FGameplayTag Tag) const;
+    UFUNCTION(BlueprintPure, Category="Spell") float GetCooldownFraction() const;
+    void SetGlobalCooldownScale(float Scale);
 
     UFUNCTION(BlueprintCallable, Category="Spell")
     virtual void InitializeSpell(UCardDataAsset* Card, AEnemySpawner* Spawner);
@@ -67,6 +75,7 @@ public:
     virtual bool ApplyMutation(FGameplayTag ModifierTag, float Value);
 
 protected:
+    virtual APooledEnemy* ResolveTarget() const;
     /** Snapshot is copied at fire time. Pass it into each projectile so impacts use it too. */
     UFUNCTION(BlueprintNativeEvent, Category="Spell")
     void FireSpell(APooledEnemy* Target, const FSpellModifiers& Snapshot);
@@ -77,4 +86,5 @@ private:
     TWeakObjectPtr<AEnemySpawner> EnemyRegistry;
     FTimerHandle FireTimer;
     bool bInitialized = false;
+    float GlobalCooldownScale = 1.f;
 };

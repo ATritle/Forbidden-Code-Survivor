@@ -1,0 +1,50 @@
+{
+  "result": "NATIVE_REGRESSIONS_PASS",
+  "checks": [
+    {
+      "log": "Saved/SevenChallengeSmoke.log",
+      "result": "SEVEN_CHALLENGES_PASS",
+      "evidence": "[2026.10.19-04.04.11:781][885]LogTemp: Display: SEVEN_CHALLENGES_PASS: random seven-card pool, Meshy sign, battery drain/kill healing, glass shared damage/penetration, courier route/delivery/timeout/practice, duel victory/grace/deadline/pool generation, death cleanup"
+    },
+    {
+      "log": "Saved/ChallengeSmoke.log",
+      "result": "CHALLENGE_PASS",
+      "evidence": "[2026.10.19-04.04.34:146][403]LogTemp: Display: CHALLENGE_PASS: 3 random reachable stations, offer/decline, pause, x3 damage, one-shot max-HP rupture, echo friendly hazard, elite cap, practice suspension, expiry"
+    },
+    {
+      "log": "Saved/ChallengePlacementRepeat.log",
+      "result": "CHALLENGE_PASS",
+      "evidence": "[2026.10.19-04.04.56:265][418]LogTemp: Display: CHALLENGE_PASS: 3 random reachable stations, offer/decline, pause, x3 damage, one-shot max-HP rupture, echo friendly hazard, elite cap, practice suspension, expiry"
+    },
+    {
+      "log": "Saved/ChallengeTestingRegression.log",
+      "result": "TESTING_MULTI_PASS",
+      "evidence": "[2026.10.19-04.05.16:884][229]LogTemp: Display: TESTING_MULTI_PASS: sixteen attack checkboxes/tooltips; four simultaneous damaging attacks; correct per-card ranges and strict boundary warning; explicit confirm/cancel; changed spacing revalidation; safe Select All with sixteen base weapons; HUD hover stats; original session restored; independent projectile pool under original 256-shot saturation"
+    },
+    {
+      "log": "Saved/ChallengeCombatRegression.log",
+      "result": "COMBAT_FEEDBACK_PASS",
+      "evidence": "[2026.10.19-04.05.42:968][729]LogTemp: Display: COMBAT_FEEDBACK_PASS: all 16 cards confirmed actual health loss and GPU bursts; visible-target fallback; 163 pulses; 114 dense bursts; 48 coalesced; 1 GPU admission drops"
+    },
+    {
+      "log": "Saved/ChallengeSettingsRegression.log",
+      "result": "SETTINGS_CARD_PASS",
+      "evidence": "[2026.10.19-04.06.03:187][550]LogTemp: Display: SETTINGS_CARD_PASS: HUD settings button, live slider bindings, independent mute, automatic save, persistence across world restart, nested draft pause/focus, one menu-to-game music transition, spinning gold card/trail, separate bounded impact pool"
+    },
+    {
+      "log": "Saved/ChallengeCityRegression.log",
+      "result": "CITY_SMOKE_PASS",
+      "evidence": "[2026.10.19-04.06.26:555][765]LogTemp: Display: CITY_SMOKE_PASS: six reachable elevations, physical ramp ascent, wall collision, weighted landing, camera-relative movement, XP/unique draft, actual enemy chase, offscreen waves, bounded rain"
+    },
+    {
+      "log": "Saved/Review/HealthAlarmFinal.log",
+      "result": "HEALTH_ALARM_PASS",
+      "evidence": "[2026.10.19-04.15.55:485][510]LogTemp: Display: HEALTH_ALARM_PASS: exact <30 threshold; full five seconds; 0.75s fade; persistent silent visual warning; no repeat; pause-safe duration; SFX volume during fade; recovery and rearm"
+    },
+    {
+      "log": "Saved/Review/TestingAreaFinal.log",
+      "result": "TESTING_AREA_PASS",
+      "evidence": "[2026.10.19-04.16.25:309][596]LogTemp: Display: TESTING_AREA_PASS: live persisted 0\u00e2\u20ac\u201c150% intensity; shared/card/cinematic spark controls; zero-density hit cues; actual settings UI; ten static tier grids; sixteen individual damaging cards; real HP and damage numbers; bounded 200 targets; reset/reboot; original run, waves, deck mutations and draft pause restored"
+    }
+  ]
+}

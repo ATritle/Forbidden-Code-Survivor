@@ -137,8 +137,8 @@ void RunTestingAreaSmoke(AMVPController* C)
     {
         const auto& T=Range->GetTargets()[0];if(!T.bAlive || !T.Enemy.IsValid() || T.Enemy->Health!=6000) {Fail(TEXT("Target did not reboot at real max HP"));return;}
         C->ExitTestingArea();if(!G->bInCodex || !C->IsPaused() || C->GetPawn()!=Original.Get() || G->Spawner!=OriginalPool.Get()) {Fail(TEXT("Original main menu was not restored"));return;}
-        G->StartingCards={TEXT("PulseDart")};if(!G->StartSelectedRun()) {Fail(TEXT("Could not start original run"));return;}
-        P=Cast<AMVPPlayer>(C->GetPawn());P->Health=64;P->bBenchmarkInvulnerable=true;P->Deck->ActiveWeapons[0]->ApplyMutation(FGameplayTag::RequestGameplayTag(TEXT("Mutation.ProjectileCount")),2);
+        G->StartingCards={TEXT("PulseDart"),TEXT("PrismBurst")};if(!G->StartSelectedRun()) {Fail(TEXT("Could not start original run"));return;}
+        P=Cast<AMVPPlayer>(C->GetPawn());P->Health=64;P->bBenchmarkInvulnerable=true;P->Deck->ActiveWeapons[0]->ApplyMutation(FGameplayTag::RequestGameplayTag(TEXT("Mutation.Program.Rank")),1);
         RunEnemy=Cast<AMVPEnemy>(G->Spawner->SpawnEnemyFromPool(FVector(600,0,55)));RunEnemy->Health=137;EnemyPosition=RunEnemy->GetActorLocation();RunClock=G->RunSeconds;
         C->ToggleSettings();TArray<int32> Counts;Counts.Init(0,10);Counts[0]=5;if(!C->StartTestingSession(TEXT("NeonCataclysm"),Counts,true)) {Fail(TEXT("Run entry failed"));return;}Next(10);
     }
@@ -146,7 +146,7 @@ void RunTestingAreaSmoke(AMVPController* C)
     {
         if(G->RunSeconds!=RunClock || RunEnemy->Health!=137 || FVector::DistSquared(RunEnemy->GetActorLocation(),EnemyPosition)>1 || OriginalPool->GetActiveEnemyCount()!=1) {Fail(TEXT("Original run advanced inside testing"));return;}
         C->ExitTestingArea();P=Cast<AMVPPlayer>(C->GetPawn());
-        if(C->IsPaused() || P!=Original.Get() || P->Health!=64 || P->Deck->ActiveWeapons.Num()!=1 || P->Deck->ActiveWeapons[0]->Modifiers.ProjectileCount!=3 || !RunEnemy->IsActorTickEnabled() || RunEnemy->IsHidden()) {Fail(TEXT("Run state or mutation was not restored"));return;}
+        if(C->IsPaused() || P!=Original.Get() || P->Health!=64 || P->Deck->ActiveWeapons.Num()!=2 || P->Deck->ActiveWeapons[0]->Modifiers.Rank!=2 || !RunEnemy->IsActorTickEnabled() || RunEnemy->IsHidden()) {Fail(TEXT("Run state or mutation was not restored"));return;}
         for(ASpellBase* Weapon:P->Deck->ActiveWeapons) Weapon->StopCasting();Next(11);
     }
     else if(Phase==11 && Age>1.6)

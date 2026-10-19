@@ -61,5 +61,6 @@ private:
     float SpinPhase=0.f;
     float ShotDamage=0.f;
     FSpellModifiers ShotModifiers;
+    bool Returning=false;
     TMap<TWeakObjectPtr<AMVPEnemy>,uint32> HitLives;
 };

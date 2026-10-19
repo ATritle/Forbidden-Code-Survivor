@@ -43,6 +43,7 @@ void RunStreetLightingSmoke(AMVPController* Controller);
 void AMVPController::TickSmokeTest()
 {
 #if !UE_BUILD_SHIPPING
+    if(FParse::Param(FCommandLine::Get(),TEXT("ReleaseSmoke"))) return;
     static bool bAwaitingRestart = false;
     static TWeakObjectPtr<AMVPEnemy> NavigationProbe;
     auto Fail = [this](const TCHAR* Reason)

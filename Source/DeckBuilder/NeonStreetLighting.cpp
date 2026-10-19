@@ -1,4 +1,5 @@
 #include "NeonStreetLighting.h"
+#include "ForbiddenSettingsControls.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Components/SpotLightComponent.h"
 #include "Components/DirectionalLightComponent.h"
@@ -153,7 +154,8 @@ void ANeonStreetLighting::Tick(float DeltaSeconds)
         const bool bShadow = bVisible && Shadows < FMath::Clamp(MaxShadowLights,0,3) && Distance < 1700.f;
         Light->SetVisibility(bVisible);
         if (Light->CastShadows != bShadow) Light->SetCastShadows(bShadow);
-        Light->SetIntensity(bVisible ? 1800.f*Fade*FMath::Clamp(Brightness,0.f,2.f) : 0.f);
+        const float DistrictGain=ForbiddenSettings::Get(this,"District",0)>0.5f ? 0.75f : 1.f;
+        Light->SetIntensity(bVisible ? 1800.f*Fade*FMath::Clamp(Brightness,0.f,2.f)*DistrictGain : 0.f);
         if (bVisible) ++Active;
         if (bShadow) ++Shadows;
     }

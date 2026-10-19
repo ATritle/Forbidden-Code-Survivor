@@ -1,0 +1,17 @@
+[
+  {
+    "asset": "ShoppingBlock",
+    "nanite": true,
+    "materials": 1
+  },
+  {
+    "asset": "MarketKiosk",
+    "nanite": true,
+    "materials": 1
+  },
+  {
+    "asset": "RooftopShrine",
+    "nanite": true,
+    "materials": 1
+  }
+]

@@ -1,0 +1,60 @@
+{
+  "result": "PACKAGED_STRESS_PASS",
+  "hardware": "Ryzen 9 7900X3D / Radeon RX 7900 XTX / 32GB RAM",
+  "configuration": "Windows Shipping, offscreen render; DX12 SM6; High preset, 1600x900; 180 pooled cyborgs; 15 fully evolved attacks; eight additional cinematic explosions per second; ten-second warmup, sixty-second samples per evolution branch",
+  "measurement": "Unfiltered wall frame times. Zero native stat counters are reported as unavailable, not zero cost. Cosmetic burst admission drops are separate from gameplay-shot/field admission. This is an extreme opt-in test; ordinary runs permit six programs.",
+  "runs": [
+    {
+      "branch": "A",
+      "frames": 9536,
+      "mean_ms": 6.291560224412752,
+      "median_ms": 6.2621,
+      "p95_ms": 7.1138,
+      "p99_ms": 7.721,
+      "max_ms": 14.4956,
+      "average_fps": 158.94308634601666,
+      "frames_over_33ms": 0,
+      "frames_over_100ms": 0,
+      "telemetry": {
+        "result": "EXPLOSION_BENCH_SAMPLED",
+        "enemies": 177,
+        "weapons": 15,
+        "projectileDrops": 0,
+        "arsenalDrops": 0,
+        "fieldDrops": 0,
+        "cosmeticDrops": 22085,
+        "warmupSeconds": 10.0,
+        "sampleSeconds": 60.0
+      },
+      "game_ms": null,
+      "render_ms": null,
+      "gpu_ms": null
+    },
+    {
+      "branch": "B",
+      "frames": 9420,
+      "mean_ms": 6.369305127388535,
+      "median_ms": 6.33845,
+      "p95_ms": 7.1417,
+      "p99_ms": 7.62,
+      "max_ms": 13.3024,
+      "average_fps": 157.00299797224628,
+      "frames_over_33ms": 0,
+      "frames_over_100ms": 0,
+      "telemetry": {
+        "result": "EXPLOSION_BENCH_SAMPLED",
+        "enemies": 178,
+        "weapons": 15,
+        "projectileDrops": 0,
+        "arsenalDrops": 0,
+        "fieldDrops": 0,
+        "cosmeticDrops": 20660,
+        "warmupSeconds": 10.0,
+        "sampleSeconds": 60.0
+      },
+      "game_ms": null,
+      "render_ms": null,
+      "gpu_ms": null
+    }
+  ]
+}

@@ -46,7 +46,7 @@ TArray<UCardDataAsset*> UCodexDeckComponent::DrawLevelUpHand()
         TArray<UCardDataAsset*> Candidates;
         for (UCardDataAsset* Card : EquippedDeck)
         {
-            if (!IsValid(Card) || Card->CardID.IsNone() || !Card->SpellClass
+            if (!IsValid(Card) || Card->CardID.IsNone() || BanishedCards.Contains(Card->CardID) || !Card->SpellClass
                 || Card->SpellClass->HasAnyClassFlags(CLASS_Abstract)
                 || !UnlockedIDs.Contains(Card->CardID) || (!bOfferOwnedSpellUpgrades && OwnsCard(Card->CardID)) || Seen.Contains(Card->CardID)) continue;
             Seen.Add(Card->CardID);
@@ -89,6 +89,8 @@ ASpellBase* UCodexDeckComponent::AddSelectedCardSpell(UCardDataAsset* SelectedCa
         OfferedMutations.Reset();
         return Existing;
     }
+    ActiveWeapons.RemoveAll([](const TObjectPtr<ASpellBase>& Entry){return !IsValid(Entry);});
+    if(MaximumActiveWeapons>0 && ActiveWeapons.Num()>=MaximumActiveWeapons && !OwnsCard(PendingReplacement)) return nullptr;
     const FTransform Transform = GetOwner()->GetActorTransform();
     ASpellBase* Spell = GetWorld()->SpawnActorDeferred<ASpellBase>(SelectedCard->SpellClass, Transform,
         GetOwner(), nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
@@ -96,6 +98,12 @@ ASpellBase* UCodexDeckComponent::AddSelectedCardSpell(UCardDataAsset* SelectedCa
     Spell->FinishSpawning(Transform);
     if (!IsValid(Spell)) return nullptr;
     Spell->InitializeSpell(SelectedCard, EnemySpawner);
+    Spell->SetGlobalCooldownScale(GlobalCooldownScale);
+    if(ASpellBase* Old=FindOwnedSpell(PendingReplacement))
+    {
+        Old->StopCasting(); ActiveWeapons.Remove(Old); WeaponsByCard.Remove(PendingReplacement); Old->Destroy();
+    }
+    PendingReplacement=NAME_None;
     Spell->AttachToActor(GetOwner(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
     ActiveWeapons.RemoveAll([](const TObjectPtr<ASpellBase>& Entry) { return !IsValid(Entry); });
     ActiveWeapons.Add(Spell);
@@ -104,6 +112,31 @@ ASpellBase* UCodexDeckComponent::AddSelectedCardSpell(UCardDataAsset* SelectedCa
     OfferedMutations.Reset();
     Spell->StartCasting();
     return Spell;
+}
+
+bool UCodexDeckComponent::RerollHand()
+{
+    if(bSelecting || CurrentHand.IsEmpty() || RerollsRemaining<=0) return false;
+    --RerollsRemaining;DiscardHand();DrawLevelUpHand();return true;
+}
+bool UCodexDeckComponent::BanishChoice(int32 Index)
+{
+    if(bSelecting || !CurrentHand.IsValidIndex(Index) || BanishesRemaining<=0) return false;
+    BanishedCards.Add(CurrentHand[Index]->CardID);--BanishesRemaining;DiscardHand();DrawLevelUpHand();return true;
+}
+bool UCodexDeckComponent::SetOfferedEvolution(FName CardID,bool BranchB)
+{
+    auto* Spell=FindOwnedSpell(CardID);
+    if(!Spell || !Spell->UsesProgramProgression() || !CurrentHand.Contains(Spell->CardDefinition)) return false;
+    const auto Tag=FGameplayTag::RequestGameplayTag(BranchB ? TEXT("Mutation.Program.EvolutionB") : TEXT("Mutation.Program.EvolutionA"));
+    if(!Spell->GetAvailableMutationTags().Contains(Tag)) return false;
+    OfferedMutations.Add(CardID,Tag);return true;
+}
+bool UCodexDeckComponent::ReplaceSelectedSpell(UCardDataAsset* Card,FName ReplacedID)
+{
+    if(!Card || OwnsCard(Card->CardID) || !OwnsCard(ReplacedID)) return false;
+    PendingReplacement=ReplacedID;
+    const bool OK=AddSelectedCardSpell(Card)!=nullptr;PendingReplacement=NAME_None;return OK;
 }
 
 void UCodexDeckComponent::DiscardHand() { if (!bSelecting) { CurrentHand.Reset(); OfferedMutations.Reset(); } }

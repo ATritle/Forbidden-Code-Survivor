@@ -1,4 +1,6 @@
 #include "NeonSpellImpactDirector.h"
+#include "ForbiddenSettingsControls.h"
+#include "ForbiddenCombatSubsystem.h"
 #include "MVPGame.h"
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
@@ -45,13 +47,14 @@ void ANeonSpellImpactDirector::ConfirmDamage(ENeonSpellStyle Style,AMVPEnemy* En
     const int32 School=int32(Style);
     if(!IsValid(Enemy) || !FMath::IsFinite(ActualDamage) || ActualDamage<=0 || School<0 || School>=16) return;
     ++ConfirmedHits[School];ConfirmedDamage[School]+=ActualDamage;
+    if(auto* Combat=GetWorld()->GetSubsystem<UForbiddenCombatSubsystem>()) Combat->RecordDamage(Enemy->GetCombatVFXLocation(),ActualDamage,Style);
     PlayImpact(Style,Enemy->GetCombatVFXLocation());
     if(!Enemy->IsPoolActive()) return;
     const FLinearColor Color=NeonSpellPalette::Color(Style);
     FHitFlash* Flash=Flashes.FindByPredicate([Enemy](const FHitFlash& F){return F.Enemy==Enemy;});
     if(!Flash) Flash=&Flashes.AddDefaulted_GetRef();
     Flash->Enemy=Enemy;Flash->Generation=Enemy->Generation;Flash->Age=0;Flash->Color=Color;
-    Enemy->SetCombatHitFlash(Color,1.f);
+    Enemy->SetCombatHitFlash(Color,ForbiddenSettings::Get(this,"Flash",1)*(ForbiddenSettings::Get(this,"ReducedFlashes",0)>0.5f ? 0.2f : 1.f));
 }
 bool ANeonSpellImpactDirector::PlayImpact(ENeonSpellStyle Style,FVector Location)
 {
@@ -81,7 +84,7 @@ bool ANeonSpellImpactDirector::PlayImpact(ENeonSpellStyle Style,FVector Location
     Ages[Slot]=0;SlotStyles[Slot]=School;SlotPositions[Slot]=Location;++Accepted;++ImpactBursts[School];
     const int32 LightIndex=LightCursor++%4;
     Lights[LightIndex]->SetWorldLocation(Location+FVector(0,0,35));Lights[LightIndex]->SetLightColor(Color);
-    Lights[LightIndex]->SetIntensity(650);Lights[LightIndex]->SetVisibility(true);LightAges[LightIndex]=0;
+    Lights[LightIndex]->SetIntensity(650*ForbiddenSettings::Get(this,"Flash",1));Lights[LightIndex]->SetVisibility(true);LightAges[LightIndex]=0;
     return true;
 }
 void ANeonSpellImpactDirector::PlayFlightTrail(ENeonSpellStyle Style,FVector Position)
@@ -104,7 +107,8 @@ void ANeonSpellImpactDirector::Tick(float Dt)
     for(int32 I=0;I<Ages.Num();++I) if(Ages[I]>=0)
     {Ages[I]+=Dt;const float Lifetime=I>=16*Reserved ? 0.95f : 1.6f;if(Ages[I]>=Lifetime) {Ages[I]=-1;Effects[I]->DeactivateImmediate();}}
     for(int32 I=0;I<FlightAges.Num();++I) if(FlightAges[I]>=0) {FlightAges[I]+=Dt;if(FlightAges[I]>=0.48f) {FlightAges[I]=-1;Flights[I]->DeactivateImmediate();}}
-    for(int32 I=0;I<4;++I) if(LightAges[I]>=0) {LightAges[I]+=Dt;Lights[I]->SetIntensity(650*FMath::Square(FMath::Max(0.f,1.f-LightAges[I]/0.16f)));if(LightAges[I]>=0.16f) {Lights[I]->SetVisibility(false);LightAges[I]=-1;}}
+    const float FlashGain=ForbiddenSettings::Get(this,"Flash",1)*(ForbiddenSettings::Get(this,"ReducedFlashes",0)>0.5f ? 0.15f : 1.f);
+    for(int32 I=0;I<4;++I) if(LightAges[I]>=0) {LightAges[I]+=Dt;Lights[I]->SetIntensity(650*FlashGain*FMath::Square(FMath::Max(0.f,1.f-LightAges[I]/0.16f)));if(LightAges[I]>=0.16f) {Lights[I]->SetVisibility(false);LightAges[I]=-1;}}
     FVector Camera=FVector(0,0,1000);FRotator View;
     if(auto* PC=UGameplayStatics::GetPlayerController(this,0)) PC->GetPlayerViewPoint(Camera,View);
     bool Dirty=false;
@@ -126,7 +130,7 @@ void ANeonSpellImpactDirector::Tick(float Dt)
     {
         auto& F=Flashes[I];F.Age+=Dt;auto* Enemy=F.Enemy.Get();
         if(!Enemy || !Enemy->IsPoolActive() || Enemy->Generation!=F.Generation) {Flashes.RemoveAtSwap(I);continue;}
-        Enemy->SetCombatHitFlash(F.Color,FMath::Max(0.f,1.f-F.Age/0.13f));
+        Enemy->SetCombatHitFlash(F.Color,FMath::Max(0.f,1.f-F.Age/0.13f)*FlashGain);
         if(F.Age>=0.13f) Flashes.RemoveAtSwap(I);
     }
 }
@@ -137,7 +141,7 @@ bool ANeonSpellImpactDirector::IsReady() const
 
 FString ANeonSpellImpactDirector::SettingsSlot() const
 {
-    return FParse::Param(FCommandLine::Get(),TEXT("MVPSmoke")) || FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) ? TEXT("CodexVFX_Automation") : TEXT("CodexVFX");
+    return FParse::Param(FCommandLine::Get(),TEXT("MVPSmoke")) || FParse::Param(FCommandLine::Get(),TEXT("ForbiddenQA")) || FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) ? TEXT("ForbiddenVFX_v3_Automation") : TEXT("ForbiddenVFX_v3");
 }
 void ANeonSpellImpactDirector::SetImpactIntensity(float Value)
 {
@@ -155,8 +159,9 @@ bool ANeonSpellImpactDirector::SaveVFXSettings()
 void ANeonSpellImpactDirector::LoadVFXSettings()
 {
     ImpactIntensity=1;
-    if(!FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) && UGameplayStatics::DoesSaveGameExist(SettingsSlot(),0))
-        if(const auto* Save=Cast<UCodexVFXSettingsSave>(UGameplayStatics::LoadGameFromSlot(SettingsSlot(),0));Save && Save->Version==1 && FMath::IsFinite(Save->ImpactIntensity)) ImpactIntensity=FMath::Clamp(Save->ImpactIntensity,0.f,1.5f);
+    const FString LoadSlot=UGameplayStatics::DoesSaveGameExist(SettingsSlot(),0) || SettingsSlot().EndsWith("Automation") ? SettingsSlot() : TEXT("CodexVFX");
+    if(!FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) && UGameplayStatics::DoesSaveGameExist(LoadSlot,0))
+        if(const auto* Save=Cast<UCodexVFXSettingsSave>(UGameplayStatics::LoadGameFromSlot(LoadSlot,0));Save && Save->Version==1 && FMath::IsFinite(Save->ImpactIntensity)) ImpactIntensity=FMath::Clamp(Save->ImpactIntensity,0.f,1.5f);
     bSettingsDirty=false;
 }
 void ANeonSpellImpactDirector::EndPlay(const EEndPlayReason::Type Reason)

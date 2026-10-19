@@ -1,0 +1,14 @@
+{
+  "approvedCredits": 60,
+  "submittedCredits": 60,
+  "model": "meshy-t2",
+  "targetTriangles": 6000,
+  "format": "fbx",
+  "animations": ["walk", "run"],
+  "paidRetries": 0,
+  "enemies": [
+    {"name":"CryptStalker","preview":"01a14aa3-6bf4-732f-a88b-55e422b746e3","refine":"01a14aa4-5786-7019-a533-85713e31dd48","rig":"01a14aab-8503-71ba-835e-7333bf47f0e8","startSeconds":45,"health":70},
+    {"name":"BoneWarden","preview":"01a14aa3-9a8b-7124-83c8-f18be28f3a8d","refine":"01a14aa5-6960-711a-858a-f66c98987081","rig":"01a14aa7-7016-74e8-9171-9c12828c2c78","startSeconds":90,"health":160},
+    {"name":"PlagueBrute","preview":"01a14aa3-a9e6-75e4-be43-b4b1911f68ba","refine":"01a14aa4-605c-7353-8c70-21bdd310221e","rig":"01a14aa7-98ed-76de-bfa3-e80f08488abd","startSeconds":150,"health":420}
+  ]
+}
