@@ -106,7 +106,7 @@ bool AMVPArenaGameMode::SaveStartingDeck()
 
 bool AMVPArenaGameMode::StartSelectedRun()
 {
-    if(const auto* PC=Cast<AMVPController>(UGameplayStatics::GetPlayerController(this,0)); PC && (PC->IsSettingsOpen() || PC->ScoreWidget || DecisionWidget)) return false;
+    if(const auto* PC=Cast<AMVPController>(UGameplayStatics::GetPlayerController(this,0)); PC && (PC->HelpWidget || PC->IsSettingsOpen() || PC->ScoreWidget || DecisionWidget)) return false;
     AMVPPlayer* Player = GetArenaPlayer();
     if (!bInCodex || !bRunInitialized || !Player || !SaveStartingDeck()) return false;
     // Reuse validated offer/equip logic one card at a time; never mutate authored data.

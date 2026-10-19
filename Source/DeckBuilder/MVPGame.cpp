@@ -57,6 +57,7 @@
 void InstallReleaseValidation(AMVPController* Controller);
 void InstallForbiddenValidation(AMVPController* Controller);
 void InstallForbiddenSystemsValidation(AMVPController* Controller);
+void InstallForbiddenHelpValidation(AMVPController* Controller);
 
 namespace MVP
 {
@@ -553,6 +554,7 @@ void AMVPController::BeginPlay()
     InstallReleaseValidation(this);
     InstallForbiddenValidation(this);
     InstallForbiddenSystemsValidation(this);
+    InstallForbiddenHelpValidation(this);
 #if !UE_BUILD_SHIPPING
     bSmokeTest = FParse::Param(FCommandLine::Get(), TEXT("MVPSmoke"));
 #endif
@@ -586,6 +588,7 @@ void AMVPController::SetupInputComponent()
     InputComponent->BindKey(EKeys::F, IE_Pressed, this, &AMVPController::TestExplosion);
     InputComponent->BindKey(EKeys::Gamepad_FaceButton_Left, IE_Pressed, this, &AMVPController::InteractChallenge);
     InputComponent->BindKey(EKeys::H, IE_Pressed, this, &AMVPController::OpenHideout).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::F1, IE_Pressed, this, &AMVPController::OpenHelp).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::L, IE_Pressed, this, &AMVPController::OpenLeaderboard).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::Gamepad_Special_Left, IE_Pressed, this, &AMVPController::OpenLeaderboard).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::Gamepad_Special_Right, IE_Pressed, this, &AMVPController::ToggleSettings).bExecuteWhenPaused=true;
@@ -602,22 +605,23 @@ bool AMVPController::IsChallengeOpen() const
 }
 void AMVPController::InteractChallenge()
 {
+    if(HelpWidget || SettingsWidget || ScoreWidget) return;
     if(auto* G=MVP::Mode(this);G && G->bInCodex) {G->OpenHideout();return;}
     if(auto* G=MVP::Mode(this);G && G->DistrictDirector && G->DistrictDirector->Interact()) return;
     if(auto* P=Cast<AMVPPlayer>(GetPawn());P && P->Challenges) P->Challenges->Interact();
 }
-void AMVPController::OpenHideout() {if(auto* G=MVP::Mode(this)) G->OpenHideout();}
+void AMVPController::OpenHideout() {if(!HelpWidget) if(auto* G=MVP::Mode(this)) G->OpenHideout();}
 void AMVPController::OpenLeaderboard()
 {
-    auto* G=MVP::Mode(this);if(!G || ScoreWidget || IsSettingsOpen() || G->DecisionWidget || G->bChoosingCard || IsChallengeOpen()) return;
+    auto* G=MVP::Mode(this);if(!G || HelpWidget || ScoreWidget || IsSettingsOpen() || G->DecisionWidget || G->bChoosingCard || IsChallengeOpen()) return;
     ScoreWidget=CreateWidget<UForbiddenScoreWidget>(this,UForbiddenScoreWidget::StaticClass());if(!ScoreWidget) return;
     ScoreWidget->WasPaused=IsPaused();SetPause(true);SetMenuInput(true);ScoreWidget->AddToViewport(90);
     FInputModeGameAndUI Input;Input.SetHideCursorDuringCapture(false);Input.SetWidgetToFocus(ScoreWidget->TakeWidget());SetInputMode(Input);
 }
-void AMVPController::BeginSelectedRun() { if (auto* Game = MVP::Mode(this)) Game->StartSelectedRun(); }
-void AMVPController::ChooseOne() { if (!IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(0); }
-void AMVPController::ChooseTwo() { if (!IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(1); }
-void AMVPController::ChooseThree() { if (!IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(2); }
+void AMVPController::BeginSelectedRun() { if (!HelpWidget && !SettingsWidget && !ScoreWidget) if (auto* Game = MVP::Mode(this)) Game->StartSelectedRun(); }
+void AMVPController::ChooseOne() { if (!HelpWidget && !IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(0); }
+void AMVPController::ChooseTwo() { if (!HelpWidget && !IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(1); }
+void AMVPController::ChooseThree() { if (!HelpWidget && !IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(2); }
 void AMVPController::Click()
 {
     float X, Y;
@@ -625,6 +629,7 @@ void AMVPController::Click()
 }
 void AMVPController::RestartRun()
 {
+    if(HelpWidget || IsSettingsOpen() || ScoreWidget) return;
     auto* Game = MVP::Mode(this);
     if(Game && Game->bChoosingCard && !Game->DecisionWidget)
     {
@@ -858,7 +863,7 @@ void AMVPArenaGameMode::OpenNextOffer()
 
 bool AMVPArenaGameMode::ChooseCard(int32 Index)
 {
-    if(const auto* PC=Cast<AMVPController>(UGameplayStatics::GetPlayerController(this,0)); PC && PC->IsSettingsOpen()) return false;
+    if(const auto* PC=Cast<AMVPController>(UGameplayStatics::GetPlayerController(this,0)); PC && (PC->HelpWidget || PC->IsSettingsOpen())) return false;
     AMVPPlayer* Player = GetArenaPlayer();
     if (!bChoosingCard || bRunEnded || DecisionWidget || !Player) return false;
     if (Player->Deck->CurrentHand.IsEmpty()) { if (Index != 0) return false; }

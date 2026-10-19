@@ -1,0 +1,11 @@
+{
+  "result": "RAMP_SOURCE_PASS",
+  "topNormal": [
+    -0.7071068286895752,
+    0.0,
+    0.7071068286895752
+  ],
+  "faces": 6,
+  "convexCollision": true,
+  "source": "C:\\dev\\DeckBuilder\\ContentSource\\City\\Kit\\SM_CityRamp.fbx"
+}

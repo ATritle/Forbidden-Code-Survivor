@@ -28,4 +28,6 @@ private:
     UFUNCTION() void ExitTesting();
     UFUNCTION() void PreviewSFX();
     UFUNCTION() void Close();
+    UFUNCTION() void HowToPlay();
+    UFUNCTION() void CloseGame();
 };

@@ -48,6 +48,14 @@ void UNeonSettingsWidget::NativeOnInitialized()
     const FLinearColor Cyan(0.05f,0.85f,1.f),White(0.85f,0.94f,1.f),Muted(0.5f,0.65f,0.75f);
     Text(ForbiddenCode::DisplayTitle,22,Cyan);
     Text(TEXT("SETTINGS"),16,Muted);
+    auto MenuAction=[&](const TCHAR* Name,const TCHAR* Copy)
+    {
+        auto* B=WidgetTree->ConstructWidget<UButton>(UButton::StaticClass(),FName(Name));
+        B->SetBackgroundColor(FLinearColor(.02f,.15f,.23f));auto* L=WidgetTree->ConstructWidget<UTextBlock>();L->SetText(FText::FromString(Copy));L->SetJustification(ETextJustify::Center);L->SetColorAndOpacity(Cyan);B->SetContent(L);
+        Column->AddChildToVerticalBox(B)->SetPadding(FMargin(0,7));return B;
+    };
+    MenuAction(TEXT("HowToPlay"),TEXT("HOW TO PLAY  /  ILLUSTRATED FIELD GUIDE"))->OnClicked.AddDynamic(this,&ThisClass::HowToPlay);
+    MenuAction(TEXT("QuitGame"),TEXT("CLOSE GAME  /  EXIT TO DESKTOP"))->OnClicked.AddDynamic(this,&ThisClass::CloseGame);
     Text(TEXT("AUDIO MIX"),13,Muted);
     auto Slider=[&](FName Name,float Value,FLinearColor Color)
     {
@@ -93,6 +101,8 @@ void UNeonSettingsWidget::ImpactChanged(float Value)
     {Game->SpellImpactDirector->SetImpactIntensity(Value);ImpactLabel->SetText(FText::FromString(FString::Printf(TEXT("IMPACT PARTICLES   %d%%"),FMath::RoundToInt(Game->SpellImpactDirector->GetImpactIntensity()*100))));}
 }
 void UNeonSettingsWidget::TestingArea() {if(auto* PC=GetOwningPlayer<AMVPController>()) PC->OpenTestingArea();}
+void UNeonSettingsWidget::HowToPlay() {if(auto* PC=GetOwningPlayer<AMVPController>()) PC->OpenHelp();}
+void UNeonSettingsWidget::CloseGame() {if(auto* PC=GetOwningPlayer<AMVPController>()) PC->CloseGame();}
 void UNeonSettingsWidget::ExitTesting() {if(auto* PC=GetOwningPlayer<AMVPController>()) PC->ExitTestingArea();}
 void UNeonSettingsWidget::MusicChanged(float Value)
 {

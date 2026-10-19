@@ -81,6 +81,10 @@ void AMVPHUD::DrawCodex(AMVPArenaGameMode* Game)
     Text(TEXT("FORBIDDEN SOFTWARE. CAPTURED SPIRITS. LIMITLESS ENERGY."),83,113,0.72f,Muted);
     Text(TEXT("BUILD YOUR SIGNAL"),1090,68,0.75f,Cyan);
     Text(TEXT("PRE-RUN  /  SPELL LIBRARY"),1090,100,0.6f,Muted);
+    Glass(TEXT("HowToPlay"),80,145,255,34,Cyan,Hover(TEXT("HowToPlay"),80,145,255,34),false,2);
+    Text(TEXT("HOW TO PLAY  /  F1"),97,153,0.72f,Cyan);
+    Glass(TEXT("CloseGame"),350,145,205,34,Pink,Hover(TEXT("CloseGame"),350,145,205,34),false,2);
+    Text(TEXT("CLOSE GAME"),375,153,0.72f,White);
     const TCHAR* Schools[]={TEXT("ALL ENERGY"),TEXT("PULSE"),TEXT("PRISM"),TEXT("KINETIC"),TEXT("BARRIER")};
     for(int32 I=0;I<5;++I)
     {

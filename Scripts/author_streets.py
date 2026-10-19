@@ -76,9 +76,15 @@ for name,c,d,w,k,j in [
     ('MI_Curb',(.20,.215,.23,1),.78,.26,3,100),
     ('MI_RoadWhite',(.57,.60,.53,1),.68,.22,2,0),
     ('MI_RoadAmber',(.72,.35,.035,1),.68,.22,2,0),
-    ('MI_Courtyard',(.044,.049,.06,1),.78,.18,1,140)]:
+    ('MI_Courtyard',(.044,.049,.06,1),.78,.18,1,140),
+    ('MI_RampFloor',(.044,.049,.06,1),.78,.18,1,140)]:
     mi=unreal.load_asset(folder+'/'+name) or tools.create_asset(name,folder,unreal.MaterialInstanceConstant,unreal.MaterialInstanceConstantFactoryNew())
     lib.set_material_instance_parent(mi,m);lib.set_material_instance_vector_parameter_value(mi,'SurfaceColor',unreal.LinearColor(*c))
     for key,value in [('DryRoughness',d),('WetRoughness',w),('SurfaceKind',k),('JointSize',j)]:lib.set_material_instance_scalar_parameter_value(mi,key,value)
+    if name=='MI_RampFloor':
+        overrides=mi.get_editor_property('base_property_overrides')
+        overrides.set_editor_property('override_blend_mode',True);overrides.set_editor_property('blend_mode',unreal.BlendMode.BLEND_OPAQUE)
+        overrides.set_editor_property('override_two_sided',True);overrides.set_editor_property('two_sided',False)
+        mi.set_editor_property('base_property_overrides',overrides)
     unreal.EditorAssetLibrary.save_loaded_asset(mi,False)
 unreal.log('STREET_MATERIALS_READY: wet aggregate asphalt, puddle roughness, rain normals, staggered pavers, weathered reflective paint')

@@ -16,7 +16,9 @@ The editions share the energy-spell catalog and cyberpunk theme. Native 0.3.0 ha
 
 The native source now includes an eight-program draft pool, two starters, six active slots, finite ranks and 32 exclusive evolution branches. Relay hacks, a three-phase boss, captured enemy code, corrupted contract rewards, persistent hideout unlocks, new Meshy art/animations, accessibility controls and an independent Windows leaderboard extend the run loop.
 
-Build with UE 5.8.2 using `Scripts/Package-Windows.ps1 -Installer`. The package and installer use separate `Windows-0.3.0` and `Installer-0.3.0` folders. `Play-Forbidden-Routines.cmd` launches that local package. The published v0.2.0 download above remains available as the earlier release.
+Build with UE 5.8.2 using `Scripts/Package-Windows.ps1 -Installer`. Current outputs use separate `Windows-0.3.1` and `Installer-0.3.1` folders. `Play-Forbidden-Routines.cmd` launches the current local package; `Play-Windows-0.3.0.cmd` retains the preceding build. The published v0.2.0 download above remains available as the earlier release.
+
+**Windows 0.3.1 maintenance update:** fixed missing ramp floors, added **CLOSE GAME** in both menus, and added **HOW TO PLAY** (F1), a 52-entry illustrated guide covering all programs/evolutions, enemies, district items, contracts, progression and settings. [Details and validation](Docs/Windows-0.3.1.txt).
 
 [Change notes](Docs/WindowsOverhaul/RELEASE-NOTES.txt) · [Card and enemy tuning](Docs/WindowsOverhaul/CARDS-AND-ENEMIES.txt) · [61-item implementation record](Docs/WindowsOverhaul/implementation-status.json) · [Validation evidence](Docs/WindowsOverhaul/Validation) · [Baseline restore instructions](Docs/WindowsOverhaul/RESTORE.txt). The verified full baseline archive is retained in the development workspace; its checksum receipt is committed here.
 

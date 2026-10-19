@@ -72,6 +72,7 @@ void ANeonStreetLayout::BeginPlay()
 
     // Replace the prototype's huge tile grid on existing floors with irregular wet stone.
     UMaterialInterface* Court=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Art/City/MI_Courtyard.MI_Courtyard"));
+    UMaterialInterface* RampFloor=LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Art/City/MI_RampFloor.MI_RampFloor"));
     for(TActorIterator<AActor> It(GetWorld());It;++It)
     {
         if(*It==this) continue;
@@ -79,7 +80,13 @@ void ANeonStreetLayout::BeginPlay()
         for(UInstancedStaticMeshComponent* Group:Existing)
         {
             UMaterialInterface* Material=Group->GetMaterial(0);
-            if(Court && Material && Material->GetName()==TEXT("M_WetConcrete")) Group->SetMaterial(0,Court);
+            if(Material && Material->GetName()==TEXT("M_WetConcrete"))
+            {
+                const bool bRamp=Group->GetStaticMesh() && Group->GetStaticMesh()->GetName()==TEXT("SM_CityRamp");
+                // Ramp floors stay opaque; bridge/courtyard cutaways retain their existing behavior.
+                if(bRamp && RampFloor) Group->SetMaterial(0,RampFloor);
+                else if(!bRamp && Court) Group->SetMaterial(0,Court);
+            }
             // Remove the old floating, emissive crossing; new paint follows actual roads.
             if(Material && Material->GetName()==TEXT("MI_Ivory"))
                 for(int32 Index=Group->GetInstanceCount()-1;Index>=0;--Index)

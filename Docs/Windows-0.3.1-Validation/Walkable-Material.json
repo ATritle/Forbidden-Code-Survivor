@@ -1,0 +1,8 @@
+{
+  "result": "WALKABLE_SURFACES_PASS",
+  "ramp": "/Game/Art/City/SM_CityRamp.SM_CityRamp",
+  "material": "/Game/Art/City/M_WetConcrete.M_WetConcrete",
+  "runtimeMaterial": "/Game/Art/City/MI_RampFloor.MI_RampFloor",
+  "blend": "Opaque",
+  "twoSided": false
+}

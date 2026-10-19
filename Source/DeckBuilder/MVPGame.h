@@ -294,6 +294,10 @@ public:
     void SetMenuInput(bool bMenu);
     UFUNCTION(BlueprintCallable,Category="Settings") void ToggleSettings();
     void CloseSettings();
+    UFUNCTION(BlueprintCallable,Category="Help") void OpenHelp();
+    void CloseHelp();
+    UFUNCTION(BlueprintCallable,Category="Menu") void CloseGame();
+    UPROPERTY(Transient) TObjectPtr<class UForbiddenHelpWidget> HelpWidget;
     bool IsSettingsOpen() const { return SettingsWidget!=nullptr; }
     bool IsChallengeOpen() const;
     void InteractChallenge();
@@ -309,6 +313,7 @@ public:
     void ExitTestingArea();
 private:
     bool bSettingsOwnPause=false;
+    bool bHelpWasPaused=false;
     void TickSettingsSmokeTest();
     void TickNeonPolishSmokeTest();
     void ChooseOne();

@@ -29,7 +29,7 @@ bpy.ops.mesh.primitive_cylinder_add(vertices=16,radius=50,depth=100);cyl=bpy.con
 coll=cyl.copy();coll.data=cyl.data.copy();bpy.context.collection.objects.link(coll)
 export('SM_CityPipe',cyl,0.6,coll)
 verts=[(-50,-50,-10),(-50,50,-10),(50,50,-10),(50,-50,-10),(-50,-50,0),(-50,50,0),(50,50,100),(50,-50,100)]
-faces=[(0,3,2,1),(4,5,6,7),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7)]
+faces=[(1,2,3,0),(7,6,5,4),(4,5,1,0),(5,6,2,1),(6,7,3,2),(7,4,0,3)]
 mesh=bpy.data.meshes.new('Wedge');mesh.from_pydata(verts,[],faces);mesh.update()
 obj=bpy.data.objects.new('Ramp',mesh);bpy.context.collection.objects.link(obj)
 coll=obj.copy();coll.data=obj.data.copy();bpy.context.collection.objects.link(coll)

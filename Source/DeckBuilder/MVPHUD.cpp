@@ -283,7 +283,7 @@ void AMVPHUD::DrawHUD()
 void AMVPHUD::ClickAt(float X, float Y)
 {
     auto* PC=Cast<AMVPController>(PlayerOwner);
-    if(PC && (PC->IsSettingsOpen() || PC->IsChallengeOpen() || PC->ScoreWidget)) return;
+    if(PC && (PC->HelpWidget || PC->IsSettingsOpen() || PC->IsChallengeOpen() || PC->ScoreWidget)) return;
     AMVPArenaGameMode* Game = Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this));
     if (!Game || Game->DecisionWidget || UIScale <= 0.f) return;
     const float LocalX = (X - OffsetX) / UIScale;
@@ -292,6 +292,8 @@ void AMVPHUD::ClickAt(float X, float Y)
     if(InChamfer(LocalX,LocalY,1360,186,190,36) || (Game->bInCodex && InChamfer(LocalX,LocalY,920,182,230,46)) || (Game->bRunEnded && InChamfer(LocalX,LocalY,490,580,620,36))) {if(PC) PC->OpenLeaderboard();return;}
     if (Game->bInCodex)
     {
+        if(InChamfer(LocalX,LocalY,80,145,255,34)) {if(PC) PC->OpenHelp();return;}
+        if(InChamfer(LocalX,LocalY,350,145,205,34)) {if(PC) PC->CloseGame();return;}
         if (LocalY >= 182 && LocalY <= 228)
             for (int32 I=0; I<5; ++I)
                 if (LocalX >= 80+I*160 && LocalX <= 230+I*160) { Game->SchoolFilter = I==0 ? -1 : I+5; Game->LibraryPage=0; return; }
