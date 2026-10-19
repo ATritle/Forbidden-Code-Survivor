@@ -55,6 +55,17 @@ void ANeonAudioDirector::BeginPlay()
     MenuMusic=MakeAudio(TEXT("MenuMusic"),true,false);
     GameplayMusic->OnAudioFinished.AddDynamic(this,&ThisClass::GameplayTrackFinished);
     MenuMusic->OnAudioFinished.AddDynamic(this,&ThisClass::MenuTrackFinished);
+    for(UAudioComponent* Voice:{MenuMusic.Get(),GameplayMusic.Get()})
+        Voice->OnAudioPlaybackPercentNative.AddWeakLambda(this,[this](const UAudioComponent* Source,const USoundWave* Wave,float Percent)
+        {
+            if(bMusicPaused || bSwitchingTrack || !Wave || Source->Sound!=Wave || !Source->IsPlaying() || Percent<0 || Percent>=1) return;
+            const double Start=FPlatformTime::Seconds()-Percent*Wave->Duration;
+            // Some codecs report a percentage relative to the latest seek rather
+            // than the file. Reject that offset (and stale callbacks) instead of
+            // resetting the absolute playhead established by Play/Seek/Resume.
+            if(Source==MenuMusic && bMenuMusic && FMath::Abs(Start-MenuTrackStart)<.25) MenuTrackStart=Start;
+            else if(Source==GameplayMusic && !bMenuMusic && FMath::Abs(Start-GameplayTrackStart)<.25) GameplayTrackStart=Start;
+        });
     CriticalAlarm=MakeAudio(TEXT("CriticalHealthAlarm"),false,false);
     CriticalAlarm->SetSound(Sounds.FindRef(TEXT("LowHealth")));CriticalAlarm->SetVolumeMultiplier(0.65f*SFXVolume);
     DangerWarning=MakeAudio(TEXT("PriorityDangerWarning"),false,true);
@@ -107,6 +118,7 @@ void ANeonAudioDirector::Tick(float Dt)
     // Retire the outgoing stream once the context crossfade completes.
     if(!bMenuMusic && MusicBlend<=0 && MenuMusic->IsActive()) MenuMusic->Stop();
     if(bMenuMusic && MusicBlend>=1 && GameplayMusic->IsActive()) GameplayMusic->Stop();
+    UpdateMusicSpectrum(RealDt,Now);
     const bool Duck=DangerWarning && DangerWarning->IsPlaying();if(Duck!=bDangerDucking) {bDangerDucking=Duck;ApplyVolumes(true);}
     UpdateHealthAlarm(Now);
     if(bSettingsDirty && Now>=SaveAfter) SaveAudioSettings();
@@ -161,6 +173,8 @@ void ANeonAudioDirector::PlayUI(FName Cue)
 }
 void ANeonAudioDirector::PlayMenuFeedback(bool bClosing,bool bNavigation)
 {
+    // Focus, mouse hover and list scrolling are silent; only activation plays a cue.
+    if(bNavigation) return;
     if(bMenuQuitPending && !bClosing) return;
     const double Now=FPlatformTime::Seconds();const FName Cue=bClosing ? TEXT("UI_Click") : TEXT("UI_Select");
     if(bNavigation && (Now-LastMenuNavigation<0.085 || Now-LastMenuAction<0.1)) return;
@@ -310,6 +324,40 @@ void ANeonAudioDirector::SelectMusicTrack(int32 Index)
 {
     if(!MusicLibrary().IsValidIndex(Index)) return;
     bMusicPaused=false;StartTrack(bMenuMusic,Index);
+}
+void ANeonAudioDirector::SeekMusic(float Seconds)
+{
+    if(!FMath::IsFinite(Seconds)) return;
+    auto* Audio=bMenuMusic ? MenuMusic.Get() : GameplayMusic.Get();if(!Audio) return;
+    const float Position=FMath::Clamp(Seconds,0.f,FMath::Max(0.f,GetMusicDuration()-.05f));
+    bSwitchingTrack=true;Audio->Play(Position);Audio->SetPaused(bMusicPaused);bSwitchingTrack=false;
+    (bMenuMusic ? MenuTrackStart : GameplayTrackStart)=FPlatformTime::Seconds()-Position;
+    (bMenuMusic ? MenuPausedPosition : GameplayPausedPosition)=Position;
+}
+void ANeonAudioDirector::UpdateMusicSpectrum(float RealDt,double Now)
+{
+    MusicSpectrum.SetNumZeroed(32);
+    if(!bMenuMusic || bMusicPaused || bMusicMuted || MusicVolume<=0)
+    {for(float& Band:MusicSpectrum) Band=0;bHasMusicSpectrum=false;return;}
+    if(Now-LastSpectrumUpdate<1.0/30.0) return;
+    const float Elapsed=float(Now-LastSpectrumUpdate);LastSpectrumUpdate=Now;
+    static const TArray<float> Frequencies=[] {TArray<float> F;for(int32 I=0;I<32;++I) F.Add(50.f*FMath::Pow(320.f,I/31.f));return F;}();
+    TArray<FSoundWaveSpectralData> Data;
+    bHasMusicSpectrum=MenuMusic && MenuMusic->GetCookedFFTData(Frequencies,Data) && Data.Num()==32;
+    // Paused worlds can omit the component's cooked-analysis time updates even
+    // while UI audio plays. Read the same source data at the audio-synced playhead.
+    if(!bHasMusicSpectrum && MenuMusic)
+        if(auto* Wave=Cast<USoundWave>(MenuMusic->Sound);Wave && Wave->CookedSpectralTimeData.Num()>0)
+        {
+            Data.Reset();
+            uint32 Index=FMath::Clamp(FMath::FloorToInt(GetMusicElapsed()/FMath::Max(1.f,Wave->Duration)*Wave->CookedSpectralTimeData.Num()),0,Wave->CookedSpectralTimeData.Num()-1);
+            bHasMusicSpectrum=Wave->GetInterpolatedCookedFFTDataForTime(GetMusicElapsed(),Index,Data,false) && Data.Num()==32;
+        }
+    for(int32 I=0;I<32;++I)
+    {
+        const float Level=bHasMusicSpectrum ? FMath::Pow(FMath::Clamp(Data[I].NormalizedMagnitude*2.f,0.f,1.f),.55f)*MusicVolume : 0.f;
+        MusicSpectrum[I]=FMath::FInterpTo(MusicSpectrum[I],Level,FMath::Min(Elapsed,.1f),Level>MusicSpectrum[I] ? 35.f : 14.f);
+    }
 }
 void ANeonAudioDirector::StepMusic(int32 Direction)
 {

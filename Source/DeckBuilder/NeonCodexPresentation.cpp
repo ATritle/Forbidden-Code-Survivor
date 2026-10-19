@@ -30,7 +30,7 @@ void AMVPHUD::PrepareNeonInterface()
 }
 float AMVPHUD::Hover(FName Key,float X,float Y,float W,float H)
 {
-    const bool bCovered=bMusicPlaylistOpen && !Key.ToString().StartsWith(TEXT("Music")) && Cursor.X>=880 && Cursor.X<=1510 && Cursor.Y>=610 && Cursor.Y<=844;
+    const bool bCovered=bMusicPlaylistOpen && !Key.ToString().StartsWith(TEXT("Music")) && Cursor.X>=880 && Cursor.X<=1510 && Cursor.Y>=584 && Cursor.Y<=818;
     const bool bOver=!bCovered && Cursor.X>=X && Cursor.X<=X+W && Cursor.Y>=Y && Cursor.Y<=Y+H;
     if(bOver) if(const auto* G=Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this));G && G->bInCodex) NeonMenuAudio::Hover(this,Key);
     float& Value=HoverStates.FindOrAdd(Key);Value=FMath::FInterpTo(Value,bOver ? 1.f : 0.f,UIRealDt,14.f);return Value;
@@ -147,12 +147,12 @@ void AMVPHUD::DrawCodex(AMVPArenaGameMode* Game)
     }
     Glass(TEXT("LoadoutHint"),900,634,610,68,Cyan);
     Text(TEXT("2 STARTERS / 8 DRAFT PROGRAMS / 6 ACTIVE SLOTS"),925,660,0.68f,Muted);
-    Glass(TEXT("DeckMessage"),80,716,1430,43,Pink);Text(Game->DeckMessage,100,731,0.72f,White);
+    Glass(TEXT("DeckMessage"),80,716,1430,30,Pink);Text(Game->DeckMessage,100,724,0.72f,White);
     const bool Valid=!Game->StartingCards.IsEmpty();
-    float H=Hover(TEXT("SaveDeck"),80,776,290,64);Glass(TEXT("SaveDeck"),80,776,290,64,Cyan,H,false,2);Text(TEXT("SAVE DECK"),150,798-H*2,0.95f,Cyan);
-    H=Hover(TEXT("Hideout"),410,776,330,64);Glass(TEXT("Hideout"),410,776,330,64,Pink,H,false,2);Text(TEXT("HIDEOUT / PRESETS [H]"),438,798-H*2,0.85f,White);
-    H=Hover(TEXT("EnterArena"),1080,776,440,64);Glass(TEXT("EnterArena"),1080,776,440,64,Cyan,H,Valid,2);
-    NeonTitle(TEXT("ENTER ARENA  >>"),1134,794-H*2,1.2f,Valid ? White : Muted);
-    Text(TEXT("ENTER"),1433,822,0.54f,Cyan);
+    float H=Hover(TEXT("SaveDeck"),80,756,290,64);Glass(TEXT("SaveDeck"),80,756,290,64,Cyan,H,false,2);Text(TEXT("SAVE DECK"),150,778-H*2,0.95f,Cyan);
+    H=Hover(TEXT("Hideout"),410,756,330,64);Glass(TEXT("Hideout"),410,756,330,64,Pink,H,false,2);Text(TEXT("HIDEOUT / PRESETS [H]"),438,778-H*2,0.85f,White);
+    H=Hover(TEXT("EnterArena"),1080,756,440,64);Glass(TEXT("EnterArena"),1080,756,440,64,Cyan,H,Valid,2);
+    NeonTitle(TEXT("ENTER ARENA  >>"),1134,774-H*2,1.2f,Valid ? White : Muted);
+    Text(TEXT("ENTER"),1433,802,0.54f,Cyan);
     DrawMusicPlayer(Game);
 }

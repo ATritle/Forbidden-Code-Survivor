@@ -313,11 +313,11 @@ void AMVPHUD::ClickAt(float X, float Y)
         if (LocalY >= 640 && LocalY <= 696)
             for (int32 I=0; I<Game->StartingCards.Num(); ++I)
                 if (LocalX >= 80+I*400 && LocalX <= 460+I*400) { NeonMenuAudio::Input(this);Game->OpenProgramEditor(Game->StartingCards[I]); return; }
-        if (LocalY >= 776 && LocalY <= 840)
+        if (LocalY >= 756 && LocalY <= 820)
         {
-            if (InChamfer(LocalX,LocalY,80,776,290,64)) Game->SaveStartingDeck();
-            if (InChamfer(LocalX,LocalY,410,776,330,64)) {if(PC) PC->OpenHideout();}
-            if (InChamfer(LocalX,LocalY,1080,776,440,64)) Game->StartSelectedRun();
+            if (InChamfer(LocalX,LocalY,80,756,290,64)) Game->SaveStartingDeck();
+            if (InChamfer(LocalX,LocalY,410,756,330,64)) {if(PC) PC->OpenHideout();}
+            if (InChamfer(LocalX,LocalY,1080,756,440,64)) Game->StartSelectedRun();
         }
         return;
     }

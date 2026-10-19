@@ -46,12 +46,15 @@ public:
     UFUNCTION(BlueprintCallable,Category="Audio|Music Player") void NextMusic();
     UFUNCTION(BlueprintCallable,Category="Audio|Music Player") void PreviousMusic();
     UFUNCTION(BlueprintCallable,Category="Audio|Music Player") void SelectMusicTrack(int32 Index);
+    UFUNCTION(BlueprintCallable,Category="Audio|Music Player") void SeekMusic(float Seconds);
     UFUNCTION(BlueprintCallable,Category="Audio|Music Player") void SetMusicMuted(bool bMuted);
     UFUNCTION(BlueprintPure,Category="Audio|Music Player") bool IsMusicMuted() const {return bMusicMuted;}
     UFUNCTION(BlueprintPure,Category="Audio|Music Player") bool IsMusicPaused() const {return bMusicPaused;}
     int32 GetMusicTrackIndex() const {return bMenuMusic ? MenuTrackIndex : GameplayTrackIndex;}
     float GetMusicElapsed() const;
     float GetMusicDuration() const;
+    const TArray<float>& GetMusicSpectrum() const {return MusicSpectrum;}
+    bool HasMusicSpectrum() const {return bHasMusicSpectrum;}
     /** Asset bank readiness is independent of intentional pause/mute. */
     UFUNCTION(BlueprintCallable,Category="Audio") void SetMusicVolume(float Value);
     UFUNCTION(BlueprintCallable,Category="Audio") void SetSFXVolume(float Value);
@@ -89,6 +92,10 @@ private:
     int32 MenuTrackIndex=0,GameplayTrackIndex=1;
     double MenuTrackStart=0,GameplayTrackStart=0;
     float MenuPausedPosition=0,GameplayPausedPosition=0;
+    TArray<float> MusicSpectrum;
+    bool bHasMusicSpectrum=false;
+    double LastSpectrumUpdate=0;
+    void UpdateMusicSpectrum(float RealDt,double Now);
     void StartTrack(bool bMenu,int32 Index);
     void StepMusic(int32 Direction);
     UFUNCTION() void MenuTrackFinished();

@@ -1,0 +1,26 @@
+[
+  {
+    "asset": "Music_Menu",
+    "bands": 32,
+    "fft": 2048,
+    "hop": 1024
+  },
+  {
+    "asset": "Music_Gameplay",
+    "bands": 32,
+    "fft": 2048,
+    "hop": 1024
+  },
+  {
+    "asset": "Music_Monume",
+    "bands": 32,
+    "fft": 2048,
+    "hop": 1024
+  },
+  {
+    "asset": "Music_Synthwave",
+    "bands": 32,
+    "fft": 2048,
+    "hop": 1024
+  }
+]

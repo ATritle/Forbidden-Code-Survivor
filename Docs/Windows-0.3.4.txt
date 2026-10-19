@@ -1,0 +1,41 @@
+Forbidden Code: Survivor — Windows 0.3.4 / Signal Dock art and audio
+
+Signal Dock now uses six generated textures: four distinct cover illustrations,
+a transparent media-control atlas and the selected concept's neon glass frame.
+The MP3s contain no embedded covers, so these are generated theme illustrations.
+The main display and playlist use the same thumbnail for each track. Original
+PNGs and the exact built-in image_gen prompts are in ContentSource/UI/SignalDock.
+
+A single circular control toggles play/pause. Previous/next and speaker/mute are
+graphic symbols; TRACKS uses a generated graphic label. Controls share a vertical
+center line within the frame. Track titles, artists and times remain live text.
+The deck action row has moved up slightly to make room for the larger dock.
+
+The 32-band spectrum uses actual frequency analysis baked from the source WAVs,
+sampled at the playing audio component's playhead and smoothed at 30 Hz. It is
+not a decorative animation and does not react to UI clicks or combat sounds.
+Pause/mute clears the meter. Analysis is prepared once, avoiding runtime FFT cost.
+
+Click or drag the progress bar to seek; a drag commits on release to avoid repeated
+stream restarts. Seeking preserves pause state. Music volume and mute still save
+between runs. TRACKS toggles the four-thumbnail playlist; its scroll handling and
+thumb size accommodate a longer library when additional tracks are authored.
+
+Hovering over buttons, moving keyboard/controller focus and scrolling the music
+playlist no longer play menu sounds. Activating a button still plays the input
+click, and Back / Close retains the closing click. Both respect saved SFX volume.
+
+The change is enforced centrally by ANeonAudioDirector::PlayMenuFeedback, covering
+the canvas menu, Signal Dock and UMG menus without changing hover animations.
+
+Play-Forbidden-Routines.cmd launches this version. Play-Windows-0.3.3.cmd retains
+the previous package. The installer and game are in separate 0.3.4 directories.
+
+Test-MenuAudio.ps1 now verifies zero navigation sounds, audible activation and
+closing cues, independent SFX volume and paused-menu playback through the mixer.
+
+Test-MusicPlayer.ps1 verifies generated assets, varying track spectra, paused and
+muted meter states, seeking, track controls, save/restart and gameplay rotation.
+To rebuild art/audio: import_signal_dock.py and prepare_music_spectrum.py run in
+Unreal's Python commandlet before packaging. The original 0.3.3 package remains
+separate; 0.3.4 replaces the coded visual approximation in the current launcher.

@@ -18,7 +18,7 @@
 void InstallMusicPlayerValidation(AMVPController* PC)
 {
     if(!FParse::Param(FCommandLine::Get(),TEXT("MusicPlayerSmoke")) || !FParse::Param(FCommandLine::Get(),TEXT("ForbiddenQA"))) return;
-    struct FState {int32 Phase=0;double Since=FPlatformTime::Seconds();float Position=0,Peak=0;};
+    struct FState {int32 Phase=0;double Since=FPlatformTime::Seconds();float Position=0,Peak=0,SpectrumChange=0;TArray<float> FirstSpectrum;};
     const auto S=MakeShared<FState>();const TWeakObjectPtr<AMVPController> Weak(PC);
     FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([S,Weak](float)
     {
@@ -30,7 +30,7 @@ void InstallMusicPlayerValidation(AMVPController* PC)
         auto End=[&](bool Pass,const TCHAR* Detail)
         {
             const FString Result=Pass ? (Reload ? TEXT("MUSIC_PLAYER_RELOAD_PASS") : TEXT("MUSIC_PLAYER_PASS")) : TEXT("MUSIC_PLAYER_FAIL");
-            const FString Json=FString::Printf(TEXT("{\"result\":\"%s\",\"detail\":\"%s\",\"tracks\":%d,\"peak\":%.6f,\"effectVoices\":%d,\"musicTransitions\":%d}"),*Result,Detail,ANeonAudioDirector::MusicLibrary().Num(),S->Peak,A->GetVoiceCapacity(),A->MusicTransitions);
+            const FString Json=FString::Printf(TEXT("{\"result\":\"%s\",\"detail\":\"%s\",\"tracks\":%d,\"peak\":%.6f,\"effectVoices\":%d,\"musicTransitions\":%d,\"spectrumChange\":%.6f}"),*Result,Detail,ANeonAudioDirector::MusicLibrary().Num(),S->Peak,A->GetVoiceCapacity(),A->MusicTransitions,S->SpectrumChange);
             FFileHelper::SaveStringToFile(Json,*(Directory/(Reload ? TEXT("reload.json") : TEXT("report.json"))));FPlatformMisc::RequestExitWithStatus(false,Pass ? 0 : 1);return false;
         };
         auto Next=[&](int32 Phase){S->Phase=Phase;S->Since=FPlatformTime::Seconds();};
@@ -48,20 +48,45 @@ void InstallMusicPlayerValidation(AMVPController* PC)
         }
         else if(S->Phase==1 && Age>1)
         {
+            if(!A->HasMusicSpectrum() || A->GetMusicSpectrum().Num()!=32)
+            {
+                auto* Voice=FindObject<UAudioComponent>(A,TEXT("MenuMusic"));auto* Wave=Voice ? Cast<USoundWave>(Voice->Sound) : nullptr;
+                const FString Why=FString::Printf(TEXT("Actual music spectrum unavailable: frames=%d frequencies=%d"),Wave ? Wave->CookedSpectralTimeData.Num() : -1,Wave ? Wave->FrequenciesToAnalyze.Num() : -1);
+                return End(false,*Why);
+            }
+            S->FirstSpectrum=A->GetMusicSpectrum();
+            for(const TCHAR* Name:{TEXT("SignalFrame"),TEXT("SignalControls"),TEXT("CoverAlex"),TEXT("CoverHuman"),TEXT("CoverMonume"),TEXT("CoverMountain")})
+                if(!LoadObject<UObject>(nullptr,*FString::Printf(TEXT("/Game/UI/SignalDock/T_%s.T_%s"),Name,Name))) return End(false,TEXT("Generated player graphics missing"));
             FScreenshotRequest::RequestScreenshot(Directory/TEXT("SignalDock.png"),true,false);
             Next(11);
         }
         else if(S->Phase==11 && Age>.4)
-        {H->ClickAt(725,870);S->Position=A->GetMusicElapsed();if(!A->IsMusicPaused()) return End(false,TEXT("Pause button failed"));Next(2);}
+        {H->ClickAt(675,860);S->Position=A->GetMusicElapsed();if(!A->IsMusicPaused()) return End(false,TEXT("Pause button failed"));Next(2);}
         else if(S->Phase==2 && Age>.8)
         {
             if(!FMath::IsNearlyEqual(A->GetMusicElapsed(),S->Position,.03f)) return End(false,TEXT("Pause lost the playback position"));
-            H->ClickAt(650,870);if(A->IsMusicPaused()) return End(false,TEXT("Play button did not resume"));Next(3);
+            for(float Band:A->GetMusicSpectrum()) if(Band>.001f) return End(false,TEXT("Spectrum moved while paused"));
+            H->ClickAt(675,860);if(A->IsMusicPaused()) return End(false,TEXT("Play button did not resume"));Next(3);
         }
         else if(S->Phase==3 && Age>.65)
         {
             if(A->GetMusicElapsed()<S->Position+.4f) return End(false,TEXT("Resume restarted or froze the stream"));
-            H->ClickAt(790,870);if(A->GetMusicTrackIndex()!=1) return End(false,TEXT("Next button failed"));
+            if(!A->HasMusicSpectrum()) return End(false,TEXT("Spectrum did not resume"));
+            for(int32 I=0;I<S->FirstSpectrum.Num();++I) S->SpectrumChange+=FMath::Abs(S->FirstSpectrum[I]-A->GetMusicSpectrum()[I]);
+            if(S->SpectrumChange<.001f) return End(false,TEXT("Spectrum was a static decoration"));
+            S->Position=A->GetMusicDuration()*.5f;H->ClickAt(899,872);Next(12);
+        }
+        else if(S->Phase==12 && Age>.4)
+        {
+            if(FMath::Abs(A->GetMusicElapsed()-S->Position)>1)
+                return End(false,*FString::Printf(TEXT("Playing seek failed: actual=%.2f expected=%.2f track=%d"),A->GetMusicElapsed(),S->Position,A->GetMusicTrackIndex()));
+            A->PauseMusic();H->ClickAt(846.5f,872);Next(13);
+        }
+        else if(S->Phase==13 && Age>.4)
+        {
+            if(!A->IsMusicPaused() || FMath::Abs(A->GetMusicElapsed()-A->GetMusicDuration()*.25f)>.1f) return End(false,TEXT("Paused seek failed"));
+            H->ClickAt(675,860);
+            H->ClickAt(744,860);if(A->GetMusicTrackIndex()!=1) return End(false,TEXT("Next button failed"));
             H->ClickAt(590,870);if(A->GetMusicTrackIndex()!=0) return End(false,TEXT("Previous button failed"));
             A->PreviousMusic();if(A->GetMusicTrackIndex()!=3) return End(false,TEXT("Previous wrap failed"));
             A->NextMusic();if(A->GetMusicTrackIndex()!=0) return End(false,TEXT("Next wrap failed"));
@@ -78,13 +103,14 @@ void InstallMusicPlayerValidation(AMVPController* PC)
         else if(S->Phase==6 && Age>.5)
         {
             H->ClickAt(1100,790);if(A->GetMusicTrackIndex()!=3) return End(false,TEXT("Scrolled track selection failed"));
-            H->ClickAt(1440,870);H->ClickAt(1260,870);H->ClickAt(1140,870);
+            H->ClickAt(1440,870);H->ClickAt(1130.8889f,860);H->ClickAt(1260,860);
             if(!A->IsMusicMuted() || !FMath::IsNearlyEqual(A->GetMusicVolume(),50.f/135,.001f)) return End(false,TEXT("Volume or mute control failed"));
             if(!A->SaveAudioSettings()) return End(false,TEXT("Could not save music preferences"));
             UAudioMixerBlueprintLibrary::StopRecordingOutput(C,EAudioRecordingExportType::WavFile,TEXT("MusicPlayback"),Directory);Next(7);
         }
         else if(S->Phase==7 && Age>.6)
         {
+            for(float Band:A->GetMusicSpectrum()) if(Band>.001f) return End(false,TEXT("Spectrum moved while muted"));
             TArray<uint8> Bytes;FFileHelper::LoadFileToArray(Bytes,*(Directory/TEXT("MusicPlayback.wav")));FWaveModInfo Wave;
             if(!Wave.ReadWaveInfo(Bytes.GetData(),Bytes.Num()) || !Wave.pBitsPerSample || *Wave.pBitsPerSample!=16) return End(false,TEXT("Music mixer recording missing"));
             for(uint32 Offset=0;Offset+2<=Wave.SampleDataSize;Offset+=2) {int16 Sample;FMemory::Memcpy(&Sample,Wave.SampleDataStart+Offset,2);S->Peak=FMath::Max(S->Peak,FMath::Abs(float(Sample)/32768));}
@@ -107,7 +133,7 @@ void InstallMusicPlayerValidation(AMVPController* PC)
         {
             if(!G->bChoosingCard || A->IsMenuMusic() || A->GetMusicTrackIndex()!=2 || A->GetMusicElapsed()<S->Position+.5f || A->MusicTransitions!=1) return End(false,TEXT("Card drafting interrupted gameplay music"));
             if(!A->IsMusicMuted() || A->GetVoiceCapacity()!=18) return End(false,TEXT("Mute or voice budget changed during gameplay"));
-            return End(true,TEXT("All four tracks, default menu, mixer audio, pause/resume, previous/next wrap, scrolling, selection, saved volume/mute, natural gameplay rotation and draft continuity verified"));
+            return End(true,TEXT("Generated frame, covers and icons, changing music-derived spectrum, pause/resume, track controls, playlist, saved volume/mute, natural rotation and draft continuity verified"));
         }
         return true;
     }));

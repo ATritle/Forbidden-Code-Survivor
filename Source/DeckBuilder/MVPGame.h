@@ -354,8 +354,11 @@ private:
     void DrawCodex(AMVPArenaGameMode* Game);
     void DrawMusicPlayer(AMVPArenaGameMode* Game);
     bool ClickMusicPlayer(float X,float Y,AMVPArenaGameMode* Game);
-    bool bMusicPlaylistOpen=false,bDraggingMusicVolume=false,bDraggingMusicScroll=false;
+    bool bMusicPlaylistOpen=false,bDraggingMusicVolume=false,bDraggingMusicScroll=false,bDraggingMusicSeek=false;
     int32 MusicScrollOffset=0;
+    float MusicSeekPreview=0;
+    UPROPERTY() TMap<FName,TObjectPtr<UTexture>> MusicGraphics;
+    void MusicGraphic(FName Name,float X,float Y,float W,float H,FLinearColor Tint=FLinearColor::White,FVector4 UV=FVector4(0,0,1,1));
     void DrawSettingsButton();
     void PrepareNeonInterface();
     float Hover(FName Key,float X,float Y,float W,float H);

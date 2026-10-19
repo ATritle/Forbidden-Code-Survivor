@@ -44,7 +44,7 @@ void InstallNeonMenuAudioValidation(AMVPController* PC)
         }
         else if(State->Phase==1 && Age>.4)
         {
-            if(A->MenuNavigationPlays<1) return End(false,TEXT("Pointer navigation did not play a cue"));
+            if(A->MenuNavigationPlays!=0) return End(false,TEXT("Pointer hover played an unwanted cue"));
             State->Navigations=A->MenuNavigationPlays;State->Inputs=A->MenuInputPlays;
             HUD->ClickAt(450,160);
             if(!C->SettingsWidget || A->MenuInputPlays!=State->Inputs+1 || !Cue(TEXT("SW_UI_Select"))) return End(false,TEXT("Relocated Settings button did not open with the medium click"));Next(2);
@@ -59,6 +59,7 @@ void InstallNeonMenuAudioValidation(AMVPController* PC)
         {
             A->SetSFXVolume(.25f);State->Inputs=A->MenuInputPlays;
             NeonMenuAudio::Navigate(C);NeonMenuAudio::Input(C);
+            if(A->MenuNavigationPlays!=0) return End(false,TEXT("Navigation played an unwanted cue"));
             if(A->MenuInputPlays!=State->Inputs+1 || !Cue(TEXT("SW_UI_Select")) || !FMath::IsNearlyEqual(ActionVoice()->VolumeMultiplier,.25f)) return End(false,TEXT("Navigation swallowed a click or SFX gain was ignored"));
             Next(4);
         }
@@ -85,7 +86,7 @@ void InstallNeonMenuAudioValidation(AMVPController* PC)
             {int16 Sample;FMemory::Memcpy(&Sample,Wave.SampleDataStart+Offset,2);State->CapturePeak=FMath::Max(State->CapturePeak,FMath::Abs(float(Sample)/32768.f));}
             if(State->CapturePeak<.003f) return End(false,TEXT("Mixer capture was silent"));
             if(A->GetVoiceCapacity()!=18 || A->GetMenuCloseDuration()<.3f || A->GetMenuCloseDuration()>.5f) return End(false,TEXT("Unexpected voice budget or exit recording duration"));
-            return End(true,TEXT("Pointer enter, relocated Settings click, Help open/close, click priority, SFX volume, paused UI playback and mixer recording verified"));
+            return End(true,TEXT("Silent hover/navigation, Settings and Help clicks, closing cues, click priority, SFX volume, paused UI playback and audible mixer recording verified"));
         }
         return true;
     }));
