@@ -1,8 +1,8 @@
 param([string]$PackageDirectory='',[string]$ReportDirectory='')
 $ErrorActionPreference='Stop'
 $projectRoot=Split-Path -Parent $PSScriptRoot
-$packageRoot=if($PackageDirectory){[IO.Path]::GetFullPath($PackageDirectory)}else{Join-Path $projectRoot 'Artifacts\Windows-0.3.8\Windows'}
-if(-not $PackageDirectory -and -not(Test-Path -LiteralPath (Join-Path $packageRoot 'ForbiddenCodeSurvivor.exe'))){$packageRoot=Join-Path $projectRoot 'Artifacts\Windows-0.3.8'}
+$packageRoot=if($PackageDirectory){[IO.Path]::GetFullPath($PackageDirectory)}else{Join-Path $projectRoot 'Artifacts\Windows-0.3.9\Windows'}
+if(-not $PackageDirectory -and -not(Test-Path -LiteralPath (Join-Path $packageRoot 'ForbiddenCodeSurvivor.exe'))){$packageRoot=Join-Path $projectRoot 'Artifacts\Windows-0.3.9'}
 $executable=Join-Path $packageRoot 'ForbiddenCodeSurvivor.exe'
 if(-not(Test-Path -LiteralPath $executable)){throw 'Build the Windows package first.'}
 $reports=if($ReportDirectory){[IO.Path]::GetFullPath($ReportDirectory)}else{Join-Path $projectRoot 'Saved\Review\OverhaulPackagedSmoke'}

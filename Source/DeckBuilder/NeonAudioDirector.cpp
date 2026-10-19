@@ -113,6 +113,13 @@ void ANeonAudioDirector::Tick(float Dt)
     UpdateMusicState();
     const double Now=FPlatformTime::Seconds();
     const float RealDt=FMath::Clamp(float(Now-LastMusicUpdate),0.f,0.1f);LastMusicUpdate=Now;
+    // A paused menu can delay the engine's completion delegate. Keep repeating
+    // against the same pause/seek-aware real-time clock used by the player UI.
+    if(bMenuMusic && !bMusicPaused && !bSwitchingTrack)
+    {
+        const float Duration=GetMusicDuration();
+        if(Duration>0.f && Now-MenuTrackStart>=Duration) StartTrack(true,MenuTrackIndex);
+    }
     MusicBlend=FMath::FInterpConstantTo(MusicBlend,bMenuMusic ? 1.f : 0.f,RealDt,1.f/0.65f);
     ApplyVolumes(false);
     // Retire the outgoing stream once the context crossfade completes.
@@ -369,7 +376,11 @@ void ANeonAudioDirector::StepMusic(int32 Direction)
 }
 void ANeonAudioDirector::NextMusic() {StepMusic(1);}
 void ANeonAudioDirector::PreviousMusic() {StepMusic(-1);}
-void ANeonAudioDirector::MenuTrackFinished() {if(!bSwitchingTrack && bMenuMusic && !bMusicPaused) StepMusic(1);}
+void ANeonAudioDirector::MenuTrackFinished()
+{
+    // Repeat only the selected menu track; skip buttons still choose another song.
+    if(!bSwitchingTrack && bMenuMusic && !bMusicPaused) StartTrack(true,MenuTrackIndex);
+}
 void ANeonAudioDirector::GameplayTrackFinished() {if(!bSwitchingTrack && !bMenuMusic && !bMusicPaused) StepMusic(1);}
 float ANeonAudioDirector::GetMusicDuration() const
 {

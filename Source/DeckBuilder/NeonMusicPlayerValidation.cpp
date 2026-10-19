@@ -19,7 +19,7 @@
 void InstallMusicPlayerValidation(AMVPController* PC)
 {
     if(!FParse::Param(FCommandLine::Get(),TEXT("MusicPlayerSmoke")) || !FParse::Param(FCommandLine::Get(),TEXT("ForbiddenQA"))) return;
-    struct FState {int32 Phase=0;double Since=FPlatformTime::Seconds();float Position=0,Peak=0,SpectrumChange=0;TArray<float> FirstSpectrum;};
+    struct FState {int32 Phase=0,LoopTrial=0;double Since=FPlatformTime::Seconds();float Position=0,Peak=0,SpectrumChange=0;TArray<float> FirstSpectrum;};
     const auto S=MakeShared<FState>();const TWeakObjectPtr<AMVPController> Weak(PC);
     FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([S,Weak](float)
     {
@@ -130,6 +130,36 @@ void InstallMusicPlayerValidation(AMVPController* PC)
         else if(S->Phase==73 && Age>.4)
         {
             H->ClickAt(1146,866);if(!A->IsMusicMuted() || !A->SaveAudioSettings()) return End(false,TEXT("Mute state was not restored and saved"));
+            Next(14);
+        }
+        else if(S->Phase==14 && Age>.2)
+        {
+            A->SelectMusicTrack(S->LoopTrial/2);Next(141);
+        }
+        else if(S->Phase==141 && Age>.3)
+        {
+            // Exercise the real streamed sound, including the paused-world
+            // completion fallback. Alternate muted and audible repetitions.
+            A->SetMusicMuted(S->LoopTrial%2==0);
+            A->SeekMusic(A->GetMusicDuration()-1.5f);Next(142);
+        }
+        else if(S->Phase==142 && Age>.3)
+        {
+            A->PauseMusic();S->Position=A->GetMusicElapsed();Next(15);
+        }
+        else if(S->Phase==15 && Age>.6)
+        {
+            if(!A->IsMusicPaused() || A->GetMusicTrackIndex()!=S->LoopTrial/2 || !FMath::IsNearlyEqual(A->GetMusicElapsed(),S->Position,.03f))
+                return End(false,TEXT("Paused menu track advanced or restarted near its end"));
+            A->PlayMusic();Next(16);
+        }
+        else if(S->Phase==16 && Age>2.5)
+        {
+            auto* Voice=FindObject<UAudioComponent>(A,TEXT("MenuMusic"));
+            if(!A->IsMenuMusic() || A->GetMusicTrackIndex()!=S->LoopTrial/2 || A->GetMusicElapsed()<.1f || A->GetMusicElapsed()>3 || !Voice || !Voice->IsPlaying())
+                return End(false,*FString::Printf(TEXT("Menu repeat failed: trial=%d index=%d elapsed=%.3f playing=%d"),S->LoopTrial,A->GetMusicTrackIndex(),A->GetMusicElapsed(),Voice && Voice->IsPlaying()));
+            if(++S->LoopTrial<ANeonAudioDirector::MusicLibrary().Num()*2) {Next(14);return true;}
+            A->SetMusicMuted(true);if(!A->SaveAudioSettings()) return End(false,TEXT("Mute state could not be saved after repeat checks"));
             G->StartingCards={TEXT("PulseDart"),TEXT("PrismBurst")};if(!G->StartSelectedRun()) return End(false,TEXT("Run did not start"));Next(8);
         }
         else if(S->Phase==8 && Age>.9)
@@ -148,7 +178,7 @@ void InstallMusicPlayerValidation(AMVPController* PC)
         {
             if(!G->bChoosingCard || A->IsMenuMusic() || A->GetMusicTrackIndex()!=2 || A->GetMusicElapsed()<S->Position+.5f || A->MusicTransitions!=1) return End(false,TEXT("Card drafting interrupted gameplay music"));
             if(!A->IsMusicMuted() || A->GetVoiceCapacity()!=18) return End(false,TEXT("Mute or voice budget changed during gameplay"));
-            return End(true,TEXT("Generated frame, covers and icons, changing music-derived spectrum, pause/resume, track controls, playlist, saved volume/mute, natural rotation and draft continuity verified"));
+            return End(true,TEXT("Each of four selected menu tracks repeated twice with paused-world completion fallback, muted/audible playback, pause near track end, manual track controls, generated graphics, reactive spectrum, saved volume/mute, gameplay rotation and draft continuity verified"));
         }
         return true;
     }));

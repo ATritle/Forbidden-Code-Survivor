@@ -16,7 +16,9 @@ The editions share the energy-spell catalog and cyberpunk theme. Native 0.3.0 ha
 
 The native source now includes an eight-program draft pool, two starters, six active slots, finite ranks and 32 exclusive evolution branches. Relay hacks, a three-phase boss, captured enemy code, corrupted contract rewards, persistent hideout unlocks, new Meshy art/animations, accessibility controls and an independent Windows leaderboard extend the run loop.
 
-Build with UE 5.8.2 using `Scripts/Package-Windows.ps1 -Installer`. Current outputs use separate `Windows-0.3.8` and `Installer-0.3.8` folders. `Play-Forbidden-Routines.cmd` launches the current local package; `Play-Windows-0.3.7.cmd`, `Play-Windows-0.3.6.cmd`, `Play-Windows-0.3.5.cmd`, `Play-Windows-0.3.4.cmd`, `Play-Windows-0.3.3.cmd`, `Play-Windows-0.3.2.cmd`, `Play-Windows-0.3.1.cmd` and `Play-Windows-0.3.0.cmd` retain preceding builds. The published v0.2.0 download above remains available as the earlier release.
+Build with UE 5.8.2 using `Scripts/Package-Windows.ps1 -Installer`. Current outputs use separate `Windows-0.3.9` and `Installer-0.3.9` folders. `Play-Forbidden-Routines.cmd` launches the current local package; `Play-Windows-0.3.8.cmd`, `Play-Windows-0.3.7.cmd`, `Play-Windows-0.3.6.cmd`, `Play-Windows-0.3.5.cmd`, `Play-Windows-0.3.4.cmd`, `Play-Windows-0.3.3.cmd`, `Play-Windows-0.3.2.cmd`, `Play-Windows-0.3.1.cmd` and `Play-Windows-0.3.0.cmd` retain preceding builds. The published v0.2.0 download above remains available as the earlier release.
+
+**Windows 0.3.9 music update:** The menu player repeats the selected song until the user chooses another. Manual track controls and gameplay music rotation are preserved. [Validation](Docs/Windows-0.3.9.txt).
 
 **Windows 0.3.8 help/window update:** How To Play matches the smaller Settings typography. Display selection previews immediately; Windowed restores a smaller movable window, handles maximized/fullscreen overrides and saves its confirmed size. [Details and validation](Docs/Windows-0.3.8.txt).
 
