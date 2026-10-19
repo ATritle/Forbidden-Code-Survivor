@@ -8,7 +8,7 @@ import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
-import {City} from './city.js?v=0.2.1';
+import {City} from './city.js?v=0.2.3';
 import {Effects} from './effects.js?v=0.2.1';
 import {rng,sampleUnique,xpCost,tierForTime,readPreferences,writePreferences,createWeapon,mutateWeapon,makeDraft,chooseStationLocations} from './rules.mjs?v=0.2.1';
 

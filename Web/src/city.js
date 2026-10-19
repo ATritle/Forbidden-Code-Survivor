@@ -24,13 +24,15 @@ export class City {
  for(let a=-len/2+1.8;a<len/2;a+=3.6)if(!inside(r.x+(ew?a:0),r.z+(ew?0:a),index,1.6))for(const s of[-1,1])place(a,s*.08,.027,1.45,.01,.06,amber);
  });
  for(const x of[0,-32.5])for(const side of[-1,1])for(let j=0;j<7;j++)this.cube(x-3.3+j*1.1,.03,-4.5+side*6.2,.58,.02,2.5,white);
- const towers=[[-35,-33,14,13,15],[36,-16.5,17,16,21],[44.5,12.5,13,14,17.5],[-46.5,25.5,10,18,23],[-26,43.5,16,10,16],[26.5,-44,16,10,18.5],[-12.5,-46.5,9.5,8.5,12.5],[-14,8,9,5,5],[14,-20,7,9,7]];
+ const towers=[[-35,-33,14,13,15],[36,-16.5,17,16,4.2],[44.5,12.5,13,14,3.6],[-46.5,25.5,10,18,23],[-26,43.5,16,10,16],[26.5,-44,16,10,18.5],[-12.5,-46.5,9.5,8.5,12.5],[-14,8,9,5,5],[14,-20,7,9,7]];
  const colors=[0x35eaff,0xff2994,0xffb64c,0x71ffb3];
  for(const [x,z,w,d,h]of towers){this.walls.push({x,z,w,d,h});this.cube(x,h/2,z,w,h,d,wall);this.cube(x,h+.12,z,w+.4,.25,d+.4,metal);for(const side of[-1,1]){this.cube(x+side*(w/2+.04),1.5,z,.12,3,d-.2,metal);for(let y=2;y<h-1;y+=2.5)for(let j=0;j<Math.floor(w/1.5)-1;j++){const xx=x-w/2+1.3+j*1.5;this.cube(xx,y,z+side*(d/2+.025),.35+random()*.35,1,.055,this.glow(random()<.3?colors[Math.floor(random()*4)]:0x284553));}}
- this.makeSign('GHOST / NET',x-w*.22,5,z+d/2+.1,4,colors[Math.floor(random()*4)]);this.makeSign('禁 / SIGNAL',x+w*.25,h*.7,z+d/2+.1,2.5,colors[Math.floor(random()*4)]);
+ this.makeSign('GHOST / NET',x-w*.22,Math.min(5,h-.5),z+d/2+.1,4,colors[Math.floor(random()*4)]);this.makeSign('禁 / SIGNAL',x+w*.25,h*.7,z+d/2+.1,2.5,colors[Math.floor(random()*4)]);
  for(let p=0;p<3;p++){this.cube(x-w/2+.3,h/2,z-d/2+.4+p*.45,.13,h,.13,metal);}this.cube(x, .18,z+d/2+.5,w+.6,.35,.65,curb);}
  this.addPlatform(24,6.5,11,15,3.2,{axis:'x',lo:6.5,hi:18.5,across:6.5,width:6});
- this.addPlatform(0,37,20,18,7,{axis:'z',lo:10,hi:28,across:6,width:6.5});
+ // Keep the camera-facing district low so rooftops cannot hide nearby combat.
+ this.addPlatform(0,37,20,18,2.2,{axis:'z',lo:10,hi:28,across:6,width:6.5});
+ this.addMarketTerraces();
  this.addPlatform(-32,15,12,16,5.6,{axis:'x',lo:-26,hi:-15,across:15,width:6,reverse:true});
  this.addPlatform(0,-30,30,4.5,6.2,{axis:'z',lo:-26,hi:-14,across:15,width:5.5,reverse:true},true);
  for(const p of[[-13.6,-10.2,0],[13.6,-10.2,Math.PI],[-39.3,-21.3,0],[-39.3,-11.3,0],[-39.3,-.7,0],[-26.3,-21.3,Math.PI],[-26.3,-11.3,Math.PI],[-26.3,-.7,Math.PI],[25.4,-24.6,Math.PI],[10.4,-39,Math.PI],[-8,-39,0],[28.6,1.7,Math.PI]])this.makeLamp(...p,metal);
@@ -38,6 +40,20 @@ export class City {
  for(const z of[-37,-41.7,-46.4])this.makeSign('SUBWAY ↓',7.8,2.5,z,1.8,0x38d9ff);
  for(let i=0;i<3;i++){const pos=[[-17,-22],[18,20],[-20,30]][i];const sign=this.makeSign('NO PAIN\n— NO GAIN',pos[0],2.8,pos[1],3.3,0xff36a2);const pole=this.cube(pos[0],1.2,pos[1],.12,2.4,.12,metal),root=new T.Group();this.scene.add(root);root.attach(sign);root.attach(pole);this.signs.push({x:pos[0],z:pos[1],anchorX:pos[0],anchorZ:pos[1],mesh:root,used:false,offer:i});}
  this.rain=new T.Points(new T.BufferGeometry(),new T.PointsMaterial({color:0x729cc2,size:.025,transparent:true,opacity:.35,depthWrite:false}));const data=new Float32Array(1500*3);for(let i=0;i<data.length;i+=3){data[i]=(random()-.5)*110;data[i+1]=random()*24;data[i+2]=(random()-.5)*110;}this.rain.geometry.setAttribute('position',new T.BufferAttribute(data,3));this.scene.add(this.rain);
+ }
+ addMarketTerraces(){
+ const metal=this.material(0x263440,{metalness:.65,roughness:.4});
+ // Walkable replacements for the former 15-metre shopping-block collider.
+ this.addPlatform(31,34,10,12,1.2,{axis:'x',lo:19,hi:26,across:34,width:6});
+ this.addPlatform(41,41,8,8,2,{axis:'z',lo:28,hi:37,across:41,width:5});
+ const cyan=this.glow(0x35eaff),pink=this.glow(0xff2994);
+ for(const [x,z,color]of [[29,39.5,cyan],[33,39.5,pink],[39,44.5,pink],[43,44.5,cyan]]){
+ const y=this.height(x,z,0);
+ this.cube(x,y+.4,z,1.8,.8,.75,metal);
+ this.cube(x,y+.83,z,1.9,.06,.8,color);
+ }
+ this.makeSign('NIGHT / MARKET',31,1.9,40,3,0xff2994);
+ this.makeSign('GHOST / NET',41,2.7,45,2.5,0x35eaff);
  }
  rampEntry(x,z){return(x>2.25&&x<10&&z>8&&z<28)||(x>5&&x<19.5&&z>2.7&&z<10.3)||(x>-27&&x<-14&&z>11.5&&z<18.5)||(Math.abs(Math.abs(x)-15)<3.8&&z>-27&&z<-13);}
  addPlatform(x,z,w,d,h,ramp,bridge=false){const mat=this.pavement(true);this.cube(x,bridge?h-.25:h/2-.1,z,w,bridge?.45:h-.2,d,this.material(0x1a2332));if(bridge)for(const side of[-1,1])this.cube(side*11,h/2,z,.35,h,.35,this.material(0x334457));this.cube(x,h-.05,z,w,.1,d,mat);const p={x,z,w,d,h,ramp,bridge};this.platforms.push(p);
@@ -50,8 +66,8 @@ export class City {
  clear(a,b){for(const wall of this.walls)if(segmentHitsRect(a.x,a.z,b.x,b.z,wall))return false;return true;}
  makeSign(label,x,y,z,width,color){const c=document.createElement('canvas');c.width=512;c.height=256;const g=c.getContext('2d');g.fillStyle='#061019';g.fillRect(0,0,512,256);g.strokeStyle='#536c7a';g.lineWidth=10;g.strokeRect(8,8,496,240);g.fillStyle='#'+new T.Color(color).getHexString();g.shadowColor=g.fillStyle;g.shadowBlur=18;g.textAlign='center';g.font='bold 55px sans-serif';const lines=label.split('\n');lines.forEach((s,i)=>g.fillText(s,256,lines.length>1?105+i*70:152,470));const texture=new T.CanvasTexture(c);texture.colorSpace=T.SRGBColorSpace;const material=this.material(0xffffff,{map:texture,emissiveMap:texture,emissive:0xffffff,emissiveIntensity:1.8,side:T.DoubleSide});this.materials.push(material);const mesh=new T.Mesh(new T.PlaneGeometry(width,width/2),material);mesh.position.set(x,y,z);this.scene.add(mesh);return mesh;}
  makeLamp(x,z,yaw,metal){this.cube(x,1.95,z,.12,3.9,.14,metal);const dx=Math.cos(yaw),dz=Math.sin(yaw);this.cube(x+dx*.65,3.9,z+dz*.65,Math.abs(dx)>0.5?1.45:.15,.12,Math.abs(dx)>0.5?.15:1.45,metal);this.cube(x+dx*1.2,3.8,z+dz*1.2,.65,.09,.4,this.glow(0xffdcb2));const light=new T.PointLight(0xffd7ad,27,12,2);light.position.set(x+dx*1.2,3.55,z+dz*1.2);this.lamps.push(light);}
- async assets(progress){const ids=['NeonExorcist',...this.rules.enemies.map(x=>x.id),'ShoppingBlock','MarketKiosk','RooftopShrine'];let loaded=0;await Promise.all(ids.map(async id=>{const data=await this.loader.loadAsync('assets/models/'+id+'.glb');data.scene.traverse(m=>{if(m.isMesh){m.castShadow=true;m.receiveShadow=true;if(m.material){m.material.envMapIntensity=.8;}}});if(!['ShoppingBlock','MarketKiosk','RooftopShrine'].includes(id)){const low=await this.loader.loadAsync('assets/models/low/'+id+'.glb');attachLowGeometry(data,low);}this.templates.set(id,data);progress(++loaded/ids.length);}));
- const add=(id,x,y,z,yaw=0)=>{const root=clone(this.templates.get(id).scene);root.position.set(x,y,z);root.rotation.y=yaw;this.scene.add(root);return root;};add('ShoppingBlock',33.5,0,36,2.5);this.walls.push({x:33.5,z:36,w:22,d:20,h:15});for(let i=0;i<6;i++)add('MarketKiosk',i<3?-43:-22.5,0,-18.5+(i%3)*6,i<3?Math.PI/2:-Math.PI/2);add('RooftopShrine',0,7,41.7);this.makeFlow();applyRenderQuality(this.scene,this.quality.bloom?'high':'low');}
+ async assets(progress){const ids=['NeonExorcist',...this.rules.enemies.map(x=>x.id),'MarketKiosk','RooftopShrine'];let loaded=0;await Promise.all(ids.map(async id=>{const data=await this.loader.loadAsync('assets/models/'+id+'.glb');data.scene.traverse(m=>{if(m.isMesh){m.castShadow=true;m.receiveShadow=true;if(m.material){m.material.envMapIntensity=.8;}}});if(!['MarketKiosk','RooftopShrine'].includes(id)){const low=await this.loader.loadAsync('assets/models/low/'+id+'.glb');attachLowGeometry(data,low);}this.templates.set(id,data);progress(++loaded/ids.length);}));
+ const add=(id,x,y,z,yaw=0)=>{const root=clone(this.templates.get(id).scene);root.position.set(x,y,z);root.rotation.y=yaw;this.scene.add(root);return root;};for(let i=0;i<6;i++)add('MarketKiosk',i<3?-43:-22.5,0,-18.5+(i%3)*6,i<3?Math.PI/2:-Math.PI/2);add('RooftopShrine',0,2.2,41.7);this.makeFlow();applyRenderQuality(this.scene,this.quality.bloom?'high':'low');}
  character(id){const data=this.templates.get(id);if(!data)throw Error('Missing model '+id);const mesh=clone(data.scene);const mixer=new T.AnimationMixer(mesh);const actions=new Map(data.animations.map(a=>[a.name,mixer.clipAction(a)]));const idle=actions.get(id==='NeonExorcist'?'Cruise':'Run')??actions.values().next().value;idle?.play();applyRenderQuality(mesh,this.quality.bloom?'high':'low');return{mesh,mixer,actions,active:idle};}
  makeFlow(){this.cell=1.2;this.N=90;const n=this.N*this.N;this.distance=new Int32Array(n);this.queue=new Int32Array(n);this.navBlocked=new Uint8Array(n);this.navHeight=new Float32Array(n);for(let i=0;i<n;i++){const x=(i%this.N+.5)*this.cell-54,z=(Math.floor(i/this.N)+.5)*this.cell-54;this.navBlocked[i]=this.blocked(x,z,.5)?1:0;this.navHeight[i]=this.height(x,z,10);}}
  cellIndex(x,z){return Math.max(0,Math.min(this.N-1,Math.floor((z+54)/this.cell)))*this.N+Math.max(0,Math.min(this.N-1,Math.floor((x+54)/this.cell)));}
