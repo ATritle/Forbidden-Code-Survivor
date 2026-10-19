@@ -1,5 +1,5 @@
 import {LeaderboardClient} from './leaderboard-client.mjs?v=0.2.2';
-import {showLeaderboardPanel,showRunResult} from './leaderboard-ui.js?v=0.2.2';
+import {showLeaderboardPanel,showRunResult} from './leaderboard-ui.js?v=0.2.4';
 import {scoreRun} from './score-policy.mjs?v=0.2.2';
 import {FrameProbe,QUALITY_PROFILES,renderPixelRatio,AdaptiveResolution} from './performance.mjs?v=0.2.1';
 import * as T from 'three';

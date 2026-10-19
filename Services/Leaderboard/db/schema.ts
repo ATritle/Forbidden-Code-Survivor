@@ -5,7 +5,7 @@ export const runs=sqliteTable('runs',{
  username:text('username'),score:integer('score'),kills:integer('kills'),level:integer('level'),seconds:integer('seconds'),challenges:integer('challenges'),won:integer('won')
 },t=>[index('runs_player_created').on(t.playerHash,t.createdAt),index('runs_expiry').on(t.expiresAt)]);
 export const scores=sqliteTable('scores',{
- playerHash:text('player_hash').primaryKey(),id:text('id').notNull().unique(),username:text('username').notNull(),score:integer('score').notNull(),
+ playerHash:text('player_hash').notNull(),id:text('id').primaryKey(),username:text('username').notNull(),score:integer('score').notNull(),
  kills:integer('kills').notNull(),level:integer('level').notNull(),seconds:integer('seconds').notNull(),challenges:integer('challenges').notNull(),won:integer('won').notNull(),
  recordedAt:integer('recorded_at').notNull(),runId:text('run_id').notNull().unique()
-},t=>[index('scores_ranking').on(t.score,t.recordedAt)]);
+},t=>[index('scores_ranking').on(t.score,t.recordedAt),index('scores_player_ranking').on(t.playerHash,t.score,t.recordedAt)]);
