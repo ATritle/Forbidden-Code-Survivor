@@ -6,7 +6,7 @@ import json
 import shutil
 
 root = Path(__file__).resolve().parents[1]
-out = root/'Docs/Windows-0.3.4-Validation'
+out = root/'Docs/Windows-0.3.5-Validation'
 out.mkdir(parents=True, exist_ok=True)
 
 def sha(path):
@@ -17,14 +17,14 @@ def sha(path):
     return value.hexdigest()
 
 reports = {
-    'MusicPlayer-Shipping': ('Saved/QA/SignalPlayerShipping/Saved/Review/MusicPlayer/report.json', 'MUSIC_PLAYER_PASS'),
-    'MusicPlayer-Restart': ('Saved/QA/SignalPlayerShipping/Saved/Review/MusicPlayer/reload.json', 'MUSIC_PLAYER_RELOAD_PASS'),
-    'MenuAudio-Shipping': ('Saved/QA/SignalMenuAudioShipping/Saved/Review/MenuAudio/report.json', 'MENU_AUDIO_PASS'),
-    'Quit-MainMenu': ('Saved/QA/SignalMenuAudioShipping/Saved/Review/RampGuide/QuitMenuSmoke-report.json', 'CLOSE_GAME_PASS'),
-    'Quit-Settings': ('Saved/QA/SignalMenuAudioShipping/Saved/Review/RampGuide/QuitSettingsSmoke-report.json', 'CLOSE_GAME_PASS'),
-    'Package': ('Saved/Review/SignalPackagedSmoke/report.json', 'PACKAGED_RELEASE_PASS'),
-    'Installer': ('Saved/Review/InstallerRoundtrip-0.3.4.json', 'INSTALLER_ROUNDTRIP_PASS'),
-    'Installer-Hashes': ('Saved/Review/InstallerExtraction-0.3.4.json', 'INSTALLER_EXTRACTION_HASH_PASS'),
+    'MusicPlayer-Shipping': ('Saved/QA/SignalLayoutPlayerShipping/Saved/Review/MusicPlayer/report.json', 'MUSIC_PLAYER_PASS'),
+    'MusicPlayer-Restart': ('Saved/QA/SignalLayoutPlayerShipping/Saved/Review/MusicPlayer/reload.json', 'MUSIC_PLAYER_RELOAD_PASS'),
+    'MenuAudio-Shipping': ('Saved/QA/SignalLayoutMenuAudioShipping/Saved/Review/MenuAudio/report.json', 'MENU_AUDIO_PASS'),
+    'Quit-MainMenu': ('Saved/QA/SignalLayoutMenuAudioShipping/Saved/Review/RampGuide/QuitMenuSmoke-report.json', 'CLOSE_GAME_PASS'),
+    'Quit-Settings': ('Saved/QA/SignalLayoutMenuAudioShipping/Saved/Review/RampGuide/QuitSettingsSmoke-report.json', 'CLOSE_GAME_PASS'),
+    'Package': ('Saved/Review/SignalLayoutPackagedSmoke/report.json', 'PACKAGED_RELEASE_PASS'),
+    'Installer': ('Saved/Review/InstallerRoundtrip-0.3.5.json', 'INSTALLER_ROUNDTRIP_PASS'),
+    'Installer-Hashes': ('Saved/Review/InstallerExtraction-0.3.5.json', 'INSTALLER_EXTRACTION_HASH_PASS'),
 }
 for name, (relative, expected) in reports.items():
     path = root/relative
@@ -33,8 +33,8 @@ for name, (relative, expected) in reports.items():
     if name.startswith('MusicPlayer') and name.endswith('Shipping'):
         assert report['peak'] > .003 and report['tracks'] == 4 and report['effectVoices'] == 18 and report['spectrumChange'] > .001
     shutil.copy2(path, out/(name+'.json'))
-capture = root/'Saved/QA/SignalPlayerShipping/Saved/Review/MusicPlayer'
-for name in ['SignalDock.png', 'SignalPlaylist.png', 'MusicPlayback.wav']:
+capture = root/'Saved/QA/SignalLayoutPlayerShipping/Saved/Review/MusicPlayer'
+for name in ['SignalDock.png', 'SignalPlaylist.png', 'SignalDockMuted.png', 'SignalDockUnmuted.png', 'MusicPlayback.wav']:
     path = capture/name
     assert path.stat().st_size > 10000
     shutil.copy2(path, out/name)
@@ -44,7 +44,8 @@ for version, receipt in [
     ('0.3.0', 'Docs/WindowsOverhaul/release-manifest.json'),
     ('0.3.1', 'Docs/Windows-0.3.1-Validation/release-manifest.json'),
     ('0.3.2', 'Docs/Windows-0.3.2-Validation/release-manifest.json'),
-    ('0.3.3', 'Docs/Windows-0.3.3-Validation/release-manifest.json')]:
+    ('0.3.3', 'Docs/Windows-0.3.3-Validation/release-manifest.json'),
+    ('0.3.4', 'Docs/Windows-0.3.4-Validation/release-manifest.json')]:
     previous = json.loads((root/receipt).read_text())
     assert sha(root/previous['installer']) == previous['installerSHA256']
     for entry in previous['packageFiles']:
@@ -53,12 +54,12 @@ for version, receipt in [
 baseline = root/'Artifacts/Baselines/Windows-PreOverhaul-20261019T021817Z/ForbiddenCode-Windows-Baseline.zip'
 assert sha(baseline) == 'f237b890ddaed08b508397b908774e273922549f4a5bacd458b469386fb775ae'
 
-installer = root/'Artifacts/Installer-0.3.4/ForbiddenCode-Survivor-0.3.4-Setup.exe'
-package = root/'Artifacts/Windows-0.3.4'
+installer = root/'Artifacts/Installer-0.3.5/ForbiddenCode-Survivor-0.3.5-Setup.exe'
+package = root/'Artifacts/Windows-0.3.5'
 if not (package/'ForbiddenCodeSurvivor.exe').exists():
     package = package/'Windows'
 manifest = {
-    'result': 'SIGNAL_DOCK_RELEASE_PASS', 'version': '0.3.4',
+    'result': 'SIGNAL_DOCK_RELEASE_PASS', 'version': '0.3.5',
     'createdUTC': datetime.now(timezone.utc).isoformat(),
     'configuration': 'Shipping', 'engine': 'UE 5.8.2',
     'installer': installer.relative_to(root).as_posix(),

@@ -16,9 +16,9 @@ The editions share the energy-spell catalog and cyberpunk theme. Native 0.3.0 ha
 
 The native source now includes an eight-program draft pool, two starters, six active slots, finite ranks and 32 exclusive evolution branches. Relay hacks, a three-phase boss, captured enemy code, corrupted contract rewards, persistent hideout unlocks, new Meshy art/animations, accessibility controls and an independent Windows leaderboard extend the run loop.
 
-Build with UE 5.8.2 using `Scripts/Package-Windows.ps1 -Installer`. Current outputs use separate `Windows-0.3.4` and `Installer-0.3.4` folders. `Play-Forbidden-Routines.cmd` launches the current local package; `Play-Windows-0.3.3.cmd`, `Play-Windows-0.3.2.cmd`, `Play-Windows-0.3.1.cmd` and `Play-Windows-0.3.0.cmd` retain preceding builds. The published v0.2.0 download above remains available as the earlier release.
+Build with UE 5.8.2 using `Scripts/Package-Windows.ps1 -Installer`. Current outputs use separate `Windows-0.3.5` and `Installer-0.3.5` folders. `Play-Forbidden-Routines.cmd` launches the current local package; `Play-Windows-0.3.4.cmd`, `Play-Windows-0.3.3.cmd`, `Play-Windows-0.3.2.cmd`, `Play-Windows-0.3.1.cmd` and `Play-Windows-0.3.0.cmd` retain preceding builds. The published v0.2.0 download above remains available as the earlier release.
 
-**Windows 0.3.4 media-player update:** Signal Dock now uses generated artwork and graphic media controls based on the selected concept, with track covers, a genuine music-derived spectrum, seeking, saved music volume/mute and a TRACKS popup. Hover/navigation is silent; button activations retain click sounds. [Details and validation](Docs/Windows-0.3.4.txt).
+**Windows 0.3.5 media-player polish:** Signal Dock controls sit lower in the frame, square cover art has padding, the mute icon switches between slashed and unslashed speakers, and TRACKS opens a more compact thumbnail playlist. Generated artwork, the music-derived spectrum, seeking, saved preferences and click-only sounds are retained. [Details and validation](Docs/Windows-0.3.5.txt).
 
 **Windows 0.3.1 maintenance update:** fixed missing ramp floors, added **CLOSE GAME** in both menus, and added **HOW TO PLAY** (F1), a 52-entry illustrated guide covering all programs/evolutions, enemies, district items, contracts, progression and settings. [Details and validation](Docs/Windows-0.3.1.txt).
 

@@ -115,6 +115,20 @@ void InstallMusicPlayerValidation(AMVPController* PC)
             if(!Wave.ReadWaveInfo(Bytes.GetData(),Bytes.Num()) || !Wave.pBitsPerSample || *Wave.pBitsPerSample!=16) return End(false,TEXT("Music mixer recording missing"));
             for(uint32 Offset=0;Offset+2<=Wave.SampleDataSize;Offset+=2) {int16 Sample;FMemory::Memcpy(&Sample,Wave.SampleDataStart+Offset,2);S->Peak=FMath::Max(S->Peak,FMath::Abs(float(Sample)/32768));}
             if(S->Peak<.003f) return End(false,TEXT("Music mixer was silent"));
+            FScreenshotRequest::RequestScreenshot(Directory/TEXT("SignalDockMuted.png"),true,false);Next(71);
+        }
+        else if(S->Phase==71 && Age>.4)
+        {
+            H->ClickAt(1260,866);if(A->IsMusicMuted()) return End(false,TEXT("Mute button did not return to its unslashed state"));
+            Next(72);
+        }
+        else if(S->Phase==72 && Age>.4)
+        {
+            FScreenshotRequest::RequestScreenshot(Directory/TEXT("SignalDockUnmuted.png"),true,false);Next(73);
+        }
+        else if(S->Phase==73 && Age>.4)
+        {
+            H->ClickAt(1260,866);if(!A->IsMusicMuted() || !A->SaveAudioSettings()) return End(false,TEXT("Mute state was not restored and saved"));
             G->StartingCards={TEXT("PulseDart"),TEXT("PrismBurst")};if(!G->StartSelectedRun()) return End(false,TEXT("Run did not start"));Next(8);
         }
         else if(S->Phase==8 && Age>.9)

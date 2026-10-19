@@ -38,16 +38,17 @@ void AMVPHUD::DrawMusicPlayer(AMVPArenaGameMode* Game)
     const auto& Tracks=ANeonAudioDirector::MusicLibrary();const int32 Current=A->GetMusicTrackIndex();
     const int32 MaxScroll=FMath::Max(0,Tracks.Num()-VisibleRows);
     if(bDraggingMusicScroll)
-    {if(!Held) bDraggingMusicScroll=false;else MusicScrollOffset=FMath::Clamp(FMath::RoundToInt((Cursor.Y-638)/166*MaxScroll),0,MaxScroll);}
+    {if(!Held) bDraggingMusicScroll=false;else MusicScrollOffset=FMath::Clamp(FMath::RoundToInt((Cursor.Y-660)/145*MaxScroll),0,MaxScroll);}
     const FLinearColor Cyan=InterfaceAccent,Pink(1,.04f,.6f),White(.9f,.96f,1),Muted(.55f,.7f,.8f);
     MusicGraphic(TEXT("SignalFrame"),70,822,1460,78,FLinearColor::White,FVector4(26.f/2172,238.f/724,2121.f/2172,215.f/724));
-    MusicGraphic(Covers[Current],101,837,48,48);
-    Text(Tracks[Current].Title,164,842,.78f,White);Text(Tracks[Current].Artist,164,868,.59f,Muted);
+    // Keep square cover art inside the frame's illuminated rim.
+    MusicGraphic(Covers[Current],111,848,38,38);
+    Text(Tracks[Current].Title,164,848,.78f,White);Text(Tracks[Current].Artist,164,873,.59f,Muted);
     const auto& Spectrum=A->GetMusicSpectrum();
     for(int32 I=0;I<Spectrum.Num();++I)
     {
         const float H=Spectrum[I]*32.f,X=415+I*4.7f;
-        Box(X-1,880-H-2,4,H+4,FLinearColor(1,.03f,.55f,.10f));Box(X,880-H,2,FMath::Max(1.f,H),Pink);
+        Box(X-1,884-H-2,4,H+4,FLinearColor(1,.03f,.55f,.10f));Box(X,884-H,2,FMath::Max(1.f,H),Pink);
     }
     auto Icon=[&](const TCHAR* Key,int32 Sprite,float X,float Y,float W,float H,bool Active=false)
     {
@@ -55,72 +56,72 @@ void AMVPHUD::DrawMusicPlayer(AMVPArenaGameMode* Game)
         MusicGraphic(TEXT("SignalControls"),X-(Grow-1)*W*.5f,Y-(Grow-1)*H*.5f,W*Grow,H*Grow,
             Active ? FLinearColor(1,.7f,1) : FLinearColor::White,Sprites[Sprite]);
     };
-    Icon(TEXT("MusicPrevious"),0,590,844,32,32);
-    Icon(TEXT("MusicPlayPause"),A->IsMusicPaused() ? 1 : 2,648,833,54,54);
-    Icon(TEXT("MusicNext"),3,728,844,32,32);
+    Icon(TEXT("MusicPrevious"),0,590,850,32,32);
+    Icon(TEXT("MusicPlayPause"),A->IsMusicPaused() ? 1 : 2,648,839,54,54);
+    Icon(TEXT("MusicNext"),3,728,850,32,32);
     const float Position=bDraggingMusicSeek ? MusicSeekPreview : A->GetMusicElapsed();
-    Text(Clock(Position)+TEXT(" / ")+Clock(A->GetMusicDuration()),794,842,.65f,White);
-    Hover(TEXT("MusicSeek"),784,840,230,43);
-    Box(794,871,210,3,FLinearColor(.15f,.3f,.4f));Box(794,871,210*Position/FMath::Max(1.f,A->GetMusicDuration()),3,Pink);
+    Text(Clock(Position)+TEXT(" / ")+Clock(A->GetMusicDuration()),794,848,.65f,White);
+    Hover(TEXT("MusicSeek"),784,846,230,43);
+    Box(794,877,210,3,FLinearColor(.15f,.3f,.4f));Box(794,877,210*Position/FMath::Max(1.f,A->GetMusicDuration()),3,Pink);
     auto Knob=[&](float X,float Y,FLinearColor Color)
     {Box(X-7,Y-7,14,14,FLinearColor(Color.R,Color.G,Color.B,.10f));for(int32 J=-4;J<=4;++J){const float W=FMath::Sqrt(25.f-J*J);Box(X-W,Y+J,W*2,1,Color);}};
-    Knob(794+210*Position/FMath::Max(1.f,A->GetMusicDuration()),872,Pink);
-    MusicGraphic(TEXT("SignalControls"),1039,846,29,27,FLinearColor::White,Sprites[4]);
-    Hover(TEXT("MusicVolume"),1072,838,152,45);
-    Box(1082,859,132,4,FLinearColor(.12f,.3f,.4f));Box(1082,859,132*A->GetMusicVolume(),4,Cyan);
-    Knob(1082+132*A->GetMusicVolume(),861,A->IsMusicMuted() ? Muted : Cyan);
-    Icon(TEXT("MusicMute"),5,1240,839,42,42,A->IsMusicMuted());
-    Icon(TEXT("MusicTracks"),6,1320,836,170,49,bMusicPlaylistOpen);
+    Knob(794+210*Position/FMath::Max(1.f,A->GetMusicDuration()),878,Pink);
+    MusicGraphic(TEXT("SignalControls"),1039,852,29,27,FLinearColor::White,Sprites[4]);
+    Hover(TEXT("MusicVolume"),1072,844,152,45);
+    Box(1082,865,132,4,FLinearColor(.12f,.3f,.4f));Box(1082,865,132*A->GetMusicVolume(),4,Cyan);
+    Knob(1082+132*A->GetMusicVolume(),867,A->IsMusicMuted() ? Muted : Cyan);
+    Icon(TEXT("MusicMute"),A->IsMusicMuted() ? 5 : 4,1240,845,42,42,A->IsMusicMuted());
+    Icon(TEXT("MusicTracks"),6,1320,842,170,49,bMusicPlaylistOpen);
     if(!bMusicPlaylistOpen) return;
-    Box(880,584,630,234,FLinearColor(.004f,.01f,.025f,.98f));
-    Glass(TEXT("MusicPlaylist"),880,584,630,234,Cyan,0,false,1);
-    Text(TEXT("PLAYLIST"),901,603,.78f,Cyan);
-    Text(FString::Printf(TEXT("%d TRACKS"),Tracks.Num()),1390,607,.59f,Muted);
+    Box(930,618,580,200,FLinearColor(.004f,.01f,.025f,.98f));
+    Glass(TEXT("MusicPlaylist"),930,618,580,200,Cyan,0,false,1);
+    Text(TEXT("PLAYLIST"),951,635,.78f,Cyan);
+    Text(FString::Printf(TEXT("%d TRACKS"),Tracks.Num()),1390,639,.59f,Muted);
     for(int32 Row=0;Row<VisibleRows;++Row)
     {
         const int32 Index=MusicScrollOffset+Row;if(!Tracks.IsValidIndex(Index)) continue;
-        const float Y=636+Row*43;const FName Key(*FString::Printf(TEXT("MusicTrack_%d"),Index));
-        const float Over=Hover(Key,900,Y,576,40);Glass(Key,900,Y,576,40,Cyan,Over,Index==Current,0);
-        MusicGraphic(Covers[Index],929,Y+3,34,34);
-        if(Index==Current) MusicGraphic(TEXT("SignalControls"),905,Y+11,18,18,FLinearColor::White,Sprites[A->IsMusicPaused() ? 2 : 1]);
-        Text(Tracks[Index].Title,976,Y+12,.70f,White);Text(Tracks[Index].Artist,1300,Y+14,.57f,Muted);
+        const float Y=660+Row*37;const FName Key(*FString::Printf(TEXT("MusicTrack_%d"),Index));
+        const float Over=Hover(Key,950,Y,526,34);Glass(Key,950,Y,526,34,Cyan,Over,Index==Current,0);
+        MusicGraphic(Covers[Index],979,Y+3,28,28);
+        if(Index==Current) MusicGraphic(TEXT("SignalControls"),955,Y+8,18,18,FLinearColor::White,Sprites[A->IsMusicPaused() ? 2 : 1]);
+        Text(Tracks[Index].Title,1020,Y+10,.65f,White);Text(Tracks[Index].Artist,1300,Y+12,.54f,Muted);
     }
-    Box(1488,636,3,169,FLinearColor(.12f,.3f,.4f));
-    const float Thumb=169.f*FMath::Min(1.f,VisibleRows/float(Tracks.Num()));
-    Box(1487,636+(169-Thumb)*(MaxScroll>0 ? float(MusicScrollOffset)/MaxScroll : 0),5,Thumb,Cyan);
+    Box(1488,660,3,145,FLinearColor(.12f,.3f,.4f));
+    const float Thumb=145.f*FMath::Min(1.f,VisibleRows/float(Tracks.Num()));
+    Box(1487,660+(145-Thumb)*(MaxScroll>0 ? float(MusicScrollOffset)/MaxScroll : 0),5,Thumb,Cyan);
 }
 bool AMVPHUD::ClickMusicPlayer(float X,float Y,AMVPArenaGameMode* Game)
 {
     auto* A=Game->AudioDirector.Get();if(!A) return false;
     if(Within(X,Y,80,826,1430,66))
     {
-        if(Within(X,Y,580,834,50,52)) {NeonMenuAudio::Input(this);A->PreviousMusic();}
-        else if(Within(X,Y,640,830,70,60)) {NeonMenuAudio::Input(this);if(A->IsMusicPaused()) A->PlayMusic();else A->PauseMusic();}
-        else if(Within(X,Y,718,834,50,52)) {NeonMenuAudio::Input(this);A->NextMusic();}
-        else if(Within(X,Y,784,840,230,43))
+        if(Within(X,Y,580,840,50,52)) {NeonMenuAudio::Input(this);A->PreviousMusic();}
+        else if(Within(X,Y,640,836,70,56)) {NeonMenuAudio::Input(this);if(A->IsMusicPaused()) A->PlayMusic();else A->PauseMusic();}
+        else if(Within(X,Y,718,840,50,52)) {NeonMenuAudio::Input(this);A->NextMusic();}
+        else if(Within(X,Y,784,846,230,43))
         {
             MusicSeekPreview=FMath::Clamp((X-794)/210,0.f,1.f)*A->GetMusicDuration();
             bDraggingMusicSeek=PlayerOwner->IsInputKeyDown(EKeys::LeftMouseButton);
             if(!bDraggingMusicSeek) A->SeekMusic(MusicSeekPreview);
         }
-        else if(Within(X,Y,1072,838,152,45)) {A->SetMusicVolume(FMath::Clamp((X-1082)/132,0.f,1.f));bDraggingMusicVolume=true;}
-        else if(Within(X,Y,1234,834,54,52)) {NeonMenuAudio::Input(this);A->SetMusicMuted(!A->IsMusicMuted());}
-        else if(Within(X,Y,1310,831,190,59))
+        else if(Within(X,Y,1072,844,152,45)) {A->SetMusicVolume(FMath::Clamp((X-1082)/132,0.f,1.f));bDraggingMusicVolume=true;}
+        else if(Within(X,Y,1234,840,54,52)) {NeonMenuAudio::Input(this);A->SetMusicMuted(!A->IsMusicMuted());}
+        else if(Within(X,Y,1310,837,190,55))
         {if(bMusicPlaylistOpen) NeonMenuAudio::Exit(this);else NeonMenuAudio::Input(this);bMusicPlaylistOpen=!bMusicPlaylistOpen;MusicScrollOffset=0;}
         return true;
     }
     if(!bMusicPlaylistOpen) return false;
     const int32 MaxScroll=FMath::Max(0,ANeonAudioDirector::MusicLibrary().Num()-VisibleRows);
-    if(Within(X,Y,1480,636,25,169)) {MusicScrollOffset=FMath::Clamp(FMath::RoundToInt((Y-636)/169*MaxScroll),0,MaxScroll);bDraggingMusicScroll=true;return true;}
-    for(int32 Row=0;Row<VisibleRows;++Row) if(Within(X,Y,900,636+Row*43,576,40))
+    if(Within(X,Y,1480,660,25,145)) {MusicScrollOffset=FMath::Clamp(FMath::RoundToInt((Y-660)/145*MaxScroll),0,MaxScroll);bDraggingMusicScroll=true;return true;}
+    for(int32 Row=0;Row<VisibleRows;++Row) if(Within(X,Y,950,660+Row*37,526,34))
     {NeonMenuAudio::Input(this);A->SelectMusicTrack(MusicScrollOffset+Row);return true;}
-    if(!Within(X,Y,880,584,630,234)) {NeonMenuAudio::Exit(this);bMusicPlaylistOpen=false;}
+    if(!Within(X,Y,930,618,580,200)) {NeonMenuAudio::Exit(this);bMusicPlaylistOpen=false;}
     return true;
 }
 void AMVPHUD::ScrollMusicPlaylist(int32 Direction)
 {
     const auto* G=Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this));const auto* PC=Cast<AMVPController>(PlayerOwner);
     if(!G || !G->bInCodex || !bMusicPlaylistOpen || !PC || PC->HelpWidget || PC->IsSettingsOpen() || PC->ScoreWidget || G->DecisionWidget || PC->IsChallengeOpen()) return;
-    float X,Y;if(!PC->GetMousePosition(X,Y) || UIScale<=0 || !Within((X-OffsetX)/UIScale,(Y-OffsetY)/UIScale,880,584,630,308)) return;
+    float X,Y;if(!PC->GetMousePosition(X,Y) || UIScale<=0 || !Within((X-OffsetX)/UIScale,(Y-OffsetY)/UIScale,930,618,580,274)) return;
     MusicScrollOffset=FMath::Clamp(MusicScrollOffset+Direction,0,FMath::Max(0,ANeonAudioDirector::MusicLibrary().Num()-VisibleRows));
 }

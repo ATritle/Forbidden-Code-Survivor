@@ -30,7 +30,7 @@ void AMVPHUD::PrepareNeonInterface()
 }
 float AMVPHUD::Hover(FName Key,float X,float Y,float W,float H)
 {
-    const bool bCovered=bMusicPlaylistOpen && !Key.ToString().StartsWith(TEXT("Music")) && Cursor.X>=880 && Cursor.X<=1510 && Cursor.Y>=584 && Cursor.Y<=818;
+    const bool bCovered=bMusicPlaylistOpen && !Key.ToString().StartsWith(TEXT("Music")) && Cursor.X>=930 && Cursor.X<=1510 && Cursor.Y>=618 && Cursor.Y<=818;
     const bool bOver=!bCovered && Cursor.X>=X && Cursor.X<=X+W && Cursor.Y>=Y && Cursor.Y<=Y+H;
     if(bOver) if(const auto* G=Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this));G && G->bInCodex) NeonMenuAudio::Hover(this,Key);
     float& Value=HoverStates.FindOrAdd(Key);Value=FMath::FInterpTo(Value,bOver ? 1.f : 0.f,UIRealDt,14.f);return Value;
