@@ -10,10 +10,13 @@ class DECKBUILDER_API UForbiddenChoiceButton : public UButton
     GENERATED_BODY()
 public:
     void Configure(int32 InIndex,TFunction<void(int32)> InCallback);
+    void PlayFeedback();
+    bool bClosingFeedback=false;
 private:
     int32 Index=0;
     TFunction<void(int32)> Callback;
     UFUNCTION() void Clicked();
+    UFUNCTION() void Hovered();
 };
 
 /** Keyboard/controller-accessible decision surface shared by replacement, capture and rewards. */

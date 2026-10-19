@@ -3,6 +3,7 @@
 #include "CardDataAsset.h"
 #include "CodexDeckComponent.h"
 #include "NeonAudioDirector.h"
+#include "NeonMenuAudio.h"
 #include "Engine/Canvas.h"
 #include "Engine/Texture.h"
 #include "Engine/Font.h"
@@ -12,6 +13,7 @@
 
 void AMVPHUD::PrepareNeonInterface()
 {
+    NeonMenuAudio::BeginPointerFrame(this);
     if(!bInterfacePrepared)
     {
         bInterfacePrepared=true;
@@ -23,11 +25,13 @@ void AMVPHUD::PrepareNeonInterface()
     }
     const double Now=FPlatformTime::Seconds();UIRealDt=FMath::Clamp(float(Now-LastUIFrame),0.f,0.05f);LastUIFrame=Now;
     float X,Y;Cursor=PlayerOwner && PlayerOwner->GetMousePosition(X,Y) ? FVector2D((X-OffsetX)/UIScale,(Y-OffsetY)/UIScale) : FVector2D(-100,-100);
-    if(const auto* PC=Cast<AMVPController>(PlayerOwner); PC && PC->IsSettingsOpen()) Cursor=FVector2D(-100,-100);
+    if(const auto* PC=Cast<AMVPController>(PlayerOwner); PC && (PC->IsSettingsOpen() || PC->HelpWidget || PC->ScoreWidget || PC->IsChallengeOpen())) Cursor=FVector2D(-100,-100);
+    if(const auto* G=Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this));G && G->DecisionWidget) Cursor=FVector2D(-100,-100);
 }
 float AMVPHUD::Hover(FName Key,float X,float Y,float W,float H)
 {
     const bool bOver=Cursor.X>=X && Cursor.X<=X+W && Cursor.Y>=Y && Cursor.Y<=Y+H;
+    if(bOver) if(const auto* G=Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this));G && G->bInCodex) NeonMenuAudio::Hover(this,Key);
     float& Value=HoverStates.FindOrAdd(Key);Value=FMath::FInterpTo(Value,bOver ? 1.f : 0.f,UIRealDt,14.f);return Value;
 }
 void AMVPHUD::Glass(FName Key,float X,float Y,float W,float H,FLinearColor Accent,float HoverValue,bool bSelected,float Mode)
@@ -83,8 +87,10 @@ void AMVPHUD::DrawCodex(AMVPArenaGameMode* Game)
     Text(TEXT("PRE-RUN  /  SPELL LIBRARY"),1090,100,0.6f,Muted);
     Glass(TEXT("HowToPlay"),80,145,255,34,Cyan,Hover(TEXT("HowToPlay"),80,145,255,34),false,2);
     Text(TEXT("HOW TO PLAY  /  F1"),97,153,0.72f,Cyan);
-    Glass(TEXT("CloseGame"),350,145,205,34,Pink,Hover(TEXT("CloseGame"),350,145,205,34),false,2);
-    Text(TEXT("CLOSE GAME"),375,153,0.72f,White);
+    Glass(TEXT("MenuSettings"),350,145,255,34,Cyan,Hover(TEXT("MenuSettings"),350,145,255,34),false,2);
+    Text(TEXT("SETTINGS  /  ESC"),370,153,0.72f,Cyan);
+    Glass(TEXT("CloseGame"),620,145,205,34,Pink,Hover(TEXT("CloseGame"),620,145,205,34),false,2);
+    Text(TEXT("CLOSE GAME"),645,153,0.72f,White);
     const TCHAR* Schools[]={TEXT("ALL ENERGY"),TEXT("PULSE"),TEXT("PRISM"),TEXT("KINETIC"),TEXT("BARRIER")};
     for(int32 I=0;I<5;++I)
     {

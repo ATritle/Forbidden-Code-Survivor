@@ -17,6 +17,7 @@
 #include "ForbiddenCombatSubsystem.h"
 #include "ForbiddenEnemyBrain.h"
 #include "ForbiddenSettingsControls.h"
+#include "NeonMenuAudio.h"
 
 namespace Palette
 {
@@ -132,7 +133,7 @@ void AMVPHUD::DrawHUD()
         }
         return;
     }
-    if (Game->bInCodex) { DrawCodex(Game);DrawSettingsButton();return; }
+    if (Game->bInCodex) { DrawCodex(Game);return; }
     DrawHealthAlert(Player);
     DrawChallengeHUD(Player);
     if(Game->DistrictDirector)
@@ -288,32 +289,33 @@ void AMVPHUD::ClickAt(float X, float Y)
     if (!Game || Game->DecisionWidget || UIScale <= 0.f) return;
     const float LocalX = (X - OffsetX) / UIScale;
     const float LocalY = (Y - OffsetY) / UIScale;
-    if(InChamfer(LocalX,LocalY,1360,142,190,36)) {if(PC) PC->ToggleSettings();return;}
-    if(InChamfer(LocalX,LocalY,1360,186,190,36) || (Game->bInCodex && InChamfer(LocalX,LocalY,920,182,230,46)) || (Game->bRunEnded && InChamfer(LocalX,LocalY,490,580,620,36))) {if(PC) PC->OpenLeaderboard();return;}
+    if(!Game->bInCodex && InChamfer(LocalX,LocalY,1360,142,190,36)) {if(PC) PC->ToggleSettings();return;}
+    if((!Game->bInCodex && InChamfer(LocalX,LocalY,1360,186,190,36)) || (Game->bInCodex && InChamfer(LocalX,LocalY,920,182,230,46)) || (Game->bRunEnded && InChamfer(LocalX,LocalY,490,580,620,36))) {if(PC) PC->OpenLeaderboard();return;}
     if (Game->bInCodex)
     {
         if(InChamfer(LocalX,LocalY,80,145,255,34)) {if(PC) PC->OpenHelp();return;}
-        if(InChamfer(LocalX,LocalY,350,145,205,34)) {if(PC) PC->CloseGame();return;}
+        if(InChamfer(LocalX,LocalY,350,145,255,34)) {if(PC) PC->ToggleSettings();return;}
+        if(InChamfer(LocalX,LocalY,620,145,205,34)) {if(PC) PC->CloseGame();return;}
         if (LocalY >= 182 && LocalY <= 228)
             for (int32 I=0; I<5; ++I)
-                if (LocalX >= 80+I*160 && LocalX <= 230+I*160) { Game->SchoolFilter = I==0 ? -1 : I+5; Game->LibraryPage=0; return; }
+                if (LocalX >= 80+I*160 && LocalX <= 230+I*160) { NeonMenuAudio::Input(this);Game->SchoolFilter = I==0 ? -1 : I+5; Game->LibraryPage=0; return; }
         const auto Library = Game->GetLibraryCards();
         const int32 LastPage=FMath::Max(0,(Library.Num()-1)/3);
         if (LocalY>=182 && LocalY<=228)
         {
-            if (InChamfer(LocalX,LocalY,1240,182,120,46)) Game->LibraryPage=FMath::Max(0,Game->LibraryPage-1);
-            if (InChamfer(LocalX,LocalY,1380,182,120,46)) Game->LibraryPage=FMath::Min(LastPage,Game->LibraryPage+1);
+            if (InChamfer(LocalX,LocalY,1240,182,120,46)) {NeonMenuAudio::Input(this);Game->LibraryPage=FMath::Max(0,Game->LibraryPage-1);}
+            if (InChamfer(LocalX,LocalY,1380,182,120,46)) {NeonMenuAudio::Input(this);Game->LibraryPage=FMath::Min(LastPage,Game->LibraryPage+1);}
         }
         if (LocalY >= 270 && LocalY <= 570)
             for (int32 I=0; I<3 && Library.IsValidIndex(Game->LibraryPage*3+I); ++I)
-                if (LocalX >= 80+I*485 && LocalX <= 540+I*485) { Game->OpenProgramEditor(Library[Game->LibraryPage*3+I]->CardID); return; }
+                if (LocalX >= 80+I*485 && LocalX <= 540+I*485) { NeonMenuAudio::Input(this);Game->OpenProgramEditor(Library[Game->LibraryPage*3+I]->CardID); return; }
         if (LocalY >= 640 && LocalY <= 696)
             for (int32 I=0; I<Game->StartingCards.Num(); ++I)
-                if (LocalX >= 80+I*400 && LocalX <= 460+I*400) { Game->OpenProgramEditor(Game->StartingCards[I]); return; }
+                if (LocalX >= 80+I*400 && LocalX <= 460+I*400) { NeonMenuAudio::Input(this);Game->OpenProgramEditor(Game->StartingCards[I]); return; }
         if (LocalY >= 776 && LocalY <= 840)
         {
             if (InChamfer(LocalX,LocalY,80,776,290,64)) Game->SaveStartingDeck();
-            if (InChamfer(LocalX,LocalY,410,776,330,64)) Game->OpenHideout();
+            if (InChamfer(LocalX,LocalY,410,776,330,64)) {if(PC) PC->OpenHideout();}
             if (InChamfer(LocalX,LocalY,1080,776,440,64)) Game->StartSelectedRun();
         }
         return;

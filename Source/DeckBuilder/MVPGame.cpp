@@ -58,6 +58,7 @@ void InstallReleaseValidation(AMVPController* Controller);
 void InstallForbiddenValidation(AMVPController* Controller);
 void InstallForbiddenSystemsValidation(AMVPController* Controller);
 void InstallForbiddenHelpValidation(AMVPController* Controller);
+void InstallNeonMenuAudioValidation(AMVPController* Controller);
 
 namespace MVP
 {
@@ -555,6 +556,7 @@ void AMVPController::BeginPlay()
     InstallForbiddenValidation(this);
     InstallForbiddenSystemsValidation(this);
     InstallForbiddenHelpValidation(this);
+    InstallNeonMenuAudioValidation(this);
 #if !UE_BUILD_SHIPPING
     bSmokeTest = FParse::Param(FCommandLine::Get(), TEXT("MVPSmoke"));
 #endif
@@ -606,15 +608,16 @@ bool AMVPController::IsChallengeOpen() const
 void AMVPController::InteractChallenge()
 {
     if(HelpWidget || SettingsWidget || ScoreWidget) return;
-    if(auto* G=MVP::Mode(this);G && G->bInCodex) {G->OpenHideout();return;}
+    if(auto* G=MVP::Mode(this);G && G->bInCodex) {OpenHideout();return;}
     if(auto* G=MVP::Mode(this);G && G->DistrictDirector && G->DistrictDirector->Interact()) return;
     if(auto* P=Cast<AMVPPlayer>(GetPawn());P && P->Challenges) P->Challenges->Interact();
 }
-void AMVPController::OpenHideout() {if(!HelpWidget) if(auto* G=MVP::Mode(this)) G->OpenHideout();}
+void AMVPController::OpenHideout() {if(!HelpWidget) if(auto* G=MVP::Mode(this);G && G->bInCodex) {if(G->AudioDirector) G->AudioDirector->PlayMenuFeedback();G->OpenHideout();}}
 void AMVPController::OpenLeaderboard()
 {
     auto* G=MVP::Mode(this);if(!G || HelpWidget || ScoreWidget || IsSettingsOpen() || G->DecisionWidget || G->bChoosingCard || IsChallengeOpen()) return;
     ScoreWidget=CreateWidget<UForbiddenScoreWidget>(this,UForbiddenScoreWidget::StaticClass());if(!ScoreWidget) return;
+    if(G->AudioDirector) G->AudioDirector->PlayMenuFeedback();
     ScoreWidget->WasPaused=IsPaused();SetPause(true);SetMenuInput(true);ScoreWidget->AddToViewport(90);
     FInputModeGameAndUI Input;Input.SetHideCursorDuringCapture(false);Input.SetWidgetToFocus(ScoreWidget->TakeWidget());SetInputMode(Input);
 }

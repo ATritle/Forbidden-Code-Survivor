@@ -65,7 +65,7 @@ struct FGuideQA
                     auto* Button=PC->SettingsWidget ? Cast<UButton>(PC->SettingsWidget->WidgetTree->FindWidget(TEXT("QuitGame"))) : nullptr;
                     if(!Button) return End(false,TEXT("Settings Close Game button missing"));Button->OnClicked.Broadcast();
                 }
-                else if(auto* HUD=Cast<AMVPHUD>(PC->GetHUD())) HUD->ClickAt(450,160);
+                else if(auto* HUD=Cast<AMVPHUD>(PC->GetHUD())) HUD->ClickAt(720,160);
                 Next(99);return true;
             }
             Capture(TEXT("Menu"));Next(12);

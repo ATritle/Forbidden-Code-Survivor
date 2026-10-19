@@ -100,7 +100,7 @@ bool AMVPArenaGameMode::SaveStartingDeck()
     Save->StartingCards = StartingCards;
     const bool Saved = UGameplayStatics::SaveGameToSlot(Save, DeckSaveSlot(), 0);
     DeckMessage = Saved ? TEXT("Deck saved. Your starting spells will be remembered between runs.") : TEXT("Could not save the deck. Check disk space and folder permissions, then retry.");
-    if(AudioDirector) AudioDirector->PlayUI(Saved ? TEXT("UI_Confirm") : TEXT("UI_Deny"));
+    if(AudioDirector) {if(Saved) AudioDirector->PlayMenuFeedback();else AudioDirector->PlayUI(TEXT("UI_Deny"));}
     return Saved;
 }
 

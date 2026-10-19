@@ -8,6 +8,7 @@
 #include "MortisTerrain.h"
 #include "NeonSpellImpactDirector.h"
 #include "NeonAudioDirector.h"
+#include "NeonMenuAudio.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/SphereComponent.h"
 #include "Engine/OverlapResult.h"
@@ -163,6 +164,7 @@ bool UNeonChallengeComponent::AcceptOffer()
 void UNeonChallengeComponent::DeclineOffer()
 {
     if(!OfferedStation && !OfferWidget) return;
+    NeonMenuAudio::Exit(this);
     if(OfferedStation && OfferedStation->State==ENeonContractState::Offered) OfferedStation->SetContractState(ENeonContractState::Ready);
     CloseOffer();
 }

@@ -7,6 +7,7 @@
 #include "CodexCardSelectionWidget.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Kismet/GameplayStatics.h"
+#include "NeonMenuAudio.h"
 
 void AMVPArenaGameMode::ShowDecision(const FString& Title,const TArray<FString>& Choices,TFunction<void(int32)> Callback)
 {

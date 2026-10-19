@@ -151,10 +151,28 @@ void ANeonAudioDirector::PlayEnemy(FVector Location,bool bDeath)
 }
 void ANeonAudioDirector::PlayUI(FName Cue)
 {
+    if(Cue==TEXT("UI_Select") || Cue==TEXT("UI_Click")) {PlayMenuFeedback(Cue==TEXT("UI_Click"),false);return;}
     const double Now=FPlatformTime::Seconds();
     if(Now-LastUI<0.05) return;
     if(PlayEffect(Cue,EVoiceGroup::UI,FVector::ZeroVector,0.7f)) {LastUI=Now;++UIPlays;}
 }
+void ANeonAudioDirector::PlayMenuFeedback(bool bClosing,bool bNavigation)
+{
+    if(bMenuQuitPending && !bClosing) return;
+    const double Now=FPlatformTime::Seconds();const FName Cue=bClosing ? TEXT("UI_Click") : TEXT("UI_Select");
+    if(bNavigation && (Now-LastMenuNavigation<0.085 || Now-LastMenuAction<0.1)) return;
+    if(!bClosing && !bNavigation && LastMenuCue==TEXT("UI_Click") && Now-LastMenuAction<0.06) return;
+    if(!bNavigation && Cue==LastMenuCue && Now-LastMenuAction<0.025) return;
+    USoundWave* Sound=Sounds.FindRef(Cue);if(!Sound || Voices.Num()!=18) return;
+    // Existing UI slots are separate from the attack, impact and enemy budgets.
+    const int32 Index=bNavigation ? 16 : 17;UAudioComponent* Voice=Voices[Index];
+    Voice->Stop();Voice->SetSound(Sound);Voice->SetPitchMultiplier(1.f);
+    VoiceGains[Index]=bNavigation ? 0.5f : 1.f;Voice->SetVolumeMultiplier(VoiceGains[Index]*SFXVolume);Voice->Play();++UIPlays;
+    if(bNavigation) {LastMenuNavigation=Now;++MenuNavigationPlays;}
+    else {LastMenuAction=Now;LastMenuCue=Cue;if(bClosing) ++MenuClosePlays;else ++MenuInputPlays;}
+}
+float ANeonAudioDirector::GetMenuCloseDuration() const
+{const USoundWave* Sound=Sounds.FindRef(TEXT("UI_Click"));return Sound ? FMath::Clamp(Sound->Duration,0.08f,1.5f) : 0.f;}
 void ANeonAudioDirector::PlayWarning(FName Cue,FVector Location)
 {
     const double Now=FPlatformTime::Seconds();if(!DangerWarning || (Now-LastWarning<0.35 && Cue!="Boss")) return;

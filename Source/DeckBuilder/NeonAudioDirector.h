@@ -23,6 +23,12 @@ public:
     /** Explicit hook for the future enemy that owns these reserved recordings. */
     UFUNCTION(BlueprintCallable,Category="Audio|Reserved Enemy") void PlayEnemy(FVector Location, bool bDeath);
     void PlayUI(FName Cue);
+    /** Two fixed UI voices: navigation cannot swallow a click or its closing cue. */
+    void PlayMenuFeedback(bool bClosing=false,bool bNavigation=false);
+    float GetMenuCloseDuration() const;
+    int32 MenuNavigationPlays=0,MenuInputPlays=0,MenuClosePlays=0;
+    FName LastMenuCue;
+    bool bMenuQuitPending=false;
     void PlayWarning(FName Cue,FVector Location);
     /** Call after changing game state; Tick also reconciles external pause changes. */
     void UpdateMusicState();
@@ -65,6 +71,7 @@ private:
     bool bMusicStarted=false;
     bool bMenuMusic=true;
     double LastAttack=-100, LastImpact=-100, LastEnemy=-100, LastUI=-100;
+    double LastMenuNavigation=-100,LastMenuAction=-100;
     double LastMusicUpdate=0;
     float MusicBlend=1.f;
     bool bCriticalHealth=false;

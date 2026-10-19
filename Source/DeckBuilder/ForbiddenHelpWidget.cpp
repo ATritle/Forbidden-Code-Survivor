@@ -1,6 +1,7 @@
 #include "ForbiddenHelpWidget.h"
 #include "ForbiddenChoiceWidget.h"
 #include "ForbiddenUI.h"
+#include "NeonMenuAudio.h"
 #include "MVPGame.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/Border.h"
@@ -46,6 +47,7 @@ void UForbiddenHelpWidget::NativeOnInitialized()
     auto MakeButton=[&](const FString& Text,int32 Index,TFunction<void(int32)> Callback,int32 Font=15)
     {
         auto* B=WidgetTree->ConstructWidget<UForbiddenChoiceButton>();B->Configure(Index,MoveTemp(Callback));B->SetBackgroundColor(FLinearColor(.025f,.07f,.12f));
+        B->bClosingFeedback=Text.StartsWith(TEXT("RETURN"));
         auto* Pad=WidgetTree->ConstructWidget<UBorder>();Pad->SetBrushColor(FLinearColor::Transparent);Pad->SetPadding(FMargin(12,10));Pad->SetContent(Label(WidgetTree,Text,Font,White));B->SetContent(Pad);return B;
     };
     Header->AddChildToHorizontalBox(MakeButton(TEXT("RETURN  [ESC / B]"),0,[this](int32){Close();}));
@@ -105,7 +107,7 @@ void UForbiddenHelpWidget::SelectEntry(int32 Index)
     }
     Counter->SetText(FText::FromString(FString::Printf(TEXT("%02d / %02d   |   ARROWS: PAGES   LB/RB: TOPICS   PG UP/DN: READ"),Index+1,Entries.Num())));
 }
-void UForbiddenHelpWidget::Step(int32 Direction) {SelectEntry((Selected+Direction+Entries.Num())%FMath::Max(1,Entries.Num()));}
+void UForbiddenHelpWidget::Step(int32 Direction) {NeonMenuAudio::Navigate(this);SelectEntry((Selected+Direction+Entries.Num())%FMath::Max(1,Entries.Num()));}
 void UForbiddenHelpWidget::Close() {if(auto* PC=GetOwningPlayer<AMVPController>()) PC->CloseHelp();}
 FReply UForbiddenHelpWidget::NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
 {
@@ -113,7 +115,7 @@ FReply UForbiddenHelpWidget::NativeOnKeyDown(const FGeometry& Geometry,const FKe
     if(Key==EKeys::Escape || Key==EKeys::Gamepad_FaceButton_Right) {if(!Event.IsRepeat()) Close();return FReply::Handled();}
     if(Key==EKeys::Right || Key==EKeys::Down || Key==EKeys::Gamepad_DPad_Right || Key==EKeys::Gamepad_DPad_Down) {Step(1);return FReply::Handled();}
     if(Key==EKeys::Left || Key==EKeys::Up || Key==EKeys::Gamepad_DPad_Left || Key==EKeys::Gamepad_DPad_Up) {Step(-1);return FReply::Handled();}
-    if(Key==EKeys::Gamepad_LeftShoulder || Key==EKeys::Gamepad_RightShoulder) {SelectTopic((Topic+(Key==EKeys::Gamepad_LeftShoulder ? 6 : 1))%7);return FReply::Handled();}
+    if(Key==EKeys::Gamepad_LeftShoulder || Key==EKeys::Gamepad_RightShoulder) {NeonMenuAudio::Navigate(this);SelectTopic((Topic+(Key==EKeys::Gamepad_LeftShoulder ? 6 : 1))%7);return FReply::Handled();}
     if(Key==EKeys::PageDown || Key==EKeys::PageUp) {ReadingScroll->SetScrollOffset(FMath::Max(0.f,ReadingScroll->GetScrollOffset()+(Key==EKeys::PageDown ? 240.f : -240.f)));return FReply::Handled();}
     // Prevent gameplay shortcuts reaching the controller while browsing the guide.
     if(Key==EKeys::Enter || Key==EKeys::One || Key==EKeys::Two || Key==EKeys::Three || Key==EKeys::R || Key==EKeys::H || Key==EKeys::L || Key==EKeys::F1) return FReply::Handled();

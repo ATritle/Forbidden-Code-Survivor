@@ -1,5 +1,7 @@
 #include "NeonSettingsWidget.h"
 #include "ForbiddenSettingsControls.h"
+#include "ForbiddenChoiceWidget.h"
+#include "NeonMenuAudio.h"
 #include "ForbiddenUI.h"
 #include "ForbiddenCodeBranding.h"
 #include "NeonAudioDirector.h"
@@ -50,7 +52,8 @@ void UNeonSettingsWidget::NativeOnInitialized()
     Text(TEXT("SETTINGS"),16,Muted);
     auto MenuAction=[&](const TCHAR* Name,const TCHAR* Copy)
     {
-        auto* B=WidgetTree->ConstructWidget<UButton>(UButton::StaticClass(),FName(Name));
+        auto* B=WidgetTree->ConstructWidget<UForbiddenChoiceButton>(UForbiddenChoiceButton::StaticClass(),FName(Name));B->Configure(0,{});
+        B->bClosingFeedback=FString(Name)==TEXT("QuitGame");
         B->SetBackgroundColor(FLinearColor(.02f,.15f,.23f));auto* L=WidgetTree->ConstructWidget<UTextBlock>();L->SetText(FText::FromString(Copy));L->SetJustification(ETextJustify::Center);L->SetColorAndOpacity(Cyan);B->SetContent(L);
         Column->AddChildToVerticalBox(B)->SetPadding(FMargin(0,7));return B;
     };
@@ -78,7 +81,8 @@ void UNeonSettingsWidget::NativeOnInitialized()
     ForbiddenSettings::AddControls(this,Column);
     auto Button=[&](FName Name,const TCHAR* Caption)
     {
-        auto* Control=WidgetTree->ConstructWidget<UButton>(UButton::StaticClass(),Name);
+        auto* Control=WidgetTree->ConstructWidget<UForbiddenChoiceButton>(UForbiddenChoiceButton::StaticClass(),Name);Control->Configure(0,{});
+        Control->bClosingFeedback=Name==TEXT("CloseSettings") || Name==TEXT("ExitTestingArea");
         Control->SetBackgroundColor(FLinearColor(0.03f,0.13f,0.22f));
         auto* Label=WidgetTree->ConstructWidget<UTextBlock>();Label->SetText(FText::FromString(Caption));
         Label->SetJustification(ETextJustify::Center);Label->SetColorAndOpacity(White);Control->SetContent(Label);
@@ -116,7 +120,7 @@ void UNeonSettingsWidget::SFXChanged(float Value)
 }
 void UNeonSettingsWidget::PreviewSFX()
 {
-    if(auto* Game=Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this)); Game && Game->AudioDirector) Game->AudioDirector->PlayUI(TEXT("UI_Confirm"));
+    if(auto* Game=Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this)); Game && Game->AudioDirector) Game->AudioDirector->PlayMenuFeedback();
 }
 void UNeonSettingsWidget::Close()
 {
@@ -129,6 +133,7 @@ void UNeonSettingsWidget::Close()
 FReply UNeonSettingsWidget::NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
 {
     if(!Event.IsRepeat() && ForbiddenSettings::HandleKey(this,Event.GetKey())) return FReply::Handled();
+    if(Event.GetKey()==EKeys::Up || Event.GetKey()==EKeys::Down || Event.GetKey()==EKeys::Gamepad_DPad_Up || Event.GetKey()==EKeys::Gamepad_DPad_Down) NeonMenuAudio::Navigate(this);
     if(Event.GetKey()==EKeys::Escape) {if(!Event.IsRepeat()) Close();return FReply::Handled();}
     return Super::NativeOnKeyDown(Geometry,Event);
 }

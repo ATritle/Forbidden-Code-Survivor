@@ -1,5 +1,7 @@
 #include "ForbiddenScoreWidget.h"
+#include "NeonMenuAudio.h"
 #include "ForbiddenUI.h"
+#include "ForbiddenChoiceWidget.h"
 #include "ForbiddenScoreService.h"
 #include "MVPGame.h"
 #include "Blueprint/WidgetTree.h"
@@ -35,7 +37,7 @@ void UForbiddenScoreWidget::NativeOnInitialized()
         if(auto* P=GetGameInstance()->GetSubsystem<UForbiddenProfile>();P && P->Data) Username->SetText(FText::FromString(P->Data->Username));Column->AddChild(Username);
     }
     auto Button=[&](const TCHAR* Copy)
-    {auto* B=WidgetTree->ConstructWidget<UButton>();auto* T=WidgetTree->ConstructWidget<UTextBlock>();T->SetText(FText::FromString(Copy));T->SetJustification(ETextJustify::Center);B->SetContent(T);B->SetBackgroundColor(FLinearColor(0.02f,0.12f,0.2f));Column->AddChildToVerticalBox(B)->SetPadding(FMargin(0,8));return B;};
+    {auto* B=WidgetTree->ConstructWidget<UForbiddenChoiceButton>();B->Configure(0,{});B->bClosingFeedback=FString(Copy).StartsWith(TEXT("RETURN"));auto* T=WidgetTree->ConstructWidget<UTextBlock>();T->SetText(FText::FromString(Copy));T->SetJustification(ETextJustify::Center);B->SetContent(T);B->SetBackgroundColor(FLinearColor(0.02f,0.12f,0.2f));Column->AddChildToVerticalBox(B)->SetPadding(FMargin(0,8));return B;};
     if(Username) Button(TEXT("SUBMIT SCORE"))->OnClicked.AddDynamic(this,&ThisClass::Submit);
     Button(TEXT("REFRESH TOP 10"))->OnClicked.AddDynamic(this,&ThisClass::Refresh);Button(TEXT("RETURN / SKIP SUBMISSION / ESC"))->OnClicked.AddDynamic(this,&ThisClass::Close);Refresh();
 }
@@ -49,6 +51,7 @@ void UForbiddenScoreWidget::Submit() {if(Scores && Username) Scores->Submit(User
 void UForbiddenScoreWidget::Refresh() {if(Scores) Scores->FetchBoard();}
 void UForbiddenScoreWidget::Close()
 {
+    NeonMenuAudio::Exit(this);
     auto* PC=GetOwningPlayer<AMVPController>();auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());RemoveFromParent();
     if(PC) {PC->ScoreWidget=nullptr;PC->SetMenuInput(!G || G->bInCodex || G->bRunEnded || G->bChoosingCard);PC->SetPause(WasPaused || !G || G->bInCodex || G->bRunEnded || G->bChoosingCard);}
 }
