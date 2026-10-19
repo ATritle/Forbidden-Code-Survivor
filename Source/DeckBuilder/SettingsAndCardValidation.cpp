@@ -47,7 +47,7 @@ void AMVPController::TickSettingsSmokeTest()
         }
         if(!Game->bInCodex || !IsPaused() || !Audio->IsReady()) {Fail(TEXT("Initial menu/audio missing"));return;}
         auto* HUD=Cast<AMVPHUD>(GetHUD());if(!HUD) {Fail(TEXT("Missing HUD"));return;}
-        HUD->ClickAt(1410,158);
+        HUD->ClickAt(450,160);
         if(!IsSettingsOpen() || !IsPaused()) {Fail(TEXT("Main-menu settings button failed"));return;}
         auto* Music=Cast<USlider>(SettingsWidget->WidgetTree->FindWidget(TEXT("MusicVolumeSlider")));
         auto* SFX=Cast<USlider>(SettingsWidget->WidgetTree->FindWidget(TEXT("SFXVolumeSlider")));

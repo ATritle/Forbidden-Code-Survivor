@@ -1,0 +1,16 @@
+{
+	"result": "SETTINGS_REVIEW_PASS",
+	"detail": "Native fullscreen, borderless, windowed, timeout rollback, close rollback and confirmed save verified",
+	"case": "native-display",
+	"checks": [
+		"Borderless applied to the real native window and RHI viewport while confirmation remained pending",
+		"Real 15-second confirmation timeout restored windowed mode while paused and hidden",
+		"Actual native viewport resolution verified at 2560 x 1440",
+		"Mode 1 confirmed on native window, RHI viewport and GameUserSettings",
+		"Actual native viewport resolution verified at 2560 x 1440",
+		"Mode 0 confirmed on native window, RHI viewport and GameUserSettings",
+		"Actual native viewport resolution verified at 1280 x 720",
+		"Mode 2 confirmed on native window, RHI viewport and GameUserSettings",
+		"Closing settings reverted unconfirmed display changes"
+	]
+}

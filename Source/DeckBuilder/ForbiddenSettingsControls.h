@@ -25,6 +25,10 @@ namespace ForbiddenSettings
     DECKBUILDER_API float Get(const UObject* Context,FName Key,float Default=1.f);
     DECKBUILDER_API void Apply(AMVPPlayer* Player,bool Rebind=false);
     DECKBUILDER_API void AddControls(UUserWidget* Widget,UVerticalBox* Column);
+    DECKBUILDER_API void AddAccessibilityControls(UUserWidget* Widget,UVerticalBox* Column);
+    DECKBUILDER_API void AddInputControls(UUserWidget* Widget,UVerticalBox* Column);
+    DECKBUILDER_API void ApplyGraphics(const UObject* Context);
+    DECKBUILDER_API bool SetGraphicsPreset(const UObject* Context,int32 Preset);
     DECKBUILDER_API bool HandleKey(UUserWidget* Widget,FKey Key);
     DECKBUILDER_API TMap<FName,FKey> DefaultBindings();
 }

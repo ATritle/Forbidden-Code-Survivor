@@ -1,4 +1,4 @@
-param([string]$CompilerPath='',[string]$PackageDirectory='',[string]$OutputDirectory='',[ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version='0.3.6')
+param([string]$CompilerPath='',[string]$PackageDirectory='',[string]$OutputDirectory='',[ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version='0.3.7')
 $ErrorActionPreference='Stop'
 $projectRoot=Split-Path -Parent $PSScriptRoot
 $packageRoot=if($PackageDirectory){[IO.Path]::GetFullPath($PackageDirectory)}else{Join-Path $projectRoot ('Artifacts\Windows-'+$Version+'\Windows')}

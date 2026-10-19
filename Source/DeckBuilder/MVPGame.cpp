@@ -150,6 +150,7 @@ void AMVPPlayer::BeginPlay()
     MaxHealth = FMath::IsFinite(MaxHealth) ? FMath::Max(1.f, MaxHealth) : 100.f;
     Health = MaxHealth;
     ForbiddenSettings::Apply(this);
+    ForbiddenSettings::ApplyGraphics(this);
     LoadCameraPreference();
     if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();Profile && Profile->Data)
         TargetPriority=FMath::Clamp(FMath::RoundToInt(Profile->Data->Settings.FindRef("TargetPriority")),0,2);
@@ -559,6 +560,8 @@ void AMVPController::BeginPlay()
     InstallNeonMenuAudioValidation(this);
     extern void InstallMusicPlayerValidation(AMVPController* Controller);
     InstallMusicPlayerValidation(this);
+    extern void InstallSettingsReviewValidation(AMVPController* Controller);
+    InstallSettingsReviewValidation(this);
 #if !UE_BUILD_SHIPPING
     bSmokeTest = FParse::Param(FCommandLine::Get(), TEXT("MVPSmoke"));
 #endif

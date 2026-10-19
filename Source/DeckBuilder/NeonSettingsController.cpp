@@ -22,6 +22,7 @@ void AMVPController::ToggleSettings()
     if(!Game || !Game->AudioDirector) return;
     SettingsWidget=CreateWidget<UNeonSettingsWidget>(this,UNeonSettingsWidget::StaticClass());
     if(!SettingsWidget) return;
+    if(!SettingsWidget->SavePreferences()) return;
     NeonMenuAudio::Input(this);
     bSettingsOwnPause=!IsPaused();
     if(bSettingsOwnPause) SetPause(true);
