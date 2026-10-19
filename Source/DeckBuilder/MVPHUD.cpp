@@ -293,6 +293,7 @@ void AMVPHUD::ClickAt(float X, float Y)
     if((!Game->bInCodex && InChamfer(LocalX,LocalY,1360,186,190,36)) || (Game->bInCodex && InChamfer(LocalX,LocalY,920,182,230,46)) || (Game->bRunEnded && InChamfer(LocalX,LocalY,490,580,620,36))) {if(PC) PC->OpenLeaderboard();return;}
     if (Game->bInCodex)
     {
+        if(ClickMusicPlayer(LocalX,LocalY,Game)) return;
         if(InChamfer(LocalX,LocalY,80,145,255,34)) {if(PC) PC->OpenHelp();return;}
         if(InChamfer(LocalX,LocalY,350,145,255,34)) {if(PC) PC->ToggleSettings();return;}
         if(InChamfer(LocalX,LocalY,620,145,205,34)) {if(PC) PC->CloseGame();return;}

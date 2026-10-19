@@ -21,7 +21,8 @@ for entry in json.loads((root/'manifest.json').read_text()):
     wave = unreal.load_asset('/Game/Audio/SW_'+name)
     if not isinstance(wave, unreal.SoundWave):
         raise RuntimeError('Audio import failed: '+name)
-    wave.set_editor_property('looping', music)
+    # Completion delegates advance playlists. UI sounds continue while gameplay pauses.
+    wave.set_editor_property('looping', False)
     if music:
         wave.set_editor_property('virtualization_mode', unreal.VirtualizationMode.PLAY_WHEN_SILENT)
     wave.set_editor_property('sound_group', unreal.SoundGroup.SOUNDGROUP_MUSIC if music else unreal.SoundGroup.SOUNDGROUP_EFFECTS)
@@ -31,4 +32,4 @@ for entry in json.loads((root/'manifest.json').read_text()):
     report.append(dict(asset=wave.get_path_name(), seconds=wave.get_editor_property('duration'),
                        looping=wave.get_editor_property('looping'), channels=wave.get_editor_property('num_channels')))
 (root/'import-report.json').write_text(json.dumps(report, indent=2))
-unreal.log('AUDIO_IMPORT_PASS: '+str(len(report))+' SoundWaves, two looping music tracks')
+unreal.log('AUDIO_IMPORT_PASS: '+str(len(report))+' SoundWaves, four streaming playlist tracks')

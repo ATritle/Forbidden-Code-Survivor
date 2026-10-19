@@ -1,4 +1,4 @@
-param([string]$EngineRoot='C:\Program Files\Epic Games\UE_5.8',[ValidateSet('Shipping','Development')][string]$Configuration='Shipping',[switch]$Installer,[string]$OutputDirectory='',[ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version='0.3.2')
+param([string]$EngineRoot='C:\Program Files\Epic Games\UE_5.8',[ValidateSet('Shipping','Development')][string]$Configuration='Shipping',[switch]$Installer,[string]$OutputDirectory='',[ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version='0.3.3')
 $ErrorActionPreference='Stop'
 $projectRoot=Split-Path -Parent $PSScriptRoot
 $uat=Join-Path $EngineRoot 'Engine\Build\BatchFiles\RunUAT.bat'

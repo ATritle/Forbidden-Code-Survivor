@@ -44,7 +44,7 @@ void ANeonAudioDirector::BeginPlay()
 {
     Super::BeginPlay();
     LoadAudioSettings();
-    for(const TCHAR* Name:{TEXT("Music_Gameplay"),TEXT("Music_Menu"),TEXT("Pulse"),TEXT("Plasma"),TEXT("Laser"),TEXT("Blaster"),
+    for(const TCHAR* Name:{TEXT("Music_Gameplay"),TEXT("Music_Menu"),TEXT("Music_Monume"),TEXT("Music_Synthwave"),TEXT("Pulse"),TEXT("Plasma"),TEXT("Laser"),TEXT("Blaster"),
         TEXT("Impact"),TEXT("Enemy_Metal"),TEXT("Enemy_Glitch"),TEXT("UI_Deny"),TEXT("UI_Confirm"),TEXT("UI_Select"),TEXT("UI_Click"),TEXT("LowHealth")})
     {
         auto* Sound=LoadObject<USoundWave>(nullptr,*FString::Printf(TEXT("/Game/Audio/SW_%s.SW_%s"),Name,Name));
@@ -53,8 +53,8 @@ void ANeonAudioDirector::BeginPlay()
     }
     GameplayMusic=MakeAudio(TEXT("GameplayMusic"),true,false);
     MenuMusic=MakeAudio(TEXT("MenuMusic"),true,false);
-    GameplayMusic->SetSound(Sounds.FindRef(TEXT("Music_Gameplay")));
-    MenuMusic->SetSound(Sounds.FindRef(TEXT("Music_Menu")));
+    GameplayMusic->OnAudioFinished.AddDynamic(this,&ThisClass::GameplayTrackFinished);
+    MenuMusic->OnAudioFinished.AddDynamic(this,&ThisClass::MenuTrackFinished);
     CriticalAlarm=MakeAudio(TEXT("CriticalHealthAlarm"),false,false);
     CriticalAlarm->SetSound(Sounds.FindRef(TEXT("LowHealth")));CriticalAlarm->SetVolumeMultiplier(0.65f*SFXVolume);
     DangerWarning=MakeAudio(TEXT("PriorityDangerWarning"),false,true);
@@ -85,14 +85,14 @@ void ANeonAudioDirector::UpdateMusicState()
         bMenuMusic=bMenu;
         MusicBlend=bMenu ? 1.f : 0.f;
         ApplyVolumes();
-        // Both loops retain their playhead across brief card drafts. Real-time
-        // equal-power blending works even when gameplay DeltaSeconds is zero.
-        MenuMusic->Play();GameplayMusic->Play();bMusicStarted=true;
+        bMusicStarted=true;
+        StartTrack(bMenu,bMenu ? MenuTrackIndex : GameplayTrackIndex);
     }
     if(bMenuMusic!=bMenu)
     {
         bMenuMusic=bMenu;++MusicTransitions;
-        UE_LOG(LogTemp,Display,TEXT("NEON_MUSIC: %s"),bMenu ? TEXT("Monume / menu") : TEXT("Humanstudioed / gameplay"));
+        StartTrack(bMenu,bMenu ? MenuTrackIndex : GameplayTrackIndex);
+        UE_LOG(LogTemp,Display,TEXT("NEON_MUSIC: %s"),bMenu ? TEXT("Neon Synthwave Drive / menu") : TEXT("Humanstudioed, Monume, The Mountain / gameplay rotation"));
     }
 }
 
@@ -104,6 +104,9 @@ void ANeonAudioDirector::Tick(float Dt)
     const float RealDt=FMath::Clamp(float(Now-LastMusicUpdate),0.f,0.1f);LastMusicUpdate=Now;
     MusicBlend=FMath::FInterpConstantTo(MusicBlend,bMenuMusic ? 1.f : 0.f,RealDt,1.f/0.65f);
     ApplyVolumes(false);
+    // Retire the outgoing stream once the context crossfade completes.
+    if(!bMenuMusic && MusicBlend<=0 && MenuMusic->IsActive()) MenuMusic->Stop();
+    if(bMenuMusic && MusicBlend>=1 && GameplayMusic->IsActive()) GameplayMusic->Stop();
     const bool Duck=DangerWarning && DangerWarning->IsPlaying();if(Duck!=bDangerDucking) {bDangerDucking=Duck;ApplyVolumes(true);}
     UpdateHealthAlarm(Now);
     if(bSettingsDirty && Now>=SaveAfter) SaveAudioSettings();
@@ -181,9 +184,8 @@ void ANeonAudioDirector::PlayWarning(FName Cue,FVector Location)
 }
 bool ANeonAudioDirector::IsReady() const
 {
-    const USoundWave* Game=Sounds.FindRef(TEXT("Music_Gameplay"));const USoundWave* Menu=Sounds.FindRef(TEXT("Music_Menu"));
-    return Sounds.Num()==14 && CriticalAlarm && CriticalAlarm->Sound && Game && Menu && Game->bLooping && Menu->bLooping && Voices.Num()==18
-        && GameplayMusic && MenuMusic && GameplayMusic->IsPlaying() && MenuMusic->IsPlaying();
+    for(const auto& Track:MusicLibrary()) if(!Sounds.FindRef(Track.SoundID) || Sounds.FindRef(Track.SoundID)->bLooping) return false;
+    return Sounds.Num()==16 && CriticalAlarm && CriticalAlarm->Sound && Voices.Num()==18 && GameplayMusic && MenuMusic;
 }
 int32 ANeonAudioDirector::GetPlayingEffectCount() const
 {
@@ -191,6 +193,9 @@ int32 ANeonAudioDirector::GetPlayingEffectCount() const
 }
 void ANeonAudioDirector::EndPlay(const EEndPlayReason::Type Reason)
 {
+    bSwitchingTrack=true;
+    if(MenuMusic) MenuMusic->OnAudioFinished.RemoveAll(this);
+    if(GameplayMusic) GameplayMusic->OnAudioFinished.RemoveAll(this);
     if(bSettingsDirty) SaveAudioSettings();
     if(auto* PC=UGameplayStatics::GetPlayerController(this,0)) PC->ClearAudioListenerAttenuationOverride();
     for(UAudioComponent* Voice:Voices) if(Voice) Voice->Stop();
@@ -207,8 +212,10 @@ FString ANeonAudioDirector::SettingsSlot() const
 }
 void ANeonAudioDirector::ApplyVolumes(bool bEffects)
 {
-    if(MenuMusic) MenuMusic->SetVolumeMultiplier(MusicVolume*0.38f*FMath::Sin(MusicBlend*HALF_PI));
-    if(GameplayMusic) GameplayMusic->SetVolumeMultiplier(MusicVolume*0.18f*FMath::Cos(MusicBlend*HALF_PI));
+    const float Gain=bMusicMuted ? 0.f : MusicVolume;
+    // Monume's recording is quieter; preserve the original mix balance.
+    if(MenuMusic) MenuMusic->SetVolumeMultiplier(Gain*(MenuTrackIndex>=2 ? 0.38f : 0.20f)*FMath::Sin(MusicBlend*HALF_PI));
+    if(GameplayMusic) GameplayMusic->SetVolumeMultiplier(Gain*(GameplayTrackIndex>=2 ? 0.34f : 0.18f)*FMath::Cos(MusicBlend*HALF_PI));
     if(bEffects) for(int32 I=0;I<Voices.Num();++I) Voices[I]->SetVolumeMultiplier(VoiceGains[I]*SFXVolume*(bDangerDucking && (Groups[I]==EVoiceGroup::Attack || Groups[I]==EVoiceGroup::Impact) ? 0.35f : 1.f));
     if(DangerWarning) DangerWarning->SetVolumeMultiplier(SFXVolume*0.85f);
     if(bEffects && CriticalAlarm) CriticalAlarm->SetVolumeMultiplier(0.65f*SFXVolume*HealthAlarmGain);
@@ -245,7 +252,7 @@ bool ANeonAudioDirector::IsHealthAlarmPlaying() const {return CriticalAlarm && C
 void ANeonAudioDirector::SetMusicVolume(float Value)
 {
     if(!FMath::IsFinite(Value)) return;
-    MusicVolume=FMath::Clamp(Value,0.f,1.f);ApplyVolumes();
+    MusicVolume=FMath::Clamp(Value,0.f,1.f);if(MusicVolume>0) bMusicMuted=false;ApplyVolumes();
     bSettingsDirty=true;SaveAfter=FPlatformTime::Seconds()+0.35;
 }
 void ANeonAudioDirector::SetSFXVolume(float Value)
@@ -259,7 +266,7 @@ bool ANeonAudioDirector::SaveAudioSettings()
     if(!bSettingsDirty) return true;
     if(FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark"))) {bSettingsDirty=false;return true;}
     auto* Save=Cast<UCodexAudioSettingsSave>(UGameplayStatics::CreateSaveGameObject(UCodexAudioSettingsSave::StaticClass()));
-    Save->MusicVolume=MusicVolume;Save->SFXVolume=SFXVolume;
+    Save->MusicVolume=MusicVolume;Save->SFXVolume=SFXVolume;Save->bMusicMuted=bMusicMuted;
     const bool bSaved=UGameplayStatics::SaveGameToSlot(Save,SettingsSlot(),0);
     if(bSaved) bSettingsDirty=false;
     else {SaveAfter=FPlatformTime::Seconds()+5;UE_LOG(LogTemp,Warning,TEXT("Could not save audio settings"));}
@@ -267,13 +274,79 @@ bool ANeonAudioDirector::SaveAudioSettings()
 }
 void ANeonAudioDirector::LoadAudioSettings()
 {
-    MusicVolume=SFXVolume=1.f;
+    MusicVolume=SFXVolume=1.f;bMusicMuted=false;
     const FString LoadSlot=UGameplayStatics::DoesSaveGameExist(SettingsSlot(),0) || SettingsSlot().EndsWith("Automation") ? SettingsSlot() : TEXT("CodexAudio");
     if(!FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) && UGameplayStatics::DoesSaveGameExist(LoadSlot,0))
-        if(const auto* Save=Cast<UCodexAudioSettingsSave>(UGameplayStatics::LoadGameFromSlot(LoadSlot,0)); Save && Save->Version==1)
+        if(const auto* Save=Cast<UCodexAudioSettingsSave>(UGameplayStatics::LoadGameFromSlot(LoadSlot,0)); Save && (Save->Version==1 || Save->Version==2))
         {
             MusicVolume=FMath::IsFinite(Save->MusicVolume) ? FMath::Clamp(Save->MusicVolume,0.f,1.f) : 1.f;
             SFXVolume=FMath::IsFinite(Save->SFXVolume) ? FMath::Clamp(Save->SFXVolume,0.f,1.f) : 1.f;
+            bMusicMuted=Save->Version>=2 && Save->bMusicMuted;
         }
     bSettingsDirty=false;ApplyVolumes();
+}
+
+const TArray<FNeonMusicTrack>& ANeonAudioDirector::MusicLibrary()
+{
+    static const TArray<FNeonMusicTrack> Tracks={
+        {TEXT("Music_Menu"),TEXT("Neon Synthwave Drive"),TEXT("Alex Morgan")},
+        {TEXT("Music_Gameplay"),TEXT("Cyberpunk EDM"),TEXT("Humanstudioed")},
+        {TEXT("Music_Monume"),TEXT("Cyberpunk"),TEXT("Monume")},
+        {TEXT("Music_Synthwave"),TEXT("Synthwave"),TEXT("The Mountain")}};
+    return Tracks;
+}
+void ANeonAudioDirector::StartTrack(bool bMenu,int32 Index)
+{
+    if(!MusicLibrary().IsValidIndex(Index)) return;
+    auto* Audio=bMenu ? MenuMusic.Get() : GameplayMusic.Get();
+    USoundWave* Sound=Sounds.FindRef(MusicLibrary()[Index].SoundID);if(!Audio || !Sound) return;
+    bSwitchingTrack=true;Audio->Stop();
+    (bMenu ? MenuTrackIndex : GameplayTrackIndex)=Index;
+    (bMenu ? MenuTrackStart : GameplayTrackStart)=FPlatformTime::Seconds();
+    (bMenu ? MenuPausedPosition : GameplayPausedPosition)=0;
+    Audio->SetSound(Sound);ApplyVolumes(false);Audio->Play();Audio->SetPaused(bMusicPaused);bSwitchingTrack=false;
+}
+void ANeonAudioDirector::SelectMusicTrack(int32 Index)
+{
+    if(!MusicLibrary().IsValidIndex(Index)) return;
+    bMusicPaused=false;StartTrack(bMenuMusic,Index);
+}
+void ANeonAudioDirector::StepMusic(int32 Direction)
+{
+    const int32 Current=GetMusicTrackIndex();
+    int32 Next=(Current+Direction+MusicLibrary().Num())%MusicLibrary().Num();
+    // Neon Synthwave Drive is the initial-menu identity. The other three rotate in runs.
+    if(!bMenuMusic && Next==0) Next=Direction>0 ? 1 : MusicLibrary().Num()-1;
+    StartTrack(bMenuMusic,Next);
+}
+void ANeonAudioDirector::NextMusic() {StepMusic(1);}
+void ANeonAudioDirector::PreviousMusic() {StepMusic(-1);}
+void ANeonAudioDirector::MenuTrackFinished() {if(!bSwitchingTrack && bMenuMusic && !bMusicPaused) StepMusic(1);}
+void ANeonAudioDirector::GameplayTrackFinished() {if(!bSwitchingTrack && !bMenuMusic && !bMusicPaused) StepMusic(1);}
+float ANeonAudioDirector::GetMusicDuration() const
+{
+    const USoundWave* Sound=Sounds.FindRef(MusicLibrary()[GetMusicTrackIndex()].SoundID);return Sound ? Sound->Duration : 0.f;
+}
+float ANeonAudioDirector::GetMusicElapsed() const
+{
+    const float Elapsed=bMusicPaused ? (bMenuMusic ? MenuPausedPosition : GameplayPausedPosition)
+        : float(FPlatformTime::Seconds()-(bMenuMusic ? MenuTrackStart : GameplayTrackStart));
+    return FMath::Clamp(Elapsed,0.f,GetMusicDuration());
+}
+void ANeonAudioDirector::PauseMusic()
+{
+    if(bMusicPaused) return;
+    MenuPausedPosition=FMath::Max(0.f,float(FPlatformTime::Seconds()-MenuTrackStart));
+    GameplayPausedPosition=FMath::Max(0.f,float(FPlatformTime::Seconds()-GameplayTrackStart));
+    bMusicPaused=true;if(MenuMusic) MenuMusic->SetPaused(true);if(GameplayMusic) GameplayMusic->SetPaused(true);
+}
+void ANeonAudioDirector::PlayMusic()
+{
+    if(!bMusicPaused) return;
+    const double Now=FPlatformTime::Seconds();MenuTrackStart=Now-MenuPausedPosition;GameplayTrackStart=Now-GameplayPausedPosition;
+    bMusicPaused=false;if(MenuMusic) MenuMusic->SetPaused(false);if(GameplayMusic) GameplayMusic->SetPaused(false);
+}
+void ANeonAudioDirector::SetMusicMuted(bool bMuted)
+{
+    bMusicMuted=bMuted;ApplyVolumes(false);bSettingsDirty=true;SaveAfter=FPlatformTime::Seconds()+0.35;
 }

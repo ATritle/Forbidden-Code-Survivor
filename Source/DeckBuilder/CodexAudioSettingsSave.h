@@ -9,7 +9,8 @@ class DECKBUILDER_API UCodexAudioSettingsSave : public USaveGame
 {
     GENERATED_BODY()
 public:
-    UPROPERTY(SaveGame) int32 Version=1;
+    UPROPERTY(SaveGame) int32 Version=2;
     UPROPERTY(SaveGame) float MusicVolume=1.f;
     UPROPERTY(SaveGame) float SFXVolume=1.f;
+    UPROPERTY(SaveGame) bool bMusicMuted=false;
 };

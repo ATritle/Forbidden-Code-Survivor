@@ -7,6 +7,14 @@
 class UAudioComponent;
 class USoundWave;
 
+/** Stable IDs keep UI ordering independent of SoundWave filenames. */
+struct FNeonMusicTrack
+{
+    FName SoundID;
+    FString Title;
+    FString Artist;
+};
+
 /** Fixed voice budgets, player-relative attenuation, and pause-safe music fades. */
 UCLASS()
 class DECKBUILDER_API ANeonAudioDirector : public AActor
@@ -32,6 +40,19 @@ public:
     void PlayWarning(FName Cue,FVector Location);
     /** Call after changing game state; Tick also reconciles external pause changes. */
     void UpdateMusicState();
+    static const TArray<FNeonMusicTrack>& MusicLibrary();
+    UFUNCTION(BlueprintCallable,Category="Audio|Music Player") void PlayMusic();
+    UFUNCTION(BlueprintCallable,Category="Audio|Music Player") void PauseMusic();
+    UFUNCTION(BlueprintCallable,Category="Audio|Music Player") void NextMusic();
+    UFUNCTION(BlueprintCallable,Category="Audio|Music Player") void PreviousMusic();
+    UFUNCTION(BlueprintCallable,Category="Audio|Music Player") void SelectMusicTrack(int32 Index);
+    UFUNCTION(BlueprintCallable,Category="Audio|Music Player") void SetMusicMuted(bool bMuted);
+    UFUNCTION(BlueprintPure,Category="Audio|Music Player") bool IsMusicMuted() const {return bMusicMuted;}
+    UFUNCTION(BlueprintPure,Category="Audio|Music Player") bool IsMusicPaused() const {return bMusicPaused;}
+    int32 GetMusicTrackIndex() const {return bMenuMusic ? MenuTrackIndex : GameplayTrackIndex;}
+    float GetMusicElapsed() const;
+    float GetMusicDuration() const;
+    /** Asset bank readiness is independent of intentional pause/mute. */
     UFUNCTION(BlueprintCallable,Category="Audio") void SetMusicVolume(float Value);
     UFUNCTION(BlueprintCallable,Category="Audio") void SetSFXVolume(float Value);
     UFUNCTION(BlueprintPure,Category="Audio") float GetMusicVolume() const { return MusicVolume; }
@@ -64,6 +85,14 @@ private:
     TArray<float> VoiceGains;
     float MusicVolume=1.f;
     float SFXVolume=1.f;
+    bool bMusicMuted=false,bMusicPaused=false,bSwitchingTrack=false;
+    int32 MenuTrackIndex=0,GameplayTrackIndex=1;
+    double MenuTrackStart=0,GameplayTrackStart=0;
+    float MenuPausedPosition=0,GameplayPausedPosition=0;
+    void StartTrack(bool bMenu,int32 Index);
+    void StepMusic(int32 Direction);
+    UFUNCTION() void MenuTrackFinished();
+    UFUNCTION() void GameplayTrackFinished();
     bool bSettingsDirty=false;
     double SaveAfter=0;
     FString SettingsSlot() const;

@@ -16,9 +16,9 @@ The editions share the energy-spell catalog and cyberpunk theme. Native 0.3.0 ha
 
 The native source now includes an eight-program draft pool, two starters, six active slots, finite ranks and 32 exclusive evolution branches. Relay hacks, a three-phase boss, captured enemy code, corrupted contract rewards, persistent hideout unlocks, new Meshy art/animations, accessibility controls and an independent Windows leaderboard extend the run loop.
 
-Build with UE 5.8.2 using `Scripts/Package-Windows.ps1 -Installer`. Current outputs use separate `Windows-0.3.2` and `Installer-0.3.2` folders. `Play-Forbidden-Routines.cmd` launches the current local package; `Play-Windows-0.3.1.cmd` and `Play-Windows-0.3.0.cmd` retain preceding builds. The published v0.2.0 download above remains available as the earlier release.
+Build with UE 5.8.2 using `Scripts/Package-Windows.ps1 -Installer`. Current outputs use separate `Windows-0.3.3` and `Installer-0.3.3` folders. `Play-Forbidden-Routines.cmd` launches the current local package; `Play-Windows-0.3.2.cmd`, `Play-Windows-0.3.1.cmd` and `Play-Windows-0.3.0.cmd` retain preceding builds. The published v0.2.0 download above remains available as the earlier release.
 
-**Windows 0.3.2 maintenance update:** grouped **HOW TO / SETTINGS / CLOSE** controls and added the requested menu navigation/input and closing sounds, with saved SFX gain and a pause-safe closing cue before application exit. [Details and validation](Docs/Windows-0.3.2.txt).
+**Windows 0.3.3 music update:** added the neon Signal Dock with play/pause, previous/next, a scrollable **TRACKS** popup, saved music volume and mute. Neon Synthwave Drive is the new initial-menu track; the previous Monume track joins the gameplay rotation. Card drafts retain gameplay music. [Details and validation](Docs/Windows-0.3.3.txt). The grouped HOW TO / SETTINGS / CLOSE controls and menu sounds from 0.3.2 remain included.
 
 **Windows 0.3.1 maintenance update:** fixed missing ramp floors, added **CLOSE GAME** in both menus, and added **HOW TO PLAY** (F1), a 52-entry illustrated guide covering all programs/evolutions, enemies, district items, contracts, progression and settings. [Details and validation](Docs/Windows-0.3.1.txt).
 

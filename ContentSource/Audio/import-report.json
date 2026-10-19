@@ -2,13 +2,25 @@
   {
     "asset": "/Game/Audio/SW_Music_Gameplay.SW_Music_Gameplay",
     "seconds": 162.34666442871094,
-    "looping": true,
+    "looping": false,
     "channels": 2
   },
   {
     "asset": "/Game/Audio/SW_Music_Menu.SW_Music_Menu",
+    "seconds": 167.52000427246094,
+    "looping": false,
+    "channels": 2
+  },
+  {
+    "asset": "/Game/Audio/SW_Music_Monume.SW_Music_Monume",
     "seconds": 73.9330825805664,
-    "looping": true,
+    "looping": false,
+    "channels": 2
+  },
+  {
+    "asset": "/Game/Audio/SW_Music_Synthwave.SW_Music_Synthwave",
+    "seconds": 197.5118408203125,
+    "looping": false,
     "channels": 2
   },
   {

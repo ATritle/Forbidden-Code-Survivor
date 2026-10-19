@@ -557,6 +557,8 @@ void AMVPController::BeginPlay()
     InstallForbiddenSystemsValidation(this);
     InstallForbiddenHelpValidation(this);
     InstallNeonMenuAudioValidation(this);
+    extern void InstallMusicPlayerValidation(AMVPController* Controller);
+    InstallMusicPlayerValidation(this);
 #if !UE_BUILD_SHIPPING
     bSmokeTest = FParse::Param(FCommandLine::Get(), TEXT("MVPSmoke"));
 #endif
@@ -595,7 +597,11 @@ void AMVPController::SetupInputComponent()
     InputComponent->BindKey(EKeys::Gamepad_Special_Left, IE_Pressed, this, &AMVPController::OpenLeaderboard).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::Gamepad_Special_Right, IE_Pressed, this, &AMVPController::ToggleSettings).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::Escape, IE_Pressed, this, &AMVPController::ToggleSettings).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::MouseScrollUp,IE_Pressed,this,&AMVPController::ScrollMusicUp).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::MouseScrollDown,IE_Pressed,this,&AMVPController::ScrollMusicDown).bExecuteWhenPaused=true;
 }
+void AMVPController::ScrollMusicUp() {if(auto* H=Cast<AMVPHUD>(GetHUD())) H->ScrollMusicPlaylist(-1);}
+void AMVPController::ScrollMusicDown() {if(auto* H=Cast<AMVPHUD>(GetHUD())) H->ScrollMusicPlaylist(1);}
 void AMVPController::TestExplosion()
 {
     if (auto* Game=MVP::Mode(this); Game && Game->ExplosionDirector && !Game->bInCodex && GetPawn())

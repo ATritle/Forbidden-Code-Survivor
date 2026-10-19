@@ -30,7 +30,8 @@ void AMVPHUD::PrepareNeonInterface()
 }
 float AMVPHUD::Hover(FName Key,float X,float Y,float W,float H)
 {
-    const bool bOver=Cursor.X>=X && Cursor.X<=X+W && Cursor.Y>=Y && Cursor.Y<=Y+H;
+    const bool bCovered=bMusicPlaylistOpen && !Key.ToString().StartsWith(TEXT("Music")) && Cursor.X>=880 && Cursor.X<=1510 && Cursor.Y>=610 && Cursor.Y<=844;
+    const bool bOver=!bCovered && Cursor.X>=X && Cursor.X<=X+W && Cursor.Y>=Y && Cursor.Y<=Y+H;
     if(bOver) if(const auto* G=Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this));G && G->bInCodex) NeonMenuAudio::Hover(this,Key);
     float& Value=HoverStates.FindOrAdd(Key);Value=FMath::FInterpTo(Value,bOver ? 1.f : 0.f,UIRealDt,14.f);return Value;
 }
@@ -153,5 +154,5 @@ void AMVPHUD::DrawCodex(AMVPArenaGameMode* Game)
     H=Hover(TEXT("EnterArena"),1080,776,440,64);Glass(TEXT("EnterArena"),1080,776,440,64,Cyan,H,Valid,2);
     NeonTitle(TEXT("ENTER ARENA  >>"),1134,794-H*2,1.2f,Valid ? White : Muted);
     Text(TEXT("ENTER"),1433,822,0.54f,Cyan);
-    Text(TEXT("RAIN-SOAKED STREETS. DIGITAL GHOSTS. YOUR RULES."),80,864,0.59f,Muted);
+    DrawMusicPlayer(Game);
 }

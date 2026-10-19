@@ -10,11 +10,29 @@
   },
   {
     "asset": "Music_Menu",
+    "source": "SFX\\music\\alex-morgan-neon-synthwave-drive-537447.mp3",
+    "seconds": 167.52,
+    "channels": 2,
+    "peak": 0.8672980070114136,
+    "rms": 0.26411864161491394,
+    "reserved_enemy_only": false
+  },
+  {
+    "asset": "Music_Monume",
     "source": "SFX\\music\\monume-cyberpunk-519219.mp3",
     "seconds": 73.93308333333333,
     "channels": 2,
     "peak": 0.8471938371658325,
     "rms": 0.10871212929487228,
+    "reserved_enemy_only": false
+  },
+  {
+    "asset": "Music_Synthwave",
+    "source": "SFX\\music\\the_mountain-synthwave-593074.mp3",
+    "seconds": 197.51183333333333,
+    "channels": 2,
+    "peak": 0.8176016211509705,
+    "rms": 0.12061066925525665,
     "reserved_enemy_only": false
   },
   {

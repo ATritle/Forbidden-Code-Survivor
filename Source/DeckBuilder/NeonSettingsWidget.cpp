@@ -93,7 +93,7 @@ void UNeonSettingsWidget::NativeOnInitialized()
     if(Game->TestingDirector && Game->TestingDirector->IsActive()) Button(TEXT("ExitTestingArea"),TEXT("EXIT TESTING & RETURN TO SESSION"))->OnClicked.AddDynamic(this,&ThisClass::ExitTesting);
     StatusLabel=Text(TEXT("Changes apply immediately and save automatically."),12,Muted);
     Button(TEXT("CloseSettings"),TEXT("SAVE & RETURN  /  ESC"))->OnClicked.AddDynamic(this,&ThisClass::Close);
-    MusicLabel->SetText(FText::FromString(FString::Printf(TEXT("MUSIC   %d%%"),FMath::RoundToInt(MusicSlider->GetValue()*100))));
+    MusicLabel->SetText(FText::FromString(FString::Printf(TEXT("MUSIC   %d%%%s"),FMath::RoundToInt(MusicSlider->GetValue()*100),Game->AudioDirector->IsMusicMuted() ? TEXT("  / MUTED IN SIGNAL DOCK") : TEXT(""))));
     SFXLabel->SetText(FText::FromString(FString::Printf(TEXT("SOUND EFFECTS   %d%%"),FMath::RoundToInt(SFXSlider->GetValue()*100))));
     MusicSlider->OnValueChanged.AddDynamic(this,&ThisClass::MusicChanged);
     SFXSlider->OnValueChanged.AddDynamic(this,&ThisClass::SFXChanged);

@@ -322,6 +322,8 @@ private:
     void Click();
     void RestartRun();
     void BeginSelectedRun();
+    void ScrollMusicUp();
+    void ScrollMusicDown();
     void TestExplosion();
     void TickSmokeTest();
     void TickCitySmokeTest();
@@ -339,6 +341,8 @@ class DECKBUILDER_API AMVPHUD : public AHUD
 public:
     virtual void DrawHUD() override;
     void ClickAt(float X, float Y);
+    void ScrollMusicPlaylist(int32 Direction);
+    bool IsMusicPlaylistOpen() const {return bMusicPlaylistOpen;}
     FName GetHoveredTestingCard() const {return HoveredTestingCard;}
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Neon UI") FLinearColor InterfaceAccent=FLinearColor(0.03f,0.85f,1.f);
     UFUNCTION(BlueprintCallable,Category="Neon UI") void SetInterfaceAccent(FLinearColor Color) { InterfaceAccent=Color; }
@@ -348,6 +352,10 @@ private:
     void CenteredText(const FString& Value, float Y, float Size, FLinearColor Color);
     void Box(float X, float Y, float W, float H, FLinearColor Color);
     void DrawCodex(AMVPArenaGameMode* Game);
+    void DrawMusicPlayer(AMVPArenaGameMode* Game);
+    bool ClickMusicPlayer(float X,float Y,AMVPArenaGameMode* Game);
+    bool bMusicPlaylistOpen=false,bDraggingMusicVolume=false,bDraggingMusicScroll=false;
+    int32 MusicScrollOffset=0;
     void DrawSettingsButton();
     void PrepareNeonInterface();
     float Hover(FName Key,float X,float Y,float W,float H);
