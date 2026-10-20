@@ -20,6 +20,8 @@ reports = {
  'MusicPlayer': ('Saved/QA/RidersMusicShipping/Saved/Review/MusicPlayer/report.json','MUSIC_PLAYER_PASS'),
  'MusicPlayer-Restart': ('Saved/QA/RidersMusicShipping/Saved/Review/MusicPlayer/reload.json','MUSIC_PLAYER_RELOAD_PASS'),
  'Guide': ('Saved/QA/RidersGuideShipping/Saved/Review/RampGuide/report.json','RAMP_GUIDE_PASS'),
+ 'Quit-MainMenu': ('Saved/QA/RidersGuideShipping/Saved/Review/RampGuide/QuitMenuSmoke-report.json','CLOSE_GAME_PASS'),
+ 'Quit-Settings': ('Saved/QA/RidersGuideShipping/Saved/Review/RampGuide/QuitSettingsSmoke-report.json','CLOSE_GAME_PASS'),
  'MenuAudio': ('Saved/QA/RidersAudioShipping/Saved/Review/MenuAudio/report.json','MENU_AUDIO_PASS'),
  'Settings-Wide': ('Saved/QA/RidersSettingsShipping/Wide/Saved/Review/SettingsReview/report.json','SETTINGS_REVIEW_PASS'),
  'Settings-Compact': ('Saved/QA/RidersSettingsShipping/Compact/Saved/Review/SettingsReview/report.json','SETTINGS_REVIEW_PASS'),
