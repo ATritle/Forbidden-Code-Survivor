@@ -1,0 +1,67 @@
+FORBIDDEN CODE: SURVIVOR / WINDOWS 0.4.2
+Hover feedback and deck clarity
+
+Hover now visibly shades the card illustration and tints its panel, with a
+stronger fine neon outline. Rider portraits/rows and buttons use matching
+feedback. The animation eases in and out; hover remains silent.
+
+PRESETS ARE SAVED DECKS
+DECK 1, DECK 2 and DECK 3 are the same three saved preset slots as before.
+Each stores eight eligible level-up cards and two distinct starting abilities.
+They initially contain the same cards, until you customize them independently.
+A new profile has exactly eight unlocked cards, so the initial eight-card pools
+match. Different starting pairs can be saved immediately; unlock more cards
+for 30 fragments each to create different eight-card pools.
+Choosing a rider is a separate selection; riders are not assigned to a preset.
+
+A program is one card/ability. ALL PROGRAMS is the complete collection, including
+locked cards. Your eight-card deck determines which programs can be offered at
+level-up. Two of those eight are equipped immediately when the run starts.
+You can have six card abilities equipped during a run. The school tabs filter
+the visible cards; you can combine schools freely in a deck.
+
+TO CHANGE A SAVED DECK
+1. Select DECK 1, 2 or 3. The header identifies the active deck.
+2. Click BROWSE ALL PROGRAMS. Unlock a card first if it is locked.
+3. Click a card not in that deck, choose ADD TO DECK, then choose which of the
+   eight existing cards it replaces. Other saved decks are not changed.
+4. Return to SHOW MY 8-CARD DECK. Click a card and choose CHOOSE AS STARTING
+   ATTACK, then choose slot 1 or 2. Repeat for the other starting ability.
+5. Edits autosave to the selected deck. SAVE DECK is an explicit save as well;
+   ENTER ARENA validates and saves before starting.
+
+Replacing a deck card that is already a starting ability also replaces that
+starting ability. The replacement menu now warns about this. Selecting an
+already-equipped starting ability allows its slot order to be swapped safely.
+Unlocking adds to the collection only; it does not equip the card or add it to
+all saved decks. Upgrades shown in the card menu are previews of in-run choices.
+
+UI CHANGES
+Renamed PRESET buttons to DECK buttons; named both starting attacks in the footer;
+labelled school filters; added a visible four-step guide; replaced internal IDs
+with display names; explained unlock/add/start distinctions in dialogs; fixed
+wrapped dialog text overlapping other controls; improved dialog typography,
+button shading and scroll visibility. No-op in-deck selections now explain how
+to replace a card. Failed saves restore the previous in-memory deck/unlock state.
+The illustrated guide has updated text and an actual current-menu still.
+
+BUILD AND REVERT
+New outputs are Artifacts/Windows-0.4.2 and Artifacts/Installer-0.4.2.
+Play-Forbidden-Routines.cmd launches the update; Play-Windows-0.4.1.cmd launches
+the preserved previous release. Earlier releases and the original baseline
+remain separate. No new generated art, Meshy jobs or paid credits were used.
+Validation receipts and actual screenshots: Docs/Windows-0.4.2-Validation.
+
+VERIFIED RELEASE
+13 verification reports and 12 real in-game screenshots were collected.
+Actual pointer hover darkens the hovered card artwork to about 82% of its
+previous mean RGB brightness, leaves the neighbouring card unchanged and adds
+stronger colored shading to rider rows. Both 1600x900 and 1280x720 passed.
+Unlock/replacement prompts, automatic starting-card replacement, independent
+saved decks, starting slots, restart persistence, silent hover, Help/Close and
+normal run launch passed. The installer passed 28 extracted-file hashes,
+installed launch and removal. All twelve earlier releases and the original
+baseline archive retain their recorded hashes.
+
+Installer: 731,241,340 bytes
+SHA256: c9e2eb3a7dcb9b40b14f13da4bd191f57f1794b21ff60ebc887f5668d9a341d3

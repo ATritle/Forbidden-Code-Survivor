@@ -4,6 +4,8 @@
 #include "ForbiddenChoiceWidget.h"
 #include "ForbiddenProfile.h"
 #include "CardDataAsset.h"
+#include "Blueprint/WidgetTree.h"
+#include "Components/TextBlock.h"
 #include "Containers/Ticker.h"
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
@@ -31,6 +33,8 @@ void InstallWorkbenchValidation(AMVPController* PC)
         };
         int32 W,VH;C->GetViewportSize(W,VH);const float Scale=FMath::Min(W/1600.f,VH/900.f);
         auto Click=[&](float X,float Y){H->ClickAt((W-1600*Scale)*.5f+X*Scale,(VH-900*Scale)*.5f+Y*Scale);};
+        auto Move=[&](float X,float Y){C->SetMouseLocation(FMath::RoundToInt((W-1600*Scale)*.5f+X*Scale),FMath::RoundToInt((VH-900*Scale)*.5f+Y*Scale));};
+        auto HasCopy=[&](const FString& Copy){bool Found=false;if(G->DecisionWidget && G->DecisionWidget->WidgetTree) G->DecisionWidget->WidgetTree->ForEachWidget([&](UWidget* Widget){if(const auto* Text=Cast<UTextBlock>(Widget);Text && Text->GetText().ToString().Contains(Copy)) Found=true;});return Found;};
         auto Next=[&](int32 P){S->Phase=P;S->Since=FPlatformTime::Seconds();};const double Age=FPlatformTime::Seconds()-S->Since;
         if(Age>45) return End(false,TEXT("Phase timed out"));
         if(S->Phase==0 && Age>4)
@@ -38,9 +42,19 @@ void InstallWorkbenchValidation(AMVPController* PC)
             if(G->GetLibraryCards().Num()<16 || G->DraftPool.IsEmpty()) return true;
             if(!G->bInCodex || G->bCharacterSelectionOpen || G->RiderPreview || !C->IsPaused()) return End(false,TEXT("Initial unified menu state failed"));
             if(Reload) return End(ForbiddenRiders::Selected(C)=="Mira" && Profile->Data->SelectedDeck==2 && G->StartingCards.Contains("TalismanGuard"),TEXT("Rider, preset and modified starters restored in fresh process"));
+            // Reset only this isolated automation profile so the test can be rerun deterministically.
+            for(auto& Deck:Profile->Data->Decks) {Deck.DraftPool={"PulseDart","PrismBurst","HaloNova","KineticCards","PhotonLance","TalismanGuard","ArcRelay","NeonCataclysm"};Deck.Starters={"PulseDart","PrismBurst"};}
+            Profile->Data->SelectedDeck=0;Profile->Data->UnlockedPrograms.Remove("OrbitRazor");Profile->Data->CodeFragments=0;
+            if(!Profile->Save()) return End(false,TEXT("Could not initialize isolated QA profile"));G->LoadStartingDeck();
             if(H->GetWorkbenchCards(G).Num()!=8 || G->StartingCards.Num()!=2) return End(false,TEXT("Initial draft count invalid"));
-            FScreenshotRequest::RequestScreenshot(Folder/TEXT("Workbench-Deck.png"),true,false);Next(1);
+            Move(20,20);Next(10);
         }
+        else if(S->Phase==10 && Age>.5) {FScreenshotRequest::RequestScreenshot(Folder/TEXT("Workbench-Deck.png"),true,false);Next(11);}
+        else if(S->Phase==11 && Age>.25) {Move(CardX(0)+100,CardY(0)+75);Next(12);}
+        else if(S->Phase==12 && Age>.6) {FScreenshotRequest::RequestScreenshot(Folder/TEXT("Workbench-Card-Hover.png"),true,false);Next(13);}
+        else if(S->Phase==13 && Age>.25) {Move(RiderX+90,RiderY+RiderPitch+25);Next(14);}
+        else if(S->Phase==14 && Age>.6) {FScreenshotRequest::RequestScreenshot(Folder/TEXT("Workbench-Rider-Hover.png"),true,false);Next(15);}
+        else if(S->Phase==15 && Age>.25) {Move(20,20);Next(1);}
         else if(S->Phase==1 && Age>.5)
         {
             Click(ViewX+20,ViewY+12);if(H->IsWorkbenchDraftView() || H->GetWorkbenchCards(G).Num()!=16) return End(false,TEXT("Browse library did not expose all programs"));
@@ -49,6 +63,26 @@ void InstallWorkbenchValidation(AMVPController* PC)
         }
         else if(S->Phase==2 && Age>.5)
         {
+            // Inspect a locked library card, unlock it, then replace a starting card through the real UI.
+            Click(CardX(1)+30,CardY(1)+35);
+            if(!G->DecisionWidget) return End(false,TEXT("Library card inspection missing"));
+            if(!Profile->IsUnlocked("OrbitRazor"))
+            {
+                if(!HasCopy(TEXT("YOU HAVE"))) return End(false,TEXT("Unlock prompt hid the fragment balance"));
+                Profile->Data->CodeFragments=30;G->DecisionWidget->Select(0);
+                if(!Profile->IsUnlocked("OrbitRazor") || !G->DecisionWidget) return End(false,TEXT("Unlock did not return to the card editor"));
+            }
+            G->DecisionWidget->Select(0);
+            if(!G->DecisionWidget || !HasCopy(TEXT("Pulse Dart")) || !HasCopy(TEXT("starting attack"))) return End(false,TEXT("Replacement choices lack readable card names or starting-slot warning"));
+            FScreenshotRequest::RequestScreenshot(Folder/TEXT("Workbench-Replace-Card.png"),true,false);Next(20);
+        }
+        else if(S->Phase==20 && Age>.5)
+        {
+            G->DecisionWidget->Select(0);
+            if(!G->DraftPool.Contains("OrbitRazor") || !G->StartingCards.Contains("OrbitRazor") || Profile->Data->Decks[1].DraftPool.Contains("OrbitRazor")) return End(false,TEXT("Card replacement or deck isolation failed"));
+            if(!G->DecisionWidget) return End(false,TEXT("Replacement did not return to card editor"));
+            G->DecisionWidget->Select(0);if(!G->DecisionWidget || !HasCopy(TEXT("already in the deck"))) return End(false,TEXT("Already-in-deck action did not explain replacement"));
+            G->DecisionWidget->Select(0);G->DecisionWidget->Select(3);
             Click(TabsX+2*TabPitch+30,TabsY+15);if(G->SchoolFilter!=7 || G->LibraryPage!=0) return End(false,TEXT("Prism school selection failed"));
             for(UCardDataAsset* Card:H->GetWorkbenchCards(G)) if(Card->MagicSchool!=EMagicSchool::Prism) return End(false,TEXT("School filter leaked other programs"));
             Click(TabsX+30,TabsY+15);Click(ViewX+20,ViewY+12);
@@ -72,7 +106,7 @@ void InstallWorkbenchValidation(AMVPController* PC)
         else if(S->Phase==3 && Age>.6)
         {
             Click(EnterX+70,ActionY+17);if(G->bInCodex || C->IsPaused()) return End(false,TEXT("Enter Arena did not start the selected loadout in one click"));
-            return End(true,TEXT("Actual rider, modal, library paging, school filter, starter editor, three presets, persistence and one-click run verified"));
+            return End(true,TEXT("Hover captures, readable replacement prompts, unlock/add distinction, deck isolation, starter replacement, three saved decks and one-click run verified"));
         }
         return true;
     }));

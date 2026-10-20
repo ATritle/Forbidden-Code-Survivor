@@ -37,7 +37,7 @@ void AMVPArenaGameMode::LoadStartingDeck()
     if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>())
     {
         const auto Preset=Profile->GetDeck();StartingCards=Preset.Starters;DraftPool=Preset.DraftPool;
-        DeckMessage=TEXT("Eight programs in the draft pool. Choose two starters; six active slots per run.");
+        DeckMessage=TEXT("Edit the highlighted deck. 8 level-up cards, 2 starting attacks. Card changes autosave.");
         return;
     }
     StartingCards.Reset();
@@ -83,7 +83,7 @@ bool AMVPArenaGameMode::SaveStartingDeck()
         if(!bInCodex) return false;
         FForbiddenDeckPreset Preset=Profile->GetDeck();Preset.Starters=StartingCards;Preset.DraftPool=DraftPool;
         const bool OK=Profile->SaveDeck(Profile->Data->SelectedDeck,Preset);
-        DeckMessage=OK ? TEXT("Deck saved. Eight draft programs / two starting programs / six active slots.") : Profile->LastError;
+        DeckMessage=OK ? TEXT("Saved to the highlighted deck. Your 2 starting attacks are shown below.") : Profile->LastError;
         return OK;
     }
     if (!bInCodex || StartingCards.IsEmpty() || StartingCards.Num() > 2)

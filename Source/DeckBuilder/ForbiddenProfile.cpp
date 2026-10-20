@@ -106,13 +106,19 @@ bool UForbiddenProfile::ValidateDeck(const FForbiddenDeckPreset& Deck,const TArr
 bool UForbiddenProfile::SaveDeck(int32 Slot,const FForbiddenDeckPreset& Deck)
 {
     if(!Data || !Data->Decks.IsValidIndex(Slot) || !ValidateDeck(Deck,Data->UnlockedPrograms,LastError)) return false;
-    Data->Decks[Slot]=Deck;Data->SelectedDeck=Slot;return Save();
+    const auto Previous=Data->Decks[Slot];const int32 PreviousSlot=Data->SelectedDeck;
+    Data->Decks[Slot]=Deck;Data->SelectedDeck=Slot;
+    if(Save()) return true;
+    Data->Decks[Slot]=Previous;Data->SelectedDeck=PreviousSlot;return false;
 }
 
 bool UForbiddenProfile::UnlockProgram(FName ID)
 {
     if(!Data || !ProgramIDs().Contains(ID) || IsUnlocked(ID) || Data->CodeFragments<30) return false;
-    Data->CodeFragments-=30;Data->UnlockedPrograms.Add(ID);return Save();
+    const int32 PreviousFragments=Data->CodeFragments;
+    Data->CodeFragments-=30;Data->UnlockedPrograms.Add(ID);
+    if(Save()) return true;
+    Data->CodeFragments=PreviousFragments;Data->UnlockedPrograms.Remove(ID);return false;
 }
 
 bool UForbiddenProfile::RecordRun(const FForbiddenRunRecord& Record,bool Practice)

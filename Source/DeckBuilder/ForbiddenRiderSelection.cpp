@@ -62,7 +62,7 @@ bool AMVPArenaGameMode::SelectDeckPreset(int32 Index)
     if(!SaveStartingDeck()) return false;
     const int32 Previous=Profile->Data->SelectedDeck;Profile->Data->SelectedDeck=Index;
     if(!Profile->Save()) {Profile->Data->SelectedDeck=Previous;DeckMessage=TEXT("Could not save the preset selection.");return false;}
-    LoadStartingDeck();LibraryPage=0;DeckMessage=FString::Printf(TEXT("PRESET %d / %s loaded."),Index+1,*Profile->GetDeck().Name);
+    LoadStartingDeck();LibraryPage=0;DeckMessage=FString::Printf(TEXT("Deck %d loaded. Card edits autosave to this deck only."),Index+1);
     NeonMenuAudio::Input(this);return true;
 }
 UTexture* AMVPHUD::GetWorkbenchPortrait(FName ID)
@@ -86,11 +86,15 @@ void AMVPHUD::WorkbenchPanel(FName Key,float X,float Y,float W,float H,FLinearCo
     Glass(Key,X,Y,W,H,Accent,Over,Selected,Chamfer ? 2.f : 1.f);
     const float Cut=Chamfer ? 13.f : 5.f;
     const FVector2D Points[]={{X+Cut,Y},{X+W-Cut,Y},{X+W,Y+Cut},{X+W,Y+H-Cut},{X+W-Cut,Y+H},{X+Cut,Y+H},{X,Y+H-Cut},{X,Y+Cut}};
-    for(int32 Layer=2;Layer<3;++Layer)
+    // A filled tint makes hover visible even over the busy city backdrop.
+    const float Strength=FMath::Clamp(Over,0.f,1.f);
+    if(Strength>.001f) DrawRect(FLinearColor(Accent.R,Accent.G,Accent.B,Strength*.24f),OffsetX+(X+9)*UIScale,OffsetY+(Y+9)*UIScale,(W-18)*UIScale,(H-18)*UIScale);
+    const FLinearColor Border=Accent*(.66f+Strength*.34f+(Selected ? .12f : 0.f));
+    for(int32 I=0;I<8;++I)
     {
-        FLinearColor C=Accent;C.A=(Layer==0 ? .06f : Layer==1 ? .2f : .78f)+Over*.12f+(Selected ? .12f : 0.f);
-        const float Width=Layer==0 ? 7.f : Layer==1 ? 3.f : 1.f;
-        for(int32 I=0;I<8;++I) {const auto A=Points[I],B=Points[(I+1)%8];FCanvasLineItem Line(FVector2D(OffsetX+A.X*UIScale,OffsetY+A.Y*UIScale),FVector2D(OffsetX+B.X*UIScale,OffsetY+B.Y*UIScale));Line.SetColor(C);Line.LineThickness=Width*UIScale;Line.BlendMode=SE_BLEND_Translucent;Canvas->DrawItem(Line);}
+        const auto A=Points[I],B=Points[(I+1)%8];
+        FCanvasLineItem Line(FVector2D(OffsetX+A.X*UIScale,OffsetY+A.Y*UIScale),FVector2D(OffsetX+B.X*UIScale,OffsetY+B.Y*UIScale));
+        Line.SetColor(Border);Line.LineThickness=(1.f+Strength*.8f)*UIScale;Line.BlendMode=SE_BLEND_Translucent;Canvas->DrawItem(Line);
     }
 }
 void AMVPHUD::WorkbenchImage(UTexture* Image,float X,float Y,float W,float H,bool Cover,FVector4 UV,FLinearColor Tint)
@@ -149,13 +153,15 @@ void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
     Button(TEXT("CloseGame"),TEXT("CLOSE GAME"),CloseX,NavY,NavW,NavH,Pink);
     WorkbenchPanel(TEXT("WorkbenchRider"),53,98,394,514,Cyan);
     WorkbenchCopy(D->Name,77,117,177,1.17f,White,1);WorkbenchCopy(D->Role,78,150,171,.65f,Muted,2);
-    WorkbenchImage(GetWorkbenchPortrait(D->ID),76,175,174,207);
+    const float PortraitOver=Hover(TEXT("WorkbenchPortrait"),76,175,174,207);
+    const float PortraitShade=1.f-PortraitOver*.22f;
+    WorkbenchImage(GetWorkbenchPortrait(D->ID),76,175,174,207,false,FVector4(0,0,1,1),FLinearColor(PortraitShade,PortraitShade,PortraitShade));
     const auto& Riders=ForbiddenRiders::All();
     for(int32 I=0;I<Riders.Num();++I)
     {
         const auto& R=Riders[I];const float Y=RiderY+I*RiderPitch;const FName Key=*FString::Printf(TEXT("WorkbenchRider%d"),I);
         const float Over=Hover(Key,RiderX,Y,RiderW,RiderH);WorkbenchPanel(Key,RiderX,Y,RiderW,RiderH,R.ID==D->ID ? Cyan : R.Color,Over,R.ID==D->ID);
-        WorkbenchImage(GetWorkbenchPortrait(R.ID),RiderX+5,Y+5,38,38,true,FVector4(.28,.035,.44,.26));
+        WorkbenchImage(GetWorkbenchPortrait(R.ID),RiderX+5,Y+5,38,38,true,FVector4(.28,.035,.44,.26),FLinearColor(1.f-Over*.25f,1.f-Over*.25f,1.f-Over*.25f));
         Text(I==0 ? TEXT("NEON") : R.Name,RiderX+51,Y+17,.85f,R.ID==D->ID ? Cyan : White);
     }
     WorkbenchCopy(D->Name+TEXT(" / ")+D->Role,77,408,350,.82f,Cyan,1);
@@ -169,14 +175,18 @@ void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
         Text(Perks[I*2],121,Y+5,.7f,C);WorkbenchCopy(Perks[I*2+1],121,Y+22,294,.64f,White,1);
     }
     Button(TEXT("WorkbenchHideout"),TEXT("HIDEOUT / RUN HISTORY [H]"),76,631,351,31,Cyan);
-    WorkbenchCopy(G->DeckMessage,78,678,343,.56f,Muted,4);
+    WorkbenchCopy(G->DeckMessage,78,678,343,.63f,Muted,2);
+    Text(TEXT("HOW YOUR DECK WORKS"),77,722,.75f,Cyan);
+    const TCHAR* Steps[]={TEXT("1. Pick Deck 1, 2 or 3; each saves separately."),TEXT("2. Browse All Programs to replace a card."),TEXT("3. Click a deck card to set a starting attack."),TEXT("4. Start with 2. Equip up to 6 during a run.")};
+    for(int32 I=0;I<4;++I) Text(Steps[I],77,744+I*18,.68f,White);
     WorkbenchPanel(TEXT("WorkbenchDeck"),462,98,1086,724,Cyan);
-    Text(TEXT("DECK & PROGRAMS"),491,127,1.1f,Cyan);
-    for(int32 I=0;I<3;++I) Button(*FString::Printf(TEXT("WorkbenchPreset%d"),I),FString::Printf(TEXT("PRESET %d"),I+1),PresetX+I*PresetPitch,PresetY,PresetW,PresetH,Cyan,Profile && Profile->Data && Profile->Data->SelectedDeck==I);
+    Text(FString::Printf(TEXT("DECK %d / PROGRAMS"),Profile && Profile->Data ? Profile->Data->SelectedDeck+1 : 1),491,127,1.03f,Cyan);
+    for(int32 I=0;I<3;++I) Button(*FString::Printf(TEXT("WorkbenchPreset%d"),I),FString::Printf(TEXT("DECK %d"),I+1),PresetX+I*PresetPitch,PresetY,PresetW,PresetH,Cyan,Profile && Profile->Data && Profile->Data->SelectedDeck==I);
     Button(TEXT("WorkbenchSave"),TEXT("SAVE DECK"),SaveX,ActionY,168,ActionH,Cyan);
     Button(TEXT("WorkbenchEnter"),TEXT("ENTER ARENA >>"),EnterX,ActionY,244,ActionH,Pink);
     const TCHAR* Schools[]={TEXT("ALL"),TEXT("PULSE"),TEXT("PRISM"),TEXT("KINETIC"),TEXT("BARRIER")};
     for(int32 I=0;I<5;++I) Button(*FString::Printf(TEXT("WorkbenchSchool%d"),I),Schools[I],TabsX+I*TabPitch,TabsY,TabW,TabH,I==2 ? Pink : I==3 ? Gold : Cyan,G->SchoolFilter==(I==0 ? -1 : I+5));
+    Text(TEXT("FILTER BY SCHOOL"),1380,185,.67f,Muted);
     auto Library=GetWorkbenchCards(G);const int32 Pages=FMath::Max(1,FMath::DivideAndRoundUp(Library.Num(),CardsPerPage));G->LibraryPage=FMath::Clamp(G->LibraryPage,0,Pages-1);
     for(int32 I=0;I<CardsPerPage && Library.IsValidIndex(G->LibraryPage*CardsPerPage+I);++I)
     {
@@ -184,9 +194,10 @@ void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
         const bool Starter=G->StartingCards.Contains(Card->CardID),Draft=G->DraftPool.Contains(Card->CardID),Unlocked=!Profile || Profile->IsUnlocked(Card->CardID);
         const FLinearColor Accent=NeonSpellPalette::Color(NeonSpellPalette::ForCard(Card->CardID));const float Over=Hover(Key,X,Y,CardW,CardH);
         WorkbenchPanel(Key,X,Y,CardW,CardH,Accent,Over,Draft);
-        WorkbenchImage(Card->Icon,X+5,Y+5,CardW-10,143,true,FVector4(0,0,1,1),Unlocked ? FLinearColor::White : FLinearColor(.38f,.38f,.45f));
+        const float Shade=1.f-Over*.34f;
+        WorkbenchImage(Card->Icon,X+5,Y+5,CardW-10,143,true,FVector4(0,0,1,1),Unlocked ? FLinearColor(Shade,Shade,Shade) : FLinearColor(.38f*Shade,.38f*Shade,.45f*Shade));
         if(Starter || !Unlocked)
-        {Box(X+3,Y+4,Unlocked ? 85 : 124,23,Unlocked ? Cyan : FLinearColor(.5f,.1f,.3f));Text(Unlocked ? TEXT("STARTER") : TEXT("LOCKED / 30"),X+12,Y+9,.59f,Unlocked ? FLinearColor(.005f,.015f,.03f) : White);}
+        {Box(X+3,Y+4,Unlocked ? 85 : 124,23,Unlocked ? Cyan : FLinearColor(.5f,.1f,.3f));Text(Unlocked ? TEXT("STARTING") : TEXT("LOCKED / 30"),X+12,Y+9,.59f,Unlocked ? FLinearColor(.005f,.015f,.03f) : White);}
         WorkbenchCopy(Card->Name.ToString(),X+14,Y+155,CardW-28,1.02f,White,1);
         Text(SchoolName(Card->MagicSchool),X+14,Y+180,.76f,Accent);
         WorkbenchCopy(Card->Description.ToString(),X+14,Y+201,CardW-28,.73f,Muted,2);
@@ -194,9 +205,11 @@ void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
         if(Draft) Text(TEXT("+"),X+CardW-20,Y+156,.68f,Cyan);
     }
     if(Library.IsEmpty()) WorkbenchCopy(bWorkbenchDraftView ? TEXT("No draft programs in this school. Browse the library to choose programs.") : TEXT("No programs in this school."),515,350,900,.9f,White,3);
-    WorkbenchPanel(TEXT("WorkbenchDraftCount"),491,739,324,49,Cyan);Icon(3,514,763,Cyan);Text(FString::Printf(TEXT("%d / 8"),G->DraftPool.Num()),538,752,1.f,Cyan);Text(TEXT("DRAFT PROGRAMS SELECTED"),620,758,.7f,White);
-    WorkbenchPanel(TEXT("WorkbenchStarterCount"),830,739,700,49,Gold);Icon(4,855,763,Gold);Text(FString::Printf(TEXT("%d / 2"),G->StartingCards.Num()),882,752,1.f,Gold);Text(TEXT("STARTERS SELECTED"),964,758,.7f,White);
-    Button(TEXT("WorkbenchView"),bWorkbenchDraftView ? TEXT("BROWSE PROGRAM LIBRARY >") : TEXT("< SHOW SELECTED DECK"),ViewX,ViewY,ViewW,ViewH,Cyan);
+    WorkbenchPanel(TEXT("WorkbenchDraftCount"),491,739,324,49,Cyan);Icon(3,514,763,Cyan);Text(FString::Printf(TEXT("%d / 8"),G->DraftPool.Num()),538,752,1.f,Cyan);Text(TEXT("LEVEL-UP CARD POOL"),620,758,.7f,White);
+    WorkbenchPanel(TEXT("WorkbenchStarterCount"),830,739,700,49,Gold);Icon(4,855,763,Gold);Text(FString::Printf(TEXT("%d / 2"),G->StartingCards.Num()),882,752,1.f,Gold);Text(TEXT("ATTACKS EQUIPPED AT RUN START"),964,746,.65f,White);
+    FString StarterNames;for(FName ID:G->StartingCards) for(UCardDataAsset* Card:G->GetArenaPlayer()->Deck->UnlockedCards) if(Card && Card->CardID==ID) {if(!StarterNames.IsEmpty()) StarterNames+=TEXT(" + ");StarterNames+=Card->Name.ToString();break;}
+    WorkbenchCopy(StarterNames,964,765,540,.72f,Gold,1);
+    Button(TEXT("WorkbenchView"),bWorkbenchDraftView ? TEXT("BROWSE ALL PROGRAMS >") : TEXT("< SHOW MY 8-CARD DECK"),ViewX,ViewY,ViewW,ViewH,Cyan);
     Text(FString::Printf(TEXT("%s / %d PROGRAMS / PAGE %d OF %d"),bWorkbenchDraftView ? TEXT("DECK") : TEXT("LIBRARY"),Library.Num(),G->LibraryPage+1,Pages),784,801,.55f,Muted);
     Button(TEXT("WorkbenchPrev"),TEXT("< PREV"),PrevX,PageY,PageW,ViewH,Cyan);Button(TEXT("WorkbenchNext"),TEXT("NEXT >"),NextX,PageY,PageW,ViewH,Cyan);
     DrawMusicPlayer(G);
