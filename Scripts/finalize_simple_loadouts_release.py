@@ -33,7 +33,7 @@ for size in ['Wide','Compact']:
  reports['Settings-'+size]=('Saved/QA/SimpleLoadoutsSettingsShipping/'+size+'/Saved/Review/SettingsReview/report.json','SETTINGS_REVIEW_PASS')
 reports['Damage'] = ('Saved/QA/SimpleLoadoutsSystemsShipping/Damage/Saved/Review/DamageAudit/report.json','DAMAGE_AUDIT_PASS')
 reports['Combat-48'] = ('Saved/QA/SimpleLoadoutsCombatShipping/Saved/Review/OverhaulFunctional/report.json','OVERHAUL_FUNCTIONAL_PASS')
-reports['Profile-Migration'] = ('Saved/QA/SimpleLoadoutsSystemsShipping/Migration/Saved/Review/Profile/migration-receipt.json','PROFILE_MIGRATION_PASS')
+reports['Profile-Migration-Receipt'] = ('Saved/QA/SimpleLoadoutsSystemsShipping/Migration/Saved/Review/Profile/migration-receipt.json','PROFILE_MIGRATION_PASS')
 for case in ['Fresh','FreshReload']:
  reports['Profile-'+case]=('Saved/QA/SimpleLoadoutsSystemsShipping/Fresh/Saved/Review/Profile/'+case+'.json','PROFILE_PASS')
 for case in ['PrepareV3','Migration','Reload']:

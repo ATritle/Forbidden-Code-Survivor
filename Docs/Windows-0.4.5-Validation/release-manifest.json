@@ -1,7 +1,7 @@
 {
   "result": "SIMPLE_LOADOUTS_RELEASE_PASS",
   "version": "0.4.5",
-  "createdUTC": "2026-10-20T15:40:25.916560+00:00",
+  "createdUTC": "2026-10-20T15:41:40.004520+00:00",
   "configuration": "Shipping",
   "engine": "UE 5.8.2",
   "installer": "Artifacts/Installer-0.4.5/ForbiddenCode-Survivor-0.4.5-Setup.exe",
@@ -51,10 +51,11 @@
     "Settings-Compact",
     "Damage",
     "Combat-48",
-    "Profile-Migration",
+    "Profile-Migration-Receipt",
     "Profile-Fresh",
     "Profile-FreshReload",
     "Profile-PrepareV3",
+    "Profile-Migration",
     "Profile-Reload"
   ],
   "musicSources": [
