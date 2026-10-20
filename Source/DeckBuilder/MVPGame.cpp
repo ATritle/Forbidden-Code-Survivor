@@ -575,6 +575,8 @@ void AMVPController::BeginPlay()
     InstallRiderSelectionValidation(this);
     extern void InstallWorkbenchValidation(AMVPController* Controller);
     InstallWorkbenchValidation(this);
+    extern void InstallMenuNavigationValidation(AMVPController* Controller);
+    InstallMenuNavigationValidation(this);
     extern void InstallSettingsReviewValidation(AMVPController* Controller);
     InstallSettingsReviewValidation(this);
 #if !UE_BUILD_SHIPPING
@@ -614,7 +616,9 @@ void AMVPController::SetupInputComponent()
     InputComponent->BindKey(EKeys::L, IE_Pressed, this, &AMVPController::OpenLeaderboard).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::Gamepad_Special_Left, IE_Pressed, this, &AMVPController::OpenLeaderboard).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::Gamepad_Special_Right, IE_Pressed, this, &AMVPController::ToggleSettings).bExecuteWhenPaused=true;
-    InputComponent->BindKey(EKeys::Escape, IE_Pressed, this, &AMVPController::ToggleSettings).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::Escape, IE_Pressed, this, &AMVPController::NavigateBack).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::Tab,IE_Pressed,this,&AMVPController::ResumeDraft).bExecuteWhenPaused=true;
+    InputComponent->BindKey(EKeys::Gamepad_FaceButton_Right,IE_Pressed,this,&AMVPController::NavigateBack).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::MouseScrollUp,IE_Pressed,this,&AMVPController::ScrollMusicUp).bExecuteWhenPaused=true;
     InputComponent->BindKey(EKeys::MouseScrollDown,IE_Pressed,this,&AMVPController::ScrollMusicDown).bExecuteWhenPaused=true;
 }
@@ -864,7 +868,7 @@ void AMVPArenaGameMode::AwardChallengeReward(int32 BonusEssence)
 
 void AMVPArenaGameMode::OpenNextOffer()
 {
-    if (bChoosingCard || bRunEnded || DecisionWidget || PendingLevels <= 0) return;
+    if (bChoosingCard || bDraftDeferred || bRunEnded || DecisionWidget || PendingLevels <= 0) return;
     AMVPPlayer* Player = GetArenaPlayer();
     if (!Player) return;
     Player->Deck->DrawLevelUpHand(); // An exhausted library offers recovery instead of stalling progression.
@@ -951,7 +955,7 @@ void AMVPArenaGameMode::FinishRun(bool Victory)
         Profile->RecordRun(RunRecord,(TestingDirector && TestingDirector->IsActive()) || FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) || FParse::Param(FCommandLine::Get(),TEXT("ForbiddenQA")));
         if(Profile->Data && !Profile->Data->History.IsEmpty() && Profile->Data->History[0].ID==RunRecord.ID) RunRecord=Profile->Data->History[0];
     }
-    bRunEnded = true;
+    bRunEnded = true;bDraftDeferred=false;bChoosingCard=false;
     if(auto* Scores=GetGameInstance()->GetSubsystem<UForbiddenScoreService>()) Scores->FinishRun(RunRecord);
     if(auto* Player=GetArenaPlayer();Player && Player->Challenges) Player->Challenges->AbortContract();
     if (SelectionWidget) { SelectionWidget->RemoveFromParent(); SelectionWidget = nullptr; }

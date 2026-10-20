@@ -57,3 +57,9 @@ void UForbiddenScoreWidget::Close()
 }
 FReply UForbiddenScoreWidget::NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
 {if(Event.GetKey()==EKeys::Escape || Event.GetKey()==EKeys::Gamepad_FaceButton_Right) {if(!Event.IsRepeat()) Close();return FReply::Handled();}return Super::NativeOnKeyDown(Geometry,Event);}
+
+FReply UForbiddenScoreWidget::NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
+{
+    if(Event.GetKey()==EKeys::Escape || Event.GetKey()==EKeys::Gamepad_FaceButton_Right) {if(!Event.IsRepeat()) {Close();}return FReply::Handled();}
+    return Super::NativeOnPreviewKeyDown(Geometry,Event);
+}

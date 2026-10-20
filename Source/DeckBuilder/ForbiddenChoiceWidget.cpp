@@ -22,7 +22,7 @@ void UForbiddenChoiceButton::Clicked() {PlayFeedback();if(Callback) Callback(Ind
 
 void UForbiddenChoiceWidget::Configure(const FString& Title,const TArray<FString>& Choices,TFunction<void(int32)> Callback)
 {
-    OnChoice=MoveTemp(Callback);Consumed=false;Focused=0;Buttons.Reset();SetIsFocusable(true);
+    OnChoice=MoveTemp(Callback);Consumed=false;Focused=0;BackIndex=Choices.Num()-1;Buttons.Reset();SetIsFocusable(true);
     auto* Root=WidgetTree->ConstructWidget<UOverlay>();WidgetTree->RootWidget=Root;
     auto* Blur=WidgetTree->ConstructWidget<UBackgroundBlur>();Blur->SetBlurStrength(9.f);
     auto* Placement=Root->AddChildToOverlay(Blur);Placement->SetHorizontalAlignment(HAlign_Fill);Placement->SetVerticalAlignment(VAlign_Fill);
@@ -41,20 +41,20 @@ void UForbiddenChoiceWidget::Configure(const FString& Title,const TArray<FString
     if(!Explanation.IsEmpty()) Column->AddChildToVerticalBox(Text(Explanation,15,FLinearColor(.73f,.86f,.94f)))->SetPadding(FMargin(0,0,0,18));
     for(int32 I=0;I<Choices.Num();++I)
     {
-        auto* Button=WidgetTree->ConstructWidget<UForbiddenChoiceButton>();Button->Configure(I,[this](int32 Index){Select(Index);});Button->SetBackgroundColor(FLinearColor::White);
+        auto* Button=WidgetTree->ConstructWidget<UForbiddenChoiceButton>();Button->Configure(I,[this](int32 Index){Select(Index,false);});Button->SetBackgroundColor(FLinearColor::White);
         auto Style=Button->GetStyle();Style.Normal.TintColor=FSlateColor(FLinearColor(.008f,.025f,.045f));Style.Hovered.TintColor=FSlateColor(FLinearColor(.025f,.3f,.4f));Style.Pressed.TintColor=FSlateColor(FLinearColor(.01f,.5f,.65f));Button->SetStyle(Style);
         Button->bClosingFeedback=Choices[I].StartsWith(TEXT("BACK")) || Choices[I].StartsWith(TEXT("RETURN")) || Choices[I].StartsWith(TEXT("CANCEL")) || Choices[I].StartsWith(TEXT("DECLINE")) || Choices[I].StartsWith(TEXT("LEAVE"));
         auto* Border=WidgetTree->ConstructWidget<UBorder>();Border->SetPadding(FMargin(18));Border->SetBrushColor(FLinearColor(0.02f,0.1f,0.16f,0.7f));
         Border->SetContent(Text(FString::Printf(TEXT("[%d]  %s"),I+1,*Choices[I]),16,FLinearColor(0.88f,0.96f,1)));Button->SetContent(Border);if(auto* ContentSlot=Cast<UButtonSlot>(Border->Slot)) {ContentSlot->SetHorizontalAlignment(HAlign_Fill);ContentSlot->SetVerticalAlignment(VAlign_Center);}
         Column->AddChildToVerticalBox(Button)->SetPadding(FMargin(0,4));Buttons.Add(Button);
     }
-    Column->AddChildToVerticalBox(Text(TEXT("Arrow keys / D-pad to browse. Enter / A to select."),13,FLinearColor(0.45f,0.65f,0.8f)))->SetPadding(FMargin(0,18,0,0));
+    Column->AddChildToVerticalBox(Text(TEXT("Esc / B: back. Arrow keys / D-pad: browse. Enter / A: select."),13,FLinearColor(0.45f,0.65f,0.8f)))->SetPadding(FMargin(0,18,0,0));
     if(!Buttons.IsEmpty()) Buttons[0]->SetKeyboardFocus();
 }
-void UForbiddenChoiceWidget::Select(int32 Index)
+void UForbiddenChoiceWidget::Select(int32 Index,bool bPlayFeedback)
 {
     if(Consumed || !Buttons.IsValidIndex(Index)) return;
-    Buttons[Index]->PlayFeedback();
+    if(bPlayFeedback) Buttons[Index]->PlayFeedback();
     Consumed=true;auto Callback=MoveTemp(OnChoice);RemoveFromParent();if(Callback) Callback(Index);
 }
 FReply UForbiddenChoiceWidget::NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
@@ -66,4 +66,16 @@ FReply UForbiddenChoiceWidget::NativeOnKeyDown(const FGeometry& Geometry,const F
     const FKey Numbers[]={EKeys::One,EKeys::Two,EKeys::Three,EKeys::Four,EKeys::Five,EKeys::Six,EKeys::Seven,EKeys::Eight,EKeys::Nine};
     for(int32 I=0;I<UE_ARRAY_COUNT(Numbers);++I) if(Key==Numbers[I]) {Select(I);return FReply::Handled();}
     return Super::NativeOnKeyDown(Geometry,Event);
+}
+
+bool UForbiddenChoiceWidget::Back()
+{
+    // All current decision surfaces put their non-destructive return/decline option last.
+    if(Consumed || !Buttons.IsValidIndex(BackIndex)) return false;
+    NeonMenuAudio::Exit(this);Select(BackIndex,false);return true;
+}
+FReply UForbiddenChoiceWidget::NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
+{
+    if(Event.GetKey()==EKeys::Escape || Event.GetKey()==EKeys::Gamepad_FaceButton_Right) {if(!Event.IsRepeat()) Back();return FReply::Handled();}
+    return Super::NativeOnPreviewKeyDown(Geometry,Event);
 }

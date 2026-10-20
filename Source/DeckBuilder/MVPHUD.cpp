@@ -80,6 +80,8 @@ void AMVPHUD::DrawHUD()
     OffsetY = (Canvas->SizeY - 900.f * UIScale) * 0.5f;
     PrepareNeonInterface();
     HoveredTestingCard=NAME_None;
+    if(!Game->bInCodex) {HoveredWorkbenchCard=NAME_None;WorkbenchTooltipText.Reset();}
+    if(Game->bDraftDeferred && !Game->bRunEnded && !(Game->TestingDirector && Game->TestingDirector->IsActive())) Text(FString::Printf(TEXT("%d UPGRADE(S) READY / TAB TO CHOOSE"),Game->PendingLevels),560,110,.85f,Palette::Mint);
     if(Game->TestingDirector && Game->TestingDirector->IsActive())
     {
         const auto* Range=Game->TestingDirector.Get();

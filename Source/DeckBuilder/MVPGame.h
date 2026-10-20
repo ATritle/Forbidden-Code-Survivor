@@ -296,6 +296,9 @@ public:
     void SetMenuInput(bool bMenu);
     UFUNCTION(BlueprintCallable,Category="Settings") void ToggleSettings();
     void CloseSettings();
+    /** Escape/controller Back closes the topmost UI layer; it never selects a reward. */
+    void NavigateBack();
+    void ResumeDraft();
     UFUNCTION(BlueprintCallable,Category="Help") void OpenHelp();
     void CloseHelp();
     UFUNCTION(BlueprintCallable,Category="Menu") void CloseGame();
@@ -349,10 +352,16 @@ public:
     UTexture* GetWorkbenchPortrait(FName ID);
     TArray<UCardDataAsset*> GetWorkbenchCards(AMVPArenaGameMode* Game) const;
     bool IsWorkbenchDraftView() const {return bWorkbenchDraftView;}
+    bool BackFromWorkbench();
+    FName GetHoveredWorkbenchCard() const {return HoveredWorkbenchCard;}
+    const FString& GetWorkbenchTooltipText() const {return WorkbenchTooltipText;}
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Neon UI") FLinearColor InterfaceAccent=FLinearColor(0.03f,0.85f,1.f);
     UFUNCTION(BlueprintCallable,Category="Neon UI") void SetInterfaceAccent(FLinearColor Color) { InterfaceAccent=Color; }
 private:
     FName HoveredTestingCard=NAME_None;
+    FName HoveredWorkbenchCard=NAME_None;
+    FString WorkbenchTooltipText;
+    void DrawWorkbenchTooltip(const UCardDataAsset* Card,float CardX,float CardY);
     void Text(const FString& Value, float X, float Y, float Size, FLinearColor Color);
     void CenteredText(const FString& Value, float Y, float Size, FLinearColor Color);
     void Box(float X, float Y, float W, float H, FLinearColor Color);
@@ -410,6 +419,9 @@ public:
     /** One extra eligible draft, without altering level or saved starting loadout. */
     void AwardChallengeReward(int32 BonusEssence);
     bool ChooseCard(int32 Index);
+    void DeferCardSelection();
+    void ResumeCardSelection();
+    bool bDraftDeferred=false;
     UPROPERTY(EditDefaultsOnly, Category="UI")
     TSubclassOf<UCodexCardSelectionWidget> CardSelectionWidgetClass;
     UPROPERTY(Transient, BlueprintReadOnly, Category="UI")

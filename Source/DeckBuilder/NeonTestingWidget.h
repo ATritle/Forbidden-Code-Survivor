@@ -14,8 +14,11 @@ UCLASS()
 class DECKBUILDER_API UNeonTestingWidget : public UUserWidget
 {
     GENERATED_BODY()
+public:
+    void RequestBack();
 protected:
     virtual void NativeOnInitialized() override;
+    virtual FReply NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
     virtual FReply NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
 private:
     UPROPERTY() TArray<TObjectPtr<UCheckBox>> AttackToggles;

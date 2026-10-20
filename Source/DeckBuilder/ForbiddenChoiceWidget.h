@@ -26,12 +26,15 @@ class DECKBUILDER_API UForbiddenChoiceWidget : public UUserWidget
     GENERATED_BODY()
 public:
     void Configure(const FString& Title,const TArray<FString>& Choices,TFunction<void(int32)> Callback);
-    void Select(int32 Index);
+    void Select(int32 Index,bool bPlayFeedback=true);
+    bool Back();
 protected:
+    virtual FReply NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
     virtual FReply NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
 private:
     UPROPERTY() TArray<TObjectPtr<UForbiddenChoiceButton>> Buttons;
     TFunction<void(int32)> OnChoice;
     int32 Focused=0;
+    int32 BackIndex=INDEX_NONE;
     bool Consumed=false;
 };

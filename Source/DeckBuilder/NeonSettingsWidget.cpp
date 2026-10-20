@@ -1,4 +1,5 @@
 #include "NeonSettingsWidget.h"
+#include "Framework/Application/SlateApplication.h"
 #include "NeonSettingsLayout.h"
 #include "ForbiddenSettingsControls.h"
 #include "ForbiddenProfile.h"
@@ -155,6 +156,20 @@ void UNeonSettingsWidget::NativeDestruct() {RevertUnconfirmedDisplay();Super::Na
 FReply UNeonSettingsWidget::NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
 {
     if(!Event.IsRepeat() && ForbiddenSettings::HandleKey(this,Event.GetKey())) return FReply::Handled();
-    if(Event.GetKey()==EKeys::Escape) {if(!Event.IsRepeat()) {if(bDisplayPending) RevertUnconfirmedDisplay();else Close();}return FReply::Handled();}
+    if(Event.GetKey()==EKeys::Escape) {if(!Event.IsRepeat()) RequestBack();return FReply::Handled();}
     return Super::NativeOnKeyDown(Geometry,Event);
+}
+
+FReply UNeonSettingsWidget::NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
+{
+    if(Event.GetKey()==EKeys::Escape || Event.GetKey()==EKeys::Gamepad_FaceButton_Right) {if(!Event.IsRepeat()) {RequestBack();}return FReply::Handled();}
+    return Super::NativeOnPreviewKeyDown(Geometry,Event);
+}
+
+void UNeonSettingsWidget::RequestBack()
+{
+    if(ForbiddenSettings::HandleKey(this,EKeys::Escape)) return;
+    if((WindowMode && WindowMode->IsOpen()) || (Resolution && Resolution->IsOpen())) {FSlateApplication::Get().DismissAllMenus();SetKeyboardFocus();return;}
+    if(bDisplayPending) {RevertUnconfirmedDisplay();return;}
+    Close();
 }

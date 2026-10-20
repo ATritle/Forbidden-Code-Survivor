@@ -133,5 +133,17 @@ void UNeonTestingWidget::Back() {if(auto* PC=GetOwningPlayer<AMVPController>()) 
 void UNeonTestingWidget::Exit() {if(auto* PC=GetOwningPlayer<AMVPController>()) PC->ExitTestingArea();}
 FReply UNeonTestingWidget::NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
 {
-    if(Event.GetKey()==EKeys::Escape) {if(!Event.IsRepeat()) {if(WarningLayer->GetVisibility()==ESlateVisibility::Visible) CancelWarning();else Back();}return FReply::Handled();}return Super::NativeOnKeyDown(Geometry,Event);
+    if(Event.GetKey()==EKeys::Escape) {if(!Event.IsRepeat()) {RequestBack();}return FReply::Handled();}return Super::NativeOnKeyDown(Geometry,Event);
+}
+
+FReply UNeonTestingWidget::NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
+{
+    if(Event.GetKey()==EKeys::Escape || Event.GetKey()==EKeys::Gamepad_FaceButton_Right) {if(!Event.IsRepeat()) {RequestBack();}return FReply::Handled();}
+    return Super::NativeOnPreviewKeyDown(Geometry,Event);
+}
+
+void UNeonTestingWidget::RequestBack()
+{
+    if(WarningLayer && WarningLayer->GetVisibility()==ESlateVisibility::Visible) {CancelWarning();return;}
+    Back();
 }

@@ -1,4 +1,5 @@
 #include "CodexCardSelectionWidget.h"
+#include "ForbiddenCardInfo.h"
 #include "ForbiddenCodeBranding.h"
 #include "MVPGame.h"
 #include "NeonArsenal.h"
@@ -62,7 +63,7 @@ void UCodexCardSelectionWidget::NativeOnInitialized()
         auto* Row = WidgetTree->ConstructWidget<UHorizontalBox>();
         Column->AddChild(Row);
         auto* Settings=WidgetTree->ConstructWidget<UButton>();
-        auto* SettingsLabel=WidgetTree->ConstructWidget<UTextBlock>();SettingsLabel->SetText(FText::FromString(TEXT("SETTINGS  /  ESC")));auto SettingsFont=SettingsLabel->GetFont();SettingsFont.Size=14;SettingsLabel->SetFont(SettingsFont);SettingsLabel->SetJustification(ETextJustify::Center);SettingsLabel->SetColorAndOpacity(FLinearColor(0.05f,0.85f,1));Settings->SetBackgroundColor(FLinearColor(0.015f,0.05f,0.09f));Settings->SetContent(SettingsLabel);
+        auto* SettingsLabel=WidgetTree->ConstructWidget<UTextBlock>();SettingsLabel->SetText(FText::FromString(TEXT("SETTINGS")));auto SettingsFont=SettingsLabel->GetFont();SettingsFont.Size=14;SettingsLabel->SetFont(SettingsFont);SettingsLabel->SetJustification(ETextJustify::Center);SettingsLabel->SetColorAndOpacity(FLinearColor(0.05f,0.85f,1));Settings->SetBackgroundColor(FLinearColor(0.015f,0.05f,0.09f));Settings->SetContent(SettingsLabel);
         Column->AddChild(Settings);Settings->OnClicked.AddDynamic(this,&ThisClass::OpenSettings);
         CardOption_A = WidgetTree->ConstructWidget<UButton>(UButton::StaticClass(), TEXT("CardOption_A"));
         CardOption_B = WidgetTree->ConstructWidget<UButton>(UButton::StaticClass(), TEXT("CardOption_B"));
@@ -98,7 +99,7 @@ void UCodexCardSelectionWidget::InitializeSelectionScreen(TArray<UCardDataAsset*
     RevealStartTime = FPlatformTime::Seconds();
     auto* Player = GetOwningPlayerPawn<AMVPPlayer>();
     if (!Player || ChoiceCards.Num() > 3) { SetIsEnabled(false); return; }
-    if(auto* Budget=Cast<UTextBlock>(WidgetTree->FindWidget(TEXT("DraftBudget")))) Budget->SetText(FText::FromString(FString::Printf(TEXT("REROLLS %d / BANISHES %d  |  Z / X / C switches the matching card's evolution branch"),Player->Deck->RerollsRemaining,Player->Deck->BanishesRemaining)));
+    if(auto* Budget=Cast<UTextBlock>(WidgetTree->FindWidget(TEXT("DraftBudget")))) Budget->SetText(FText::FromString(FString::Printf(TEXT("REROLLS %d / BANISHES %d  |  Z / X / C switches the matching card's evolution branch\nESC: BACK TO COMBAT  /  TAB: RESUME THIS DRAFT"),Player->Deck->RerollsRemaining,Player->Deck->BanishesRemaining)));
     // Reject altered, reordered or stale offers. Never redraw a hand from the UI.
     const auto& Hand = Player->Deck->CurrentHand;
     if (Hand.Num() != ChoiceCards.Num()) { SetIsEnabled(false); return; }
@@ -156,6 +157,9 @@ void UCodexCardSelectionWidget::InitializeSelectionScreen(TArray<UCardDataAsset*
                 Data.Description = FText::FromString(Detail);
             }
         }
+        FString Tooltip=Choices.IsValidIndex(I) ? ForbiddenCardInfo::Describe(Choices[I]) : Data.Description.ToString();
+        if(Choices.IsValidIndex(I) && Player->Deck->GetOfferedMutation(Choices[I]->CardID).IsValid()) Tooltip+=TEXT("\n\nOFFERED UPGRADE\n")+Data.Description.ToString();
+        Button->SetToolTip(ForbiddenCardInfo::MakeTooltip(this,Tooltip));
         DisplayCards.Add(Data);
         if (bNativeLayout) BuildCardFace(Button, Data, I);
         OnCardDisplayUpdated(I, Data);
@@ -183,7 +187,7 @@ void UCodexCardSelectionWidget::ClickC() { SelectChoice(2); }
 FReply UCodexCardSelectionWidget::NativeOnKeyDown(const FGeometry& Geometry, const FKeyEvent& Event)
 {
     const FKey Key = Event.GetKey();
-    if(Key==EKeys::Escape) {if(!Event.IsRepeat()) OpenSettings();return FReply::Handled();}
+    if(Key==EKeys::Escape) {if(!Event.IsRepeat()) if(auto* PC=GetOwningPlayer<AMVPController>()) PC->NavigateBack();return FReply::Handled();}
     if(!Event.IsRepeat())
     {
         if(Key==EKeys::R) {Reroll();return FReply::Handled();}
@@ -222,3 +226,9 @@ void UCodexCardSelectionWidget::SwitchBranch(int32 Index)
 void UCodexCardSelectionWidget::BranchA(){SwitchBranch(0);}
 void UCodexCardSelectionWidget::BranchB(){SwitchBranch(1);}
 void UCodexCardSelectionWidget::BranchC(){SwitchBranch(2);}
+
+FReply UCodexCardSelectionWidget::NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
+{
+    if(Event.GetKey()==EKeys::Escape || Event.GetKey()==EKeys::Gamepad_FaceButton_Right) {if(!Event.IsRepeat()) {if(auto* PC=GetOwningPlayer<AMVPController>()) PC->NavigateBack();}return FReply::Handled();}
+    return Super::NativeOnPreviewKeyDown(Geometry,Event);
+}

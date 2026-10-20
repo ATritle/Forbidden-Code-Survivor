@@ -1,0 +1,50 @@
+FORBIDDEN CODE: SURVIVOR - WINDOWS 0.4.4
+
+HOVER DESCRIPTIONS AND CONSISTENT BACK NAVIGATION
+
+Hover any deck/library card for the complete authored description and detailed
+base stats. Chains show jump reach/target count; area, beam and piercing rules
+appear where relevant. The tooltip wraps without an ellipsis and stays inside
+the screen for the current 16-card catalog. No click is needed to read it.
+Clicking still opens deck and starting-attack editing. Draft cards also have
+full-rule/upgrade hover text, and the testing range keeps its existing tooltips.
+
+Esc (or controller B) backs out one layer at a time: upgrade paths to card,
+card editor to deck/hideout, program library to hideout, hideout to workbench,
+How To Play or Testing to Settings, Settings to its parent, and leaderboard
+or challenge to its previous screen. Replacement and reward dialogs use their
+safe cancel/decline action. No reward, purchase or replacement is auto-selected.
+The spacing warning closes before its testing configuration. Display previews
+revert before leaving Settings; a key-capture prompt cancels before its menu.
+Back works with buttons or username text focused. Held Escape does not cascade.
+
+At the workbench, Esc closes TRACKS or returns the library/filter to your deck.
+The root screen stays open: use CLOSE GAME to quit. During combat Esc opens
+Settings as before. Start also opens Settings.
+
+Esc can close the level-up screen and resume combat while retaining the actual
+hand, widget, branch choices, reroll budget and queued upgrades. Press Tab to
+return to those choices. A HUD reminder shows pending upgrades. More collected
+essence queues additional upgrades without silently redrawing the saved hand.
+Tab retains normal build inspection when no draft is deferred. The testing
+range cannot resume a suspended normal-run draft inside a practice session.
+
+VALIDATION AND LIMITS
+
+Real pointer movement checks all 16 descriptions, including second-page and
+screen-edge captures at 1600x900 and 1280x720. Real Slate key events exercise
+nested windows, focused buttons and username input. Deferred-hand checks cover
+live run time, queued upgrades, hidden-input rejection and replacement cancel.
+Workbench checks at 720p, 900p and 1440p cover deck edits, saved riders/decks and
+restart persistence. Settings, guide/quit controls, click audio, a packaged run
+and installer extraction/launch/uninstall are checked with isolated profiles.
+These are local automated checks, not a broad hardware compatibility test.
+
+RUN / ROLLBACK
+
+Play-Forbidden-Routines.cmd launches Windows 0.4.4.
+Play-Windows-0.4.3.cmd launches the preserved previous compact layout.
+Artifacts/Windows-0.4.4/ForbiddenCodeSurvivor.exe is the portable package.
+Artifacts/Installer-0.4.4/ForbiddenCode-Survivor-0.4.4-Setup.exe is the installer.
+Earlier packages/installers and the original baseline are verified by checksum.
+No browser deployment, newly generated art or Meshy credits are involved.

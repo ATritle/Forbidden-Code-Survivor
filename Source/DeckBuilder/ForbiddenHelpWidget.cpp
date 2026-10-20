@@ -126,3 +126,9 @@ FReply UForbiddenHelpWidget::NativeOnKeyDown(const FGeometry& Geometry,const FKe
     if(Key==EKeys::Enter || Key==EKeys::One || Key==EKeys::Two || Key==EKeys::Three || Key==EKeys::R || Key==EKeys::H || Key==EKeys::L || Key==EKeys::F1) return FReply::Handled();
     return Super::NativeOnKeyDown(Geometry,Event);
 }
+
+FReply UForbiddenHelpWidget::NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
+{
+    if(Event.GetKey()==EKeys::Escape || Event.GetKey()==EKeys::Gamepad_FaceButton_Right) {if(!Event.IsRepeat()) {Close();}return FReply::Handled();}
+    return Super::NativeOnPreviewKeyDown(Geometry,Event);
+}

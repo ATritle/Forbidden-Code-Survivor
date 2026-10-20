@@ -156,7 +156,7 @@ bool ForbiddenSettings::HandleKey(UUserWidget* Widget,FKey Key)
     auto* Profile=Widget->GetGameInstance()->GetSubsystem<UForbiddenProfile>();if(!Profile || !Profile->Data || !Key.IsValid()) return true;
     auto Bindings=DefaultBindings();for(const auto& Pair:Profile->Data->Bindings) Bindings.Add(Pair.Key,Pair.Value);
     for(const auto& Pair:Bindings) if(Pair.Key!=RebindingAction && Pair.Value==Key) {if(RebindingCaption.IsValid()) RebindingCaption->SetText(FText::FromString(TEXT("KEY ALREADY USED / CHOOSE ANOTHER")));return true;}
-    if(Key==EKeys::F1 || Key==EKeys::One || Key==EKeys::Two || Key==EKeys::Three || Key==EKeys::R || Key==EKeys::H || Key==EKeys::T || Key==EKeys::L || Key==EKeys::Enter || Key==EKeys::LeftMouseButton || Key.IsGamepadKey() || Key==EKeys::MouseScrollUp || Key==EKeys::MouseScrollDown)
+    if((Key==EKeys::Tab && RebindingAction!="Inspect") || Key==EKeys::F1 || Key==EKeys::One || Key==EKeys::Two || Key==EKeys::Three || Key==EKeys::R || Key==EKeys::H || Key==EKeys::T || Key==EKeys::L || Key==EKeys::Enter || Key==EKeys::LeftMouseButton || Key.IsGamepadKey() || Key==EKeys::MouseScrollUp || Key==EKeys::MouseScrollDown)
     {if(RebindingCaption.IsValid()) RebindingCaption->SetText(FText::FromString(TEXT("RESERVED MENU KEY / CHOOSE ANOTHER")));return true;}
     Profile->Data->Bindings.Add(RebindingAction,Key);if(RebindingCaption.IsValid()) RebindingCaption->SetText(FText::FromString(RebindingAction.ToString()+TEXT(" / ")+Key.GetDisplayName().ToString()));
     RebindingWidget.Reset();RebindingAction=NAME_None;Apply(Cast<AMVPPlayer>(UGameplayStatics::GetPlayerPawn(Widget,0)),true);SaveLater(Profile);return true;

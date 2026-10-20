@@ -1,5 +1,6 @@
 #include "MVPGame.h"
 #include "ForbiddenWorkbenchLayout.h"
+#include "NeonMusicPlayerLayout.h"
 #include "ForbiddenRiderRoster.h"
 #include "ForbiddenRiderPreview.h"
 #include "ForbiddenCodeBranding.h"
@@ -124,6 +125,7 @@ void AMVPHUD::WorkbenchCopy(const FString& Copy,float X,float Y,float W,float Si
 void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
 {
     using namespace ForbiddenWorkbench;
+    HoveredWorkbenchCard=NAME_None;WorkbenchTooltipText.Reset();UCardDataAsset* HoveredCard=nullptr;float HoveredX=0,HoveredY=0;
     const auto* D=ForbiddenRiders::Find(ForbiddenRiders::Selected(this));if(!D) return;
     const FLinearColor Cyan=InterfaceAccent,White(.91f,.96f,1),Muted(.57f,.72f,.82f),Pink(1,.025f,.54f),Gold(1,.68f,.06f);
     auto* Profile=G->GetGameInstance()->GetSubsystem<UForbiddenProfile>();
@@ -148,7 +150,7 @@ void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
     WorkbenchPanel(TEXT("WorkbenchHeader"),145,48,1286,54,Cyan);
     NeonTitle(ForbiddenCode::DisplayTitle,165,54,1.12f,White);Text(TEXT("LOADOUT WORKBENCH"),166,83,.56f,Cyan);
     Button(TEXT("HowToPlay"),TEXT("HOW TO PLAY / F1"),HowToX,NavY,NavW,NavH,Cyan);
-    Button(TEXT("MenuSettings"),TEXT("SETTINGS / ESC"),SettingsX,NavY,NavW,NavH,Cyan);
+    Button(TEXT("MenuSettings"),TEXT("SETTINGS"),SettingsX,NavY,NavW,NavH,Cyan);
     Button(TEXT("RiderScores"),TEXT("LEADERBOARD [L]"),ScoresX,NavY,NavW,NavH,Cyan);
     Button(TEXT("CloseGame"),TEXT("CLOSE GAME"),CloseX,NavY,NavW,NavH,Pink);
     WorkbenchPanel(TEXT("WorkbenchRider"),145,118,330,674,Cyan);
@@ -194,6 +196,7 @@ void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
         const bool Starter=G->StartingCards.Contains(Card->CardID),Draft=G->DraftPool.Contains(Card->CardID),Unlocked=!Profile || Profile->IsUnlocked(Card->CardID);
         const FLinearColor Accent=NeonSpellPalette::Color(NeonSpellPalette::ForCard(Card->CardID));const float Over=Hover(Key,X,Y,CardW,CardH);
         WorkbenchPanel(Key,X,Y,CardW,CardH,Accent,Over,Draft);
+        if(Within(Cursor.X,Cursor.Y,X,Y,CardW,CardH) && (!bMusicPlaylistOpen || !NeonMusicLayout::ContainsPlaylist(Cursor.X,Cursor.Y))) {HoveredCard=Card;HoveredX=X;HoveredY=Y;}
         const float Shade=1.f-Over*.34f;
         WorkbenchImage(Card->Icon,X+5,Y+5,CardW-10,112,true,FVector4(0,0,1,1),Unlocked ? FLinearColor(Shade,Shade,Shade) : FLinearColor(.38f*Shade,.38f*Shade,.45f*Shade));
         if(Starter || !Unlocked)
@@ -212,8 +215,9 @@ void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
     Button(TEXT("WorkbenchView"),bWorkbenchDraftView ? TEXT("BROWSE ALL PROGRAMS >") : TEXT("< SHOW MY 8-CARD DECK"),ViewX,ViewY,ViewW,ViewH,Cyan);
     Text(FString::Printf(TEXT("%s / %d PROGRAMS / PAGE %d OF %d"),bWorkbenchDraftView ? TEXT("DECK") : TEXT("LIBRARY"),Library.Num(),G->LibraryPage+1,Pages),780,658,.55f,Muted);
     Button(TEXT("WorkbenchPrev"),TEXT("< PREV"),PrevX,PageY,PageW,ViewH,Cyan);Button(TEXT("WorkbenchNext"),TEXT("NEXT >"),NextX,PageY,PageW,ViewH,Cyan);
-    Text(TEXT("CARD EDITS AUTOSAVE / CLICK A CARD FOR DETAILS"),519,757,.59f,Muted);
+    Text(TEXT("HOVER: FULL DESCRIPTION / CLICK: EDIT DECK"),519,757,.59f,Muted);
     DrawMusicPlayer(G);
+    if(HoveredCard) DrawWorkbenchTooltip(HoveredCard,HoveredX,HoveredY);
 }
 bool AMVPHUD::ClickRiderSelection(float X,float Y,AMVPArenaGameMode* G)
 {

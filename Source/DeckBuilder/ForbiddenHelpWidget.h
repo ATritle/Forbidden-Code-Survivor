@@ -36,6 +36,7 @@ public:
     const TArray<FForbiddenHelpEntry>& GetEntries() const {return Entries;}
 protected:
     virtual void NativeOnInitialized() override;
+    virtual FReply NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
     virtual FReply NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
 private:
     TArray<FForbiddenHelpEntry> Entries;

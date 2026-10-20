@@ -96,3 +96,9 @@ FReply UNeonChallengeWidget::NativeOnKeyDown(const FGeometry& Geometry,const FKe
     if(Event.GetKey()==EKeys::Escape) {Decline();return FReply::Handled();}
     return Super::NativeOnKeyDown(Geometry,Event);
 }
+
+FReply UNeonChallengeWidget::NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event)
+{
+    if(Event.GetKey()==EKeys::Escape || Event.GetKey()==EKeys::Gamepad_FaceButton_Right) {if(!Event.IsRepeat()) {Decline();}return FReply::Handled();}
+    return Super::NativeOnPreviewKeyDown(Geometry,Event);
+}

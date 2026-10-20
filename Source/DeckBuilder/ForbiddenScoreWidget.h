@@ -11,9 +11,11 @@ class DECKBUILDER_API UForbiddenScoreWidget : public UUserWidget
     GENERATED_BODY()
 public:
     bool WasPaused=false;
+    UFUNCTION() void Close();
 protected:
     virtual void NativeOnInitialized() override;
     virtual void NativeTick(const FGeometry& Geometry,float DeltaSeconds) override;
+    virtual FReply NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
     virtual FReply NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
 private:
     UPROPERTY() TObjectPtr<UTextBlock> Board;
@@ -23,5 +25,4 @@ private:
     int32 SeenRevision=-1;
     UFUNCTION() void Submit();
     UFUNCTION() void Refresh();
-    UFUNCTION() void Close();
 };
