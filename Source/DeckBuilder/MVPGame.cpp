@@ -575,6 +575,10 @@ void AMVPController::BeginPlay()
     InstallRiderSelectionValidation(this);
     extern void InstallWorkbenchValidation(AMVPController* Controller);
     InstallWorkbenchValidation(this);
+    extern void InstallProfileValidation(AMVPController* Controller);
+    InstallProfileValidation(this);
+    extern void InstallDamageAudit(AMVPController* Controller);
+    InstallDamageAudit(this);
     extern void InstallMenuNavigationValidation(AMVPController* Controller);
     InstallMenuNavigationValidation(this);
     extern void InstallSettingsReviewValidation(AMVPController* Controller);

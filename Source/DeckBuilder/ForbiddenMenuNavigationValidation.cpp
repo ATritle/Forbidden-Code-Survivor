@@ -67,7 +67,7 @@ void InstallMenuNavigationValidation(AMVPController* PC)
         if(S->Phase==0 && Age>4)
         {
             if(P->Deck->UnlockedCards.Num()!=16 || !G->bInCodex) return true;
-            Click(ViewX+20,ViewY+10);G->SchoolFilter=-1;G->LibraryPage=0;Move(CardX(0)+80,CardY(0)+70);Next(1);
+            Profile->SelectRider("NeonExorcist");Profile->Data->UnlockedPrograms={"PulseDart","PrismBurst","KineticCards","HaloNova"};auto Deck=Profile->GetDeck();Deck.Starters={"PulseDart","PrismBurst"};Profile->SaveDeck(0,Deck);G->LoadStartingDeck();G->SchoolFilter=-1;G->LibraryPage=0;Move(CardX(0)+80,CardY(0)+70);Next(1);
         }
         else if(S->Phase==1 && Age>.3)
         {
@@ -89,12 +89,12 @@ void InstallMenuNavigationValidation(AMVPController* PC)
             if(C->IsSettingsOpen() || !C->IsPaused()) return End(false,TEXT("Root Escape opened another window or unpaused the menu"));
             FScreenshotRequest::RequestScreenshot(Folder/TEXT("Menu.png"),true,false);Next(35);
         }
-        else if(S->Phase==35 && Age>.3) {Click(CardX(0)+30,CardY(0)+35);Next(4);}
+        else if(S->Phase==35 && Age>.3) {G->bProgramEditorFromHideout=false;G->OpenProgramEditor("PulseDart");Next(4);}
         else if(S->Phase==4 && Age>.3)
         {
-            if(!G->DecisionWidget) return End(false,TEXT("Card details missing"));G->DecisionWidget->Select(2);Next(5);
+            if(!G->DecisionWidget) return End(false,TEXT("Card details missing"));G->DecisionWidget->Select(1);Next(5);
         }
-        else if(S->Phase==5 && Age>.3) {Focus(G->DecisionWidget);Key();if(!G->DecisionWidget || !Has(TEXT("HOW TO CHANGE"))) return End(false,TEXT("Upgrade paths did not back out to card details"));Next(6);}
+        else if(S->Phase==5 && Age>.3) {Focus(G->DecisionWidget);Key();if(!G->DecisionWidget || !Has(TEXT("REMOVE STARTING CARD"))) return End(false,TEXT("Upgrade paths did not back out to card details"));Next(6);}
         else if(S->Phase==6 && Age>.3)
         {
             Focus(G->DecisionWidget);Key();if(G->DecisionWidget || !C->IsPaused()) return End(false,TEXT("Card details did not close safely"));

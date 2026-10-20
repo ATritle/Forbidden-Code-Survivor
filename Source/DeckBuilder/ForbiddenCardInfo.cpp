@@ -50,7 +50,7 @@ bool AMVPHUD::BackFromWorkbench()
 {
     auto* G=Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this));if(!G || !G->bInCodex) return false;
     if(bMusicPlaylistOpen) {bMusicPlaylistOpen=false;NeonMenuAudio::Exit(this);return true;}
-    if(!bWorkbenchDraftView || G->SchoolFilter!=-1 || G->LibraryPage!=0)
+    if(G->SchoolFilter!=-1 || G->LibraryPage!=0)
     {
         bWorkbenchDraftView=true;G->SchoolFilter=-1;G->LibraryPage=0;HoveredWorkbenchCard=NAME_None;WorkbenchTooltipText.Reset();NeonMenuAudio::Exit(this);return true;
     }

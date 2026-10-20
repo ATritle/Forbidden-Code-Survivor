@@ -5,7 +5,7 @@
 const TArray<ForbiddenRiders::FDefinition>& ForbiddenRiders::All()
 {
     static const TArray<FDefinition> R={
-        {"NeonExorcist",TEXT("NEON EXORCIST"),TEXT("STREET MEDIUM"),TEXT("The original rider. Forbidden energy programs, captured spirits and a custom neon board."),TEXT("OPEN SIGNAL / Flexible builds across every energy school."),TEXT("DECK FREEDOM / Choose any two starters from your saved draft pool."),TEXT("BASELINE / Standard health, movement and damage."),FLinearColor(1,.04f,.55f),170},
+        {"NeonExorcist",TEXT("NEON EXORCIST"),TEXT("STREET MEDIUM"),TEXT("The original rider. Forbidden energy programs, captured spirits and a custom neon board."),TEXT("OPEN SIGNAL / Flexible builds across every energy school."),TEXT("DECK FREEDOM / Choose two unlocked starters; draft every program during a run."),TEXT("BASELINE / Standard health, movement and damage."),FLinearColor(1,.04f,.55f),170},
         {"Vex",TEXT("VEX"),TEXT("GHOST COURIER"),TEXT("An agile street courier who redirects the horde and extends energy networks."),TEXT("AFTERIMAGE / Boost leaves a 1.5s decoy. 6s cooldown; basic enemies only."),TEXT("GHOST ROUTING / Chain attacks gain one target and 15% more jump reach."),TEXT("TRADEOFF / 20% less maximum health."),FLinearColor(.02f,1,.65f),170},
         {"Rook",TEXT("ROOK"),TEXT("SIGNAL WARDEN"),TEXT("An armored street protector who turns collected essence into defensive energy."),TEXT("WARD RECHARGE / Every 25 essence restores 15% max-health shield; cap 30%."),TEXT("REPULSOR / Boost emits a 35-damage, 350cm push pulse. 6s cooldown."),TEXT("TRADEOFF / 10% lower movement speed."),FLinearColor(1,.5f,.035f),185},
         {"Zero",TEXT("ZERO"),TEXT("PRECISION ASSASSIN"),TEXT("A disciplined cyberpunk assassin. Lock a priority target and pierce the line."),TEXT("TARGET LOCK / Three direct hits in 2s mark one foe for 4s: +25% damage."),TEXT("PERFECT LINE / Every third projectile cast adds two pierces to its first shot."),TEXT("TRADEOFF / 20% smaller damage-area radius."),FLinearColor(.04f,.3f,1),178},
@@ -24,6 +24,6 @@ bool ForbiddenRiders::Select(const UObject* Context,FName ID)
 {
     if(!Find(ID)) return false;
     if(auto* GI=UGameplayStatics::GetGameInstance(Context))
-        if(auto* P=GI->GetSubsystem<UForbiddenProfile>();P && P->Data) {const FName Previous=P->Data->SelectedRider;P->Data->SelectedRider=ID;if(P->Save()) return true;P->Data->SelectedRider=Previous;return false;}
+        if(auto* P=GI->GetSubsystem<UForbiddenProfile>();P && P->Data) return P->SelectRider(ID);
     return false;
 }

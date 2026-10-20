@@ -38,14 +38,14 @@ void AMVPArenaGameMode::OpenHideout()
     auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();if(!bInCodex || !Profile || !Profile->Data) return;
     TArray<FString> Options;
     for(int32 I=0;I<3;++I) Options.Add(FString::Printf(TEXT("DECK %d / SAVED LOADOUT%s"),I+1,I==Profile->Data->SelectedDeck ? TEXT(" / ACTIVE") : TEXT("")));
-    Options.Add(TEXT("ALL PROGRAMS / UNLOCK CARDS / EDIT DECK"));Options.Add(TEXT("RUN HISTORY / DAMAGE / CONTRACTS / RECIPES"));
+    Options.Add(TEXT("STARTING CARD UNLOCKS"));Options.Add(TEXT("RUN HISTORY / DAMAGE / CONTRACTS / RECIPES"));
     Options.Add(TEXT("BOARD & DISTRICT MODIFIER"));Options.Add(TEXT("RETURN TO CODEX"));
     ShowDecision(FString::Printf(TEXT("HIDEOUT / %d CODE FRAGMENTS"),Profile->Data->CodeFragments),Options,[this,Profile](int32 I)
     {
         if(I>=0 && I<3) {SelectDeckPreset(I);OpenHideout();}
         if(I==3)
         {
-            TArray<FString> Names;for(FName ID:UForbiddenProfile::ProgramIDs()) Names.Add([&](){for(UCardDataAsset* Card:GetArenaPlayer()->Deck->UnlockedCards) if(Card && Card->CardID==ID) return Card->Name.ToString();return ID.ToString();}()+(Profile->IsUnlocked(ID) ? DraftPool.Contains(ID) ? TEXT(" / IN THIS DECK") : TEXT(" / UNLOCKED") : TEXT(" / LOCKED / 30 FRAGMENTS")));
+            TArray<FString> Names;for(FName ID:UForbiddenProfile::ProgramIDs()) Names.Add([&](){for(UCardDataAsset* Card:GetArenaPlayer()->Deck->UnlockedCards) if(Card && Card->CardID==ID) return Card->Name.ToString();return ID.ToString();}()+(Profile->IsUnlocked(ID) ? StartingCards.Contains(ID) ? TEXT(" / STARTING") : TEXT(" / AVAILABLE STARTER") : TEXT(" / LOCKED / 30 FRAGMENTS")));
             Names.Add(TEXT("BACK"));ShowDecision(TEXT("PROGRAM LIBRARY"),Names,[this](int32 Pick){if(UForbiddenProfile::ProgramIDs().IsValidIndex(Pick)) OpenProgramEditor(UForbiddenProfile::ProgramIDs()[Pick]);else OpenHideout();});
         }
         if(I==4)
@@ -77,89 +77,27 @@ void AMVPArenaGameMode::OpenProgramEditor(FName ID)
     if(!Profile || !Profile->Data || !Player || !Player->Deck) return;
     UCardDataAsset* Card=nullptr;for(UCardDataAsset* Candidate:Player->Deck->UnlockedCards) if(Candidate && Candidate->CardID==ID) Card=Candidate;
     if(!Card) return;
-    const int32 DeckNumber=Profile->Data->SelectedDeck+1;
-    auto Name=[Player](FName Key){for(UCardDataAsset* Definition:Player->Deck->UnlockedCards) if(Definition && Definition->CardID==Key) return Definition->Name.ToString();return Key.ToString();};
-    FString Detail=FString::Printf(TEXT("DECK %d / %s\n%.1f DAMAGE / %.2fs COOLDOWN\n"),DeckNumber,*Card->Name.ToString(),Card->BaseDamage,Card->Cooldown)+Card->Description.ToString();
     const FString Back=bProgramEditorFromHideout ? TEXT("BACK TO HIDEOUT") : TEXT("BACK TO MY DECK");
+    const FString Detail=FString::Printf(TEXT("%s / STARTING CARD\n%.1f DAMAGE / %.2fs COOLDOWN\n"),*Card->Name.ToString(),Card->BaseDamage,Card->Cooldown)+Card->Description.ToString();
     if(!Profile->IsUnlocked(ID))
     {
-        Detail+=FString::Printf(TEXT("\nLOCKED / COST 30 FRAGMENTS / YOU HAVE %d\nUnlocking adds this card to your collection. Add it to a deck separately."),Profile->Data->CodeFragments);
-        ShowDecision(Detail,{TEXT("UNLOCK CARD / 30 FRAGMENTS"),Back},[this,Profile,ID](int32 Pick)
+        ShowDecision(Detail+FString::Printf(TEXT("\nUNLOCK FOR THIS RIDER / COST 30 CODE FRAGMENTS / YOU HAVE %d\nThis card is already available in the random in-run draft. Unlocking lets this rider start with it in any of their 3 decks. It does not equip the card."),Profile->Data->CodeFragments),{TEXT("UNLOCK STARTING CARD / 30 FRAGMENTS"),Back},[this,Profile,ID](int32 Pick)
         {
             if(Pick==0)
             {
-                if(!Profile->UnlockProgram(ID)) {ShowDecision(Profile->Data->CodeFragments<30 ? TEXT("CARD NOT UNLOCKED\nYou need 30 code fragments earned from normal runs. Testing does not earn fragments.") : TEXT("CARD NOT UNLOCKED\n")+Profile->LastError,{TEXT("BACK TO CARD")},[this,ID](int32){OpenProgramEditor(ID);});return;}
-                OpenProgramEditor(ID);
+                if(!Profile->UnlockProgram(ID))
+                {
+                    ShowDecision(Profile->Data->CodeFragments<30 ? TEXT("NOT ENOUGH CODE FRAGMENTS\nEarn 30 fragments from normal runs. Testing does not earn fragments.") : TEXT("COULD NOT SAVE UNLOCK\n")+Profile->LastError,{TEXT("BACK")},[this,ID](int32){OpenProgramEditor(ID);});return;
+                }
+                DeckMessage=TEXT("Starting card unlocked for this rider. Click it to add it to the selected deck.");
             }
-            else if(bProgramEditorFromHideout) OpenHideout();
+            if(bProgramEditorFromHideout) OpenHideout();
         });return;
     }
-    const bool InDeck=DraftPool.Contains(ID);const int32 ExistingStarter=StartingCards.IndexOfByKey(ID);
-    Detail+=InDeck ? FString::Printf(TEXT("\nIN DECK %d / ELIGIBLE FOR LEVEL-UP CHOICES"),DeckNumber) : FString::Printf(TEXT("\nNOT IN DECK %d / ADD IT BEFORE USING IT THIS RUN"),DeckNumber);
-    if(ExistingStarter!=INDEX_NONE) Detail+=FString::Printf(TEXT("\nSTARTING ATTACK / SLOT %d"),ExistingStarter+1);
-    ShowDecision(Detail,{
-        InDeck ? TEXT("HOW TO CHANGE THIS 8-CARD DECK") : FString::Printf(TEXT("ADD TO DECK %d / REPLACE ONE CARD"),DeckNumber),
-        InDeck ? TEXT("CHOOSE AS STARTING ATTACK / SLOT 1 OR 2") : TEXT("STARTING ATTACK / ADD TO DECK FIRST"),
-        TEXT("VIEW UPGRADE PATHS / EARNED DURING A RUN"),Back},[this,ID,Card,Name,InDeck,DeckNumber](int32 Pick)
+    ShowDecision(Detail+TEXT("\nAll 16 programs are eligible for random level-up choices. Starting cards save automatically to this rider's selected deck."),{StartingCards.Contains(ID) ? TEXT("REMOVE STARTING CARD") : TEXT("ADD STARTING CARD / MAX 2"),TEXT("VIEW UPGRADE PATHS"),Back},[this,ID,Card](int32 Pick)
     {
-        if(Pick==0)
-        {
-            if(InDeck)
-            {
-                ShowDecision(FString::Printf(TEXT("DECK %d / 8 CARDS + 2 STARTING ATTACKS\nThis card is already in the deck. To replace it, return to the menu, click BROWSE ALL PROGRAMS, choose another unlocked card, then ADD TO DECK.\nEach deck saves its own card pool and two starting attacks. All 3 decks initially contain the same cards until you customize them. Changing one deck does not change the others."),DeckNumber),{TEXT("BACK TO CARD")},[this,ID](int32){OpenProgramEditor(ID);});return;
-            }
-            TArray<FString> Choices;
-            for(FName Old:DraftPool)
-            {
-                FString Copy=TEXT("REPLACE ")+Name(Old)+TEXT(" WITH ")+Name(ID);
-                if(StartingCards.Contains(Old)) Copy+=TEXT("\nThis is a starting attack. The new card will also start equipped.");
-                Choices.Add(Copy);
-            }
-            Choices.Add(TEXT("CANCEL / KEEP MY DECK"));
-            ShowDecision(FString::Printf(TEXT("ADD %s TO DECK %d\nChoose the card that leaves this deck. The total stays at 8. Your other saved decks are unchanged."),*Name(ID),DeckNumber),Choices,[this,ID](int32 Index)
-            {
-                if(DraftPool.IsValidIndex(Index))
-                {
-                    const auto PreviousPool=DraftPool,PreviousStarters=StartingCards;
-                    const FName Old=DraftPool[Index];DraftPool[Index]=ID;
-                    for(FName& Starter:StartingCards) if(Starter==Old) Starter=ID;
-                    if(!SaveStartingDeck())
-                    {
-                        DraftPool=PreviousPool;StartingCards=PreviousStarters;
-                        ShowDecision(TEXT("COULD NOT SAVE DECK\n")+DeckMessage,{TEXT("BACK TO CARD")},[this,ID](int32){OpenProgramEditor(ID);});return;
-                    }
-                }
-                OpenProgramEditor(ID);
-            });
-        }
-        else if(Pick==1)
-        {
-            if(!DraftPool.Contains(ID))
-            {
-                ShowDecision(TEXT("ADD THIS CARD TO THE DECK FIRST\nChoose ADD TO DECK and replace one of the 8 cards. You can then assign it to starting slot 1 or 2."),{TEXT("BACK TO CARD")},[this,ID](int32){OpenProgramEditor(ID);});return;
-            }
-            if(StartingCards.Num()!=2) return;
-            TArray<FString> Choices;
-            const int32 Current=StartingCards.IndexOfByKey(ID);
-            for(int32 Index=0;Index<2;++Index)
-                Choices.Add(FString::Printf(TEXT("STARTING SLOT %d / %s\n%s"),Index+1,*Name(StartingCards[Index]),Index==Current ? TEXT("Already equipped in this slot.") : Current!=INDEX_NONE ? TEXT("Swap the order of your two starting attacks.") : *(TEXT("Replace with ")+Name(ID))));
-            Choices.Add(TEXT("CANCEL / KEEP MY STARTING ATTACKS"));
-            ShowDecision(FString::Printf(TEXT("START WITH %s\nPick one of the two attacks equipped immediately when the run begins. The other 6 deck cards become available through level-up choices."),*Name(ID)),Choices,[this,ID](int32 Index)
-            {
-                if(Index>=0 && Index<2)
-                {
-                    const auto Previous=StartingCards;const int32 Current=StartingCards.IndexOfByKey(ID);
-                    if(Current!=INDEX_NONE) StartingCards.Swap(Current,Index);else StartingCards[Index]=ID;
-                    if(!SaveStartingDeck())
-                    {
-                        StartingCards=Previous;
-                        ShowDecision(TEXT("COULD NOT SAVE STARTING ATTACKS\n")+DeckMessage,{TEXT("BACK TO CARD")},[this,ID](int32){OpenProgramEditor(ID);});return;
-                    }
-                }
-                OpenProgramEditor(ID);
-            });
-        }
-        else if(Pick==2) ShowDecision(Card->Name.ToString()+TEXT(" / UPGRADE PATHS\nThese are chosen through level-ups during a run, not equipped here."),{Card->EvolutionA.ToString()+TEXT("\n")+Card->EvolutionDescriptionA.ToString(),Card->EvolutionB.ToString()+TEXT("\n")+Card->EvolutionDescriptionB.ToString(),TEXT("BACK TO CARD")},[this,ID](int32){OpenProgramEditor(ID);});
+        if(Pick==0) {ToggleStartingCard(ID);if(bProgramEditorFromHideout) OpenHideout();}
+        else if(Pick==1) ShowDecision(Card->Name.ToString()+TEXT(" / IN-RUN EVOLUTIONS"),{Card->EvolutionA.ToString()+TEXT("\n")+Card->EvolutionDescriptionA.ToString(),Card->EvolutionB.ToString()+TEXT("\n")+Card->EvolutionDescriptionB.ToString(),TEXT("BACK TO CARD")},[this,ID](int32){OpenProgramEditor(ID);});
         else if(bProgramEditorFromHideout) OpenHideout();
     });
 }

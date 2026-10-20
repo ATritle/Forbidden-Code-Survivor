@@ -79,10 +79,41 @@ bool FForbiddenDeckCapacityTest::RunTest(const FString& Parameters)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FForbiddenPresetTest,"Forbidden.Runtime.PresetValidation",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FForbiddenPresetTest::RunTest(const FString& Parameters)
 {
-    FForbiddenDeckPreset Deck;const auto& IDs=UForbiddenProfile::ProgramIDs();for(int32 I=0;I<8;++I) Deck.DraftPool.Add(IDs[I]);Deck.Starters={IDs[0],IDs[1]};FString Error;
-    TestTrue(TEXT("Eight unique programs, two contained starters"),UForbiddenProfile::ValidateDeck(Deck,IDs,Error));
-    Deck.DraftPool[7]=Deck.DraftPool[0];TestFalse(TEXT("Duplicate draft entry rejected"),UForbiddenProfile::ValidateDeck(Deck,IDs,Error));
-    Deck.DraftPool[7]=IDs[7];Deck.Starters[1]=IDs[15];TestFalse(TEXT("Starter outside draft pool rejected"),UForbiddenProfile::ValidateDeck(Deck,IDs,Error));
-    Deck.Starters={IDs[0],IDs[1]};auto Unlocked=IDs;Unlocked.Remove(IDs[7]);TestFalse(TEXT("Locked card rejected"),UForbiddenProfile::ValidateDeck(Deck,Unlocked,Error));return true;
+    FForbiddenDeckPreset Deck;const auto& IDs=UForbiddenProfile::ProgramIDs();Deck.DraftPool=IDs;Deck.Starters={IDs[0],IDs[1]};FString Error;
+    const TArray<FName> Owned={IDs[0],IDs[1],IDs[2],IDs[3]};
+    TestTrue(TEXT("Full draft catalog does not require starting unlocks"),UForbiddenProfile::ValidateDeck(Deck,Owned,Error));
+    Deck.Starters={IDs[0],IDs[0]};TestFalse(TEXT("Duplicate starter rejected"),UForbiddenProfile::ValidateDeck(Deck,Owned,Error));
+    Deck.Starters={IDs[0],IDs[15]};TestFalse(TEXT("Locked starter rejected"),UForbiddenProfile::ValidateDeck(Deck,Owned,Error));
+    Deck.Starters={IDs[0],IDs[1],IDs[2]};TestFalse(TEXT("Third starter rejected"),UForbiddenProfile::ValidateDeck(Deck,Owned,Error));
+    Deck.Starters={IDs[0]};TestTrue(TEXT("One-card edit can autosave"),UForbiddenProfile::ValidateDeck(Deck,Owned,Error));
+    Deck.Starters.Reset();TestTrue(TEXT("Empty edit can autosave"),UForbiddenProfile::ValidateDeck(Deck,Owned,Error));return true;
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FForbiddenFullDraftTest,"Forbidden.Runtime.FullCatalogDraft",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FForbiddenFullDraftTest::RunTest(const FString& Parameters)
+{
+    ForbiddenTests::FWorld W;auto* Owner=W.World->SpawnActor<AActor>();auto* Registry=W.World->SpawnActor<AEnemySpawner>();
+    auto* Deck=NewObject<UCodexDeckComponent>(Owner);Deck->RegisterComponent();Deck->EnemySpawner=Registry;
+    for(FName ID:UForbiddenProfile::ProgramIDs())
+    {
+        auto* Card=NewObject<UCardDataAsset>(Deck);Card->CardID=ID;Card->BaseDamage=30;Card->Cooldown=1;
+        Card->SpellClass=AMVPBoltSpell::StaticClass();ForbiddenPrograms::Configure(Card);Deck->UnlockedCards.Add(Card);
+    }
+    Deck->EquippedDeck=Deck->UnlockedCards;TSet<FName> Seen;
+    for(int32 Trial=0;Trial<256;++Trial)
+    {
+        Deck->DiscardHand();const auto Hand=Deck->DrawLevelUpHand();TestEqual(TEXT("Three choices per fresh draft"),Hand.Num(),3);
+        TSet<FName> Unique;for(UCardDataAsset* Card:Hand) {Unique.Add(Card->CardID);Seen.Add(Card->CardID);}
+        TestEqual(TEXT("No duplicate choices"),Unique.Num(),3);
+        TestTrue(TEXT("Repeated access preserves the offered hand"),Hand==Deck->DrawLevelUpHand());
+    }
+    TestEqual(TEXT("All 16 cards reachable without starting unlocks"),Seen.Num(),16);
+    Deck->DiscardHand();UCardDataAsset* Card=Deck->UnlockedCards[0];Deck->EquippedDeck={Card};Deck->DrawLevelUpHand();auto* Spell=Deck->AddSelectedCardSpell(Card);
+    if(!Spell) return false;
+    const auto Rank=FGameplayTag::RequestGameplayTag(TEXT("Mutation.Program.Rank"));Spell->ApplyMutation(Rank,1);Spell->ApplyMutation(Rank,1);
+    Spell->ApplyMutation(FGameplayTag::RequestGameplayTag(TEXT("Mutation.Program.EvolutionA")),1);
+    Deck->EquippedDeck=Deck->UnlockedCards;Deck->DiscardHand();
+    for(int32 Trial=0;Trial<64;++Trial) {Deck->DiscardHand();for(UCardDataAsset* Offer:Deck->DrawLevelUpHand()) TestNotEqual(TEXT("Mastered spell excluded"),Offer->CardID,Card->CardID);}
+    return true;
+}
+
 #endif

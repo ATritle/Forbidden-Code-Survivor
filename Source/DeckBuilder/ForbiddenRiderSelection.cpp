@@ -53,7 +53,8 @@ bool AMVPArenaGameMode::SelectRider(FName ID)
     if(!ForbiddenRiders::Select(this,ID)) {DeckMessage=TEXT("Could not save the rider selection. Please retry.");return false;}
     if(auto* Player=GetArenaPlayer();!Player || !Player->ApplySelectedRider())
     {ForbiddenRiders::Select(this,Previous);if(Player) Player->ApplySelectedRider();DeckMessage=TEXT("Rider gameplay assets are unavailable.");return false;}
-    DeckMessage=TEXT("Rider saved. Choose your programs and enter the arena.");NeonMenuAudio::Input(this);return true;
+    LoadStartingDeck();LibraryPage=0;SchoolFilter=-1;
+    DeckMessage=TEXT("Rider saved. Each rider remembers 3 decks and their own starting-card unlocks.");NeonMenuAudio::Input(this);return true;
 }
 void AMVPArenaGameMode::ContinueToDeck() {OpenRiderSelection();}
 bool AMVPArenaGameMode::SelectDeckPreset(int32 Index)
@@ -78,8 +79,10 @@ TArray<UCardDataAsset*> AMVPHUD::GetWorkbenchCards(AMVPArenaGameMode* G) const
 {
     TArray<UCardDataAsset*> Result;if(!G) return Result;
     const auto Library=G->GetLibraryCards();
-    if(!bWorkbenchDraftView) return Library;
-    for(FName ID:G->DraftPool) for(UCardDataAsset* Card:Library) if(Card && Card->CardID==ID) {Result.Add(Card);break;}
+    auto* Profile=G->GetGameInstance()->GetSubsystem<UForbiddenProfile>();
+    // Keep owned starters together. Locked cards remain visible and can still be drafted in-run.
+    for(int32 Owned=1;Owned>=0;--Owned)
+        for(UCardDataAsset* Card:Library) if(Card && int32(!Profile || Profile->IsUnlocked(Card->CardID))==Owned) Result.Add(Card);
     return Result;
 }
 void AMVPHUD::WorkbenchPanel(FName Key,float X,float Y,float W,float H,FLinearColor Accent,float Over,bool Selected,bool Chamfer)
@@ -179,12 +182,12 @@ void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
     Button(TEXT("WorkbenchHideout"),TEXT("HIDEOUT / RUN HISTORY [H]"),HideoutX,HideoutY,HideoutW,HideoutH,Cyan);
     WorkbenchCopy(G->DeckMessage,165,651,290,.63f,Muted,2);
     Text(TEXT("HOW YOUR DECK WORKS"),165,700,.69f,Cyan);
-    const TCHAR* Steps[]={TEXT("1. Pick Deck 1, 2 or 3 (separate saves)."),TEXT("2. Browse programs to replace a card."),TEXT("3. Click a card to set starting attacks."),TEXT("4. Start with 2. Equip up to 6 in a run.")};
+    const TCHAR* Steps[]={TEXT("1. Pick Deck 1, 2 or 3 (separate saves)."),TEXT("2. Click a card to add or remove it."),TEXT("3. Unlock more starters with fragments."),TEXT("4. All 16 cards can appear in a run.")};
     for(int32 I=0;I<4;++I) Text(Steps[I],165,723+I*16,.64f,White);
     WorkbenchPanel(TEXT("WorkbenchDeck"),495,118,936,674,Cyan);
-    Text(FString::Printf(TEXT("DECK %d / PROGRAMS"),Profile && Profile->Data ? Profile->Data->SelectedDeck+1 : 1),519,143,1.f,Cyan);
+    Text(FString::Printf(TEXT("DECK %d / STARTING CARDS"),Profile && Profile->Data ? Profile->Data->SelectedDeck+1 : 1),519,143,1.f,Cyan);
     for(int32 I=0;I<3;++I) Button(*FString::Printf(TEXT("WorkbenchPreset%d"),I),FString::Printf(TEXT("DECK %d"),I+1),PresetX+I*PresetPitch,PresetY,PresetW,PresetH,Cyan,Profile && Profile->Data && Profile->Data->SelectedDeck==I);
-    Button(TEXT("WorkbenchSave"),TEXT("SAVE DECK"),SaveX,ActionY,SaveW,ActionH,Cyan);
+    Text(TEXT("AUTOSAVED"),1085,757,.59f,Cyan);
     Button(TEXT("WorkbenchEnter"),TEXT("ENTER ARENA >>"),EnterX,ActionY,EnterW,ActionH,Pink);
     const TCHAR* Schools[]={TEXT("ALL"),TEXT("PULSE"),TEXT("PRISM"),TEXT("KINETIC"),TEXT("BARRIER")};
     for(int32 I=0;I<5;++I) Button(*FString::Printf(TEXT("WorkbenchSchool%d"),I),Schools[I],TabsX+I*TabPitch,TabsY,TabW,TabH,I==2 ? Pink : I==3 ? Gold : Cyan,G->SchoolFilter==(I==0 ? -1 : I+5));
@@ -193,29 +196,39 @@ void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
     for(int32 I=0;I<CardsPerPage && Library.IsValidIndex(G->LibraryPage*CardsPerPage+I);++I)
     {
         auto* Card=Library[G->LibraryPage*CardsPerPage+I];const float X=CardX(I),Y=CardY(I);const FName Key=*FString::Printf(TEXT("WorkbenchCard%d"),I);
-        const bool Starter=G->StartingCards.Contains(Card->CardID),Draft=G->DraftPool.Contains(Card->CardID),Unlocked=!Profile || Profile->IsUnlocked(Card->CardID);
+        const bool Starter=G->StartingCards.Contains(Card->CardID),Unlocked=!Profile || Profile->IsUnlocked(Card->CardID);
         const FLinearColor Accent=NeonSpellPalette::Color(NeonSpellPalette::ForCard(Card->CardID));const float Over=Hover(Key,X,Y,CardW,CardH);
-        WorkbenchPanel(Key,X,Y,CardW,CardH,Accent,Over,Draft);
+        WorkbenchPanel(Key,X,Y,CardW,CardH,Accent,Over,Starter);
         if(Within(Cursor.X,Cursor.Y,X,Y,CardW,CardH) && (!bMusicPlaylistOpen || !NeonMusicLayout::ContainsPlaylist(Cursor.X,Cursor.Y))) {HoveredCard=Card;HoveredX=X;HoveredY=Y;}
         const float Shade=1.f-Over*.34f;
         WorkbenchImage(Card->Icon,X+5,Y+5,CardW-10,112,true,FVector4(0,0,1,1),Unlocked ? FLinearColor(Shade,Shade,Shade) : FLinearColor(.38f*Shade,.38f*Shade,.45f*Shade));
-        if(Starter || !Unlocked)
-        {Box(X+3,Y+4,Unlocked ? 85 : 124,23,Unlocked ? Cyan : FLinearColor(.5f,.1f,.3f));Text(Unlocked ? TEXT("STARTING") : TEXT("LOCKED / 30"),X+12,Y+9,.59f,Unlocked ? FLinearColor(.005f,.015f,.03f) : White);}
+        if(Starter)
+        {Box(X+3,Y+4,85,23,Cyan);Text(TEXT("STARTING"),X+12,Y+9,.59f,FLinearColor(.005f,.015f,.03f));}
+        if(!Unlocked)
+        {
+            const bool Affordable=Profile && Profile->Data && Profile->Data->CodeFragments>=30;
+            const FLinearColor LockColor=Affordable ? Gold : Muted;
+            Box(X+15,Y+38,CardW-30,51,FLinearColor(.008f,.012f,.027f,.88f));
+            Text(Affordable ? TEXT("UNLOCK") : TEXT("LOCKED"),X+CardW*.5f-37,Y+43,.92f,LockColor);
+            Text(TEXT("30 CODE FRAGMENTS"),X+25,Y+71,.56f,LockColor);
+        }
         WorkbenchCopy(Card->Name.ToString(),X+12,Y+126,CardW-28,.96f,White,1);
         Text(SchoolName(Card->MagicSchool),X+12,Y+152,.72f,Accent);
 
         Text(FString::Printf(TEXT("%.0f DMG / %.2fs"),Card->BaseDamage,Card->Cooldown),X+12,Y+176,.70f,White);
-        if(Draft) Text(TEXT("+"),X+CardW-20,Y+128,.68f,Cyan);
+        if(Starter) Text(TEXT("+"),X+CardW-20,Y+128,.68f,Cyan);
     }
-    if(Library.IsEmpty()) WorkbenchCopy(bWorkbenchDraftView ? TEXT("No draft programs in this school. Browse the library to choose programs.") : TEXT("No programs in this school."),543,350,830,.9f,White,3);
-    WorkbenchPanel(TEXT("WorkbenchDraftCount"),519,689,250,46,Cyan);Icon(3,539,712,Cyan);Text(FString::Printf(TEXT("%d / 8"),G->DraftPool.Num()),559,698,.9f,Cyan);Text(TEXT("LEVEL-UP POOL"),624,707,.62f,White);
+    if(Library.IsEmpty()) WorkbenchCopy(TEXT("No programs in this school."),543,350,830,.9f,White,3);
+    WorkbenchPanel(TEXT("WorkbenchFragments"),519,689,250,46,Cyan);Icon(3,539,712,Cyan);
+    Text(FString::Printf(TEXT("%d"),Profile && Profile->Data ? Profile->Data->CodeFragments : 0),559,697,.9f,Cyan);Text(TEXT("CODE FRAGMENTS"),559,718,.59f,White);
     WorkbenchPanel(TEXT("WorkbenchStarterCount"),785,689,622,46,Gold);Icon(4,805,712,Gold);Text(FString::Printf(TEXT("%d / 2"),G->StartingCards.Num()),827,698,.9f,Gold);Text(TEXT("ATTACKS EQUIPPED AT RUN START"),900,696,.59f,White);
     FString StarterNames;for(FName ID:G->StartingCards) for(UCardDataAsset* Card:G->GetArenaPlayer()->Deck->UnlockedCards) if(Card && Card->CardID==ID) {if(!StarterNames.IsEmpty()) StarterNames+=TEXT(" + ");StarterNames+=Card->Name.ToString();break;}
+    if(G->StartingCards.Num()<2) StarterNames+=StarterNames.IsEmpty() ? TEXT("Click two unlocked cards to begin") : TEXT(" + [EMPTY SLOT]");
     WorkbenchCopy(StarterNames,900,715,488,.70f,Gold,1);
-    Button(TEXT("WorkbenchView"),bWorkbenchDraftView ? TEXT("BROWSE ALL PROGRAMS >") : TEXT("< SHOW MY 8-CARD DECK"),ViewX,ViewY,ViewW,ViewH,Cyan);
-    Text(FString::Printf(TEXT("%s / %d PROGRAMS / PAGE %d OF %d"),bWorkbenchDraftView ? TEXT("DECK") : TEXT("LIBRARY"),Library.Num(),G->LibraryPage+1,Pages),780,658,.55f,Muted);
+    Text(TEXT("ALL 16 CARDS IN THE RUN DRAFT"),ViewX,ViewY+9,.59f,Cyan);
+    Text(FString::Printf(TEXT("%d PROGRAMS / PAGE %d OF %d"),Library.Num(),G->LibraryPage+1,Pages),865,658,.55f,Muted);
     Button(TEXT("WorkbenchPrev"),TEXT("< PREV"),PrevX,PageY,PageW,ViewH,Cyan);Button(TEXT("WorkbenchNext"),TEXT("NEXT >"),NextX,PageY,PageW,ViewH,Cyan);
-    Text(TEXT("HOVER: FULL DESCRIPTION / CLICK: EDIT DECK"),519,757,.59f,Muted);
+    Text(TEXT("HOVER: DETAILS / CLICK: ADD OR REMOVE"),519,757,.59f,Muted);
     DrawMusicPlayer(G);
     if(HoveredCard) DrawWorkbenchTooltip(HoveredCard,HoveredX,HoveredY);
 }
@@ -230,15 +243,19 @@ bool AMVPHUD::ClickRiderSelection(float X,float Y,AMVPArenaGameMode* G)
     if(In(CloseX,NavY,NavW,NavH)) {if(PC) PC->CloseGame();return true;}
     for(int32 I=0;I<ForbiddenRiders::All().Num();++I) if(In(RiderX,RiderY+I*RiderPitch,RiderW,RiderH)) {G->SelectRider(ForbiddenRiders::All()[I].ID);return true;}
     for(int32 I=0;I<3;++I) if(In(PresetX+I*PresetPitch,PresetY,PresetW,PresetH)) {G->SelectDeckPreset(I);return true;}
-    if(In(SaveX,ActionY,SaveW,ActionH)) {if(G->SaveStartingDeck()) NeonMenuAudio::Input(this);return true;}
     if(In(EnterX,ActionY,EnterW,ActionH)) {if(G->StartSelectedRun()) NeonMenuAudio::Input(this);return true;}
     if(In(HideoutX,HideoutY,HideoutW,HideoutH)) {if(PC) PC->OpenHideout();return true;}
-    if(In(ViewX,ViewY,ViewW,ViewH)) {bWorkbenchDraftView=!bWorkbenchDraftView;G->LibraryPage=0;NeonMenuAudio::Input(this);return true;}
     for(int32 I=0;I<5;++I) if(In(TabsX+I*TabPitch,TabsY,TabW,TabH)) {G->SchoolFilter=I==0 ? -1 : I+5;G->LibraryPage=0;NeonMenuAudio::Input(this);return true;}
     const auto Library=GetWorkbenchCards(G);const int32 LastPage=FMath::Max(0,(Library.Num()-1)/CardsPerPage);
     if(In(PrevX,PageY,PageW,ViewH)) {G->LibraryPage=FMath::Max(0,G->LibraryPage-1);NeonMenuAudio::Input(this);return true;}
     if(In(NextX,PageY,PageW,ViewH)) {G->LibraryPage=FMath::Min(LastPage,G->LibraryPage+1);NeonMenuAudio::Input(this);return true;}
     for(int32 I=0;I<CardsPerPage && Library.IsValidIndex(G->LibraryPage*CardsPerPage+I);++I) if(In(CardX(I),CardY(I),CardW,CardH))
-    {NeonMenuAudio::Input(this);G->bProgramEditorFromHideout=false;G->OpenProgramEditor(Library[G->LibraryPage*CardsPerPage+I]->CardID);return true;}
+    {
+        const FName ID=Library[G->LibraryPage*CardsPerPage+I]->CardID;
+        auto* Profile=G->GetGameInstance()->GetSubsystem<UForbiddenProfile>();
+        if(!Profile || Profile->IsUnlocked(ID)) G->ToggleStartingCard(ID);
+        else {NeonMenuAudio::Input(this);G->bProgramEditorFromHideout=false;G->OpenProgramEditor(ID);}
+        return true;
+    }
     return false;
 }

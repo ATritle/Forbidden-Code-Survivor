@@ -5,6 +5,18 @@
 #include "Misc/CommandLine.h"
 #include "Misc/Parse.h"
 
+namespace
+{
+    USaveGame* LoadCheckedSave(const FString& Slot)
+    {
+        TArray<uint8> Bytes;
+        if(!UGameplayStatics::LoadDataFromSlot(Bytes,Slot,0) || Bytes.Num()<16) return nullptr;
+        // Unreal treats a non-GVAS header as a legacy archive; garbage can assert before fallback.
+        if(Bytes[0]!='G' || Bytes[1]!='V' || Bytes[2]!='A' || Bytes[3]!='S') return nullptr;
+        return UGameplayStatics::LoadGameFromMemory(Bytes);
+    }
+}
+
 const TArray<FName>& UForbiddenProfile::ProgramIDs()
 {
     static const TArray<FName> IDs={"PulseDart","PrismBurst","HaloNova","KineticCards","PhotonLance","TalismanGuard","ArcRelay","GhostLink","NeonCataclysm","OrbitRazor","RicochetSeal","StrobeRail","EchoPetals","EventHorizon","ShatterSigil","SatelliteChoir"};
@@ -14,17 +26,46 @@ const TArray<FName>& UForbiddenProfile::ProgramIDs()
 FString UForbiddenProfile::SlotName() const
 {
     return FParse::Param(FCommandLine::Get(),TEXT("MVPSmoke")) || FParse::Param(FCommandLine::Get(),TEXT("ForbiddenQA"))
-        || FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) ? TEXT("ForbiddenCode_Profile_v3_Automation") : TEXT("ForbiddenCode_Profile_v3");
+        || FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) ? TEXT("ForbiddenCode_Profile_v4_Automation") : TEXT("ForbiddenCode_Profile_v4");
 }
 
+namespace
+{
+    FForbiddenRiderLoadouts NewRiderLoadouts(FName Rider)
+    {
+        FForbiddenRiderLoadouts Result;
+        if(Rider=="Vex") Result.UnlockedStarters={"ArcRelay","GhostLink","RicochetSeal","PulseDart"};
+        else if(Rider=="Rook") Result.UnlockedStarters={"TalismanGuard","HaloNova","EventHorizon","PulseDart"};
+        else if(Rider=="Zero") Result.UnlockedStarters={"PhotonLance","StrobeRail","KineticCards","PulseDart"};
+        else if(Rider=="Mira") Result.UnlockedStarters={"SatelliteChoir","GhostLink","TalismanGuard","PrismBurst"};
+        else Result.UnlockedStarters={"PulseDart","PrismBurst","KineticCards","HaloNova"};
+        for(int32 I=0;I<3;++I)
+        {
+            FForbiddenDeckPreset Deck;Deck.Name=FString::Printf(TEXT("DECK %d"),I+1);
+            Deck.DraftPool=UForbiddenProfile::ProgramIDs();
+            Deck.Starters={Result.UnlockedStarters[0],Result.UnlockedStarters[1]};Result.Decks.Add(Deck);
+        }
+        return Result;
+    }
+}
+
+void UForbiddenProfile::LoadSelectedRider()
+{
+    const auto& Rider=Data->RiderLoadouts.FindChecked(Data->SelectedRider);
+    Data->UnlockedPrograms=Rider.UnlockedStarters;Data->Decks=Rider.Decks;Data->SelectedDeck=Rider.SelectedDeck;
+}
+void UForbiddenProfile::StoreSelectedRider()
+{
+    auto& Rider=Data->RiderLoadouts.FindOrAdd(Data->SelectedRider);
+    Rider.UnlockedStarters=Data->UnlockedPrograms;Rider.Decks=Data->Decks;Rider.SelectedDeck=Data->SelectedDeck;
+}
 void UForbiddenProfile::SetDefaults()
 {
     Data=NewObject<UForbiddenProfileSave>(this);
     Data->PlayerToken=FGuid::NewGuid().ToString(EGuidFormats::Digits)+FGuid::NewGuid().ToString(EGuidFormats::Digits);
-    Data->UnlockedPrograms={"PulseDart","PrismBurst","HaloNova","KineticCards","PhotonLance","TalismanGuard","ArcRelay","NeonCataclysm"};
-    FForbiddenDeckPreset Deck; Deck.DraftPool=Data->UnlockedPrograms; Deck.Starters={"PulseDart","PrismBurst"};
-    Data->Decks={Deck,Deck,Deck}; Data->Decks[1].Name=TEXT("PRESET 2"); Data->Decks[2].Name=TEXT("PRESET 3");
-    Data->UnlockedBoards={"Neon"}; Data->UnlockedDistrictModifiers={"Standard"};
+    for(const auto& Rider:ForbiddenRiders::All()) Data->RiderLoadouts.Add(Rider.ID,NewRiderLoadouts(Rider.ID));
+    LoadSelectedRider();
+    Data->UnlockedBoards={"Neon"};Data->UnlockedDistrictModifiers={"Standard"};
     Data->Settings={{"Flash",1.f},{"Bloom",0.7f},{"Shake",0.6f},{"DamageNumbers",1.f},{"ReducedFlashes",0.f},{"Graphics",2.f}};
     Data->Bindings={{"Boost",EKeys::LeftShift},{"Mark",EKeys::MiddleMouseButton},{"Interact",EKeys::E},{"Inspect",EKeys::Tab}};
 }
@@ -32,28 +73,40 @@ void UForbiddenProfile::SetDefaults()
 void UForbiddenProfile::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection); SetDefaults();
-    auto* Loaded=Cast<UForbiddenProfileSave>(UGameplayStatics::LoadGameFromSlot(SlotName(),0));
-    if(!Loaded || Loaded->Version!=3) Loaded=Cast<UForbiddenProfileSave>(UGameplayStatics::LoadGameFromSlot(SlotName()+TEXT("_Recovery"),0));
-    if(Loaded && Loaded->Version==3) Data=Loaded;
+    auto* Loaded=Cast<UForbiddenProfileSave>(LoadCheckedSave(SlotName()));
+    if(!Loaded || Loaded->Version!=4) Loaded=Cast<UForbiddenProfileSave>(LoadCheckedSave(SlotName()+TEXT("_Recovery")));
+    if(Loaded && Loaded->Version==4) Data=Loaded;
     else
     {
-        // One-way import. The original slot remains unchanged and usable by the baseline build.
-        const FString Old=SlotName().EndsWith(TEXT("Automation")) ? TEXT("CodexDeck_Automation") : TEXT("CodexDeck");
-        if(auto* Legacy=Cast<UCodexLoadoutSave>(UGameplayStatics::LoadGameFromSlot(Old,0)))
+        // Read the old slot once. Never write v3, so 0.4.4 remains independently revertible.
+        const FString OldSlot=SlotName().Replace(TEXT("_v4"),TEXT("_v3"));
+        auto* Old=Cast<UForbiddenProfileSave>(LoadCheckedSave(OldSlot));
+        if(!Old || Old->Version!=3) Old=Cast<UForbiddenProfileSave>(LoadCheckedSave(OldSlot+TEXT("_Recovery")));
+        if(Old && Old->Version==3)
         {
-            TArray<FName> Starters;
-            const TMap<FName,FName> Migration={{"BoneLance","PulseDart"},{"EmberFan","PrismBurst"},{"FrostNova","HaloNova"},{"StormLance","KineticCards"},{"BloodRite","PhotonLance"},{"RaiseSkeletons","TalismanGuard"}};
-            for(FName ID:Legacy->StartingCards)
+            Data=Old;Data->Version=4;Data->RiderLoadouts.Reset();
+            for(const auto& Definition:ForbiddenRiders::All())
             {
-                if(const auto* New=Migration.Find(ID)) ID=*New;
-                if(ProgramIDs().Contains(ID) && Starters.Num()<2) {Starters.AddUnique(ID);Data->UnlockedPrograms.AddUnique(ID);}
+                auto Rider=NewRiderLoadouts(Definition.ID);
+                // Previously account-wide purchases remain available to every rider.
+                for(FName ID:Data->UnlockedPrograms) if(ProgramIDs().Contains(ID)) Rider.UnlockedStarters.AddUnique(ID);
+                if(Definition.ID==Data->SelectedRider) {Rider.Decks=Data->Decks;Rider.SelectedDeck=Data->SelectedDeck;}
+                Data->RiderLoadouts.Add(Definition.ID,Rider);
             }
-            if(!Starters.IsEmpty())
+        }
+        else
+        {
+            const FString LegacySlot=SlotName().EndsWith(TEXT("Automation")) ? TEXT("CodexDeck_Automation") : TEXT("CodexDeck");
+            if(auto* Legacy=Cast<UCodexLoadoutSave>(LoadCheckedSave(LegacySlot)))
             {
-                if(Starters.Num()==1) Starters.AddUnique(Starters[0]=="PulseDart" ? FName("PrismBurst") : FName("PulseDart"));
-                Data->Decks[0].Starters=Starters;
-                for(FName ID:Starters) if(!Data->Decks[0].DraftPool.Contains(ID))
-                    for(int32 I=Data->Decks[0].DraftPool.Num()-1;I>=0;--I) if(!Starters.Contains(Data->Decks[0].DraftPool[I])) {Data->Decks[0].DraftPool[I]=ID;break;}
+                auto& Rider=Data->RiderLoadouts.FindChecked(Data->SelectedRider);TArray<FName> Starters;
+                const TMap<FName,FName> Migration={{"BoneLance","PulseDart"},{"EmberFan","PrismBurst"},{"FrostNova","HaloNova"},{"StormLance","KineticCards"},{"BloodRite","PhotonLance"},{"RaiseSkeletons","TalismanGuard"}};
+                for(FName ID:Legacy->StartingCards)
+                {
+                    if(const auto* New=Migration.Find(ID)) ID=*New;
+                    if(ProgramIDs().Contains(ID) && Starters.Num()<2) {Starters.AddUnique(ID);Rider.UnlockedStarters.AddUnique(ID);}
+                }
+                if(!Starters.IsEmpty()) Rider.Decks[0].Starters=Starters;
             }
         }
     }
@@ -66,27 +119,34 @@ void UForbiddenProfile::Sanitize()
     Data->PlayerToken.ToLowerInline();
     Data->CodeFragments=FMath::Clamp(Data->CodeFragments,0,1000000);
     if(Data->PlayerToken.Len()!=64) Data->PlayerToken=FGuid::NewGuid().ToString(EGuidFormats::Digits)+FGuid::NewGuid().ToString(EGuidFormats::Digits);
-    Data->UnlockedPrograms.RemoveAll([](FName ID){return !ProgramIDs().Contains(ID);});
-    for(FName ID:{FName("PulseDart"),FName("PrismBurst"),FName("HaloNova"),FName("KineticCards"),FName("PhotonLance"),FName("TalismanGuard"),FName("ArcRelay"),FName("NeonCataclysm")}) Data->UnlockedPrograms.AddUnique(ID);
-    Data->Decks.SetNum(3); Data->SelectedDeck=FMath::Clamp(Data->SelectedDeck,0,2);
-    for(auto& Deck:Data->Decks)
+    for(const auto& Definition:ForbiddenRiders::All())
     {
-        FString Error;
-        if(!ValidateDeck(Deck,Data->UnlockedPrograms,Error))
+        if(!Data->RiderLoadouts.Contains(Definition.ID)) Data->RiderLoadouts.Add(Definition.ID,NewRiderLoadouts(Definition.ID));
+        auto& Rider=Data->RiderLoadouts.FindChecked(Definition.ID);
+        TArray<FName> Owned;
+        for(FName ID:Rider.UnlockedStarters) if(ProgramIDs().Contains(ID)) Owned.AddUnique(ID);
+        for(FName ID:NewRiderLoadouts(Definition.ID).UnlockedStarters) Owned.AddUnique(ID);
+        Rider.UnlockedStarters=MoveTemp(Owned);
+        while(Rider.Decks.Num()<3) Rider.Decks.Add(NewRiderLoadouts(Definition.ID).Decks[Rider.Decks.Num()]);
+        Rider.Decks.SetNum(3);Rider.SelectedDeck=FMath::Clamp(Rider.SelectedDeck,0,2);
+        for(auto& Deck:Rider.Decks)
         {
-            Deck.DraftPool.Reset(); for(int32 I=0;I<8;++I) Deck.DraftPool.Add(Data->UnlockedPrograms[I]);
-            Deck.Starters={"PulseDart","PrismBurst"};
+            Deck.DraftPool=ProgramIDs();TArray<FName> Starters;
+            for(FName ID:Deck.Starters) if(Starters.Num()<2 && Rider.UnlockedStarters.Contains(ID)) Starters.AddUnique(ID);
+            Deck.Starters=MoveTemp(Starters); // Incomplete presets are valid edits, not lost saves.
         }
     }
+    LoadSelectedRider();
     if(Data->History.Num()>32) Data->History.SetNum(32);
 }
 
 bool UForbiddenProfile::Save()
 {
     if(!Data) return false;
+    StoreSelectedRider();
     ++Data->Revision;
     // Keep the previous complete revision. A failed write never erases the recovery copy.
-    if(auto* Previous=UGameplayStatics::LoadGameFromSlot(SlotName(),0)) UGameplayStatics::SaveGameToSlot(Previous,SlotName()+TEXT("_Recovery"),0);
+    if(auto* Previous=LoadCheckedSave(SlotName())) UGameplayStatics::SaveGameToSlot(Previous,SlotName()+TEXT("_Recovery"),0);
     const bool OK=UGameplayStatics::SaveGameToSlot(Data,SlotName(),0);
     LastError=OK ? TEXT("") : TEXT("Profile could not be saved. Your old build and profile are unchanged."); return OK;
 }
@@ -96,10 +156,8 @@ FForbiddenDeckPreset UForbiddenProfile::GetDeck() const {return Data && Data->De
 
 bool UForbiddenProfile::ValidateDeck(const FForbiddenDeckPreset& Deck,const TArray<FName>& Unlocked,FString& Error)
 {
-    if(Deck.DraftPool.Num()!=8 || TSet<FName>(Deck.DraftPool).Num()!=8) {Error=TEXT("Choose eight different unlocked programs for the draft pool.");return false;}
-    for(FName ID:Deck.DraftPool) if(!ProgramIDs().Contains(ID) || !Unlocked.Contains(ID)) {Error=TEXT("Draft pool contains a locked program.");return false;}
-    if(Deck.Starters.Num()!=2 || Deck.Starters[0]==Deck.Starters[1]) {Error=TEXT("Choose two different starting programs.");return false;}
-    for(FName ID:Deck.Starters) if(!Deck.DraftPool.Contains(ID)) {Error=TEXT("Starting programs must be in the draft pool.");return false;}
+    if(Deck.Starters.Num()>2 || TSet<FName>(Deck.Starters).Num()!=Deck.Starters.Num()) {Error=TEXT("Choose at most two different starting cards.");return false;}
+    for(FName ID:Deck.Starters) if(!ProgramIDs().Contains(ID) || !Unlocked.Contains(ID)) {Error=TEXT("Unlock this starting card for the selected rider first.");return false;}
     Error.Reset();return true;
 }
 
@@ -107,9 +165,18 @@ bool UForbiddenProfile::SaveDeck(int32 Slot,const FForbiddenDeckPreset& Deck)
 {
     if(!Data || !Data->Decks.IsValidIndex(Slot) || !ValidateDeck(Deck,Data->UnlockedPrograms,LastError)) return false;
     const auto Previous=Data->Decks[Slot];const int32 PreviousSlot=Data->SelectedDeck;
-    Data->Decks[Slot]=Deck;Data->SelectedDeck=Slot;
+    Data->Decks[Slot]=Deck;Data->Decks[Slot].DraftPool=ProgramIDs();Data->SelectedDeck=Slot;
     if(Save()) return true;
-    Data->Decks[Slot]=Previous;Data->SelectedDeck=PreviousSlot;return false;
+    Data->Decks[Slot]=Previous;Data->SelectedDeck=PreviousSlot;StoreSelectedRider();return false;
+}
+
+bool UForbiddenProfile::SelectRider(FName ID)
+{
+    if(!Data || !ForbiddenRiders::Find(ID) || !Data->RiderLoadouts.Contains(ID)) return false;
+    StoreSelectedRider();const FName Previous=Data->SelectedRider;
+    Data->SelectedRider=ID;LoadSelectedRider();
+    if(Save()) return true;
+    Data->SelectedRider=Previous;LoadSelectedRider();return false;
 }
 
 bool UForbiddenProfile::UnlockProgram(FName ID)
@@ -118,7 +185,7 @@ bool UForbiddenProfile::UnlockProgram(FName ID)
     const int32 PreviousFragments=Data->CodeFragments;
     Data->CodeFragments-=30;Data->UnlockedPrograms.Add(ID);
     if(Save()) return true;
-    Data->CodeFragments=PreviousFragments;Data->UnlockedPrograms.Remove(ID);return false;
+    Data->CodeFragments=PreviousFragments;Data->UnlockedPrograms.Remove(ID);StoreSelectedRider();return false;
 }
 
 bool UForbiddenProfile::RecordRun(const FForbiddenRunRecord& Record,bool Practice)

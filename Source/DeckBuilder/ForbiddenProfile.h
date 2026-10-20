@@ -15,6 +15,16 @@ struct FForbiddenDeckPreset
     UPROPERTY(EditAnywhere, BlueprintReadWrite) TArray<FName> Starters;
 };
 
+/** Starting-card unlocks are rider-specific; the run draft always uses the full catalog. */
+USTRUCT(BlueprintType)
+struct FForbiddenRiderLoadouts
+{
+    GENERATED_BODY()
+    UPROPERTY() TArray<FName> UnlockedStarters;
+    UPROPERTY() TArray<FForbiddenDeckPreset> Decks;
+    UPROPERTY() int32 SelectedDeck = 0;
+};
+
 USTRUCT(BlueprintType)
 struct FForbiddenRunRecord
 {
@@ -40,7 +50,7 @@ class DECKBUILDER_API UForbiddenProfileSave : public USaveGame
 {
     GENERATED_BODY()
 public:
-    UPROPERTY() int32 Version = 3;
+    UPROPERTY() int32 Version = 4;
     UPROPERTY() int32 Revision = 0;
     UPROPERTY() FString PlayerToken;
     UPROPERTY() FString Username;
@@ -51,8 +61,10 @@ public:
     UPROPERTY() TArray<FName> UnlockedBoards;
     UPROPERTY() TArray<FName> UnlockedDistrictModifiers;
     UPROPERTY() TMap<FName, int32> Research;
+    // Mirrors of the selected rider, retained for existing menu/settings consumers.
     UPROPERTY() TArray<FForbiddenDeckPreset> Decks;
     UPROPERTY() int32 SelectedDeck = 0;
+    UPROPERTY() TMap<FName, FForbiddenRiderLoadouts> RiderLoadouts;
     UPROPERTY() FName SelectedRider = TEXT("NeonExorcist");
     UPROPERTY() TArray<FForbiddenRunRecord> History;
     UPROPERTY() TMap<FName, float> Settings;
@@ -69,6 +81,7 @@ public:
     UPROPERTY(Transient, BlueprintReadOnly) TObjectPtr<UForbiddenProfileSave> Data;
     UPROPERTY(BlueprintReadOnly) FString LastError;
     UFUNCTION(BlueprintCallable) bool Save();
+    UFUNCTION(BlueprintCallable) bool SelectRider(FName ID);
     UFUNCTION(BlueprintCallable) bool UnlockProgram(FName ID);
     UFUNCTION(BlueprintCallable) bool SaveDeck(int32 Slot, const FForbiddenDeckPreset& Deck);
     UFUNCTION(BlueprintCallable) bool RecordRun(const FForbiddenRunRecord& Record, bool Practice);
@@ -80,4 +93,6 @@ public:
 private:
     void SetDefaults();
     void Sanitize();
+    void StoreSelectedRider();
+    void LoadSelectedRider();
 };

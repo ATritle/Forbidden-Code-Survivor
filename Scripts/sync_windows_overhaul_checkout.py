@@ -18,7 +18,7 @@ for folder in folders:
         if path.name in {'meshy-downloads.json','.env','.env.local'} or path.suffix in {'.pyc','.db','.sqlite','.sqlite3'}:continue
         if path.suffix.startswith('.blend') and path.suffix!='.blend':continue
         files.append(path)
-files += [root/name for name in ['DeckBuilder.uproject','Play-Forbidden-Routines.cmd','Play-Windows-0.3.0.cmd','Play-Windows-0.3.1.cmd','Play-Windows-0.3.2.cmd','Play-Windows-0.3.3.cmd','Play-Windows-0.3.4.cmd','Play-Windows-0.3.5.cmd','Play-Windows-0.3.6.cmd','Play-Windows-0.3.7.cmd','Play-Windows-0.3.8.cmd','Play-Windows-0.3.9.cmd','Play-Windows-0.4.0.cmd','Play-Windows-0.4.1.cmd','Play-Windows-0.4.2.cmd','Play-Windows-0.4.3.cmd','Play-Original-Windows.cmd','Restore-Original-Windows.cmd']]
+files += [root/name for name in ['DeckBuilder.uproject','Play-Forbidden-Routines.cmd','Play-Windows-0.3.0.cmd','Play-Windows-0.3.1.cmd','Play-Windows-0.3.2.cmd','Play-Windows-0.3.3.cmd','Play-Windows-0.3.4.cmd','Play-Windows-0.3.5.cmd','Play-Windows-0.3.6.cmd','Play-Windows-0.3.7.cmd','Play-Windows-0.3.8.cmd','Play-Windows-0.3.9.cmd','Play-Windows-0.4.0.cmd','Play-Windows-0.4.1.cmd','Play-Windows-0.4.2.cmd','Play-Windows-0.4.3.cmd', 'Play-Windows-0.4.4.cmd','Play-Original-Windows.cmd','Restore-Original-Windows.cmd']]
 changed=0
 for path in files:
     target=destination/path.relative_to(root)

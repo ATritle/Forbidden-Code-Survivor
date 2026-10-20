@@ -4,6 +4,9 @@
 #include "ForbiddenChoiceWidget.h"
 #include "ForbiddenProfile.h"
 #include "CardDataAsset.h"
+#include "CodexDeckComponent.h"
+#include "EnemySpawner.h"
+#include "Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/TextBlock.h"
 #include "Containers/Ticker.h"
@@ -41,12 +44,13 @@ void InstallWorkbenchValidation(AMVPController* PC)
         {
             if(G->GetLibraryCards().Num()<16 || G->DraftPool.IsEmpty()) return true;
             if(!G->bInCodex || G->bCharacterSelectionOpen || G->RiderPreview || !C->IsPaused()) return End(false,TEXT("Initial unified menu state failed"));
-            if(Reload) return End(ForbiddenRiders::Selected(C)=="Mira" && Profile->Data->SelectedDeck==2 && G->StartingCards.Contains("TalismanGuard"),TEXT("Rider, preset and modified starters restored in fresh process"));
-            // Reset only this isolated automation profile so the test can be rerun deterministically.
-            for(auto& Deck:Profile->Data->Decks) {Deck.DraftPool={"PulseDart","PrismBurst","HaloNova","KineticCards","PhotonLance","TalismanGuard","ArcRelay","NeonCataclysm"};Deck.Starters={"PulseDart","PrismBurst"};}
-            Profile->Data->SelectedDeck=0;Profile->Data->UnlockedPrograms.Remove("OrbitRazor");Profile->Data->CodeFragments=0;
+            if(Reload) return End(ForbiddenRiders::Selected(C)=="Mira" && Profile->Data->SelectedDeck==2 && G->StartingCards==TArray<FName>({"SatelliteChoir","TalismanGuard"}) && Profile->Data->CodeFragments==0 && Profile->Data->RiderLoadouts.FindChecked("NeonExorcist").UnlockedStarters.Contains("OrbitRazor") && !Profile->IsUnlocked("OrbitRazor"),TEXT("Rider-specific decks/unlocks and shared wallet restored in fresh process"));
+            if(!Profile->SelectRider("NeonExorcist")) return End(false,TEXT("Could not select QA rider"));
+            Profile->Data->UnlockedPrograms={"PulseDart","PrismBurst","KineticCards","HaloNova"};
+            for(auto& Deck:Profile->Data->Decks) {Deck.DraftPool=UForbiddenProfile::ProgramIDs();Deck.Starters={"PulseDart","PrismBurst"};}
+            Profile->Data->SelectedDeck=0;Profile->Data->CodeFragments=0;
             if(!Profile->Save()) return End(false,TEXT("Could not initialize isolated QA profile"));G->LoadStartingDeck();
-            if(H->GetWorkbenchCards(G).Num()!=8 || G->StartingCards.Num()!=2) return End(false,TEXT("Initial draft count invalid"));
+            if(H->GetWorkbenchCards(G).Num()!=16 || G->StartingCards.Num()!=2 || G->DraftPool.Num()!=16) return End(false,TEXT("Full draft catalog or starters invalid"));
             Move(20,20);Next(10);
         }
         else if(S->Phase==10 && Age>.5) {FScreenshotRequest::RequestScreenshot(Folder/TEXT("Workbench-Deck.png"),true,false);Next(11);}
@@ -57,56 +61,61 @@ void InstallWorkbenchValidation(AMVPController* PC)
         else if(S->Phase==15 && Age>.25) {Move(20,20);Next(1);}
         else if(S->Phase==1 && Age>.5)
         {
-            Click(ViewX+20,ViewY+12);if(H->IsWorkbenchDraftView() || H->GetWorkbenchCards(G).Num()!=16) return End(false,TEXT("Browse library did not expose all programs"));
-            Click(NextX+20,PageY+12);if(G->LibraryPage!=1) return End(false,TEXT("Library page navigation failed"));
+            // Main menu clicks toggle starters directly and immediately persist incomplete edits.
+            Click(CardX(0)+30,CardY(0)+35);
+            if(G->DecisionWidget || G->StartingCards.Num()!=1 || Profile->GetDeck().Starters!=G->StartingCards) return End(false,TEXT("Click-to-remove did not autosave"));
+            if(G->StartSelectedRun() || !G->bInCodex) return End(false,TEXT("Incomplete preset started a run"));
+            Click(PresetX+PresetPitch+40,PresetY+15);if(G->StartingCards.Num()!=2) return End(false,TEXT("Second preset did not retain starters"));
+            Click(PresetX+40,PresetY+15);if(G->StartingCards.Num()!=1) return End(false,TEXT("Incomplete preset lost on switching"));
+            Click(CardX(0)+30,CardY(0)+35);if(G->StartingCards.Num()!=2) return End(false,TEXT("Click-to-add failed"));
+            const auto Before=G->StartingCards;Click(CardX(2)+30,CardY(2)+35);
+            if(G->StartingCards!=Before || G->DecisionWidget) return End(false,TEXT("Third starter replaced a card or opened an editor"));
+            Click(NextX+20,PageY+12);if(G->LibraryPage!=1) return End(false,TEXT("Library pagination failed"));
             FScreenshotRequest::RequestScreenshot(Folder/TEXT("Workbench-Library.png"),true,false);Next(2);
         }
         else if(S->Phase==2 && Age>.5)
         {
-            // Inspect a locked library card, unlock it, then replace a starting card through the real UI.
-            Click(CardX(1)+30,CardY(1)+35);
-            if(!G->DecisionWidget) return End(false,TEXT("Library card inspection missing"));
-            if(!Profile->IsUnlocked("OrbitRazor"))
-            {
-                if(!HasCopy(TEXT("YOU HAVE"))) return End(false,TEXT("Unlock prompt hid the fragment balance"));
-                Profile->Data->CodeFragments=30;G->DecisionWidget->Select(0);
-                if(!Profile->IsUnlocked("OrbitRazor") || !G->DecisionWidget) return End(false,TEXT("Unlock did not return to the card editor"));
-            }
-            G->DecisionWidget->Select(0);
-            if(!G->DecisionWidget || !HasCopy(TEXT("Pulse Dart")) || !HasCopy(TEXT("starting attack"))) return End(false,TEXT("Replacement choices lack readable card names or starting-slot warning"));
-            FScreenshotRequest::RequestScreenshot(Folder/TEXT("Workbench-Replace-Card.png"),true,false);Next(20);
+            // Find a known locked card rather than assuming collection ordering.
+            const auto All=H->GetWorkbenchCards(G);const int32 Index=All.IndexOfByPredicate([](const UCardDataAsset* Card){return Card->CardID=="OrbitRazor";});
+            if(Index==INDEX_NONE) return End(false,TEXT("Locked card missing from collection"));G->LibraryPage=Index/8;
+            Click(CardX(Index%8)+30,CardY(Index%8)+35);
+            if(!G->DecisionWidget || !HasCopy(TEXT("YOU HAVE")) || !HasCopy(TEXT("already available"))) return End(false,TEXT("Unlock confirmation did not explain starting unlock vs draft"));
+            const FName Before=ForbiddenRiders::Selected(C);Click(RiderX+50,RiderY+4*RiderPitch+20);if(ForbiddenRiders::Selected(C)!=Before) return End(false,TEXT("Modal click leaked"));
+            Profile->Data->CodeFragments=30;
+            FScreenshotRequest::RequestScreenshot(Folder/TEXT("Workbench-Unlock.png"),true,false);Next(20);
         }
         else if(S->Phase==20 && Age>.5)
         {
             G->DecisionWidget->Select(0);
-            if(!G->DraftPool.Contains("OrbitRazor") || !G->StartingCards.Contains("OrbitRazor") || Profile->Data->Decks[1].DraftPool.Contains("OrbitRazor")) return End(false,TEXT("Card replacement or deck isolation failed"));
-            if(!G->DecisionWidget) return End(false,TEXT("Replacement did not return to card editor"));
-            G->DecisionWidget->Select(0);if(!G->DecisionWidget || !HasCopy(TEXT("already in the deck"))) return End(false,TEXT("Already-in-deck action did not explain replacement"));
-            G->DecisionWidget->Select(0);G->DecisionWidget->Select(3);
-            Click(TabsX+2*TabPitch+30,TabsY+15);if(G->SchoolFilter!=7 || G->LibraryPage!=0) return End(false,TEXT("Prism school selection failed"));
-            for(UCardDataAsset* Card:H->GetWorkbenchCards(G)) if(Card->MagicSchool!=EMagicSchool::Prism) return End(false,TEXT("School filter leaked other programs"));
-            Click(TabsX+30,TabsY+15);Click(ViewX+20,ViewY+12);
-            Click(CardX(0)+30,CardY(0)+35);if(!G->DecisionWidget) return End(false,TEXT("Program inspection did not open"));
-            const FName Before=ForbiddenRiders::Selected(C);Click(RiderX+50,RiderY+4*RiderPitch+20);
-            if(ForbiddenRiders::Selected(C)!=Before) return End(false,TEXT("Modal click leaked into rider selection"));
-            G->DecisionWidget->Select(3);if(G->DecisionWidget || !G->bInCodex || !C->IsPaused()) return End(false,TEXT("Program BACK failed to restore combined screen"));
-            Click(PresetX+PresetPitch+40,PresetY+15);if(Profile->Data->SelectedDeck!=1) return End(false,TEXT("Preset two click failed"));
-            Click(PresetX+2*PresetPitch+40,PresetY+15);if(Profile->Data->SelectedDeck!=2) return End(false,TEXT("Preset three click failed"));
-            // Choose the sixth selected program (Talisman Guard) through its real modal.
-            const auto Cards=H->GetWorkbenchCards(G);const int32 Guard=Cards.IndexOfByPredicate([](const UCardDataAsset* Card){return Card->CardID=="TalismanGuard";});
-            if(Guard==INDEX_NONE) return End(false,TEXT("Default draft omitted Talisman Guard"));
-            Click(CardX(Guard)+30,CardY(Guard)+35);if(!G->DecisionWidget) return End(false,TEXT("Starter editor missing"));
-            G->DecisionWidget->Select(1);if(!G->DecisionWidget) return End(false,TEXT("Starter replacement missing"));G->DecisionWidget->Select(0);
-            if(!G->StartingCards.Contains("TalismanGuard") || !G->DecisionWidget) return End(false,TEXT("Starter replacement failed"));G->DecisionWidget->Select(3);
-            Click(PresetX+30,PresetY+15);if(Profile->Data->SelectedDeck!=0 || G->StartingCards.Contains("TalismanGuard")) return End(false,TEXT("Presets leaked modified starters"));
-            Click(PresetX+2*PresetPitch+30,PresetY+15);if(!G->StartingCards.Contains("TalismanGuard")) return End(false,TEXT("Preset three did not restore saved starter"));
-            Click(RiderX+50,RiderY+4*RiderPitch+20);if(ForbiddenRiders::Selected(C)!="Mira") return End(false,TEXT("Mira row click failed"));
-            Click(SaveX+40,ActionY+17);FScreenshotRequest::RequestScreenshot(Folder/TEXT("Workbench-Saved.png"),true,false);Next(3);
+            if(!Profile->IsUnlocked("OrbitRazor") || Profile->Data->CodeFragments!=0 || G->StartingCards.Contains("OrbitRazor") || G->DecisionWidget) return End(false,TEXT("Unlock spent incorrectly or auto-equipped the card"));
+            if(Profile->Data->RiderLoadouts.FindChecked("Mira").UnlockedStarters.Contains("OrbitRazor")) return End(false,TEXT("Unlock leaked to another rider"));
+            Click(TabsX+2*TabPitch+30,TabsY+15);if(G->SchoolFilter!=7 || G->LibraryPage!=0) return End(false,TEXT("School selection failed"));
+            for(UCardDataAsset* Card:H->GetWorkbenchCards(G)) if(Card->MagicSchool!=EMagicSchool::Prism) return End(false,TEXT("School filter leaked"));
+            Click(TabsX+30,TabsY+15);
+            Click(RiderX+50,RiderY+4*RiderPitch+20);if(ForbiddenRiders::Selected(C)!="Mira" || Profile->Data->SelectedDeck!=0) return End(false,TEXT("Rider did not load its own presets"));
+            Click(PresetX+2*PresetPitch+30,PresetY+15);
+            // Reset only Mira deck 3 in this isolated profile, then use actual toggles.
+            auto Deck=Profile->GetDeck();Deck.Starters={"SatelliteChoir","GhostLink"};if(!Profile->SaveDeck(2,Deck)) return End(false,TEXT("Mira setup failed"));G->LoadStartingDeck();
+            if(!G->ToggleStartingCard("GhostLink") || !G->ToggleStartingCard("TalismanGuard")) return End(false,TEXT("Mira starter edit failed"));
+            Click(PresetX+30,PresetY+15);if(Profile->Data->SelectedDeck!=0) return End(false,TEXT("Preset 1 failed"));
+            Click(PresetX+2*PresetPitch+30,PresetY+15);if(G->StartingCards!=TArray<FName>({"SatelliteChoir","TalismanGuard"})) return End(false,TEXT("Mira deck 3 did not persist"));
+            FScreenshotRequest::RequestScreenshot(Folder/TEXT("Workbench-Saved.png"),true,false);Next(3);
         }
         else if(S->Phase==3 && Age>.6)
         {
-            Click(EnterX+70,ActionY+17);if(G->bInCodex || C->IsPaused()) return End(false,TEXT("Enter Arena did not start the selected loadout in one click"));
-            return End(true,TEXT("Hover captures, readable replacement prompts, unlock/add distinction, deck isolation, starter replacement, three saved decks and one-click run verified"));
+            Click(EnterX+70,ActionY+17);if(G->bInCodex || C->IsPaused()) return End(false,TEXT("Run start failed"));
+            UCodexDeckComponent* D=G->GetArenaPlayer()->Deck;if(D->EquippedDeck.Num()!=16 || D->ActiveWeapons.Num()!=2) return End(false,TEXT("Run draft did not include all 16 with two starting weapons"));
+            G->Spawner->StopWaves();TSet<FName> Seen;
+            for(int32 N=0;N<256;++N)
+            {
+                D->DiscardHand();const auto Hand=D->DrawLevelUpHand();TSet<FName> Unique;
+                for(UCardDataAsset* Card:Hand) {Unique.Add(Card->CardID);Seen.Add(Card->CardID);}
+                if(Hand.Num()!=3 || Unique.Num()!=3) return End(false,TEXT("Draft did not offer three unique choices"));
+            }
+            if(Seen.Num()!=16) return End(false,TEXT("Locked starters were excluded from RNG drafts"));D->DiscardHand();
+            G->AddXP(G->GetXPRequirement());
+            if(!G->bChoosingCard || !C->IsPaused() || D->CurrentHand.Num()!=3 || !G->ChooseCard(0) || C->IsPaused()) return End(false,TEXT("Essence level-up did not apply a choice and restore combat"));
+            return End(true,TEXT("Direct toggle autosave; incomplete preset persistence; two-card cap; rider/preset/unlock isolation; purchase without equip; 256 full-catalog unique RNG hands; actual essence draft verified"));
         }
         return true;
     }));

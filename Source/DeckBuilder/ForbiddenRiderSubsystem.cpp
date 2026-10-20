@@ -84,7 +84,8 @@ bool UForbiddenRiderSubsystem::IsLocked(const AMVPEnemy* Enemy) const
 {return MarkRemaining>0 && Marked.Get()==Enemy && Enemy && Enemy->IsPoolActive() && Enemy->Generation==MarkedLife;}
 float UForbiddenRiderSubsystem::ModifyDamage(AMVPEnemy* Enemy,float Damage,FName Program,bool Direct)
 {
-    if(!Started || InPractice(this) || IsSummon(Program) || Program=="TalismanGuard" || Program=="RiderRepulsor") return Damage;
+    // Echo power already comes from confirmed post-rider damage on the source hit.
+    if(!Started || InPractice(this) || IsSummon(Program) || Program=="TalismanGuard" || Program=="RiderRepulsor" || Program=="UnstableEcho") return Damage;
     if(ID=="Mira") Damage*=.85f;
     if(ID=="Zero" && IsLocked(Enemy)) Damage*=1.25f;
     return Damage;

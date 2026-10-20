@@ -23,11 +23,17 @@ A cyberpunk deckbuilding survivor. Ride a hoverboard through rain-soaked neon st
 The editions share the energy-spell catalog and cyberpunk theme. Native 0.3.0 has its own balance and progression rules. Their saved games are separate. See [architecture and parity limits](Docs/TwoEditions.md).
 
 
+## Windows 0.4.5: simple rider decks and open drafts
+
+Choose a rider and Deck 1/2/3, then click two starting cards to add/remove them. Edits autosave, including unfinished decks. New profiles begin with four starter choices per rider; additional starting unlocks cost 30 shared Code Fragments and apply to that rider's three presets. Previously owned cards are retained. All 16 programs are available to the random, three-unique-card in-run draft regardless of starting unlocks. The old eight-card pool editor is removed.
+
+The v4 profile imports v3 progress without rewriting its slot; the preserved 0.4.4 launcher uses the old profile. The damage review includes numeric health/attribution checks and all 16 spells at base and both evolutions. It fixes repeated rider scaling on Unstable Echo and reports the echo's actual mitigated damage. [Rules, compatibility and validation scope](Docs/Windows-0.4.5.txt).
+
 ## Windows 0.3.0: Forbidden Routines
 
 The native source now includes an eight-program draft pool, two starters, six active slots, finite ranks and 32 exclusive evolution branches. Relay hacks, a three-phase boss, captured enemy code, corrupted contract rewards, persistent hideout unlocks, new Meshy art/animations, accessibility controls and an independent Windows leaderboard extend the run loop.
 
-Build with UE 5.8.2 using `Scripts/Package-Windows.ps1 -Installer`. Current outputs use separate `Windows-0.4.4` and `Installer-0.4.4` folders. `Play-Forbidden-Routines.cmd` launches the current local package; `Play-Windows-0.4.3.cmd`, `Play-Windows-0.4.2.cmd`, `Play-Windows-0.4.1.cmd`, `Play-Windows-0.4.0.cmd`, `Play-Windows-0.3.9.cmd`, `Play-Windows-0.3.8.cmd`, `Play-Windows-0.3.7.cmd`, `Play-Windows-0.3.6.cmd`, `Play-Windows-0.3.5.cmd`, `Play-Windows-0.3.4.cmd`, `Play-Windows-0.3.3.cmd`, `Play-Windows-0.3.2.cmd`, `Play-Windows-0.3.1.cmd` and `Play-Windows-0.3.0.cmd` retain preceding builds. The published v0.2.0 download above remains available as the earlier release.
+Build with UE 5.8.2 using `Scripts/Package-Windows.ps1 -Installer`. Current outputs use separate `Windows-0.4.5` and `Installer-0.4.5` folders. `Play-Forbidden-Routines.cmd` launches the current local package; `Play-Windows-0.4.4.cmd`, `Play-Windows-0.4.3.cmd`, `Play-Windows-0.4.2.cmd`, `Play-Windows-0.4.1.cmd`, `Play-Windows-0.4.0.cmd`, `Play-Windows-0.3.9.cmd`, `Play-Windows-0.3.8.cmd`, `Play-Windows-0.3.7.cmd`, `Play-Windows-0.3.6.cmd`, `Play-Windows-0.3.5.cmd`, `Play-Windows-0.3.4.cmd`, `Play-Windows-0.3.3.cmd`, `Play-Windows-0.3.2.cmd`, `Play-Windows-0.3.1.cmd` and `Play-Windows-0.3.0.cmd` retain preceding builds. The published v0.2.0 download above remains available as the earlier release.
 
 **Windows 0.3.9 music update:** The menu player repeats the selected song until the user chooses another. Manual track controls and gameplay music rotation are preserved. [Validation](Docs/Windows-0.3.9.txt).
 

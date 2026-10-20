@@ -1,0 +1,19 @@
+{
+	"result": "SETTINGS_REVIEW_PASS",
+	"detail": "Organized settings layout and real graphics controls verified",
+	"case": "layout-and-graphics",
+	"checks": [
+		"Preset 0 applied all ten scalability groups, 70% screen percentage and actual Lumen enablement",
+		"Preset 1 applied all ten scalability groups, 85% screen percentage and actual Lumen enablement",
+		"Preset 2 applied all ten scalability groups, 100% screen percentage and actual Lumen enablement",
+		"Preset 3 applied all ten scalability groups, 100% screen percentage and actual Lumen enablement",
+		"Custom 63% render scale and VSync reached the actual render CVars",
+		"Tab 0 rendered with all four fixed footer actions inside the frame",
+		"Tab 1 rendered with all four fixed footer actions inside the frame",
+		"Tab 2 rendered with all four fixed footer actions inside the frame",
+		"Tab 3 rendered with all four fixed footer actions inside the frame",
+		"Bloom and reduced-flashes controls changed actual camera settings without resetting custom render scale",
+		"Audio/VFX sliders, input rebind/reset/cancel and saved close behavior verified",
+		"Gameplay settings resume; nested card selection remains paused and enabled"
+	]
+}

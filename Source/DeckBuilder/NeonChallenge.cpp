@@ -236,7 +236,7 @@ void UNeonChallengeComponent::DetonateEcho(FEcho& Echo)
         Seen.Add(E);FHitResult Wall;
         if(GetWorld()->LineTraceSingleByObjectType(Wall,Echo.Position+FVector(0,0,25),E->GetActorLocation(),FCollisionObjectQueryParams(ECC_WorldStatic))) continue;
         const float Before=E->Health;E->TakeSpellDamage(Echo.Damage,FVector::UpVector*350,"UnstableEcho",false);
-        if(G && G->SpellImpactDirector) G->SpellImpactDirector->ConfirmDamage(ENeonSpellStyle::Prism,E,FMath::Min(Before,Echo.Damage));
+        if(G && G->SpellImpactDirector) G->SpellImpactDirector->ConfirmDamage(ENeonSpellStyle::Prism,E,FMath::Max(0.f,Before-FMath::Max(0.f,E->Health)));
     }
     if(Player.IsValid() && FVector::DistSquared2D(Player->GetActorLocation(),Echo.Position)<=FMath::Square(Echo.Radius) && FMath::Abs(Player->GetActorLocation().Z-Echo.Position.Z)<160)
     {
