@@ -119,7 +119,7 @@ struct FForbiddenSystemsQA
             P->SetActorLocation(FVector(-1100,500,55));if(!G->DistrictDirector->Interact() || G->DistrictDirector->FoundCaches!=1 || G->RunSalvage!=10) return End(false,TEXT("Spirit cache did not award exploration salvage"),G);
             P->SetActorLocation(FVector(0,0,55));Check(TEXT("Street clinic and spirit cache have real salvage/healing/essence effects"));
             auto* SavedProfile=G->GetGameInstance()->GetSubsystem<UForbiddenProfile>();auto* Copy=DuplicateObject<UForbiddenProfileSave>(SavedProfile->Data,SavedProfile);
-            const int32 Currency=SavedProfile->Data->CodeFragments;FForbiddenRunRecord Record;Record.ID=FGuid::NewGuid().ToString(EGuidFormats::Digits);Record.Kills=100;Record.Level=3;Record.Seconds=360;Record.Contracts=2;Record.Victory=true;
+            const int32 Currency=SavedProfile->Data->CodeFragments;FForbiddenRunRecord Record;Record.ID=FGuid::NewGuid().ToString(EGuidFormats::Digits);Record.RiderID=SavedProfile->Data->SelectedRider;Record.Kills=100;Record.Level=3;Record.Seconds=360;Record.Contracts=2;Record.Victory=true;
             if(!SavedProfile->RecordRun(Record,false) || SavedProfile->RecordRun(Record,false) || SavedProfile->Data->CodeFragments!=Currency+38) return End(false,TEXT("Profile banking was not idempotent"),G);
             auto* Reload=Cast<UForbiddenProfileSave>(UGameplayStatics::LoadGameFromSlot(SavedProfile->SlotName(),0));
             if(!Reload || Reload->History.IsEmpty() || Reload->History[0].Score!=27600 || Reload->Decks.Num()!=3) return End(false,TEXT("Profile roundtrip or shared score formula failed"),G);

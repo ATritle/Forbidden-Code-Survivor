@@ -172,7 +172,7 @@ void AMVPHUD::DrawHUD()
     Text(FString::Printf(TEXT("BOOST %s  /  TARGET %s"),Player->BoostCooldown>0 ? *FString::Printf(TEXT("%.1fs"),Player->BoostCooldown) : TEXT("READY"),Priorities[FMath::Clamp(Player->TargetPriority,0,2)]),50,200,0.62f,Palette::Mint);
     int32 WeaponIndex = 0;
     const bool ExpandedBuild=Player->Deck->MaximumActiveWeapons>6;
-    if(ExpandedBuild) Text(FString::Printf(TEXT("16-CARD PLAYTEST / %d OF 16 EQUIPPED"),Player->Deck->ActiveWeapons.Num()),50,230,.64f,Palette::Mint);
+    if(ExpandedBuild) Text(FString::Printf(TEXT("PROGRAMS / %d OF 16 EQUIPPED"),Player->Deck->ActiveWeapons.Num()),50,230,.64f,Palette::Mint);
     const auto* Profile=Game->GetGameInstance()->GetSubsystem<UForbiddenProfile>();
     const FKey InspectKey=Profile && Profile->Data && Profile->Data->Bindings.Contains("Inspect") ? Profile->Data->Bindings["Inspect"] : EKeys::Tab;
     const bool Inspect=PlayerOwner->IsInputKeyDown(InspectKey) && !Game->bChoosingCard && !Game->bRunEnded;

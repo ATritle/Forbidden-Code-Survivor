@@ -1,5 +1,6 @@
 #include "MVPGame.h"
 #include "ForbiddenWorkbenchLayout.h"
+#include "ForbiddenPrograms.h"
 #include "NeonMusicPlayerLayout.h"
 #include "ForbiddenRiderRoster.h"
 #include "ForbiddenRiderPreview.h"
@@ -208,21 +209,21 @@ void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
         {Box(X+3,Y+4,85,23,Cyan);Text(TEXT("STARTING"),X+12,Y+9,.59f,FLinearColor(.005f,.015f,.03f));}
         if(!Unlocked)
         {
-            const bool Affordable=Profile && Profile->Data && Profile->Data->CodeFragments>=30;
+            const bool Affordable=Profile && Profile->Data && Profile->Data->CodeFragments>=ForbiddenPrograms::UnlockCost(Card->CardID);
             const FLinearColor LockColor=Affordable ? Gold : Muted;
             Box(X+15,Y+38,CardW-30,51,FLinearColor(.008f,.012f,.027f,.88f));
             Text(Affordable ? TEXT("UNLOCK") : TEXT("LOCKED"),X+CardW*.5f-37,Y+43,.92f,LockColor);
-            Text(TEXT("30 CODE FRAGMENTS"),X+25,Y+71,.56f,LockColor);
+            Text(FString::Printf(TEXT("%s / %d FRAGMENTS"),*ForbiddenPrograms::RarityName(Card->CardID),ForbiddenPrograms::UnlockCost(Card->CardID)),X+25,Y+71,.56f,LockColor);
         }
         WorkbenchCopy(Card->Name.ToString(),X+12,Y+126,CardW-28,.96f,White,1);
-        Text(SchoolName(Card->MagicSchool),X+12,Y+152,.72f,Accent);
+        Text(SchoolName(Card->MagicSchool)+TEXT(" / ")+ForbiddenPrograms::RarityName(Card->CardID),X+12,Y+152,.62f,Accent);
 
         Text(FString::Printf(TEXT("%.0f DMG / %.2fs"),Card->BaseDamage,Card->Cooldown),X+12,Y+176,.70f,White);
         if(Starter) Text(TEXT("+"),X+CardW-20,Y+128,.68f,Cyan);
     }
     if(Library.IsEmpty()) WorkbenchCopy(TEXT("No programs in this school."),543,350,830,.9f,White,3);
     WorkbenchPanel(TEXT("WorkbenchFragments"),519,689,250,46,Cyan);Icon(3,539,712,Cyan);
-    Text(FString::Printf(TEXT("%d"),Profile && Profile->Data ? Profile->Data->CodeFragments : 0),559,697,.9f,Cyan);Text(TEXT("CODE FRAGMENTS"),559,718,.59f,White);
+    Text(FString::Printf(TEXT("%d"),Profile && Profile->Data ? Profile->Data->CodeFragments : 0),559,697,.9f,Cyan);Text(TEXT("RIDER FRAGMENTS"),559,718,.59f,White);
     WorkbenchPanel(TEXT("WorkbenchStarterCount"),785,689,622,46,Gold);Icon(4,805,712,Gold);Text(FString::Printf(TEXT("%d / 2"),G->StartingCards.Num()),827,698,.9f,Gold);Text(TEXT("ATTACKS EQUIPPED AT RUN START"),900,696,.59f,White);
     FString StarterNames;for(FName ID:G->StartingCards) for(UCardDataAsset* Card:G->GetArenaPlayer()->Deck->UnlockedCards) if(Card && Card->CardID==ID) {if(!StarterNames.IsEmpty()) StarterNames+=TEXT(" + ");StarterNames+=Card->Name.ToString();break;}
     if(G->StartingCards.Num()<2) StarterNames+=StarterNames.IsEmpty() ? TEXT("Click two unlocked cards to begin") : TEXT(" + [EMPTY SLOT]");
@@ -230,7 +231,7 @@ void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
     Text(TEXT("ALL 16 CARDS IN THE RUN DRAFT"),ViewX,ViewY+9,.59f,Cyan);
     Text(FString::Printf(TEXT("%d PROGRAMS / PAGE %d OF %d"),Library.Num(),G->LibraryPage+1,Pages),865,658,.55f,Muted);
     Button(TEXT("WorkbenchPrev"),TEXT("< PREV"),PrevX,PageY,PageW,ViewH,Cyan);Button(TEXT("WorkbenchNext"),TEXT("NEXT >"),NextX,PageY,PageW,ViewH,Cyan);
-    Text(FParse::Param(FCommandLine::Get(),TEXT("AllCardsPlaytest")) ? TEXT("PLAYTEST / UP TO 16 ATTACKS IN RUN") : TEXT("HOVER: DETAILS / CLICK: ADD OR REMOVE"),519,757,.59f,Muted);
+    Text(FParse::Param(FCommandLine::Get(),TEXT("AllCardsPlaytest")) ? TEXT("PLAYTEST / UP TO 16 ATTACKS IN RUN") : TEXT("ALL 16 ATTACKS CAN STAY IN YOUR RUN"),519,757,.59f,Muted);
     DrawMusicPlayer(G);
     if(HoveredCard) DrawWorkbenchTooltip(HoveredCard,HoveredX,HoveredY);
 }

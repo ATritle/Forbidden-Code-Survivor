@@ -1,7 +1,7 @@
 param([string]$Executable='',[string]$UserDirectory='Saved/QA/All16Shipping',[switch]$Compact)
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
-if(-not $Executable){$Executable=Join-Path $root 'Artifacts/Windows-All16-Playtest/ForbiddenCodeSurvivor.exe'}
+if(-not $Executable){$Executable=Join-Path $root 'Artifacts/Windows-0.4.6/ForbiddenCodeSurvivor.exe'}
 $userRoot=[IO.Path]::GetFullPath($UserDirectory)
 foreach($mode in @('Normal','Expanded')){
  $user=Join-Path $userRoot $mode

@@ -3,6 +3,7 @@
 #include "ForbiddenRiderRoster.h"
 #include "ForbiddenChoiceWidget.h"
 #include "ForbiddenProfile.h"
+#include "ForbiddenPrograms.h"
 #include "CardDataAsset.h"
 #include "CodexDeckComponent.h"
 #include "EnemySpawner.h"
@@ -44,7 +45,7 @@ void InstallWorkbenchValidation(AMVPController* PC)
         {
             if(G->GetLibraryCards().Num()<16 || G->DraftPool.IsEmpty()) return true;
             if(!G->bInCodex || G->bCharacterSelectionOpen || G->RiderPreview || !C->IsPaused()) return End(false,TEXT("Initial unified menu state failed"));
-            if(Reload) return End(ForbiddenRiders::Selected(C)=="Mira" && Profile->Data->SelectedDeck==2 && G->StartingCards==TArray<FName>({"SatelliteChoir","TalismanGuard"}) && Profile->Data->CodeFragments==0 && Profile->Data->RiderLoadouts.FindChecked("NeonExorcist").UnlockedStarters.Contains("OrbitRazor") && !Profile->IsUnlocked("OrbitRazor"),TEXT("Rider-specific decks/unlocks and shared wallet restored in fresh process"));
+            if(Reload) return End(ForbiddenRiders::Selected(C)=="Mira" && Profile->Data->SelectedDeck==2 && G->StartingCards==TArray<FName>({"SatelliteChoir","TalismanGuard"}) && Profile->Data->CodeFragments==0 && Profile->Data->RiderLoadouts.FindChecked("NeonExorcist").UnlockedStarters.Contains("OrbitRazor") && !Profile->IsUnlocked("OrbitRazor"),TEXT("Rider-specific decks/unlocks and fragment wallet restored in fresh process"));
             if(!Profile->SelectRider("NeonExorcist")) return End(false,TEXT("Could not select QA rider"));
             Profile->Data->UnlockedPrograms={"PulseDart","PrismBurst","KineticCards","HaloNova"};
             for(auto& Deck:Profile->Data->Decks) {Deck.DraftPool=UForbiddenProfile::ProgramIDs();Deck.Starters={"PulseDart","PrismBurst"};}
@@ -81,7 +82,7 @@ void InstallWorkbenchValidation(AMVPController* PC)
             Click(CardX(Index%8)+30,CardY(Index%8)+35);
             if(!G->DecisionWidget || !HasCopy(TEXT("YOU HAVE")) || !HasCopy(TEXT("already available"))) return End(false,TEXT("Unlock confirmation did not explain starting unlock vs draft"));
             const FName Before=ForbiddenRiders::Selected(C);Click(RiderX+50,RiderY+4*RiderPitch+20);if(ForbiddenRiders::Selected(C)!=Before) return End(false,TEXT("Modal click leaked"));
-            Profile->Data->CodeFragments=30;
+            Profile->Data->CodeFragments=ForbiddenPrograms::UnlockCost("OrbitRazor");
             FScreenshotRequest::RequestScreenshot(Folder/TEXT("Workbench-Unlock.png"),true,false);Next(20);
         }
         else if(S->Phase==20 && Age>.5)

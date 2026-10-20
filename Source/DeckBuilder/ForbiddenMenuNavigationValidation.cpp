@@ -187,7 +187,7 @@ void InstallMenuNavigationValidation(AMVPController* PC)
         else if(S->Phase==22 && Age>.3)
         {
             Focus(G->DecisionWidget);Key();if(G->DecisionWidget || !G->bChoosingCard || !C->IsPaused() || Hand()!=S->Hand || P->Deck->ActiveWeapons.Num()!=S->Active) return End(false,TEXT("Replacement Escape consumed a choice or changed weapons"));
-            P->Deck->MaximumActiveWeapons=6;S->Checks.Add(TEXT("Draft Escape resumes live combat; same widget/hand, rerolls, branch state and queued levels survive Tab; replacement Escape keeps weapons"));
+            P->Deck->MaximumActiveWeapons=16;S->Checks.Add(TEXT("Draft Escape resumes live combat; same widget/hand, rerolls, branch state and queued levels survive Tab; replacement Escape keeps weapons"));
             for(int32 I=0;I<4 && G->bChoosingCard;++I) if(!G->ChooseCard(0)) return End(false,TEXT("Could not resolve preserved upgrades"));
             if(G->bChoosingCard || G->PendingLevels!=0 || C->IsPaused()) return End(false,TEXT("Queued choices did not finish normally"));G->PendingCorruptRewards=1;G->ChooseCorruptPerk();Next(23);
         }

@@ -2,6 +2,7 @@
 #include "ForbiddenRiderSubsystem.h"
 #include "ForbiddenChoiceWidget.h"
 #include "ForbiddenProfile.h"
+#include "ForbiddenPrograms.h"
 #include "ForbiddenSpirit.h"
 #include "CardDataAsset.h"
 #include "CodexDeckComponent.h"
@@ -9,6 +10,9 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Kismet/GameplayStatics.h"
 #include "NeonMenuAudio.h"
+#include "MortisTestingDirector.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
 
 void AMVPArenaGameMode::ShowDecision(const FString& Title,const TArray<FString>& Choices,TFunction<void(int32)> Callback)
 {
@@ -40,12 +44,12 @@ void AMVPArenaGameMode::OpenHideout()
     for(int32 I=0;I<3;++I) Options.Add(FString::Printf(TEXT("DECK %d / SAVED LOADOUT%s"),I+1,I==Profile->Data->SelectedDeck ? TEXT(" / ACTIVE") : TEXT("")));
     Options.Add(TEXT("STARTING CARD UNLOCKS"));Options.Add(TEXT("RUN HISTORY / DAMAGE / CONTRACTS / RECIPES"));
     Options.Add(TEXT("BOARD & DISTRICT MODIFIER"));Options.Add(TEXT("RETURN TO CODEX"));
-    ShowDecision(FString::Printf(TEXT("HIDEOUT / %d CODE FRAGMENTS"),Profile->Data->CodeFragments),Options,[this,Profile](int32 I)
+    ShowDecision(FString::Printf(TEXT("%s HIDEOUT / %d RIDER FRAGMENTS"),*Profile->Data->SelectedRider.ToString(),Profile->Data->CodeFragments),Options,[this,Profile](int32 I)
     {
         if(I>=0 && I<3) {SelectDeckPreset(I);OpenHideout();}
         if(I==3)
         {
-            TArray<FString> Names;for(FName ID:UForbiddenProfile::ProgramIDs()) Names.Add([&](){for(UCardDataAsset* Card:GetArenaPlayer()->Deck->UnlockedCards) if(Card && Card->CardID==ID) return Card->Name.ToString();return ID.ToString();}()+(Profile->IsUnlocked(ID) ? StartingCards.Contains(ID) ? TEXT(" / STARTING") : TEXT(" / AVAILABLE STARTER") : TEXT(" / LOCKED / 30 FRAGMENTS")));
+            TArray<FString> Names;for(FName ID:UForbiddenProfile::ProgramIDs()) Names.Add([&](){for(UCardDataAsset* Card:GetArenaPlayer()->Deck->UnlockedCards) if(Card && Card->CardID==ID) return Card->Name.ToString();return ID.ToString();}()+(Profile->IsUnlocked(ID) ? StartingCards.Contains(ID) ? TEXT(" / STARTING") : TEXT(" / AVAILABLE STARTER") : FString::Printf(TEXT(" / %s / LOCKED / %d FRAGMENTS"),*ForbiddenPrograms::RarityName(ID),ForbiddenPrograms::UnlockCost(ID))));
             Names.Add(TEXT("BACK"));ShowDecision(TEXT("PROGRAM LIBRARY"),Names,[this](int32 Pick){if(UForbiddenProfile::ProgramIDs().IsValidIndex(Pick)) OpenProgramEditor(UForbiddenProfile::ProgramIDs()[Pick]);else OpenHideout();});
         }
         if(I==4)
@@ -53,7 +57,7 @@ void AMVPArenaGameMode::OpenHideout()
             TArray<FString> History;
             for(const auto& R:Profile->Data->History)
             {
-                FString Detail=FString::Printf(TEXT("%s / %s / %d SCORE / +%d FRAGMENTS\n%.0fs / %d KILLS / %d CONTRACTS\n%s"),*R.DateUTC,R.Victory ? TEXT("VICTORY") : TEXT("DEFEAT"),R.Score,R.Currency,R.Seconds,R.Kills,R.Contracts,*R.DeathCause);
+                FString Detail=(R.RiderID.IsNone() ? TEXT("LEGACY RUN / RIDER UNRECORDED\n") : R.RiderID.ToString()+TEXT("\n"))+FString::Printf(TEXT("%s / %s / %d SCORE / +%d FRAGMENTS\n%.0fs / %d KILLS / %d CONTRACTS\n%s"),*R.DateUTC,R.Victory ? TEXT("VICTORY") : TEXT("DEFEAT"),R.Score,R.Currency,R.Seconds,R.Kills,R.Contracts,*R.DeathCause);
                 TArray<FName> IDs;R.DamageByCard.GetKeys(IDs);IDs.Sort([&](FName A,FName B){return R.DamageByCard[A]>R.DamageByCard[B];});
                 for(FName ID:IDs) Detail+=FString::Printf(TEXT("\n%s: %.0f damage"),*ID.ToString(),R.DamageByCard[ID]);
                 History.Add(Detail);if(History.Num()>=8) break;
@@ -79,15 +83,16 @@ void AMVPArenaGameMode::OpenProgramEditor(FName ID)
     if(!Card) return;
     const FString Back=bProgramEditorFromHideout ? TEXT("BACK TO HIDEOUT") : TEXT("BACK TO MY DECK");
     const FString Detail=FString::Printf(TEXT("%s / STARTING CARD\n%.1f DAMAGE / %.2fs COOLDOWN\n"),*Card->Name.ToString(),Card->BaseDamage,Card->Cooldown)+Card->Description.ToString();
+    const int32 Cost=ForbiddenPrograms::UnlockCost(ID);
     if(!Profile->IsUnlocked(ID))
     {
-        ShowDecision(Detail+FString::Printf(TEXT("\nUNLOCK FOR THIS RIDER / COST 30 CODE FRAGMENTS / YOU HAVE %d\nThis card is already available in the random in-run draft. Unlocking lets this rider start with it in any of their 3 decks. It does not equip the card."),Profile->Data->CodeFragments),{TEXT("UNLOCK STARTING CARD / 30 FRAGMENTS"),Back},[this,Profile,ID](int32 Pick)
+        ShowDecision(Detail+FString::Printf(TEXT("\nUNLOCK FOR THIS RIDER / %s / COST %d CODE FRAGMENTS / YOU HAVE %d\nFragments belong only to the selected rider and are earned on that rider\'s runs. This card is already available in the random in-run draft. Unlocking lets this rider start with it in any of their 3 decks. It does not equip the card."),*ForbiddenPrograms::RarityName(ID),Cost,Profile->Data->CodeFragments),{FString::Printf(TEXT("UNLOCK STARTING CARD / %d FRAGMENTS"),Cost),Back},[this,Profile,ID](int32 Pick)
         {
             if(Pick==0)
             {
                 if(!Profile->UnlockProgram(ID))
                 {
-                    ShowDecision(Profile->Data->CodeFragments<30 ? TEXT("NOT ENOUGH CODE FRAGMENTS\nEarn 30 fragments from normal runs. Testing does not earn fragments.") : TEXT("COULD NOT SAVE UNLOCK\n")+Profile->LastError,{TEXT("BACK")},[this,ID](int32){OpenProgramEditor(ID);});return;
+                    ShowDecision(TEXT("STARTER NOT UNLOCKED\n")+Profile->LastError,{TEXT("BACK")},[this,ID](int32){OpenProgramEditor(ID);});return;
                 }
                 DeckMessage=TEXT("Starting card unlocked for this rider. Click it to add it to the selected deck.");
             }
@@ -130,6 +135,7 @@ void AMVPArenaGameMode::OfferCapturedCode(int32 Archetype)
     ShowDecision(TEXT("ENEMY CODE CAPTURED"),{TEXT("STEAL ROUTINE / 20 SECONDS\nA digital spirit fires assault chains or slowing disruption links based on the captured enemy. Replaces the current routine."),TEXT("RESEARCH THE CODE\nBank 4 code fragments and unlock progress for horizontal upgrades."),TEXT("LEAVE THE CODE")},[this,Archetype](int32 I)
     {
         if(I==0) {CapturedRoutine=Archetype;CapturedRoutineRemaining=20.f;if(SupportSpirit) SupportSpirit->ActivateSupport(GetArenaPlayer(),20.f);}
-        if(I==1) if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();Profile && Profile->Data) {Profile->Data->CodeFragments+=4;Profile->Data->Research.FindOrAdd("Captures")+=1;if(Profile->Data->Research["Captures"]>=3) Profile->Data->UnlockedBoards.AddUnique("Ghost");Profile->Save();}
+        if(I==1) if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>())
+            Profile->RewardCapturedCode(RunRecord.RiderID,(TestingDirector && TestingDirector->IsActive()) || FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) || FParse::Param(FCommandLine::Get(),TEXT("ForbiddenQA")));
     });
 }

@@ -20,6 +20,7 @@ USTRUCT(BlueprintType)
 struct FForbiddenRiderLoadouts
 {
     GENERATED_BODY()
+    UPROPERTY() int32 CodeFragments = 0;
     UPROPERTY() TArray<FName> UnlockedStarters;
     UPROPERTY() TArray<FForbiddenDeckPreset> Decks;
     UPROPERTY() int32 SelectedDeck = 0;
@@ -30,6 +31,7 @@ struct FForbiddenRunRecord
 {
     GENERATED_BODY()
     UPROPERTY(BlueprintReadOnly) FString ID;
+    UPROPERTY(BlueprintReadOnly) FName RiderID;
     UPROPERTY(BlueprintReadOnly) FString DateUTC;
     UPROPERTY(BlueprintReadOnly) bool Victory = false;
     UPROPERTY(BlueprintReadOnly) float Seconds = 0;
@@ -50,11 +52,13 @@ class DECKBUILDER_API UForbiddenProfileSave : public USaveGame
 {
     GENERATED_BODY()
 public:
-    UPROPERTY() int32 Version = 4;
+    UPROPERTY() int32 Version = 5;
     UPROPERTY() int32 Revision = 0;
     UPROPERTY() FString PlayerToken;
     UPROPERTY() FString Username;
+    // Selected-rider wallet mirror. RiderLoadouts owns each persistent balance.
     UPROPERTY() int32 CodeFragments = 0;
+    UPROPERTY() bool bRiderWalletsInitialized = false;
     UPROPERTY() int32 Victories = 0;
     UPROPERTY() TArray<FName> UnlockedPrograms;
     UPROPERTY() TArray<FName> UnlockedRecipes;
@@ -84,6 +88,7 @@ public:
     UFUNCTION(BlueprintCallable) bool SelectRider(FName ID);
     UFUNCTION(BlueprintCallable) bool UnlockProgram(FName ID);
     UFUNCTION(BlueprintCallable) bool SaveDeck(int32 Slot, const FForbiddenDeckPreset& Deck);
+    UFUNCTION(BlueprintCallable) bool RewardCapturedCode(FName RiderID, bool Practice);
     UFUNCTION(BlueprintCallable) bool RecordRun(const FForbiddenRunRecord& Record, bool Practice);
     UFUNCTION(BlueprintPure) bool IsUnlocked(FName ID) const;
     UFUNCTION(BlueprintPure) FForbiddenDeckPreset GetDeck() const;

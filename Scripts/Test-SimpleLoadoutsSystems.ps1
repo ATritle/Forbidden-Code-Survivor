@@ -21,21 +21,23 @@ function Run-Case([string]$testCase,[string]$user,[switch]$Damage){
 }
 Run-Case Fresh (Join-Path $userRoot 'Fresh')
 Run-Case FreshReload (Join-Path $userRoot 'Fresh')
-$migration=Join-Path $userRoot 'Migration'
-Run-Case PrepareV3 $migration
-$old=Join-Path $migration 'Saved/SaveGames/ForbiddenCode_Profile_v3_Automation.sav'
-$before=(Get-FileHash -LiteralPath $old -Algorithm SHA256).Hash
-foreach($file in @('ForbiddenCode_Profile_v4_Automation.sav','ForbiddenCode_Profile_v4_Automation_Recovery.sav')){
-    $fixture=Join-Path $migration ('Saved/SaveGames/'+$file)
-    if(Test-Path -LiteralPath $fixture){Remove-Item -LiteralPath $fixture}
+Run-Case Economy (Join-Path $userRoot 'Economy')
+Run-Case EconomyReload (Join-Path $userRoot 'Economy')
+foreach($version in @(3,4)){
+ $migration=Join-Path $userRoot ('MigrationV'+$version)
+ Run-Case ('PrepareV'+$version) $migration
+ $old=Join-Path $migration ('Saved/SaveGames/ForbiddenCode_Profile_v'+$version+'_Automation.sav')
+ $before=(Get-FileHash -LiteralPath $old -Algorithm SHA256).Hash
+ foreach($file in @('ForbiddenCode_Profile_v5_Automation.sav','ForbiddenCode_Profile_v5_Automation_Recovery.sav')){
+  $fixture=Join-Path $migration ('Saved/SaveGames/'+$file)
+  if(Test-Path -LiteralPath $fixture){Remove-Item -LiteralPath $fixture}
+ }
+ Run-Case ('MigrationV'+$version) $migration
+ Run-Case ('ReloadV'+$version) $migration
+ if((Get-FileHash -LiteralPath $old -Algorithm SHA256).Hash -ne $before){throw 'Migration changed the preserved older save'}
+ $current=Join-Path $migration 'Saved/SaveGames/ForbiddenCode_Profile_v5_Automation.sav'
+ [IO.File]::WriteAllText($current,'deliberately invalid isolated QA fixture')
+ Run-Case ('ReloadV'+$version) $migration
+ @{result='PROFILE_MIGRATION_PASS';previousVersion=$version;newVersion=5;previousSlotSHA256=$before;oldSaveUnchanged=$true;recoveryVerified=$true}|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $migration 'Saved/Review/Profile/migration-receipt.json') -Encoding UTF8
 }
-Run-Case Migration $migration
-Run-Case Reload $migration
-if((Get-FileHash -LiteralPath $old -Algorithm SHA256).Hash -ne $before){throw 'Migration changed the preserved v3 save'}
-# Recovery from an unreadable current v4 file must restore its complete previous revision.
-$current=Join-Path $migration 'Saved/SaveGames/ForbiddenCode_Profile_v4_Automation.sav'
-[IO.File]::WriteAllText($current,'deliberately invalid isolated QA fixture')
-Run-Case Reload $migration
-$receipt=@{result='PROFILE_MIGRATION_PASS';previousSlotSHA256=$before;oldSaveUnchanged=$true;recoveryVerified=$true}|ConvertTo-Json
-$receipt|Set-Content -LiteralPath (Join-Path $migration 'Saved/Review/Profile/migration-receipt.json') -Encoding UTF8
 Run-Case Damage (Join-Path $userRoot 'Damage') -Damage

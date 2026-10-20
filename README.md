@@ -1,5 +1,7 @@
 # Forbidden Code: Survivor
 
+**Windows 0.4.6 — Sixteen attacks and rider progression:** Regular runs can retain all 16 attack programs through random three-card drafts. Starting unlocks cost 75 Common / 150 Rare / 300 Epic fragments. Each rider earns and spends their own fragments; the old shared balance transfers once to the last-selected rider. Existing unlocks and all three presets per rider carry over. [Rules and validation](Docs/Windows-0.4.6.txt).
+
 **Windows 0.4.4 — Hover rules and Escape navigation:** Deck/library cards reveal their complete descriptions and detailed base stats on hover. Esc backs out of nested menus safely, including card/replacement dialogs and focused controls. Level-up drafts can be deferred without losing the offered hand; Tab restores them. [Details and validation](Docs/Windows-0.4.4.txt).
 
 **Windows 0.4.3 — Compact Loadout Workbench:** Smaller cards and controls retain the full 4×2 grid, with wider city margins, compact rider selection, deck selectors above the cards, and named starters plus Save Deck / Enter Arena below. Click cards for full descriptions and editing. [Details and validation](Docs/Windows-0.4.3.txt).
@@ -23,9 +25,11 @@ A cyberpunk deckbuilding survivor. Ride a hoverboard through rain-soaked neon st
 The editions share the energy-spell catalog and cyberpunk theme. Native 0.3.0 has its own balance and progression rules. Their saved games are separate. See [architecture and parity limits](Docs/TwoEditions.md).
 
 
-## Optional all-16-card Windows playtest
+## All sixteen attacks in regular Windows runs
 
-Build with `Scripts/Package-All16Playtest.ps1`, then run `Play-All-16-Cards.cmd`. The opt-in playtest retains two starters and random three-card essence drafts but allows all 16 attack programs to remain active together, with a two-row HUD and full-build inspection. It uses separate local saves and cannot post leaderboard scores. The regular 0.4.5 package is preserved. [Instructions and validation](Docs/All16-Playtest.txt).
+Run `Play-Forbidden-Routines.cmd` for the current regular 0.4.6 build. No experimental flag is needed: start with two cards and draft up to all sixteen without replacing attacks. `Play-All-16-Cards.cmd` uses the same current binary with separate private playtest saves and public score submissions disabled.
+
+`Play-Windows-0.4.5.cmd` preserves the prior regular build; `Play-All-16-Cards-0.4.5.cmd` preserves the original experimental build. Both keep their earlier economy and save slots. [Current rules](Docs/Windows-0.4.6.txt) · [Historical playtest evidence](Docs/All16-Playtest.txt).
 
 ## Windows 0.4.5: simple rider decks and open drafts
 
@@ -37,7 +41,7 @@ The v4 profile imports v3 progress without rewriting its slot; the preserved 0.4
 
 The native source now includes an eight-program draft pool, two starters, six active slots, finite ranks and 32 exclusive evolution branches. Relay hacks, a three-phase boss, captured enemy code, corrupted contract rewards, persistent hideout unlocks, new Meshy art/animations, accessibility controls and an independent Windows leaderboard extend the run loop.
 
-Build with UE 5.8.2 using `Scripts/Package-Windows.ps1 -Installer`. Current outputs use separate `Windows-0.4.5` and `Installer-0.4.5` folders. `Play-Forbidden-Routines.cmd` launches the current local package; `Play-Windows-0.4.4.cmd`, `Play-Windows-0.4.3.cmd`, `Play-Windows-0.4.2.cmd`, `Play-Windows-0.4.1.cmd`, `Play-Windows-0.4.0.cmd`, `Play-Windows-0.3.9.cmd`, `Play-Windows-0.3.8.cmd`, `Play-Windows-0.3.7.cmd`, `Play-Windows-0.3.6.cmd`, `Play-Windows-0.3.5.cmd`, `Play-Windows-0.3.4.cmd`, `Play-Windows-0.3.3.cmd`, `Play-Windows-0.3.2.cmd`, `Play-Windows-0.3.1.cmd` and `Play-Windows-0.3.0.cmd` retain preceding builds. The published v0.2.0 download above remains available as the earlier release.
+Build with UE 5.8.2 using `Scripts/Package-Windows.ps1 -Installer`. Current outputs use separate `Windows-0.4.6` and `Installer-0.4.6` folders. `Play-Forbidden-Routines.cmd` launches the current local package; `Play-Windows-0.4.5.cmd`, `Play-Windows-0.4.4.cmd`, `Play-Windows-0.4.3.cmd`, `Play-Windows-0.4.2.cmd`, `Play-Windows-0.4.1.cmd`, `Play-Windows-0.4.0.cmd`, `Play-Windows-0.3.9.cmd`, `Play-Windows-0.3.8.cmd`, `Play-Windows-0.3.7.cmd`, `Play-Windows-0.3.6.cmd`, `Play-Windows-0.3.5.cmd`, `Play-Windows-0.3.4.cmd`, `Play-Windows-0.3.3.cmd`, `Play-Windows-0.3.2.cmd`, `Play-Windows-0.3.1.cmd` and `Play-Windows-0.3.0.cmd` retain preceding builds. The published v0.2.0 download above remains available as the earlier release.
 
 **Windows 0.3.9 music update:** The menu player repeats the selected song until the user chooses another. Manual track controls and gameplay music rotation are preserved. [Validation](Docs/Windows-0.3.9.txt).
 

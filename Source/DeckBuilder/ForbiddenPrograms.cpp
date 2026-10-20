@@ -1,9 +1,8 @@
 #include "ForbiddenPrograms.h"
 #include "CardDataAsset.h"
 
-void ForbiddenPrograms::Configure(UCardDataAsset* Card)
+namespace
 {
-    if(!Card) return;
     struct FBranch {const TCHAR* ID;const TCHAR* A;const TCHAR* AD;const TCHAR* B;const TCHAR* BD;ECardRarity Rarity;};
     static const FBranch Branches[]={
         {TEXT("PulseDart"),TEXT("WEAKPOINT COMPILER"),TEXT("Repeated hits on the same living target build up to 3 precision stacks, +15% damage each."),TEXT("PACKET NOVA"),TEXT("Eight radial darts share a 1.5x volley damage budget. Each dart deals 18.75% damage; maximum 6 pierces."),ECardRarity::Common},
@@ -23,6 +22,42 @@ void ForbiddenPrograms::Configure(UCardDataAsset* Card)
         {TEXT("ShatterSigil"),TEXT("SHAPED CHARGE"),TEXT("Seven fragments fan forward from impact. Each deals 14 damage and pierces one enemy."),TEXT("AMBER RING"),TEXT("Eight fragments radiate from impact for 10 damage each. Fragments cannot split again."),ECardRarity::Rare},
         {TEXT("SatelliteChoir"),TEXT("HUNTER CHOIR"),TEXT("Orbs prioritize the marked target, then the strongest visible enemy; +35% elite damage."),TEXT("FINISHER CHOIR"),TEXT("Orbs seek the lowest health fraction and gain +60% damage against targets below 30% HP."),ECardRarity::Rare}
     };
+}
+
+ECardRarity ForbiddenPrograms::Rarity(FName ID)
+{
+    for(const auto& Row:Branches) if(ID==Row.ID) return Row.Rarity;
+    return ECardRarity::Common;
+}
+FString ForbiddenPrograms::RarityName(FName ID)
+{
+    switch(Rarity(ID))
+    {
+        case ECardRarity::Rare:return TEXT("RARE");
+        case ECardRarity::Epic:return TEXT("EPIC");
+        case ECardRarity::Legendary:return TEXT("LEGENDARY");
+        default:return TEXT("COMMON");
+    }
+}
+int32 ForbiddenPrograms::CostForRarity(ECardRarity Tier)
+{
+    switch(Tier)
+    {
+        case ECardRarity::Common:return 75;
+        case ECardRarity::Rare:return 150;
+        case ECardRarity::Epic:return 300;
+        case ECardRarity::Legendary:return 500;
+        default:return 0;
+    }
+}
+int32 ForbiddenPrograms::UnlockCost(FName ID)
+{
+    for(const auto& Row:Branches) if(ID==Row.ID) return CostForRarity(Row.Rarity);
+    return 0; // Unknown IDs cannot be purchased.
+}
+void ForbiddenPrograms::Configure(UCardDataAsset* Card)
+{
+    if(!Card) return;
     for(const auto& Row:Branches) if(Card->CardID==Row.ID)
     {
         Card->bUseProgramProgression=true;

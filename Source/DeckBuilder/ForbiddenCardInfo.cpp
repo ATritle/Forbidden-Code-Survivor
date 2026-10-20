@@ -1,4 +1,5 @@
 #include "ForbiddenCardInfo.h"
+#include "ForbiddenPrograms.h"
 #include "MVPGame.h"
 #include "CardDataAsset.h"
 #include "TestingCardInfo.h"
@@ -14,7 +15,7 @@
 
 FString ForbiddenCardInfo::Describe(const UCardDataAsset* Card)
 {
-    return TestingCardInfo::Describe(Card).Replace(TEXT("Practice uses base stats without run mutations."),TEXT("Base values before rider bonuses and run mutations."));
+    return TestingCardInfo::Describe(Card).Replace(TEXT("Practice uses base stats without run mutations."),TEXT("Base values before rider bonuses and run mutations."))+(Card ? FString::Printf(TEXT("\n%s / STARTER UNLOCK: %d CODE FRAGMENTS\nAll 16 cards remain available in arena drafts."),*ForbiddenPrograms::RarityName(Card->CardID),ForbiddenPrograms::UnlockCost(Card->CardID)) : FString());
 }
 UWidget* ForbiddenCardInfo::MakeTooltip(UUserWidget* Owner,const FString& Copy)
 {

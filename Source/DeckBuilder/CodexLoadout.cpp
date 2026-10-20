@@ -5,6 +5,7 @@
 #include "EngineUtils.h"
 #include "CodexLoadoutSave.h"
 #include "ForbiddenProfile.h"
+#include "ForbiddenPrograms.h"
 #include "ForbiddenRiderPreview.h"
 #include "ForbiddenRiderSubsystem.h"
 #include "ForbiddenScoreService.h"
@@ -65,7 +66,7 @@ bool AMVPArenaGameMode::ToggleStartingCard(FName ID)
 {
     AMVPPlayer* Player = GetArenaPlayer();
     if (!bInCodex || !Player || !Player->Deck->UnlockedCards.ContainsByPredicate([ID](const UCardDataAsset* C) { return C && C->CardID == ID && C->SpellClass; })) return false;
-    if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();Profile && !Profile->IsUnlocked(ID)) {DeckMessage=TEXT("Unlock this starting card for this rider with 30 Code Fragments.");return false;}
+    if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();Profile && !Profile->IsUnlocked(ID)) {DeckMessage=FString::Printf(TEXT("Unlock this %s starter for %d Code Fragments."),*ForbiddenPrograms::RarityName(ID),ForbiddenPrograms::UnlockCost(ID));return false;}
     const auto Previous=StartingCards;
     if (StartingCards.Contains(ID)) StartingCards.Remove(ID);
     else if (StartingCards.Num() < 2) StartingCards.Add(ID);
@@ -131,6 +132,7 @@ bool AMVPArenaGameMode::StartSelectedRun()
     if(RiderPreview) RiderPreview->SetPreviewVisible(false);
     if(auto* Rider=GetWorld()->GetSubsystem<UForbiddenRiderSubsystem>()) Rider->BeginRun(Player);
     RunRecord.ID=FGuid::NewGuid().ToString(EGuidFormats::Digits);
+    if(const auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();Profile && Profile->Data) RunRecord.RiderID=Profile->Data->SelectedRider;
     if(auto* Scores=GetGameInstance()->GetSubsystem<UForbiddenScoreService>()) Scores->BeginRun();
     if(Player->Challenges) Player->Challenges->BeginRun();
     if (auto* PC = Cast<AMVPController>(Player->GetController()))

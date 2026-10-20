@@ -1,7 +1,7 @@
 @echo off
 setlocal
-set "GAME=%~dp0Artifacts\Windows-All16-Playtest\ForbiddenCodeSurvivor.exe"
-if not exist "%GAME%" set "GAME=%~dp0Artifacts\Windows-All16-Playtest\Windows\ForbiddenCodeSurvivor.exe"
+set "GAME=%~dp0Artifacts\Windows-0.4.6\ForbiddenCodeSurvivor.exe"
+if not exist "%GAME%" set "GAME=%~dp0Artifacts\Windows-0.4.6\Windows\ForbiddenCodeSurvivor.exe"
 if not exist "%GAME%" (
   echo Build the all-16-card playtest first with Scripts\Package-All16Playtest.ps1.
   pause

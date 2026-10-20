@@ -742,7 +742,7 @@ void AMVPArenaGameMode::InitializeRun()
     Spawner->FinishSpawning(FTransform::Identity);
     Player->Deck->EnemySpawner = Spawner;
     Player->Deck->bOfferOwnedSpellUpgrades = true;
-    Player->Deck->MaximumActiveWeapons = FParse::Param(FCommandLine::Get(),TEXT("AllCardsPlaytest")) ? 16 : 6;
+    Player->Deck->MaximumActiveWeapons = 16;
     for (int32 Index = 0; Index < 256; ++Index) Projectiles.Add(GetWorld()->SpawnActor<AMVPProjectile>());
     for (int32 Index = 0; Index < 400; ++Index) Gems.Add(GetWorld()->SpawnActor<AMVPGem>());
     for (int32 Index = 0; Index < 32; ++Index) ImpactPulses.Add(GetWorld()->SpawnActor<AMVPImpactPulse>());

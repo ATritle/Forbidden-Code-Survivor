@@ -1,9 +1,9 @@
 @echo off
 setlocal
-set "GAME=%~dp0Artifacts\Windows-0.4.5\Windows\ForbiddenCodeSurvivor.exe"
-if not exist "%GAME%" set "GAME=%~dp0Artifacts\Windows-0.4.5\ForbiddenCodeSurvivor.exe"
+set "GAME=%~dp0Artifacts\Windows-0.4.6\Windows\ForbiddenCodeSurvivor.exe"
+if not exist "%GAME%" set "GAME=%~dp0Artifacts\Windows-0.4.6\ForbiddenCodeSurvivor.exe"
 if not exist "%GAME%" (
-  echo The Windows 0.4.5 package has not been built in this workspace.
+  echo The Windows 0.4.6 package has not been built in this workspace.
   echo Run Scripts\Package-Windows.ps1 to build it.
   pause
   exit /b 1

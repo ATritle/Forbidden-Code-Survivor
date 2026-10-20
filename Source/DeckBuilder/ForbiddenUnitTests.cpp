@@ -116,4 +116,20 @@ bool FForbiddenFullDraftTest::RunTest(const FString& Parameters)
     return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FForbiddenEconomyTest,"Forbidden.Runtime.RarityEconomy",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FForbiddenEconomyTest::RunTest(const FString& Parameters)
+{
+    TestEqual(TEXT("Common starter price"),ForbiddenPrograms::UnlockCost("ArcRelay"),75);
+    TestEqual(TEXT("Rare starter price"),ForbiddenPrograms::UnlockCost("GhostLink"),150);
+    TestEqual(TEXT("Epic starter price"),ForbiddenPrograms::UnlockCost("NeonCataclysm"),300);
+    TestEqual(TEXT("Unknown ID has no purchasable price"),ForbiddenPrograms::UnlockCost("MissingCard"),0);
+    TestEqual(TEXT("Future legendary price"),ForbiddenPrograms::CostForRarity(ECardRarity::Legendary),500);
+    for(FName ID:UForbiddenProfile::ProgramIDs())
+    {
+        auto* Card=NewObject<UCardDataAsset>();Card->CardID=ID;ForbiddenPrograms::Configure(Card);
+        TestEqual(TEXT("Runtime card rarity matches purchase catalog"),Card->Rarity,ForbiddenPrograms::Rarity(ID));
+    }
+    return true;
+}
+
 #endif

@@ -38,8 +38,7 @@ void InstallAllCardsValidation(AMVPController* PC)
         if(Age>45) return End(false,TEXT("Validation phase timed out"));
         if(S->Phase==0 && Age>3)
         {
-            if(P->Deck->MaximumActiveWeapons!=(Expanded ? 16 : 6)) return End(false,TEXT("Flag did not configure the expected attack cap"));
-            if(!Expanded) return End(true,TEXT("Without the playtest flag normal capacity remains six"));
+            if(P->Deck->MaximumActiveWeapons!=16) return End(false,TEXT("Flag did not configure the expected attack cap"));
             auto* Profile=G->GetGameInstance()->GetSubsystem<UForbiddenProfile>();Profile->SelectRider("NeonExorcist");
             auto Deck=Profile->GetDeck();Deck.Starters={"PulseDart","PrismBurst"};if(!Profile->SaveDeck(0,Deck)) return End(false,TEXT("Starter setup failed"));G->LoadStartingDeck();
             if(!G->StartSelectedRun()) return End(false,TEXT("Could not start the ordinary two-starter run"));
