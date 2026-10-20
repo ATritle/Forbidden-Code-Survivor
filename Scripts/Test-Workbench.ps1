@@ -1,4 +1,4 @@
-param([string]$Executable='',[string]$UserDirectory='Saved/QA/Workbench',[switch]$Compact,[switch]$SkipReload)
+param([string]$Executable='',[string]$UserDirectory='Saved/QA/Workbench',[switch]$Compact,[switch]$SkipReload,[ValidateRange(0,7680)][int]$Width=0,[ValidateRange(0,4320)][int]$Height=0)
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
 $editor=-not $Executable
@@ -7,8 +7,8 @@ $user=[IO.Path]::GetFullPath($UserDirectory)
 foreach($reload in $(if($SkipReload){@($false)}else{@($false,$true)})){
     $report=Join-Path $user ('Saved/Review/Workbench/'+$(if($reload){'reload.json'}else{'report.json'}))
     if(Test-Path -LiteralPath $report){Remove-Item -LiteralPath $report}
-    $width=if($Compact){1280}else{1600};$height=if($Compact){720}else{900}
-    $arguments=@('-WorkbenchSmoke','-ForbiddenQA','-ExecCmds=DisableAllScreenMessages',('-UserDir='+$user),'-dx12','-sm6','-RenderOffscreen','-windowed',('-ResX='+$width),('-ResY='+$height),'-ForceRes','-unattended','-nosplash')
+    $testWidth=if($Width){$Width}elseif($Compact){1280}else{1600};$testHeight=if($Height){$Height}elseif($Compact){720}else{900}
+    $arguments=@('-WorkbenchSmoke','-ForbiddenQA','-ExecCmds=DisableAllScreenMessages',('-UserDir='+$user),'-dx12','-sm6','-RenderOffscreen','-windowed',('-ResX='+$testWidth),('-ResY='+$testHeight),'-ForceRes','-unattended','-nosplash')
     if($reload){$arguments+='-WorkbenchReload'}
     if($editor){$arguments=@((Join-Path $root 'DeckBuilder.uproject'),'/Game/Maps/NeonDistrict','-game')+$arguments}
     $process=Start-Process -FilePath $Executable -WorkingDirectory $root -WindowStyle Hidden -PassThru -ArgumentList $arguments

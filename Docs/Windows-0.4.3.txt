@@ -1,0 +1,35 @@
+FORBIDDEN CODE: SURVIVOR - WINDOWS 0.4.3
+
+COMPACT LOADOUT WORKBENCH
+
+Player selection remains on the left and decks on the right. The same eight
+cards fit in a 4-by-2 grid, now 210 x 200 logical pixels instead of 251 x 244
+(16% narrower, 18% shorter). Artwork, buttons and rider rows have been tightened
+individually, with wider outside margins showing the neon city.
+
+Cards keep their name, magic school, damage and cooldown visible. Click a card
+for its full description, evolution details and deck/start-slot editing.
+School filters and the three saved deck selectors sit above the grid. The
+level-up pool, named starting attacks, Save Deck and Enter Arena sit below it.
+The existing music dock, strong silent hover shading and click sounds remain.
+Settings, How To Play, gameplay HUD and combat balance retain their sizes.
+
+VALIDATION
+
+Playback exercises real rendered button hit testing, all three saved decks,
+card unlock/replacement, two starters, rider choice, filters and paging, modal
+blocking and Enter Arena at 1280x720, 1600x900 and 2560x1440. Separate restarts
+verify saved selection. Pixel checks measure hover shading in actual captures.
+Guide/quit buttons, music controls/repeat/persistence, click audio, a packaged
+run and an install/launch/uninstall roundtrip are verified in the release
+validation folder. These are local automated checks, not broad hardware QA.
+
+RUN AND REVERT
+
+Play-Forbidden-Routines.cmd launches Windows 0.4.3.
+Play-Windows-0.4.2.cmd launches the preceding, preserved menu layout.
+Artifacts/Windows-0.4.3/ForbiddenCodeSurvivor.exe is the portable package.
+Artifacts/Installer-0.4.3/ForbiddenCode-Survivor-0.4.3-Setup.exe is the installer.
+Earlier packages/installers and the original baseline archive remain intact;
+the release manifest records file hashes and preservation verification.
+No browser deployment, new generated artwork or Meshy credits are involved.

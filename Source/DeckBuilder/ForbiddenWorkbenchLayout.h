@@ -1,15 +1,17 @@
 #pragma once
 
-/** Approved layout A in the HUD's 1600 x 900 logical coordinates. */
+/** Compact rider-left / deck-right workbench in 1600 x 900 logical coordinates.
+ * Rendering, hit testing and playback validation share these bounds. */
 namespace ForbiddenWorkbench
 {
-    constexpr float HowToX=806,SettingsX=989,ScoresX=1178,CloseX=1367,NavY=31,NavW=172,NavH=35;
-    constexpr float RiderX=265,RiderY=116,RiderW=163,RiderH=50,RiderPitch=57;
-    constexpr float GridX=491,GridY=226,CardW=251,CardH=244,CardPitchX=262,CardPitchY=256;
-    constexpr float PresetX=686,PresetY=119,PresetW=119,PresetH=37,PresetPitch=124;
-    constexpr float SaveX=1106,EnterX=1285,ActionY=119,ActionH=39;
-    constexpr float TabsX=491,TabsY=174,TabW=167,TabPitch=174,TabH=34;
-    constexpr float ViewX=492,ViewY=794,ViewW=260,ViewH=25,PrevX=1368,NextX=1452,PageY=794,PageW=75;
+    constexpr float HowToX=797,SettingsX=952,ScoresX=1107,CloseX=1262,NavY=59,NavW=145,NavH=30;
+    constexpr float RiderX=311,RiderY=137,RiderW=144,RiderH=40,RiderPitch=47;
+    constexpr float GridX=519,GridY=220,CardW=210,CardH=200,CardPitchX=226,CardPitchY=214;
+    constexpr float PresetX=1025,PresetY=137,PresetW=119,PresetH=30,PresetPitch=124;
+    constexpr float SaveX=1072,SaveW=132,EnterX=1217,EnterW=190,ActionY=746,ActionH=30;
+    constexpr float TabsX=519,TabsY=181,TabW=167,TabPitch=180,TabH=28;
+    constexpr float ViewX=519,ViewY=649,ViewW=238,ViewH=27,PrevX=1250,NextX=1332,PageY=649,PageW=75;
+    constexpr float HideoutX=165,HideoutY=610,HideoutW=290,HideoutH=29;
     constexpr int CardsPerPage=8;
     constexpr float CardX(int I) {return GridX+(I%4)*CardPitchX;}
     constexpr float CardY(int I) {return GridY+(I/4)*CardPitchY;}

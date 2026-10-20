@@ -12,8 +12,8 @@ def mean(image,box):
 
 def ratio(image,box):
  return sum(mean(image,box))/sum(mean(normal,box))
-shading=ratio(card,(530,265,700,345));unaffected=ratio(card,(800,265,950,345))
-before=mean(normal,(370,185,405,206));after=mean(rider,(370,185,405,206))
+shading=ratio(card,(550,250,700,310));unaffected=ratio(card,(770,250,910,310))
+before=mean(normal,(408,189,440,209));after=mean(rider,(408,189,440,209))
 assert .55<shading<.9,('Card artwork did not visibly darken on actual pointer hover',shading)
 assert .98<unaffected<1.02,('Hover changed another card',unaffected)
 assert after[1]>before[1]*1.15,('Rider row did not receive the stronger colored hover fill',before,after)
