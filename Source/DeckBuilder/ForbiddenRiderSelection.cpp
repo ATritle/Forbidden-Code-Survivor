@@ -14,6 +14,8 @@
 #include "CanvasItem.h"
 #include "Engine/Engine.h"
 #include "Engine/Font.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
 #include "Engine/Texture.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -228,7 +230,7 @@ void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
     Text(TEXT("ALL 16 CARDS IN THE RUN DRAFT"),ViewX,ViewY+9,.59f,Cyan);
     Text(FString::Printf(TEXT("%d PROGRAMS / PAGE %d OF %d"),Library.Num(),G->LibraryPage+1,Pages),865,658,.55f,Muted);
     Button(TEXT("WorkbenchPrev"),TEXT("< PREV"),PrevX,PageY,PageW,ViewH,Cyan);Button(TEXT("WorkbenchNext"),TEXT("NEXT >"),NextX,PageY,PageW,ViewH,Cyan);
-    Text(TEXT("HOVER: DETAILS / CLICK: ADD OR REMOVE"),519,757,.59f,Muted);
+    Text(FParse::Param(FCommandLine::Get(),TEXT("AllCardsPlaytest")) ? TEXT("PLAYTEST / UP TO 16 ATTACKS IN RUN") : TEXT("HOVER: DETAILS / CLICK: ADD OR REMOVE"),519,757,.59f,Muted);
     DrawMusicPlayer(G);
     if(HoveredCard) DrawWorkbenchTooltip(HoveredCard,HoveredX,HoveredY);
 }

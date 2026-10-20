@@ -28,7 +28,7 @@ void UForbiddenScoreService::Send(const FString& Route,TSharedPtr<FJsonObject> P
 void UForbiddenScoreService::BeginRun()
 {
     ++Epoch;RunID.Reset();RunToken.Reset();Eligible=false;Submitted=Posting=false;Result=FForbiddenRunRecord();
-    if(FParse::Param(FCommandLine::Get(),TEXT("ForbiddenQA")) || FParse::Param(FCommandLine::Get(),TEXT("MVPSmoke")) || FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) || FParse::Param(FCommandLine::Get(),TEXT("ReleaseSmoke"))) {Status=TEXT("Practice / validation run: leaderboard submission disabled.");return;}
+    if(FParse::Param(FCommandLine::Get(),TEXT("AllCardsPlaytest")) || FParse::Param(FCommandLine::Get(),TEXT("ForbiddenQA")) || FParse::Param(FCommandLine::Get(),TEXT("MVPSmoke")) || FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark")) || FParse::Param(FCommandLine::Get(),TEXT("ReleaseSmoke"))) {Status=TEXT("Practice / validation run: leaderboard submission disabled.");return;}
     auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();if(!Profile || !Profile->Data) return;
     auto JSON=MakeShared<FJsonObject>();JSON->SetStringField(TEXT("playerToken"),Profile->Data->PlayerToken.ToLower());JSON->SetStringField(TEXT("edition"),TEXT("windows"));
     const TWeakObjectPtr<UForbiddenScoreService> WeakThis(this);const int32 RequestEpoch=Epoch;

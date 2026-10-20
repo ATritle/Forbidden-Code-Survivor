@@ -577,6 +577,8 @@ void AMVPController::BeginPlay()
     InstallWorkbenchValidation(this);
     extern void InstallProfileValidation(AMVPController* Controller);
     InstallProfileValidation(this);
+    extern void InstallAllCardsValidation(AMVPController* Controller);
+    InstallAllCardsValidation(this);
     extern void InstallDamageAudit(AMVPController* Controller);
     InstallDamageAudit(this);
     extern void InstallMenuNavigationValidation(AMVPController* Controller);
@@ -740,7 +742,7 @@ void AMVPArenaGameMode::InitializeRun()
     Spawner->FinishSpawning(FTransform::Identity);
     Player->Deck->EnemySpawner = Spawner;
     Player->Deck->bOfferOwnedSpellUpgrades = true;
-    Player->Deck->MaximumActiveWeapons = 6;
+    Player->Deck->MaximumActiveWeapons = FParse::Param(FCommandLine::Get(),TEXT("AllCardsPlaytest")) ? 16 : 6;
     for (int32 Index = 0; Index < 256; ++Index) Projectiles.Add(GetWorld()->SpawnActor<AMVPProjectile>());
     for (int32 Index = 0; Index < 400; ++Index) Gems.Add(GetWorld()->SpawnActor<AMVPGem>());
     for (int32 Index = 0; Index < 32; ++Index) ImpactPulses.Add(GetWorld()->SpawnActor<AMVPImpactPulse>());

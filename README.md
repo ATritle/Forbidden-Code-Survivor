@@ -23,6 +23,10 @@ A cyberpunk deckbuilding survivor. Ride a hoverboard through rain-soaked neon st
 The editions share the energy-spell catalog and cyberpunk theme. Native 0.3.0 has its own balance and progression rules. Their saved games are separate. See [architecture and parity limits](Docs/TwoEditions.md).
 
 
+## Optional all-16-card Windows playtest
+
+Build with `Scripts/Package-All16Playtest.ps1`, then run `Play-All-16-Cards.cmd`. The opt-in playtest retains two starters and random three-card essence drafts but allows all 16 attack programs to remain active together, with a two-row HUD and full-build inspection. It uses separate local saves and cannot post leaderboard scores. The regular 0.4.5 package is preserved. [Instructions and validation](Docs/All16-Playtest.txt).
+
 ## Windows 0.4.5: simple rider decks and open drafts
 
 Choose a rider and Deck 1/2/3, then click two starting cards to add/remove them. Edits autosave, including unfinished decks. New profiles begin with four starter choices per rider; additional starting unlocks cost 30 shared Code Fragments and apply to that rider's three presets. Previously owned cards are retained. All 16 programs are available to the random, three-unique-card in-run draft regardless of starting unlocks. The old eight-card pool editor is removed.

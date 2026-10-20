@@ -143,7 +143,7 @@ void AMVPHUD::DrawHUD()
     if(Game->DistrictDirector)
     {
         Text(Game->DistrictDirector->GetTracker(),460,28,0.6f,Palette::Mint);
-        Text(Game->DistrictDirector->GetPrompt(),570,666,0.85f,Palette::White);
+        Text(Game->DistrictDirector->GetPrompt(),570,Player->Deck->MaximumActiveWeapons>6 ? 620.f : 666.f,0.85f,Palette::White);
     }
     DrawSettingsButton();
     if(!Game->bRunEnded) {Glass(TEXT("CombatBoard"),1360,186,210,34,Palette::Mint,Hover(TEXT("CombatBoard"),1360,186,210,34));Text(TEXT("LEADERBOARD [L]"),1375,194,0.67f,Palette::Mint);}
@@ -171,28 +171,42 @@ void AMVPHUD::DrawHUD()
     const TCHAR* Priorities[]={TEXT("NEAREST"),TEXT("STRONGEST"),TEXT("MARKED")};
     Text(FString::Printf(TEXT("BOOST %s  /  TARGET %s"),Player->BoostCooldown>0 ? *FString::Printf(TEXT("%.1fs"),Player->BoostCooldown) : TEXT("READY"),Priorities[FMath::Clamp(Player->TargetPriority,0,2)]),50,200,0.62f,Palette::Mint);
     int32 WeaponIndex = 0;
+    const bool ExpandedBuild=Player->Deck->MaximumActiveWeapons>6;
+    if(ExpandedBuild) Text(FString::Printf(TEXT("16-CARD PLAYTEST / %d OF 16 EQUIPPED"),Player->Deck->ActiveWeapons.Num()),50,230,.64f,Palette::Mint);
     const auto* Profile=Game->GetGameInstance()->GetSubsystem<UForbiddenProfile>();
     const FKey InspectKey=Profile && Profile->Data && Profile->Data->Bindings.Contains("Inspect") ? Profile->Data->Bindings["Inspect"] : EKeys::Tab;
     const bool Inspect=PlayerOwner->IsInputKeyDown(InspectKey) && !Game->bChoosingCard && !Game->bRunEnded;
-    if(Inspect) Box(400,240,800,445,FLinearColor(0.005f,0.012f,0.025f,0.97f));
+    if(Inspect)
+    {
+        if(ExpandedBuild)
+        {
+            // Cover underlying combat labels so the sixteen-program inspection stays legible.
+            DrawRect(FLinearColor(.005f,.012f,.025f,.995f),OffsetX+70*UIScale,OffsetY+150*UIScale,1460*UIScale,480*UIScale);
+            DrawRect(Palette::Mint,OffsetX+70*UIScale,OffsetY+150*UIScale,1460*UIScale,UIScale);
+        }
+        else Box(400,240,800,445,FLinearColor(.005f,.012f,.025f,.97f));
+    }
     for (UCardDataAsset* Card : Player->Deck->EquippedDeck)
     {
         ASpellBase* Spell=Card ? Player->Deck->FindOwnedSpell(Card->CardID) : nullptr;if(!Spell) continue;
-        const float X=500+WeaponIndex*158.f,Y=712.f;
+        const float X=ExpandedBuild ? 50+(WeaponIndex%8)*187.f : 500+WeaponIndex*158.f,Y=ExpandedBuild ? 650.f+(WeaponIndex/8)*66.f : 712.f;
+        const float TileWidth=ExpandedBuild ? 176.f : 146.f;
         const FLinearColor Accent=NeonSpellPalette::Color(NeonSpellPalette::ForCard(Card->CardID));
-        const float H=Hover(Card->CardID,X,Y,146,64);Glass(Card->CardID,X,Y,146,64,Accent,H);
+        const float H=Hover(Card->CardID,X,Y,TileWidth,64);Glass(Card->CardID,X,Y,TileWidth,64,Accent,H);
         SpellArt(*FString::Printf(TEXT("CombatArt%d"),WeaponIndex),Card->Icon,X+4,Y+5,46,46,Accent,H);
         Text(Card->Name.ToString(),X+52,Y+12,0.43f,Accent);Text(FString::Printf(TEXT("R%d %s"),Spell->Modifiers.Rank,Spell->Modifiers.Evolution>0 ? TEXT("EVOLVED") : TEXT("")),X+52,Y+32,0.48f,Palette::White);
-        Box(X+5,Y+58,136*Spell->GetCooldownFraction(),3,Accent);
+        Box(X+5,Y+58,(TileWidth-10)*Spell->GetCooldownFraction(),3,Accent);
         if(Inspect)
         {
             const FString Branch=Spell->Modifiers.Evolution==1 ? Card->EvolutionA.ToString() : Spell->Modifiers.Evolution==2 ? Card->EvolutionB.ToString() : TEXT("NO EVOLUTION");
-            Text(FString::Printf(TEXT("%s / R%d / %s"),*Card->Name.ToString(),Spell->Modifiers.Rank,*Branch),425,258+WeaponIndex*65,0.72f,Accent);
-            Text(FString::Printf(TEXT("%.1f DAMAGE  /  %.2fs  /  %d VOLLEY MOD  /  %d PIERCE  /  %.2fx FIELD"),Spell->Damage*Game->PerkDamageMultiplier(),Spell->Cooldown*Player->Deck->GlobalCooldownScale,Spell->Modifiers.ProjectileCount,Spell->Modifiers.PiercingCount,Spell->Modifiers.RadiusMultiplier),425,285+WeaponIndex*65,0.58f,Palette::White);
+            const float DetailX=ExpandedBuild ? 95.f+(WeaponIndex/8)*730.f : 425.f;
+            const float DetailY=ExpandedBuild ? 165.f+(WeaponIndex%8)*55.f : 258.f+WeaponIndex*65.f;
+            Text(FString::Printf(TEXT("%s / R%d / %s"),*Card->Name.ToString(),Spell->Modifiers.Rank,*Branch),DetailX,DetailY,ExpandedBuild ? .62f : .72f,Accent);
+            Text(FString::Printf(TEXT("%.1f DAMAGE  /  %.2fs  /  %d VOLLEY MOD  /  %d PIERCE  /  %.2fx FIELD"),Spell->Damage*Game->PerkDamageMultiplier(),Spell->Cooldown*Player->Deck->GlobalCooldownScale,Spell->Modifiers.ProjectileCount,Spell->Modifiers.PiercingCount,Spell->Modifiers.RadiusMultiplier),DetailX,DetailY+27,ExpandedBuild ? .49f : .58f,Palette::White);
         }
         ++WeaponIndex;
     }
-    if(!Game->bChoosingCard && !Game->bRunEnded && !Game->DecisionWidget && Game->Spawner)
+    if(!Game->bChoosingCard && !Game->bRunEnded && !Game->DecisionWidget && Game->Spawner && !(Inspect && ExpandedBuild))
     {
         if(const auto* Combat=GetWorld()->GetSubsystem<UForbiddenCombatSubsystem>();Combat && ForbiddenSettings::Get(this,"DamageNumbers",1)>0.01f)
         {
