@@ -28,7 +28,7 @@ FString TestingCardInfo::Describe(const UCardDataAsset* Card)
     if(!Card) return FString();
     FString Text=Card->Name.ToString()+TEXT("\n\n")+Card->Description.ToString()+TEXT("\n\n");
     if(Card->CardID==TEXT("TalismanGuard"))
-        return Text+TEXT("3 orbiting charges. Each contact instantly defeats\none enemy and consumes one charge, including bosses.\nNo automatic recharge; reapply the setup to refill.");
+        return Text+TEXT("3 orbiting charges; maximum 8. Basic / medium / elite\nexecutions cost 1 / 2 / 3 charges. Bosses cost 4 charges\nfor 8% max HP damage, never an instant kill. Partial\ncharges deal proportional damage. No base recharge.");
     const int32 P=NeonArsenal::Find(Card->CardID);
     const auto* Defaults=Card->SpellClass ? Card->SpellClass->GetDefaultObject<ASpellBase>() : nullptr;
     const float Range=P>=0 ? NeonArsenal::Profiles()[P].Range : Defaults ? Defaults->TargetRange : 0;

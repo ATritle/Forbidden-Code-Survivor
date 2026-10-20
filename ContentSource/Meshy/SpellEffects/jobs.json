@@ -1,0 +1,23 @@
+{
+  "approved_credits": 24,
+  "spent_credits": 24,
+  "paid_retries": 0,
+  "spear_preview": {
+    "task": "01a14a7e-d42b-779e-a7c0-2313e75b5926",
+    "credits": 5,
+    "model": "meshy-t2",
+    "target_triangles": 4000
+  },
+  "spear_refine": {
+    "task": "01a14a81-d2fa-705b-87bf-78bbc338f049",
+    "credits": 10,
+    "format": "fbx",
+    "pbr": true
+  },
+  "effect_sheet": {
+    "task": "01a14a7e-e6ac-763a-bf0b-467d5de65a8e",
+    "credits": 9,
+    "model": "gpt-image-2"
+  },
+  "animations": "Existing approved Meshy walk/run/idle reused; Niagara animates generated effect textures."
+}

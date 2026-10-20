@@ -1,0 +1,32 @@
+Forbidden Code: Survivor - Windows 0.3.8 / Help typography and windowed mode
+
+HOW TO PLAY now uses the Settings panel size (1080 x 760 logical units),
+downscaling only, a 28-point title, 20-point page headings, 13-point explanatory
+text, 15-point buttons and 12-point captions. This removes the old automatic
+upscaling and large body text. The cyan button treatment, padding and dark panel
+match Settings. Existing illustrations, all 52 entries and navigation remain.
+
+The old display dropdown only staged a selection until Apply, and Windowed
+could retain a desktop-sized resolution. The native checks also forced a small
+resolution, so they did not cover the full user selection flow.
+
+Committed mouse/keyboard selections now automatically preview mode/resolution
+after the dropdown closes. Windowed choices fit inside the current monitor work
+area and use the last confirmed window size, or 1600 x 900 when it fits (otherwise
+a smaller supported choice). Applying restores and centers a non-maximized
+native window. A cached Windowed value no longer causes an early return when
+the actual native window/viewport remains fullscreen or borderless.
+
+KEEP CHANGES saves the preview; the 15-second timeout and Escape still revert.
+The footer explicitly reads REVERT & RETURN while confirmation is pending.
+Fullscreen and Borderless remain available. Selecting Windowed can therefore
+produce a visibly smaller window without a separate Apply click.
+
+Native validation now checks physical window bounds and non-maximized state,
+committed selection auto-preview without Apply, cached/native mode mismatch,
+maximized-window recovery, automatic resolution preview, and saved Windowed
+mode/client size across restart. The guide test verifies typography, all 52
+illustrated entries, navigation, Return and pause/draft behavior.
+
+The current launcher opens 0.3.8; Play-Windows-0.3.7.cmd retains the prior build.
+All packages, installers and the original baseline remain separate.

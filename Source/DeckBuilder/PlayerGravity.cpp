@@ -4,6 +4,9 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Engine/World.h"
+#include "CodexDeckComponent.h"
+#include "EnemySpawner.h"
+#include "ForbiddenSettingsControls.h"
 
 void AMVPPlayer::UpdateGroundPhysics(float Dt)
 {
@@ -32,6 +35,11 @@ void AMVPPlayer::UpdateGroundPhysics(float Dt)
                 ++LandingCount;LandingPulse=0.34f;LandingStrength=FMath::Clamp(Speed/1050.f,0.2f,1.f);
                 LandingDust->SetWorldLocation(Floor.ImpactPoint+FVector(0,0,5));LandingDust->Activate(true);
                 OnLandingImpact(Speed,Height);
+                if(Height>=180.f && LandingRewardCooldown<=0 && Deck && Deck->EnemySpawner)
+                {
+                    LandingRewardCooldown=8.f;LandingCharge=2.5f;
+                    for(APooledEnemy* A:Deck->EnemySpawner->GetActiveEnemies()) if(auto* E=Cast<AMVPEnemy>(A);E && E->IsPoolActive() && FVector::DistSquared(E->GetActorLocation(),GetActorLocation())<FMath::Square(260.f)) E->StaggerRemaining=E->EnemyTier>=3 ? 0.15f : 0.8f;
+                }
             }
         }
         else SetActorLocation(FVector(P.X,P.Y,NextZ),true);
@@ -40,5 +48,5 @@ void AMVPPlayer::UpdateGroundPhysics(float Dt)
     const float T=1.f-LandingPulse/0.34f;
     const float Offset=LandingPulse>0 ? -14.f*LandingStrength*FMath::Sin(T*PI)*FMath::Exp(-T*2.f) : 0.f;
     CharacterArt->AddLocalOffset(FVector(0,0,Offset-LastLandingOffset));LastLandingOffset=Offset;
-    CameraBoom->SocketOffset.Z=LandingPulse>0 ? LandingStrength*10.f*FMath::Sin(T*PI*4.f)*(1.f-T) : 0.f;
+    CameraBoom->SocketOffset.Z=LandingPulse>0 ? LandingStrength*10.f*FMath::Sin(T*PI*4.f)*(1.f-T)*ForbiddenSettings::Get(this,"Shake",0.6f) : 0.f;
 }

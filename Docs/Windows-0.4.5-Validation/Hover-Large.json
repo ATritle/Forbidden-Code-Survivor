@@ -1,0 +1,19 @@
+{
+  "result": "WORKBENCH_HOVER_PASS",
+  "resolution": [
+    2560,
+    1440
+  ],
+  "hoveredCardBrightnessRatio": 0.8218133093794444,
+  "otherCardBrightnessRatio": 1.0,
+  "riderBackgroundBefore": [
+    10.715073529411764,
+    16.550857843137255,
+    19.67156862745098
+  ],
+  "riderBackgroundAfter": [
+    15.637254901960784,
+    63.38970588235294,
+    56.791053921568626
+  ]
+}

@@ -1,4 +1,5 @@
 #include "KineticCardVFXDirector.h"
+#include "ForbiddenSettingsControls.h"
 #include "MVPGame.h"
 #include "NeonSpellImpactDirector.h"
 #include "NiagaraComponent.h"
@@ -39,7 +40,7 @@ bool AKineticCardVFXDirector::PlayImpact(FVector Location)
         if(Ages[I]<0 && Impacts[I]->GetAsset())
         {
             Ages[I]=0;Impacts[I]->SetWorldLocation(Location);Impacts[I]->SetVariableInt(TEXT("User.SparkCount"),FMath::RoundToInt(36*Intensity));Impacts[I]->Activate(true);
-            if(Lights.IsValidIndex(I)) {Lights[I]->SetWorldLocation(Location+FVector(0,0,25));Lights[I]->SetIntensity(220.f);Lights[I]->SetVisibility(true);}
+            if(Lights.IsValidIndex(I)) {Lights[I]->SetWorldLocation(Location+FVector(0,0,25));Lights[I]->SetIntensity(220.f*ForbiddenSettings::Get(this,"Flash",1)*(ForbiddenSettings::Get(this,"ReducedFlashes",0)>0.5f ? 0.15f : 1.f));Lights[I]->SetVisibility(true);}
             ++Accepted;return true;
         }
     ++Dropped;return false;
@@ -51,7 +52,7 @@ void AKineticCardVFXDirector::Tick(float Dt)
         if(Ages[I]>=0)
         {
             Ages[I]+=Dt;
-            if(Lights.IsValidIndex(I)) {Lights[I]->SetIntensity(220.f*FMath::Square(FMath::Max(0.f,1.f-Ages[I]/0.14f)));if(Ages[I]>=0.14f) Lights[I]->SetVisibility(false);}
+            if(Lights.IsValidIndex(I)) {Lights[I]->SetIntensity(220.f*ForbiddenSettings::Get(this,"Flash",1)*(ForbiddenSettings::Get(this,"ReducedFlashes",0)>0.5f ? 0.15f : 1.f)*FMath::Square(FMath::Max(0.f,1.f-Ages[I]/0.14f)));if(Ages[I]>=0.14f) Lights[I]->SetVisibility(false);}
             if(Ages[I]>=0.8f) {Ages[I]=-1;Impacts[I]->DeactivateImmediate();}
         }
 }

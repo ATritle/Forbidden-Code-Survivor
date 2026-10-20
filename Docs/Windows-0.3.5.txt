@@ -1,0 +1,22 @@
+Forbidden Code: Survivor — Windows 0.3.5 / Signal Dock layout polish
+
+Moved media controls six logical pixels down to align their centers with the
+frame interior. The seek and volume bars and their click/drag regions follow
+the new positions. Titles and the spectrum baseline also move down slightly.
+
+Main cover art now draws at 38 x 38 rather than 48 x 48, remains square, and sits
+inside the illuminated rim with visible padding. Playlist thumbnails are 28 x 28.
+
+The mute control now uses the unslashed generated speaker icon when unmuted and
+the slashed generated speaker icon when muted. Both come from the existing atlas.
+
+TRACKS still toggles the playlist; its panel is now 580 x 200 instead of 630 x 234,
+with compact rows, matching hover/click/scroll regions and the same four tracks.
+
+Test-MusicPlayer verifies both mute directions, saves the preference across a fresh
+process, and captures separate muted/unmuted screenshots for visual inspection.
+Playback, seeking, track rotation, the audio-derived spectrum and click-only UI
+sounds retain the existing behavior.
+
+Play-Forbidden-Routines.cmd launches 0.3.5. Play-Windows-0.3.4.cmd retains the
+previous package. The new game/installer use separate versioned directories.

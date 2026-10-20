@@ -1,0 +1,54 @@
+{
+  "succeeded": 3,
+  "succeededWithWarnings": 0,
+  "failed": 0,
+  "notRun": 0,
+  "totalDuration": 0.028452400118112564,
+  "tests": [
+    {
+      "testDisplayName": "DeckTransactions",
+      "fullTestPath": "Forbidden.Runtime.DeckTransactions",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "A4760713442DC66AB2692DB82CF443CD"
+      ],
+      "duration": 0.01195329800248146,
+      "dateTime": "2026.10.19-03.54.25",
+      "entries": [],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "FinitePrograms",
+      "fullTestPath": "Forbidden.Runtime.FinitePrograms",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "A4760713442DC66AB2692DB82CF443CD"
+      ],
+      "duration": 0.01163329929113388,
+      "dateTime": "2026.10.19-03.54.25",
+      "entries": [],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    },
+    {
+      "testDisplayName": "PresetValidation",
+      "fullTestPath": "Forbidden.Runtime.PresetValidation",
+      "tags": [],
+      "state": "Success",
+      "deviceInstance": [
+        "A4760713442DC66AB2692DB82CF443CD"
+      ],
+      "duration": 0.004865802824497223,
+      "dateTime": "2026.10.19-03.54.25",
+      "entries": [],
+      "warnings": 0,
+      "errors": 0,
+      "artifacts": []
+    }
+  ]
+}

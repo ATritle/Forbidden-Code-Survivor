@@ -1,0 +1,363 @@
+{
+  "approvedCredits": 80,
+  "reservedCredits": 0,
+  "animations": [
+    {
+      "id": "WireThrall",
+      "rigTask": "01a14d48-9410-72fa-b042-cfe7cda9fb3e",
+      "action": 97,
+      "credits": 3,
+      "result": {
+        "task_id": "01a151f7-934a-7142-9c66-cd50f25a0570",
+        "status": "PENDING",
+        "message": "Animation task created successfully. Task ID: 01a151f7-934a-7142-9c66-cd50f25a0570",
+        "estimated_time": "1-2 minutes"
+      },
+      "status": "SUCCEEDED",
+      "download": {
+        "content": [
+          {
+            "type": "text",
+            "text": "# Animation Download URLs\n\n**Task ID**: 01a151f7-934a-7142-9c66-cd50f25a0570\n\n## Animation Files\n- **GLB**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f7-934a-7142-9c66-cd50f25a0570/output/Animation_Left_Slash_withSkin.glb?Expires=1792635747&Signature=csHi8u3gs1d1BuGgPnHi~-k0FiEL0fsj5gXjR7OfPa5s6P2lbm7bE0GtDvGeOty4SxWzsh-JLE9fgmY8Tppnr8CxA1hyi9T1TZela~ZHXs~d89uhB428XgCEkToCfGZjDwKE39v2jWm4LXw8jLe7OLGSIt12QLJC4XPluCQrdrYj8jRGlRFLLcbLWMIP5cQ2aFc0Y2QfPFc9dSKI8UFPmJUo0CQAJcv30lw6woCGLDoFPzKuhSN3yaFVtpg6pr39ub1tMfh5hp6tmBxGm8wxU9awACK8Ws~8lWq8ddm4CTSRhif8fx0YZPGZpYSsZ0VwpBzow47jB7n5fOqo3sH4-A__&Key-Pair-Id=K1VGYTHIYLM9UM\n- **FBX**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f7-934a-7142-9c66-cd50f25a0570/output/Animation_Left_Slash_withSkin.fbx?Expires=1792635747&Signature=IuZEjhH0RhQctPIoUMP0rN0WA1oIlI7sK52ApSHRwFRKXJPLVbX5lvYc7ilXamBKRinjbw-DS8xY7TnSq2zBknw554qep6COZRFtJITfNR-AkfY2s3CtBG3IbZ7lO0jc1dGEPgiy5bwl1yJV9enCB3B02VoO8lXyf2kTtsxPvArHTnlfq8DrvOciTU2TZgB0vU0Zbap69D2xYWbS3KSkQtuGN5uNuAybp~KATMiYc0o76EVoJVyFMG~wRXeccOaS35uSZJG7~TlXburL0dEEHKcwQsGkPzaaMn2YB7nTvbtqkyqOj8m6l5rem1yERe8R6p7iC0O6rtOCMiDTYUxrhA__&Key-Pair-Id=K1VGYTHIYLM9UM\n\n**Note**: Download URLs expire after 24 hours."
+          }
+        ],
+        "structuredContent": {
+          "download_url": "<external download URL omitted; local source asset retained>",
+          "format": "fbx",
+          "animation_glb_url": "<external download URL omitted; local source asset retained>",
+          "animation_fbx_url": "<external download URL omitted; local source asset retained>",
+          "processed_usdz_url": "",
+          "expires_at": "2026-10-20T02:31:44.788Z"
+        }
+      },
+      "local_path": "ContentSource/WindowsOverhaul/Enemies/WireThrall/attack.fbx",
+      "sha256": "bd31b5ff95b22bb763e06078e43201ee76528076798ab05188960910d444ffc2",
+      "bytes": 4156972,
+      "completionStatus": "SUCCEEDED"
+    },
+    {
+      "id": "RelayRunner",
+      "rigTask": "01a14d48-a87b-7111-903a-360872365050",
+      "action": 93,
+      "credits": 3,
+      "result": {
+        "task_id": "01a151f7-ab77-7648-b479-92a8c5fada27",
+        "status": "PENDING",
+        "message": "Animation task created successfully. Task ID: 01a151f7-ab77-7648-b479-92a8c5fada27",
+        "estimated_time": "1-2 minutes"
+      },
+      "status": "SUCCEEDED",
+      "download": {
+        "content": [
+          {
+            "type": "text",
+            "text": "# Animation Download URLs\n\n**Task ID**: 01a151f7-ab77-7648-b479-92a8c5fada27\n\n## Animation Files\n- **GLB**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f7-ab77-7648-b479-92a8c5fada27/output/Animation_Dodge_and_Counter_withSkin.glb?Expires=1792635755&Signature=LbXdc~fHXFvOWVC7DuZVklENZfsDvMUyfZayJrawefNBLjbR03siv0BWSRevia18tAdwl8P1CERr3SgT6-hybTCFPpnkNHY24aNlS0IL3~FzrA6dPzB4qJUKbZnqQbn-LwIoTNPv5evR4YimsFDORKQqaviWizpx9yUt6C33yW99JoJpPs56V-r0N2mmjNPjdWMwq8bolaPaxbVYluC~4~mpWQPas3G6SeK~Nsj8NbYFYHBSBAZNCweU3PUZfHJebkyTVJ6SF2uUHzNlP4NXMQt2p3m5xSkwPV51gaxprVn0hLEBJdh7sZFFL3GP7sW1Fe1qLTcsmn8h-mKoH1bvxQ__&Key-Pair-Id=K1VGYTHIYLM9UM\n- **FBX**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f7-ab77-7648-b479-92a8c5fada27/output/Animation_Dodge_and_Counter_withSkin.fbx?Expires=1792635755&Signature=Wc~g-V5VOYxn-IiQt8OaHbSnDM1nDsyiYVP~DVJiOt3av3nmM1dVajhcRx-8QQzYkBNH5OFcnZ1INoUYtUUx0kNhIm4B6-ngQYWdFzx3uAJkWpRQiMwu0pP7ug~Wwlg6Dcc6ZyJYb2xBg3CCUFmOPiLMcgQpO7sg1RWIh6mZ9q1eXIrr3m5AM4B3foAW3Yaw8nB4cvYkXNLFBYd3IYjR3AaqJ7qBsEhgrTxs628MJtsK3PynF9YbhJjeq~b4tqWpkBzkA8YVU~DYOeNfshQ2NSyhWVnlRaBSa9N2MX3WPU~r5QqoFCHWQKC-SPr91U3F2ohV98uQaSapCxyT09ybLw__&Key-Pair-Id=K1VGYTHIYLM9UM\n\n**Note**: Download URLs expire after 24 hours."
+          }
+        ],
+        "structuredContent": {
+          "download_url": "<external download URL omitted; local source asset retained>",
+          "format": "fbx",
+          "animation_glb_url": "<external download URL omitted; local source asset retained>",
+          "animation_fbx_url": "<external download URL omitted; local source asset retained>",
+          "processed_usdz_url": "",
+          "expires_at": "2026-10-20T02:31:46.918Z"
+        }
+      },
+      "local_path": "ContentSource/WindowsOverhaul/Enemies/RelayRunner/attack.fbx",
+      "sha256": "d85c05a9d236e30d87d3b87d02a457bd631f4eb45ea2efd4a62bd6dd202e702a",
+      "bytes": 4121356,
+      "completionStatus": "SUCCEEDED"
+    },
+    {
+      "id": "ChromeVagrant",
+      "rigTask": "01a14d48-bd4a-769f-9c07-232a328b6054",
+      "action": 194,
+      "credits": 3,
+      "result": {
+        "task_id": "01a151f7-b62e-772e-acb4-938be7391cbc",
+        "status": "PENDING",
+        "message": "Animation task created successfully. Task ID: 01a151f7-b62e-772e-acb4-938be7391cbc",
+        "estimated_time": "1-2 minutes"
+      },
+      "status": "SUCCEEDED",
+      "download": {
+        "content": [
+          {
+            "type": "text",
+            "text": "# Animation Download URLs\n\n**Task ID**: 01a151f7-b62e-772e-acb4-938be7391cbc\n\n## Animation Files\n- **GLB**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f7-b62e-772e-acb4-938be7391cbc/output/Animation_Right_Uppercut_from_Guard_withSkin.glb?Expires=1792635755&Signature=IhWoRXj1uPhf3Eg3cte4s2iToSMT4bcY14NrjRukT-4Wd9AMC-xkHV-CZFjPy3~hWZYJJJewhRuFynXNMJ2yUO0fHXjDFSWd6-6XJUwSrgb6n9zdzM3abb~r~saoP3ADKtsdD4f6iIuj2j70LkR4ND1pp8q-~Vc6t9UehBTVAz1rgn~fVA1d1ak4TjUU22GcNeZceDVHXU6Qq3xaRghlg8eVE0aHmWOP0bOTdiMLw9kumSFbrXBaE0ZWKT03GwA6qTpFJQn7XB3-Ro1MOKoVfc6o84OdxBZ3YcBM62nb4HUJboxljn69BrEgahURVhCodRH8M2gpMq9uwJeQtGD4AQ__&Key-Pair-Id=K1VGYTHIYLM9UM\n- **FBX**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f7-b62e-772e-acb4-938be7391cbc/output/Animation_Right_Uppercut_from_Guard_withSkin.fbx?Expires=1792635755&Signature=eupKN-igkzVE4xK-u8VdXT8fELzArk3pkvmyIL9vvaZW0y5DWVxKwIaBPS~AFV2by8ST9gp~9ldiqC4~EyIzJvSTlLhxnl6PW5Jg-qlMlH5iB9w79Og0pCg1yjsBMYeMi7VvJTqlxzkclkZqTUV7zY~k3opsV2cfctbsRNzqch7Z~YDQefxa9mye7732sJZzFhYAfaaotVeFK2QQTk8qSd0JJJ~sM4XbgxtF3bAe2vsQURiBr4~XqLQZjQpmwmhS6ND4XSovEIEX8X1pbus2ATf7HxyPxIb9KfWTTZH6B-FIuUNnTUffBCRZydoSVEPNkTVEbpQcXYa4JR-7dY5asQ__&Key-Pair-Id=K1VGYTHIYLM9UM\n\n**Note**: Download URLs expire after 24 hours."
+          }
+        ],
+        "structuredContent": {
+          "download_url": "<external download URL omitted; local source asset retained>",
+          "format": "fbx",
+          "animation_glb_url": "<external download URL omitted; local source asset retained>",
+          "animation_fbx_url": "<external download URL omitted; local source asset retained>",
+          "processed_usdz_url": "",
+          "expires_at": "2026-10-20T02:31:50.306Z"
+        }
+      },
+      "local_path": "ContentSource/WindowsOverhaul/Enemies/ChromeVagrant/attack.fbx",
+      "sha256": "501bb9b979476de0a858b8ce109036e204734ee79c2c504ac89e9d2e5006b295",
+      "bytes": 4242652,
+      "completionStatus": "SUCCEEDED"
+    },
+    {
+      "id": "GlitchAcolyte",
+      "rigTask": "01a14d48-d262-7491-aad7-a9d48ab0ba8b",
+      "action": 133,
+      "credits": 3,
+      "result": {
+        "task_id": "01a151f7-c3c9-7627-bb3a-b9f590b32870",
+        "status": "PENDING",
+        "message": "Animation task created successfully. Task ID: 01a151f7-c3c9-7627-bb3a-b9f590b32870",
+        "estimated_time": "1-2 minutes"
+      },
+      "status": "SUCCEEDED",
+      "download": {
+        "content": [
+          {
+            "type": "text",
+            "text": "# Animation Download URLs\n\n**Task ID**: 01a151f7-c3c9-7627-bb3a-b9f590b32870\n\n## Animation Files\n- **GLB**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f7-c3c9-7627-bb3a-b9f590b32870/output/Animation_mage_soell_cast_4_withSkin.glb?Expires=1792635758&Signature=aKdtF~mkKLijVrg885CJV~suozqiZmhqKQOKOQbN~bAHOd5bTSpFhc9DmaQ00eoltoOajuL-fviAcs3-S-5tbFNxuwoZj0I31IUam1hGgfQWn9hg6jPShag5Q16NGbK6fPcJlvt4gmy6g8GK4cZbrEPpVmAQT~4xKaqKaCittGk3l5o4~bdfaPQcLtA0z7cpPDIr3G6AmdIvgYJi2E379fHSB7LpvVyrTZr-HMZQFwErHbuVaeQXJ01kJRtvRHCn5ewjwK~btHIp~5x~M-cMwi22ZlzJ7kYUnzWHI6b8R9oNOhQIjHNz8YPFtZeTLlfaUjPMYSBMUFTLwYUH3jDvZQ__&Key-Pair-Id=K1VGYTHIYLM9UM\n- **FBX**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f7-c3c9-7627-bb3a-b9f590b32870/output/Animation_mage_soell_cast_4_withSkin.fbx?Expires=1792635758&Signature=k5lL72jMew3MbutiUaBMAOlm2JccChw4H3H6iEG4rpKeTxcvTFg8j5z4bu6nitoPogDoYx4I9paUfPNjV~vwDAxj4rKWFfHKAWZZmZ7KD551WZm9al1QIJtRLjqlLepq-UKtRu5w4jHZYZipqqkDwfrVFbauN0fwyJLK5y8TJtPADuQnIXx2YQTNshsDO6UmK891YxKMAwdP8UTGnVm~OMUPV4evSc3R1QsS8iCErbuXvBHeD4qoFUJDpcFrrhhWIhgk-znIOcNJjXmehAZrtxA4ogKGkz0z3cqs~igcaJIWvZbl~u39kOH3ZrfdlVZNgpjNoSkiQiMJw7p~-gF4cQ__&Key-Pair-Id=K1VGYTHIYLM9UM\n\n**Note**: Download URLs expire after 24 hours."
+          }
+        ],
+        "structuredContent": {
+          "download_url": "<external download URL omitted; local source asset retained>",
+          "format": "fbx",
+          "animation_glb_url": "<external download URL omitted; local source asset retained>",
+          "animation_fbx_url": "<external download URL omitted; local source asset retained>",
+          "processed_usdz_url": "",
+          "expires_at": "2026-10-20T02:31:52.205Z"
+        }
+      },
+      "local_path": "ContentSource/WindowsOverhaul/Enemies/GlitchAcolyte/attack.fbx",
+      "sha256": "23dd18b2dcac44308d4cb5796a3774b1ec3df6a33aeb6882d28e380394487dc5",
+      "bytes": 3942124,
+      "completionStatus": "SUCCEEDED"
+    },
+    {
+      "id": "RiotBulwark",
+      "rigTask": "01a14d4b-bd79-77d1-bb90-f7dd90880a58",
+      "action": 220,
+      "credits": 3,
+      "result": {
+        "task_id": "01a151f7-d354-7640-8178-14748beb88bd",
+        "status": "PENDING",
+        "message": "Animation task created successfully. Task ID: 01a151f7-d354-7640-8178-14748beb88bd",
+        "estimated_time": "1-2 minutes"
+      },
+      "status": "SUCCEEDED",
+      "download": {
+        "content": [
+          {
+            "type": "text",
+            "text": "# Animation Download URLs\n\n**Task ID**: 01a151f7-d354-7640-8178-14748beb88bd\n\n## Animation Files\n- **GLB**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f7-d354-7640-8178-14748beb88bd/output/Animation_Shield_Push_Left_withSkin.glb?Expires=1792635763&Signature=ql2TcaIR9C~oja8~oCpk9UZzOpt3tq61zJobq5U5udpkICr132He~w07g0KQPbnvw26Np9Of1ojUr~4PuZen51dTPYJNg4BcV9J4dSrxFLjdNS3cro5oYHTBmVaZWz8dOY0UGJ9KFR8MZ9kA28T-v15~xAtkrMCMInGgQmLn9XCXvDdBFbe7JR2nfITIiiLz9WIn5e0j6eLYduGcYsw9LeXA5BFBMEmi8-KjnmL5OtEf1knAB520AP1qH24roiUUWyl3QGcpnaBmykvyZgi5JTY31O6BSiWzrerxqHBnsge1Mdop8nC5gSHWrA5EgECbAd~iCRsa7bnpgouQnbIYzw__&Key-Pair-Id=K1VGYTHIYLM9UM\n- **FBX**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f7-d354-7640-8178-14748beb88bd/output/Animation_Shield_Push_Left_withSkin.fbx?Expires=1792635763&Signature=kAqXRBAKqiAoNAOLsIjjzAnlwf1sc27YtteyHxCdeISL0r04LLuWDBJD0ID05oXgNZZNrcqbROglO9BXWq3as-f-blff6kUD3GrBF4arGbromjSRJdDoYABFXOX4EY3hjrcJso7~ahU~gx3czgPPGjXX~eOSlqleR5QBLmru3CFwD7NvoWfSAcEWdTgYEoTSPos5c5omsWJuN~~zvVi96OUQ13zMdmWaNVsjaGQ9wOM4lHEGUVhVkJrXtHPu1eTpA4Zjr5s~g2u9d0OEfGsbiTbbpepRqqtCCdE7T0IGngAcXZJ~8geoWxZk4iE88~E1KHlRQaBM7upCme5W5ZlMHw__&Key-Pair-Id=K1VGYTHIYLM9UM\n\n**Note**: Download URLs expire after 24 hours."
+          }
+        ],
+        "structuredContent": {
+          "download_url": "<external download URL omitted; local source asset retained>",
+          "format": "fbx",
+          "animation_glb_url": "<external download URL omitted; local source asset retained>",
+          "animation_fbx_url": "<external download URL omitted; local source asset retained>",
+          "processed_usdz_url": "",
+          "expires_at": "2026-10-20T02:31:54.04Z"
+        }
+      },
+      "local_path": "ContentSource/WindowsOverhaul/Enemies/RiotBulwark/attack.fbx",
+      "sha256": "a8d3ebd4093314440d93b0bf667707e4922e1da1e022434de2a2d032ba8a4ce2",
+      "bytes": 3500924,
+      "completionStatus": "SUCCEEDED"
+    },
+    {
+      "id": "CoilHarrier",
+      "rigTask": "01a14d48-ea52-719a-8662-b8082ccf5a49",
+      "action": 208,
+      "credits": 3,
+      "result": {
+        "task_id": "01a151f7-e02d-7300-bb4d-51adddd4d880",
+        "status": "PENDING",
+        "message": "Animation task created successfully. Task ID: 01a151f7-e02d-7300-bb4d-51adddd4d880",
+        "estimated_time": "1-2 minutes"
+      },
+      "status": "SUCCEEDED",
+      "download": {
+        "content": [
+          {
+            "type": "text",
+            "text": "# Animation Download URLs\n\n**Task ID**: 01a151f7-e02d-7300-bb4d-51adddd4d880\n\n## Animation Files\n- **GLB**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f7-e02d-7300-bb4d-51adddd4d880/output/Animation_Lunge_Roundhouse_Kick_withSkin.glb?Expires=1792635766&Signature=Ysu898NSTaMjJJ2eUsg0-YJFvZ23K05bfvA6swZMOQwjhzUVY~E60mmHn4oFHslscm9h4Y1j7W7Iq-BvKAhG50R2W4JhszwtlKkvMFXryp4h51sDLQkWejfaaEw45xj7msk7C7Q7F8lvJa0dZHVHMR2UG05BW~BpRmrA6jwpFQUtueFUoNbwXBEPSVMVwIWjybKW~rBiu-caMDe69~jwscx5q6fxswVthIbmwuPotW8bU354E2RpM6kMtv56BmOq-~xPzoTTndpvQcRMennpLDH6zXpxxzGW1z~YLmlmHpOtqYSqwv97jAfttepnccdSTtdoEA2B-P9c0LWdEc2n-A__&Key-Pair-Id=K1VGYTHIYLM9UM\n- **FBX**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f7-e02d-7300-bb4d-51adddd4d880/output/Animation_Lunge_Roundhouse_Kick_withSkin.fbx?Expires=1792635766&Signature=jOjmDhZ9bN-hp3~YIZMDXY3pQfT3XkXnClVG8HYsPyHH3GWMTiN0P68CYtJVBLDTnkeGP5BIR27-OfRZO7PJ~RSQNS1WK3yqk5mUuvQw7UZVsNAotZiCuw4FfyUkrDGVr39SSDmlMOR2ae19iokHxUX398d2xw4ygLrAntbwrKbnEa7BDcLev1i1Qt~LgsGoRdst9cFhKw3VmJEKI8kRvYfgtm-FIxjUQrxN~L9woR5lPGNKPVHI9HnsIDTQoktx~6WjVnu4a3dVsvNc6zxz1k02TNoYCY9W896QVDuiH55NdfAM2QuwOpu-py55msM8So8xVn-bQaTZh1jc1v0A5A__&Key-Pair-Id=K1VGYTHIYLM9UM\n\n**Note**: Download URLs expire after 24 hours."
+          }
+        ],
+        "structuredContent": {
+          "download_url": "<external download URL omitted; local source asset retained>",
+          "format": "fbx",
+          "animation_glb_url": "<external download URL omitted; local source asset retained>",
+          "animation_fbx_url": "<external download URL omitted; local source asset retained>",
+          "processed_usdz_url": "",
+          "expires_at": "2026-10-20T02:31:55.92Z"
+        }
+      },
+      "local_path": "ContentSource/WindowsOverhaul/Enemies/CoilHarrier/attack.fbx",
+      "sha256": "e7b51f8cdbc80e9a61b1b5aee6c8123b8d085ebb9be5dd485da2d68e30aad5d2",
+      "bytes": 4436812,
+      "completionStatus": "SUCCEEDED"
+    },
+    {
+      "id": "NullBishop",
+      "rigTask": "01a14d48-fee8-7033-9e62-63b47808737a",
+      "action": 125,
+      "credits": 3,
+      "result": {
+        "task_id": "01a151f8-5bd1-7787-8532-8b13ee3f5bd7",
+        "status": "PENDING",
+        "message": "Animation task created successfully. Task ID: 01a151f8-5bd1-7787-8532-8b13ee3f5bd7",
+        "estimated_time": "1-2 minutes"
+      },
+      "status": "SUCCEEDED",
+      "download": {
+        "content": [
+          {
+            "type": "text",
+            "text": "# Animation Download URLs\n\n**Task ID**: 01a151f8-5bd1-7787-8532-8b13ee3f5bd7\n\n## Animation Files\n- **GLB**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f8-5bd1-7787-8532-8b13ee3f5bd7/output/Animation_Charged_Spell_Cast_withSkin.glb?Expires=1792635798&Signature=cqSFp1G7g8hu~i1CIxwUv98e82Zt4DZ2cdN4CCVhWazX0G36j7a9Qx4gxWTSoEMQKd9Z8vMDQNVqTlUMvVWgthnDLdq7dlP9PFrBrXtR-rPMVDARP71MxxL2e0LjjeolfLE3PIZAcbMW9k983xa6pfVFeQGvIej6Wbd5QaX0J24iR8w87ESWhU2YoNGcgMrsrrk6YwbW0u98SGrdEQxdyNjY9pb9Ft27gLeMLbvFNBOJTBOlVfnD0gzWCZvF66oHmcR03y0i52kQwENK16MDP8GzWB~vsC7zENttJVzJcJz7848L193ZPoindYgEQK9X2tsU0UH2G-6rhqEZErsEZA__&Key-Pair-Id=K1VGYTHIYLM9UM\n- **FBX**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f8-5bd1-7787-8532-8b13ee3f5bd7/output/Animation_Charged_Spell_Cast_withSkin.fbx?Expires=1792635798&Signature=Xa~Y1bXHNwDPu5CatPZpa2J2U7iDRlQ-NIXM5S7Zmso9vDy9ClJ82bD4EBRih6b8ZJdxnwPfCfZjYJWYWeb2UbGMgQHm2E6EPOoVsC4iNt7IxG2hzQ9sUwzeW1hIinqOk72tIzAZ0ap9hAT38PK8niArMNA1QAm4GBOAnybULKjrqegVzLMO7bERKxv3oQ8bHieIaEOuyZtwIpEFUyRETy4qA4sd7dY0Sd6Jvr5VRe-ptTY8BfkK4pNefa2xrlOi~dTrBCEd0QmPfP~sxWLGgjbneqdlDMRtwr7R74to9m21ZUWY4b2J1JlufmVQ1yrR4JVXv1gZW4sYIGCjUqY5UQ__&Key-Pair-Id=K1VGYTHIYLM9UM\n\n**Note**: Download URLs expire after 24 hours."
+          }
+        ],
+        "structuredContent": {
+          "download_url": "<external download URL omitted; local source asset retained>",
+          "format": "fbx",
+          "animation_glb_url": "<external download URL omitted; local source asset retained>",
+          "animation_fbx_url": "<external download URL omitted; local source asset retained>",
+          "processed_usdz_url": "",
+          "expires_at": "2026-10-20T02:31:57.758Z"
+        }
+      },
+      "local_path": "ContentSource/WindowsOverhaul/Enemies/NullBishop/attack.fbx",
+      "sha256": "85d82a417c72630863578895256f23aca487596e1c1503bf6551df14088e57d7",
+      "bytes": 4323948,
+      "completionStatus": "SUCCEEDED"
+    },
+    {
+      "id": "RazorSeraph",
+      "rigTask": "01a14d49-15e3-77e8-b1fc-d7db6da33896",
+      "action": 91,
+      "credits": 3,
+      "result": {
+        "task_id": "01a151f8-6965-722e-9591-20a653006f13",
+        "status": "PENDING",
+        "message": "Animation task created successfully. Task ID: 01a151f8-6965-722e-9591-20a653006f13",
+        "estimated_time": "1-2 minutes"
+      },
+      "status": "SUCCEEDED",
+      "download": {
+        "content": [
+          {
+            "type": "text",
+            "text": "# Animation Download URLs\n\n**Task ID**: 01a151f8-6965-722e-9591-20a653006f13\n\n## Animation Files\n- **GLB**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f8-6965-722e-9591-20a653006f13/output/Animation_Double_Blade_Spin_withSkin.glb?Expires=1792635823&Signature=UYZ7j1abDiOrMULotgbqV0HMlR09VZrPwQC0vqpAyROD4I-1rBNkZZ12MuFicibOJNoxOAjPTQSHqVsVS7IDv3QmSgBA8jQU2J42T13qeymcDb2W4KwuiiA-kiGM8HZ3DGgUhVCtsH9vjK7IfESBBqrxZIaw2C47heMKa2xc-XFv01MoPA9PCoxidMbCWl~fhGAljWJhidd2kwDwCvbOYUYVTFS53UnGyQiqJ-U4hDkbEaVi-KGp6yG85O8Ivzjr6dVOEU9~~SS~19zl2x~2MyBtNwp~yULiXwVEdKVJOnAGzsMXe~kt~Y~GVEFmneOurbk0cxAaUZ4hjS14N3En~Q__&Key-Pair-Id=K1VGYTHIYLM9UM\n- **FBX**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f8-6965-722e-9591-20a653006f13/output/Animation_Double_Blade_Spin_withSkin.fbx?Expires=1792635823&Signature=Q6WTYBIbz-La-33l4WnEekrlgVjxX5K5HLzm3qSxM2lwkhOhX3k4yoNojG3By7KU4Y4nSZw6KmhzI9ncCbzTLFXxu7chmTx3kCM~feQBBsujIUXBPmKtBVXXopTXibuMPCeFP3XEl-Z9iOgIwluZFiiLz63XBxUNu9c6agtOq2esAtqZVD~VHbEnLcKP3EWK47buIS6KACbqrPJhYQpdBJT-UNP-GkSBmJck9KpEsqM0b5-sXw4Wh2tWY66kCqDdn65L~LigFwusdh5vJFatrACHtLoZk4B04jGyEYPabhzl6KjG9rGHusTgXXjR-Xazv9SqZXcpmoWkK8GYqUi-vA__&Key-Pair-Id=K1VGYTHIYLM9UM\n\n**Note**: Download URLs expire after 24 hours."
+          }
+        ],
+        "structuredContent": {
+          "download_url": "<external download URL omitted; local source asset retained>",
+          "format": "fbx",
+          "animation_glb_url": "<external download URL omitted; local source asset retained>",
+          "animation_fbx_url": "<external download URL omitted; local source asset retained>",
+          "processed_usdz_url": "",
+          "expires_at": "2026-10-20T02:31:59.8Z"
+        }
+      },
+      "local_path": "ContentSource/WindowsOverhaul/Enemies/RazorSeraph/attack.fbx",
+      "sha256": "db67f7bf04d9d2be700adb2de29807ab87e65c32fe7e40eb517a9673d1360b04",
+      "bytes": 4486412,
+      "completionStatus": "SUCCEEDED"
+    },
+    {
+      "id": "FurnaceOni",
+      "rigTask": "01a14d49-2c77-747c-8fee-bcc14e1adbbf",
+      "action": 127,
+      "credits": 3,
+      "result": {
+        "task_id": "01a151f8-7388-7075-8479-4c29286caf71",
+        "status": "PENDING",
+        "message": "Animation task created successfully. Task ID: 01a151f8-7388-7075-8479-4c29286caf71",
+        "estimated_time": "1-2 minutes"
+      },
+      "status": "SUCCEEDED",
+      "download": {
+        "content": [
+          {
+            "type": "text",
+            "text": "# Animation Download URLs\n\n**Task ID**: 01a151f8-7388-7075-8479-4c29286caf71\n\n## Animation Files\n- **GLB**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f8-7388-7075-8479-4c29286caf71/output/Animation_Charged_Ground_Slam_withSkin.glb?Expires=1792635804&Signature=mLv5hyyE5rW2olyq1aoudgRZ497lvFpsLMFUEDMPmgYqbjt1EzCwt8oQxN9WaUsp~HkSrNen47IvDGR7Ss6jT2aSDIshswG1ruy6XfqgtJzyxifHJFYzN8ikIIJLW2tlmJfF7eDwt14kUwZH2H0WhH-9R01PMeyT2HHhRWQN6TZRQrsRd4bB~M~WhQCZwQu6t-kdazFqlUZQ96wdu6nazbIW2fWLMN5BK91pZ4BLLSJrPIrMvFKv0xIrFKr7rBbp4BGZkAcnvmM6Vk1IiuOhZUYdNmbtKY5IfBo4WeULYy1qWHlN8jVfGE97Fw6yGzbsAQfYoSHim0ri6Cgyt~kJ9Q__&Key-Pair-Id=K1VGYTHIYLM9UM\n- **FBX**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f8-7388-7075-8479-4c29286caf71/output/Animation_Charged_Ground_Slam_withSkin.fbx?Expires=1792635804&Signature=jMGJXi27AszQJe~1S90aZzSQ6hfOnIAWvtqb5FlQrceCQ6HEo~GG36TN84cU9N1A6LmzOGrafXCbeff59DPXPHg961zDL0wsti9pi2O5hcS1-yQVUkcxckJqHwVN6t~6Fr0fHxyOcQmLHzaPn2xWWECIr0ZF3fREyInXJZ3jjW4tuweuPa3zmNBY-FbF2omfgErnuMecDDQU1SsrhlSaSR8VEPHJ~QURiaBe08QQBGDEb-C0uSqep9y4xd4MZQusxyKDYPZ0Iem-pnpO-2obbNLebDXL--bcqXIBShko3Z6JxUzAEfPSOWmz6tVZ~dHNOBfNQMHZcKOgScRwiJ5U7w__&Key-Pair-Id=K1VGYTHIYLM9UM\n\n**Note**: Download URLs expire after 24 hours."
+          }
+        ],
+        "structuredContent": {
+          "download_url": "<external download URL omitted; local source asset retained>",
+          "format": "fbx",
+          "animation_glb_url": "<external download URL omitted; local source asset retained>",
+          "animation_fbx_url": "<external download URL omitted; local source asset retained>",
+          "processed_usdz_url": "",
+          "expires_at": "2026-10-20T02:32:01.814Z"
+        }
+      },
+      "local_path": "ContentSource/WindowsOverhaul/Enemies/FurnaceOni/attack.fbx",
+      "sha256": "21a9638793030813c43d14007fc50b52b32fe61878bead578ef67213cbb90585",
+      "bytes": 4483532,
+      "completionStatus": "SUCCEEDED"
+    },
+    {
+      "id": "BroadcastSovereign",
+      "rigTask": "01a14d4b-d46b-73f6-bf48-68263d4510e0",
+      "action": 135,
+      "credits": 3,
+      "result": {
+        "task_id": "01a151f8-7edf-7095-a268-160d8374ea5e",
+        "status": "PENDING",
+        "message": "Animation task created successfully. Task ID: 01a151f8-7edf-7095-a268-160d8374ea5e",
+        "estimated_time": "1-2 minutes"
+      },
+      "status": "SUCCEEDED",
+      "download": {
+        "content": [
+          {
+            "type": "text",
+            "text": "# Animation Download URLs\n\n**Task ID**: 01a151f8-7edf-7095-a268-160d8374ea5e\n\n## Animation Files\n- **GLB**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f8-7edf-7095-a268-160d8374ea5e/output/Animation_mage_soell_cast_6_withSkin.glb?Expires=1792635807&Signature=dbUcLvZQTXZ472U6XA~B~StGNAqfZemfWGIkLJtfrum9PQfttApmNkmUKlXa3SP20uH8qG4Pk1dWn~9RbMo6EMc4WRLVdXGg3l4dUkwQSIvPjFBXHAXsUpshe~sN7V2pt0m-mGn0PGD5H7FUS0R4jwO0oiw-mDzZZsF51Zf~eZunOXvKbicLq8QlZsZq~jaJJUtVzJNqXTLcGpSKMlK7I3QOPmMN9gvPjC2ATF4QnwlilF-VnUdq2TA1Gl4Eey6s6~itqOYvTRkUjWrVafFzTdSphd--Ng6wann2y5aE2ZESOJU0AG~su15F-S2en7wn~mENrvz~crofuStrh~Mt7A__&Key-Pair-Id=K1VGYTHIYLM9UM\n- **FBX**: https://assets.meshy.ai/f3b81a51-5ea1-4933-8aef-149fba170245/tasks/01a151f8-7edf-7095-a268-160d8374ea5e/output/Animation_mage_soell_cast_6_withSkin.fbx?Expires=1792635807&Signature=XD4xz~OwU1uY9y4D0amjuaHMLZoueTDViat2M8NWJd3wp-CTfZtDe4o7KPhwOBmS5YUP8nmySC-H8hqqJaJOnduEBHNnO9xqTTrG8SQuP-YItziUVU3L0Z~zyZPIukC8JxXcJJ6iQdfWktEkufZCF~hail63qaSJ9Fm8ii1-nX0msf4Zsofm6eufpTYMm5Wep1JFp-TUSnnoVvWwtMakhJLrHUk5ER2404Pfp7PGetcZ8L0pqjP9hYt-cuL1czcJELA4YBecGJJzG7Y-buvOFf8Axm0HK5GqnuCKInARbAGNGhqOZF2ZgFJXPKc1D~70TNfuJtj5MH2Owqn2VYMCkw__&Key-Pair-Id=K1VGYTHIYLM9UM\n\n**Note**: Download URLs expire after 24 hours."
+          }
+        ],
+        "structuredContent": {
+          "download_url": "<external download URL omitted; local source asset retained>",
+          "format": "fbx",
+          "animation_glb_url": "<external download URL omitted; local source asset retained>",
+          "animation_fbx_url": "<external download URL omitted; local source asset retained>",
+          "processed_usdz_url": "",
+          "expires_at": "2026-10-20T02:32:03.53Z"
+        }
+      },
+      "local_path": "ContentSource/WindowsOverhaul/Enemies/BroadcastSovereign/attack.fbx",
+      "sha256": "c70e710f5b0b96fcb8908f57bdd9c4497cbb1e92b74208a845621a33d15e1924",
+      "bytes": 5068972,
+      "completionStatus": "SUCCEEDED"
+    }
+  ],
+  "models": [
+    {
+      "credits": 15,
+      "task_id": "01a151fd-8d11-746a-9685-5612d1bfc4b3",
+      "id": "Shopfront",
+      "status": "SUCCEEDED"
+    },
+    {
+      "credits": 15,
+      "task_id": "01a151fd-ad3e-773c-aec4-51a9fabe9ec1",
+      "id": "ServiceCabinet",
+      "status": "SUCCEEDED"
+    },
+    {
+      "credits": 15,
+      "task_id": "01a151fd-bd8f-74b4-acc8-1517c67dc02c",
+      "id": "DigitalSpirit",
+      "status": "SUCCEEDED"
+    }
+  ],
+  "spiritRig": {
+    "task_id": "01a15203-c8bd-702e-a6bb-d658a9ba76dc",
+    "status": "SUCCEEDED",
+    "credits": 5
+  },
+  "consumedCredits": 80,
+  "initialReservedCredits": 80
+}

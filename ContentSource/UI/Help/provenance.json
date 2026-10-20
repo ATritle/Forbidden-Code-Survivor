@@ -1,0 +1,162 @@
+[
+  {
+    "id": "Combat",
+    "source": "Saved\\Review\\OverhaulFunctional\\02-Evolved-Combat.png",
+    "sha256": "8ca26790b03c8ce065e44dfcba65f1c9b4d71c4ef1a721aa0e5bdf8185613065"
+  },
+  {
+    "id": "Draft",
+    "source": "Saved\\Review\\OverhaulFunctional\\03-Draft.png",
+    "sha256": "9759333e604ce8a4c968d590d393952b5382c553ac39d827c61787ee6742d255"
+  },
+  {
+    "id": "Warning",
+    "source": "Saved\\Screenshots\\LowHealth-SilentWarning.png",
+    "sha256": "0dd46f910f833d4755b527e84663d76cbc6b674848d9a6e13c2447bd2f31ccea"
+  },
+  {
+    "id": "Menu",
+    "source": "ContentSource\\UI\\LoadoutWorkbench\\Menu.png",
+    "sha256": "9a9d4e26d5c2e79343570de7abf10e09c1fd43cb63239c24ed4d489283c1d0f8"
+  },
+  {
+    "id": "Sign",
+    "source": "Saved\\Screenshots\\Challenge-Sign.png",
+    "sha256": "8d448635312941ca6b945d28c782728995d30063427b4e7032265791e25ea6da"
+  },
+  {
+    "id": "Settings",
+    "source": "Saved\\Screenshots\\Settings-ImpactIntensity.png",
+    "sha256": "7f57868dffcd91fabea289373a7575ed439309292605a191ca129eb8f48a34cc"
+  },
+  {
+    "id": "Testing",
+    "source": "Saved\\Screenshots\\TestingMulti-AllAttacks.png",
+    "sha256": "c8ac4daa96eedcf45f333f63eb327e3f2fec0108094aa83bf4d9cf2d5d549428"
+  },
+  {
+    "id": "Leaderboard",
+    "source": "Saved\\QA\\PackagedSystems\\Saved\\Review\\OverhaulSystems\\WindowsLeaderboard.png",
+    "sha256": "07909055fdae96706b70afc44b37af4915bd8d45ffec7f13b095e37c2b8a25a0"
+  },
+  {
+    "id": "Ramp",
+    "source": "Saved\\QA\\RampGuide\\Saved\\Review\\RampGuide\\Ramp.png",
+    "sha256": "47a83e28a0d43d75823efe1612d3fd091ddd0a87c9c01ff4644315d205efaa8e"
+  },
+  {
+    "id": "Relay",
+    "source": "Saved\\QA\\RampGuide\\Saved\\Review\\RampGuide\\Relay.png",
+    "sha256": "a04e527bb44f02f79a9c575abbe03b2e86959c1b256ac0434f6b96c7e96fbab3"
+  },
+  {
+    "id": "Cache",
+    "source": "Saved\\QA\\RampGuide\\Saved\\Review\\RampGuide\\Cache.png",
+    "sha256": "25ce7dd8fcdad5dbbbaaa6d20efc7e87bd6c3c3647069ea0675b6d7b72c66a9a"
+  },
+  {
+    "id": "Clinic",
+    "source": "Saved\\QA\\RampGuide\\Saved\\Review\\RampGuide\\Clinic.png",
+    "sha256": "3d6bc9756b8e9cb25cb4b47feb94376a4229328780b7e97043b9efbf9d93ea73"
+  },
+  {
+    "id": "Ward",
+    "source": "Saved\\QA\\RampGuide\\Saved\\Review\\RampGuide\\Ward.png",
+    "sha256": "5121f97cd393ce6b0216bf9a6239a2d01bd2096c10e73efd77520cc3ae234112"
+  },
+  {
+    "id": "Subway",
+    "source": "Saved\\QA\\RampGuide\\Saved\\Review\\RampGuide\\Subway.png",
+    "sha256": "9e987d4b8e0d4ca2af44a470f8b5a27eeb7b55c951b2d9f7bcbfc0920099a929"
+  },
+  {
+    "id": "Spirit",
+    "source": "Saved\\QA\\RampGuide\\Saved\\Review\\RampGuide\\Spirit.png",
+    "sha256": "3b9c042e4ab98d1e38c8424ec0b662c49902bab2523dd1be5ebadf7036e9c79b"
+  },
+  {
+    "id": "OverloadOrb",
+    "source": "Saved\\Screenshots\\Challenge-OverloadOrb.png",
+    "sha256": "c9e946836057036a35f03d0f4483fd605102f599356f18a9a5abe96ff05a97d8"
+  },
+  {
+    "id": "UnstableEcho",
+    "source": "Saved\\Screenshots\\Challenge-UnstableEcho.png",
+    "sha256": "55651bf98ba733f397e31f82e38689161ebf83e95bc4654056a19fca9116f131"
+  },
+  {
+    "id": "HostileBroadcast",
+    "source": "Saved\\Screenshots\\Challenge-Broadcast.png",
+    "sha256": "3230438602541b133238f9307886421592731a6148fe2f32f66556eb4ad03314"
+  },
+  {
+    "id": "DeadmanBattery",
+    "source": "Saved\\Screenshots\\Challenge-DeadmanBattery.png",
+    "sha256": "6a812acc53791ea75f84b33d2d5768a9a76dfabeb400a6bbf96a93cb25a54aa3"
+  },
+  {
+    "id": "GlassProtocol",
+    "source": "Saved\\Screenshots\\Challenge-GlassProtocol.png",
+    "sha256": "3331abceb1a601590ff8c53b35633679b19c2b356a1c934e466e82d77c938cfc"
+  },
+  {
+    "id": "JackpotCourier",
+    "source": "Saved\\Screenshots\\Challenge-JackpotCourier.png",
+    "sha256": "6c110e09f908f3cdb5c48cde29babef172b8851551ac2e3db8faa546daa81cca"
+  },
+  {
+    "id": "LockdownDuel",
+    "source": "Saved\\Screenshots\\Challenge-LockdownDuel.png",
+    "sha256": "e407fcff2d70612bb67fe8d0b3ae7441b16d135ba0f9c54b8b94f8388a93938c"
+  },
+  {
+    "id": "BroadcastSovereign",
+    "source": "ContentSource\\Enemies\\CyberRoster\\BroadcastSovereign.png",
+    "sha256": "26fc30489b96d9ec14521851969ed3afedc1c1bfdb83cb555b6923e7687396ba"
+  },
+  {
+    "id": "ChromeVagrant",
+    "source": "ContentSource\\Enemies\\CyberRoster\\ChromeVagrant.png",
+    "sha256": "2109b2d721038a7cc66642f59baf4b21b4ff60a43fb894cdda3f4f05e1e5851f"
+  },
+  {
+    "id": "CoilHarrier",
+    "source": "ContentSource\\Enemies\\CyberRoster\\CoilHarrier.png",
+    "sha256": "8a18e7e020215412331a8a4e39fec5881470d00c71fdf2ab21dfd26f79550f9e"
+  },
+  {
+    "id": "FurnaceOni",
+    "source": "ContentSource\\Enemies\\CyberRoster\\FurnaceOni.png",
+    "sha256": "3bd677b699f6886ba810d95c9ba9375019b2393ae1293b1348561cdbae3aa0f5"
+  },
+  {
+    "id": "GlitchAcolyte",
+    "source": "ContentSource\\Enemies\\CyberRoster\\GlitchAcolyte.png",
+    "sha256": "37eab0bab0803a273486e3de1271c4b0ce6eeb9ed8cd88298aa901483c2867a1"
+  },
+  {
+    "id": "NullBishop",
+    "source": "ContentSource\\Enemies\\CyberRoster\\NullBishop.png",
+    "sha256": "87f5355eca9a01d30c8c1a8a2e7076054db0554774944b7e5ae4b6c1173e304c"
+  },
+  {
+    "id": "RazorSeraph",
+    "source": "ContentSource\\Enemies\\CyberRoster\\RazorSeraph.png",
+    "sha256": "55c63302fd8b2e3155186291a3d1b3383e68349796e9f113376e3ccd2d6d54ef"
+  },
+  {
+    "id": "RelayRunner",
+    "source": "ContentSource\\Enemies\\CyberRoster\\RelayRunner.png",
+    "sha256": "6a5a3ba2abe25f6751aeae9cae373f3b16345930df137019963d32dbf45c85a7"
+  },
+  {
+    "id": "RiotBulwark",
+    "source": "ContentSource\\Enemies\\CyberRoster\\RiotBulwark.png",
+    "sha256": "73c17d16abbd55455656d1c90b2edfa0d8d37bab83607bbe529d0dc4f438e6b5"
+  },
+  {
+    "id": "WireThrall",
+    "source": "ContentSource\\Enemies\\CyberRoster\\WireThrall.png",
+    "sha256": "cd8ca3340bdf186e4dfcb8fc02ecd51a9b56853e19b982b595241a1dad1b243b"
+  }
+]

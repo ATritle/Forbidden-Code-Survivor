@@ -1,0 +1,66 @@
+{
+  "status": "Proposed concepts awaiting user approval. No game implementation or Meshy generation.",
+  "tool": "Built-in image_gen",
+  "reference": "../NeonExorcist/Player-Concept-v8.png",
+  "balanceNote": "Initial proposed values for later playtesting.",
+  "concepts": [
+    {
+      "id": "Zero",
+      "name": "ZERO",
+      "role": "Vector Duelist",
+      "palette": [
+        "Cobalt blue",
+        "Cool white",
+        "Coral red"
+      ],
+      "perks": [
+        {
+          "name": "Target Lock",
+          "description": "Three direct player-weapon hits on one enemy within 2 seconds mark it for 4 seconds. Player weapons deal 25% extra damage to the marked enemy. Only one mark can be active; a new mark cannot replace a live mark. Summons, secondary explosions and damage-over-time ticks do not build the mark."
+        },
+        {
+          "name": "Perfect Line",
+          "description": "Every third projectile cast gives its first projectile two additional pierces, with a distinct cobalt-white trail. Other projectiles in the same volley are unchanged. Area pulses, beams and summons are excluded."
+        }
+      ],
+      "tradeoff": "20% smaller area-damage radius; targeting range and projectile collision size are unchanged.",
+      "deckSynergy": [
+        "Photon Lance",
+        "Kinetic Cards",
+        "Pulse Dart"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: premium playable-character approval sheet for the cyberpunk energy-spell bullet-heaven game Forbidden Code: Survivor. Create a NEW character named ZERO, subtitle VECTOR DUELIST. Input image is a STYLE/WORLD reference only: retain the realistic high-end 3D game-concept finish, black technical streetwear, practical fine detailing, neon accents, futuristic spiritual circuitry, studio presentation and hoverboard fantasy. This is a different person, silhouette, equipment and palette from the reference; no resemblance to existing superheroes.\nSubject: a lean adult man with light olive skin, angular features, neatly cut jet-black hair swept back with a single narrow silver streak, composed focused expression, exposed lower face. A smooth single-screen COBALT blue visor covers his eyes and nose, with tiny white targeting marks projected inside. Long fitted sleeveless graphite technical tunic with angular overlapping short panels terminating above the knee, crisp white ceramic collar and white narrow shoulder guards, fitted dark sleeves underneath, slim tapered combat trousers and compact black ninja footwear. His silhouette should be tall, narrow and precise, rather than bulky or baggy. Not a robe, not a cape. One slim articulated aiming bracer projects concentric cobalt target rings and a razor-straight white energy line. Small precisely aligned holographic code tiles clipped near his belt. Color palette: luminous COBALT BLUE and cool WHITE against graphite, small sharply controlled CORAL RED markers. Avoid teal/mint or orange/gold dominating. Emissive trim is precise clean linear circuitry, unlike random all-over neon scribbles. No guns, no swords held in his hands, no physical lightning, flames, blood or skeletons.\nHoverboard: ONE connected sleek narrow asymmetrical precision board, long monocoque deck with a sculpted forked front tip, a single central white ceramic spine, graphite foot pads, two slender recessed cobalt lift strips and tiny coral alignment lights. Both human-size compact feet planted in a natural diagonal riding stance, safe usable deck width. Carbon and ceramic, no wheels, no giant boots, no detached hover shoes. Whole board entirely visible with realistic small levitation gap above wet floor.\nComposition: sophisticated landscape character-design sheet, charcoal-gray studio background, fine drafting lines. Large uncropped three-quarter full-body hero render fills LEFT two-thirds, all head and board tips visible. RIGHT third contains a smaller rear three-quarter view of the SAME character, a closeup of visor/aiming bracer, an isolated clean side profile of the board and restrained blue/white/coral swatches. A small lower-right action vignette shows a single slender WHITE-COBALT energy projectile piercing through three abstract target silhouettes in a perfectly aligned row, each contact with a sharp little coral crosshair and geometric chip sparks, absolutely no lightning branches or fireball. Use controlled cinematic rim light and a neutral readable key light revealing black fabric construction, mild wet floor reflection, realistic materials, restrained bloom. Hero remains the main focus, make the silhouette readable from a top-down game camera. The design feels like a cyberpunk duelist and elite precision coder.\nText only: small elegant header ZERO, subtitle VECTOR DUELIST. No game statistics, no extra paragraphs, no brand logos, no watermark. A finished character approval concept sheet rather than an in-game screenshot.",
+      "image": "Zero-VectorDuelist-v1.png"
+    },
+    {
+      "id": "Mira",
+      "name": "MIRA",
+      "role": "Daemon Shepherd",
+      "palette": [
+        "Magenta",
+        "Lilac",
+        "Pearl white"
+      ],
+      "perks": [
+        {
+          "name": "Bound Daemon",
+          "description": "Starts with one permanent digital-spirit familiar firing a homing energy pulse every 1.2 seconds. Base damage is 12 plus 2 per player level after level 1. It benefits from summon modifiers and is separate from the player's normal loadout slots."
+        },
+        {
+          "name": "Signal Possession",
+          "description": "Every 20 direct summon hits, convert one nearby basic enemy into an ally for 8 seconds. Internal cooldown 10 seconds, maximum one converted ally. Elites, bosses and objective enemies cannot be possessed. Expiration grants no kill credit or essence. The temporary ally's own hits do not build possession progress."
+        }
+      ],
+      "tradeoff": "15% less damage from the player's own weapons; summon damage is unaffected.",
+      "deckSynergy": [
+        "Summon-focused energy builds",
+        "Talisman protection",
+        "Crowd-control programs"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: premium playable-character approval sheet for the cyberpunk energy-spell bullet-heaven game Forbidden Code: Survivor. Create a NEW character named MIRA, subtitle DAEMON SHEPHERD. The supplied image is a STYLE/WORLD reference only: retain realistic high-end 3D game-concept rendering, black technical materials, saturated neon edge accents, spiritual digital circuitry, studio presentation and one hoverboard. Do NOT copy the reference man's face, topknot, jacket, stance, board or rainbow palette.\nSubject: an adult East Asian woman in her thirties with pale warm skin, calm intelligent face and dark lips, chin-length straight glossy black hair with two longer thin silver fiberoptic braids behind the ears, short geometric bangs. Smooth single-screen pearly LILAC visor covers eyes AND nose, mouth and jaw exposed. Distinctive modern cyberpunk spirit-controller silhouette: a short boxy cropped black technical poncho with broad angular shoulder silhouette and narrow split sides, no floor-length robes and no cape, a tailored matte-black high-collar underlayer, slim tapered trousers, compact soft ninja-style footwear. Lilac translucent circuit panels are embedded in the shoulder mantle, subtle asymmetric ivory ceramic forearm cuffs, small white data cartridges and luminous magenta seals on a neat waist harness. Chest and torso fully clothed in practical technical fabrics. Hands held apart controlling two small floating digital-spirit familiars through luminous gesture rings. Color palette: vivid MAGENTA and soft LILAC with PEARL WHITE on charcoal black, subtle ultraviolet depth; no orange/gold or mint-green. This is an energy hacker, not a skeleton necromancer.\nThe familiars: two small floating translucent digital ghosts, one roughly knee-high and one palm-sized, elegant faceless smooth holographic little humanoid forms with soft tapered lower bodies, pearly polygon mesh silhouettes, magenta particle trails and lilac glyph cores. Clearly projected companions, not solid robots, not skulls or monsters. They must stay beside the rider and not obscure the body or board. Spiritual cyberpunk rather than occult horror. No blood, fire, skeletons, guns or lightning bolts.\nHoverboard: ONE connected gently crescent-shaped graphite deck with a broad usable central foot platform, short upturned swept ends and a thin silver rim. Both compact feet clearly supported on this single board in a graceful diagonal stance. Two concentric shallow recessed levitation rings under the deck cast lilac circular light onto the wet floor. Clean sculpted monocoque shell, flush emitters, magenta perimeter pinstripe, no large engine boxes. Hovering with small visible air gap, no wheels or hover shoes. The distinctive curved board must be entirely visible and mechanically believable, not a floating chair or hoop.\nComposition: sophisticated landscape character-design sheet on charcoal-gray studio backdrop with fine drafting lines. Large full-body three-quarter beauty render fills LEFT two-thirds, uncropped head and whole board and both feet visible. RIGHT third shows a smaller rear three-quarter view of the SAME character, a closeup of one translucent daemon familiar and one isolated board side profile, lilac/magenta/pearl material swatches. Small lower-right action vignette shows the two familiars aiming bright compact magenta energy pulses at a small abstract hostile robot silhouette that is transitioning from red digital noise into lilac friendly holographic code; keep this readable and elegant, no text labels or explosions. Neutral key light exposes black fabric texture, cinematic lilac and magenta rim lighting, restrained emissive bloom, convincing material response and controlled wet floor reflections. Top-down readable, distinctive wide upper-body silhouette balanced on slim curved board.\nText only: elegant small header MIRA, subtitle DAEMON SHEPHERD. No statistics, no extra paragraphs, no logos or watermark. Finished original character approval concept art rather than an in-game screenshot.",
+      "image": "Mira-DaemonShepherd-v1.png"
+    }
+  ],
+  "perkConceptFeedback": "User likes both perk sets; retain them unchanged while exploring different character appearances.",
+  "visualStatus": "Previous images preserved; alternate visual concepts requested."
+}

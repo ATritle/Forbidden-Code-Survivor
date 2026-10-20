@@ -2,11 +2,21 @@ Unicode true
 !ifndef PACKAGE_ROOT
 !define PACKAGE_ROOT "..\Artifacts\Windows"
 !endif
+!ifndef BUILD_VERSION
+!define BUILD_VERSION "0.4.7"
+!endif
+!ifndef OUTPUT_DIRECTORY
+!define OUTPUT_DIRECTORY "..\Artifacts\Installer-${BUILD_VERSION}"
+!endif
+!ifndef UNINSTALL_INCLUDE
+!define UNINSTALL_INCLUDE "${OUTPUT_DIRECTORY}\uninstall-files.nsh"
+!endif
+!define REG_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\ForbiddenCodeSurvivor-${BUILD_VERSION}"
 !include "MUI2.nsh"
 Name "Forbidden Code: Survivor"
-OutFile "..\Artifacts\Installer\ForbiddenCode-Survivor-Setup.exe"
-InstallDir "$LOCALAPPDATA\Programs\ForbiddenCodeSurvivor"
-InstallDirRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ForbiddenCodeSurvivor" "InstallLocation"
+OutFile "${OUTPUT_DIRECTORY}\ForbiddenCode-Survivor-${BUILD_VERSION}-Setup.exe"
+InstallDir "$LOCALAPPDATA\Programs\ForbiddenCodeSurvivor-${BUILD_VERSION}"
+InstallDirRegKey HKCU "${REG_KEY}" "InstallLocation"
 RequestExecutionLevel user
 SetCompressor /SOLID lzma
 !define MUI_ABORTWARNING
@@ -24,25 +34,25 @@ Section "Forbidden Code: Survivor (required)" Game
   SetOutPath "$INSTDIR"
   File /r /x "*.pdb" /x "Manifest_DebugFiles*.txt" "${PACKAGE_ROOT}\*"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ForbiddenCodeSurvivor" "DisplayName" "Forbidden Code: Survivor"
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ForbiddenCodeSurvivor" "DisplayVersion" "0.2.0"
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ForbiddenCodeSurvivor" "InstallLocation" "$INSTDIR"
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ForbiddenCodeSurvivor" "UninstallString" '"$INSTDIR\Uninstall.exe"'
-  WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ForbiddenCodeSurvivor" "NoModify" 1
-  WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ForbiddenCodeSurvivor" "NoRepair" 1
-  CreateDirectory "$SMPROGRAMS\Forbidden Code Survivor"
-  CreateShortcut "$SMPROGRAMS\Forbidden Code Survivor\Forbidden Code Survivor.lnk" "$INSTDIR\ForbiddenCodeSurvivor.exe"
+  WriteRegStr HKCU "${REG_KEY}" "DisplayName" "Forbidden Code: Survivor ${BUILD_VERSION}"
+  WriteRegStr HKCU "${REG_KEY}" "DisplayVersion" "${BUILD_VERSION}"
+  WriteRegStr HKCU "${REG_KEY}" "InstallLocation" "$INSTDIR"
+  WriteRegStr HKCU "${REG_KEY}" "UninstallString" '"$INSTDIR\Uninstall.exe"'
+  WriteRegDWORD HKCU "${REG_KEY}" "NoModify" 1
+  WriteRegDWORD HKCU "${REG_KEY}" "NoRepair" 1
+  CreateDirectory "$SMPROGRAMS\Forbidden Code Survivor ${BUILD_VERSION}"
+  CreateShortcut "$SMPROGRAMS\Forbidden Code Survivor ${BUILD_VERSION}\Forbidden Code Survivor.lnk" "$INSTDIR\ForbiddenCodeSurvivor.exe"
 SectionEnd
 Section /o "Desktop shortcut" Desktop
-  CreateShortcut "$DESKTOP\Forbidden Code Survivor.lnk" "$INSTDIR\ForbiddenCodeSurvivor.exe"
+  CreateShortcut "$DESKTOP\Forbidden Code Survivor ${BUILD_VERSION}.lnk" "$INSTDIR\ForbiddenCodeSurvivor.exe"
 SectionEnd
 Section "Uninstall"
   ; Delete only files enumerated from this build, preserving unrelated files and saved games.
-  !include "..\Artifacts\Installer\uninstall-files.nsh"
+  !include "${UNINSTALL_INCLUDE}"
   Delete "$INSTDIR\Uninstall.exe"
   RMDir "$INSTDIR"
-  Delete "$SMPROGRAMS\Forbidden Code Survivor\Forbidden Code Survivor.lnk"
-  RMDir "$SMPROGRAMS\Forbidden Code Survivor"
-  Delete "$DESKTOP\Forbidden Code Survivor.lnk"
-  DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ForbiddenCodeSurvivor"
+  Delete "$SMPROGRAMS\Forbidden Code Survivor ${BUILD_VERSION}\Forbidden Code Survivor.lnk"
+  RMDir "$SMPROGRAMS\Forbidden Code Survivor ${BUILD_VERSION}"
+  Delete "$DESKTOP\Forbidden Code Survivor ${BUILD_VERSION}.lnk"
+  DeleteRegKey HKCU "${REG_KEY}"
 SectionEnd

@@ -1,0 +1,11 @@
+{
+	"result": "ALL16_PASS",
+	"detail": "Without the playtest flag normal capacity remains six",
+	"expanded": false,
+	"capacity": 6,
+	"weapons": 0,
+	"hands": 0,
+	"damageByCard":
+	{
+	}
+}

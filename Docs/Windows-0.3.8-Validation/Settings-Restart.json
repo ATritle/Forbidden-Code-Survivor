@@ -1,0 +1,8 @@
+{
+	"result": "SETTINGS_REVIEW_PASS",
+	"detail": "Saved settings restored",
+	"case": "preferences-reload",
+	"checks": [
+		"Fresh process restored preset, custom render scale, VSync, independent audio volumes and impact intensity"
+	]
+}

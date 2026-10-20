@@ -1,0 +1,19 @@
+Forbidden Code: Survivor - Windows 0.3.9 / Repeat selected menu track
+
+The menu music player now restarts the selected song at natural completion,
+including resetting its displayed playhead and music spectrum timing. It keeps
+repeating until the user selects a different song through previous, next or
+TRACKS. Pause/resume, seeking, volume and mute retain their behavior.
+
+The gameplay playlist still advances normally and continues through card drafts.
+Music assets are unchanged. Menu completion repeats the same track, with a
+pause/seek-aware real-time fallback because paused worlds can delay the engine
+completion delegate. The timer and visualizer restart with the sound.
+
+Packaged validation lets every one of the four menu tracks finish twice and
+checks playback, selected index and restarted playhead. It also pauses near
+track end, tests all manual controls, verifies saved volume/mute after restart,
+records audible mixer output and checks gameplay rotation/draft continuity.
+
+The current launcher opens 0.3.9. Play-Windows-0.3.8.cmd retains the previous
+build. Versioned packages/installers and the original baseline remain separate.

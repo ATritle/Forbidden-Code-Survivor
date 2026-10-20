@@ -1,0 +1,37 @@
+Forbidden Code: Survivor - Windows 0.3.7 / Settings and display controls
+
+Settings now has four tabs: Display, Audio & Effects, Accessibility and Controls.
+Consistent fonts, readable descriptions, aligned control columns, cyan outlines
+and fixed footer actions replace the long stack of mixed-size widgets. Button
+labels stay on one line. The panel scales down to fit smaller windows; content
+can scroll independently of navigation and footer actions.
+
+Display offers four existing graphics presets, a custom 50-100% internal render
+scale, VSync, Fullscreen / Borderless / Windowed, and output resolution selection.
+Borderless uses the desktop resolution. Apply previews a display mode for 15
+seconds; Keep confirms and saves. Escape, timeout or closing the settings menu
+restores the previous unconfirmed mode. A real-time ticker runs independently
+of gameplay pause and visibility. Other controls are disabled during confirmation.
+
+Presets apply all Unreal scalability groups plus their default internal render
+scale: Performance 70%, Balanced 85%, High 100%, Cinematic 100%. The existing
+preset names map to UE scalability levels 0, 1, 2, 3 respectively. UE 5.8 uses
+no Lumen GI at level 0, irradiance-volume Lumen GI at level 1, and screen-probe
+Lumen GI at levels 2 and 3. Lumen reflections begin at level 2.
+
+Graphics now apply through non-resolution settings, so quality changes do not
+unexpectedly resize the window. Custom render scale applies even when the same
+preset remains selected, and survives accessibility changes and process restart.
+
+The audio/VFX, testing-range, guide, close-game, pause and draft behavior remain.
+Input bindings are ordered, reset updates their labels immediately, and cancelling
+a remap restores the current key label. Closing flushes pending profile changes.
+
+Test-SettingsReview.ps1 verifies all presets against actual scalability and render
+CVars, camera bloom, VSync, custom scale, audio/VFX settings, input reset/rebind,
+testing-menu return, pause/draft behavior, layout at 1600x900 and 1280x720,
+native window/viewport modes and resolutions, real timeout rollback while
+paused/hidden, close rollback, and confirmed settings across process restart.
+
+Play-Forbidden-Routines.cmd launches 0.3.7. Play-Windows-0.3.6.cmd retains the
+previous layout. Packages/installers and the original baseline stay separate.

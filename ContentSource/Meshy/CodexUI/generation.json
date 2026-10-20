@@ -1,0 +1,8 @@
+{
+  "task_id": "01a14a65-3524-71fd-b0ca-ffb87e1b93fa",
+  "provider": "Meshy",
+  "model": "gpt-image-2",
+  "credits": 9,
+  "approved_batch": "one art sheet, no paid retries",
+  "prompt": "Game UI texture atlas, exact 3x3 equal square grid, no gaps, no text, no borders. Dark fantasy oil painting, black obsidian backgrounds, luminous intricate detail, centered subjects inset 15% inside each cell. Row1: spectral green bone spear; orange inferno fireball; icy blue exploding crystal nova. Row2: two armored summoned skeleton warriors; emerald skull school emblem; amber flame school emblem. Row3: crimson blood drop school emblem; violet cursed eye school emblem; pale blue snowflake school emblem. Each cell separate complete artwork. Premium gothic grimoire art."
+}

@@ -11,7 +11,7 @@ const TArray<FCyberEnemyProfile>& CyberEnemies::Roster()
         {TEXT("NullBishop"),TEXT("NULL BISHOP"),2,720,295,155,180,30,58,10},
         {TEXT("RazorSeraph"),TEXT("RAZOR SERAPH"),2,560,280,260,210,28,52,10},
         {TEXT("FurnaceOni"),TEXT("FURNACE ONI"),2,1100,325,125,240,38,65,14},
-        {TEXT("BroadcastSovereign"),TEXT("BROADCAST SOVEREIGN"),3,6000,520,115,360,48,90,40}
+        {TEXT("BroadcastSovereign"),TEXT("BROADCAST SOVEREIGN"),3,6000,520,115,360,32,90,40}
     };return Data;
 }
 int32 CyberEnemies::Select(float Seconds,float Roll)

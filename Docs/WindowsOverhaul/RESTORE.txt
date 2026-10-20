@@ -1,0 +1,7 @@
+Original Windows build: C:\dev\DeckBuilder\Artifacts\Baselines\Windows-PreOverhaul-20261019T021817Z
+
+Play-Original-Windows.cmd at the workspace root launches the preserved packaged game with an isolated user directory.
+Restore-Original-Windows.cmd restores the archive into Artifacts/RestoredOriginal, only if empty, and verifies every file.
+The immutable ZIP and manifest checksums are in the baseline folder. Never overwrite or regenerate that baseline.
+Copy the baseline folder to another physical drive for disk-failure protection.
+The overhaul uses versioned save slots and separate package/installer output paths.

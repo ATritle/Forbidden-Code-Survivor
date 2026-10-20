@@ -1,0 +1,21 @@
+{
+  "task_id": "01a15029-1807-72aa-b8cd-1d0b5da4bc3f",
+  "status": "SUCCEEDED",
+  "approval": "User approved 15 Meshy credits for one T2 FBX sign housing, 12000 target triangles, 2K PBR textures; no paid retries or extras.",
+  "consumed_credits": 15,
+  "ai_model": "meshy-t2",
+  "model_type": "smart-topology",
+  "target_polycount": 12000,
+  "actual_triangles": 12085,
+  "target_formats": ["fbx"],
+  "enable_pbr": true,
+  "texture_resolution": "2k",
+  "input_image": "HousingReference-v1.png",
+  "reference_preparation": "Built-in imagegen edit; HousingPrompt-v1.txt preserves the prompt. Original approved sign was retained separately.",
+  "source_model": "model.fbx",
+  "normalized_model": "ChallengeSign-UE.fbx",
+  "textures": ["base_color", "normal", "metallic", "roughness"],
+  "unreal_asset": "/Game/Art/Challenges/Meshy/SM_ChallengeSign",
+  "nanite": true,
+  "post_generation_neon": "Live text, pink energy core, cyan trim, animated emissive materials and a local point light are separate Unreal components. Housing PBR material has no emissive output."
+}

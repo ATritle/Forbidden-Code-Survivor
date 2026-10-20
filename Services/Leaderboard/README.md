@@ -1,5 +1,28 @@
-# Forbidden Code: Survivor leaderboard service
+# Sites Worker ESM starter
 
-Public Sites Worker and D1 database for the browser leaderboard. See [the architecture, score rules, tests and deployment notes](../../Docs/Leaderboard.md).
+Use this starter for a static microsite, click counter, or simple internal UI whose state is browser-scoped. It has no dependencies and needs no install.
 
-Run `node --test tests/*.test.mjs` with Node 24. Source migrations are generated with the pinned Drizzle tools; deployed SQL is included in `drizzle/`. No package installation is needed to run Worker SQL tests.
+Edit `worker/index.js`, then publish through the Sites hosting workflow with this starter's build and validation in `commands`.
+
+The build copies only `worker/index.js` and `.openai/hosting.json`. Do not add standalone asset files. Embed any essential raster bytes in `worker/index.js` and serve or reference them as a data URL.
+
+Pass these argument arrays as `commands`:
+
+```json
+[
+  ["bash", "scripts/build.sh"],
+  ["node", "scripts/validate-artifact.mjs"]
+]
+```
+
+The deterministic build produces:
+
+```text
+dist/
+├── .openai/
+│   └── hosting.json
+└── server/
+    └── index.js
+```
+
+`dist/server/index.js` is an ES module with a default export containing `fetch(request, env, ctx)`. Edit `worker/index.js`, not the generated file under `dist/`.

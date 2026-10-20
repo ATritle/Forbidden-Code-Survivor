@@ -1,0 +1,7 @@
+{
+  "extractionHashes": "Saved/Review/InstallerExtraction-0.4.5.json",
+  "result": "INSTALLER_ROUNDTRIP_PASS",
+  "installedLaunch": "Saved/Review/InstalledSmoke/report.json",
+  "temporaryInstallRemoved": true,
+  "originalBuildPreserved": true
+}

@@ -1,0 +1,14 @@
+{
+	"result": "MENU_NAVIGATION_PASS",
+	"detail": "Complete hover descriptions and layered Escape navigation verified through real pointer/Slate input with isolated saves",
+	"phase": 25,
+	"width": 1600,
+	"height": 900,
+	"checks": [
+		"All 16 actual hover targets expose complete descriptions; edge/second-page captures recorded",
+		"Focused dialog buttons back through upgrade paths, card editor, program library and hideout without selecting an upgrade",
+		"Escape returns Help and Testing to Settings, dismisses spacing warning first, closes leaderboard and preserves root pause",
+		"Draft Escape resumes live combat; same widget/hand, rerolls, branch state and queued levels survive Tab; replacement Escape keeps weapons",
+		"Back declines corruption/capture without spending or auto-picking, and closes the scoreboard while username text has focus"
+	]
+}

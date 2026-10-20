@@ -1,0 +1,20 @@
+{
+  "background": "NeonDistrict-Menu.png",
+  "generation": "built-in imagegen",
+  "palette": [
+    "mint",
+    "pink",
+    "violet",
+    "cyan",
+    "gold",
+    "teal"
+  ],
+  "glass": "nine-tap anisotropic texture blur, honeycomb SDF grid, pulsing neon rims",
+  "parameters": [
+    "Backdrop",
+    "Rect",
+    "Accent",
+    "Control",
+    "PanelSize"
+  ]
+}

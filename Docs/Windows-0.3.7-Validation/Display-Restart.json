@@ -1,0 +1,8 @@
+{
+	"result": "SETTINGS_REVIEW_PASS",
+	"detail": "Saved display mode restored",
+	"case": "display-reload",
+	"checks": [
+		"Fresh process restored confirmed borderless mode from GameUserSettings.ini"
+	]
+}

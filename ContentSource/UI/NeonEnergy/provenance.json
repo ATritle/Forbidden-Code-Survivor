@@ -1,0 +1,7 @@
+{
+  "generator": "OpenAI built-in image generation",
+  "prompt": "Create one cohesive game UI texture atlas, exactly 3 columns by 2 rows of six square cyberpunk spell card illustrations, edge to edge tiles no gutters no borders no words no letters. Dark midnight backgrounds, premium sharp painterly sci-fi concept art with hot neon magenta pink cyan violet highlights, original designs, readable at thumbnail size. Row1 left: a fast needle-shaped pink kinetic energy dart surrounded by tiny firework sparks. Row1 middle: three luminous magenta plasma spheres with tapered pink aura tails and colliding sparks. Row1 right: a circular cyan violet energy nova with eight bright radiant shards. Row2 left: three black holographic playing cards with magenta luminous geometric circuit sigils flying in a charged kinetic arc, no suits or lettering. Row2 middle: a concentrated sleek cyan photon lance piercing forward through concentric energy rings. Row2 right: a protective circular constellation of three luminous pink and cyan talisman cards making a barrier. Detailed particles and soft glows with crisp silhouettes. This is one flat atlas texture asset for a neon exorcist deckbuilder, not a screenshot, no people, no skulls, no skeletons, no blood, no lightning bolts, no orange fire.",
+  "atlas": "EnergyAtlas.png",
+  "layout": "3 columns, 2 rows; split into six game textures",
+  "meshy_credits": 0
+}

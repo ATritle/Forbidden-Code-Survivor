@@ -1,0 +1,72 @@
+{
+  "status": "VEX and ROOK concept art approved by the user. No game implementation or Meshy generation performed.",
+  "tool": "Built-in image_gen",
+  "reference": "../NeonExorcist/Player-Concept-v8.png",
+  "concepts": [
+    {
+      "id": "Vex",
+      "name": "VEX",
+      "role": "Ghost Courier",
+      "palette": [
+        "Cyan",
+        "Mint green",
+        "Ultraviolet"
+      ],
+      "silhouette": "Lean female courier, cropped hooded jacket, smooth visor, narrow racing hoverboard",
+      "perks": [
+        {
+          "name": "Afterimage Protocol",
+          "description": "Boost leaves a holographic decoy for 1.5 seconds. It draws nearby basic enemies within 600 cm. Internal cooldown: 6 seconds; bosses ignore the taunt."
+        },
+        {
+          "name": "Ghost Routing",
+          "description": "Chain attacks gain one additional hop and 15% more jump range. Extra hops follow normal targeting rules and cannot create recursive chains."
+        }
+      ],
+      "tradeoff": "20% less maximum health.",
+      "deckSynergy": [
+        "Ghost Link",
+        "Arc Relay"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: AAA playable-character approval concept sheet for Forbidden Code: Survivor. Generate a NEW adult female player character named VEX, subtitle GHOST COURIER. The supplied image is a STYLE AND WORLD REFERENCE ONLY: match its exceptionally detailed realistic 3D game-concept rendering, convincing black technical fabrics, saturated neon emissive accents, high quality visible materials, full-body readability and near-future spiritual cyberpunk world. Do NOT copy the reference man's identity, hair, clothes silhouette, exact colors, pose or hoverboard.\nDesign VEX as a lean athletic street courier and digital-spirit hacker, adult woman with warm medium-brown skin, short asymmetrical platinum-white hair and one shaved temple, expressive exposed mouth and jaw. A compact angular hood rests behind her head, short fitted asymmetrical black technical bolero jacket over a charcoal armored bodysuit, narrow cargo trousers, close fitting small ninja-style footwear. A smooth single-piece translucent cyan visor covers eyes AND nose, mouth visible, no separate goggles lenses. One forearm carries a compact hologram projector; practical tiny courier pouches, visible fine wiring and etched digital ritual circuitry, spectral code strips instead of a skirt of hanging talismans. Strong primary neon CYAN and MINT-GREEN, restrained ULTRAVIOLET secondary accents, tiny magenta continuity accents. NO fire, lightning bolts, blood, skeletons or weapons resembling firearms.\nHer unique ride: ONE ultra-slim short racing hoverboard with elongated pointed nose, narrow swept carbon deck, cyan luminous underside, twin flush mint propulsion channels at the tail. Both small shoes visibly planted in a believable diagonal riding stance on one connected deck. No wheels, no oversized boots, no disconnected hover shoes. Entire board in frame, distinct narrow agile silhouette unlike the reference.\nComposition: sophisticated landscape character-development sheet on charcoal-gray studio background with faint cyberpunk drafting lines. The LEFT TWO THIRDS contain one large full-body three-quarter beauty render of VEX riding the entire hoverboard, head and both board tips uncropped, hovering above a subtle wet reflective studio floor. The RIGHT THIRD contains a smaller clean rear three-quarter design view of the same character, a closeup of the visor and one isolated side profile of her racing board. Small lower-right action vignette: VEX boost-dashing with one translucent cyan humanoid holographic afterimage decoy left behind, broken mint energy trail and short sharp graphic particles; keep it restrained and readable. Soft neutral key lighting exposes all garment shapes, cinematic neon rim lighting with controlled bloom, crisp edges, physically plausible reflective materials. The cyan hologram decoy must clearly be an effect rather than another physical character. Fine orange-free cyan/mint swatches near detail views.\nText: only a small elegant typography header reading VEX and GHOST COURIER. No stats text, no invented logos, no watermark. Favor a unique practical playable character with top-down silhouette readability rather than generic fan art or sexualized clothing. This is approval concept art, not an in-game screenshot.",
+      "image": "Vex-GhostCourier-v1.png"
+    },
+    {
+      "id": "Rook",
+      "name": "ROOK",
+      "role": "Signal Warden",
+      "palette": [
+        "Electric amber",
+        "Warm gold",
+        "Violet",
+        "Ivory"
+      ],
+      "silhouette": "Broad armored street rescuer, capacitor bracers, continuous visor, wide low-profile industrial hoverboard",
+      "perks": [
+        {
+          "name": "Ward Recharge",
+          "description": "Every 25 essence points collected restore shield equal to 15% of maximum health. Shield cap: 30% of maximum health. Shield absorbs damage before health and cannot negate the fixed health cost of a challenge."
+        },
+        {
+          "name": "Repulsor Boost",
+          "description": "Boost emits a 350 cm energy ring dealing 35 base damage and pushing basic enemies back. Internal cooldown: 6 seconds. Bosses take damage but resist displacement."
+        }
+      ],
+      "tradeoff": "10% lower movement speed.",
+      "deckSynergy": [
+        "Halo Nova",
+        "Talisman Guard"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: AAA playable-character approval concept sheet for Forbidden Code: Survivor. Generate a NEW adult male player character named ROOK, subtitle SIGNAL WARDEN. The supplied image is a STYLE AND WORLD REFERENCE ONLY: match its exceptionally detailed realistic 3D game-concept rendering, convincing black technical fabrics, saturated neon emissive accents, high quality visible materials, full-body readability and near-future spiritual cyberpunk world. Do NOT copy the reference man's identity, hair, jacket silhouette, exact colors, pose or hoverboard.\nDesign ROOK as a broad-shouldered heavyset athletic Black man around forty, close cropped dark hair with subtle gray at the temples, strong grounded face with visible mouth and jaw, calm protective stance. A continuous smooth AMBER single-screen visor wraps eyes AND nose, face below nose exposed; not a full face helmet. Heavy industrial street-rescue aesthetic: sleeveless boxy graphite armored tactical vest with asymmetric ivory ceramic plates, high dark collar, orange-black utility cloth, exposed thick arms partly clad in practical segmented cybernetic bracers, reinforced cargo trousers, compact human-scale low-profile armored split-toe footwear. No long coat, no cape, no giant boots. Strong blocky silhouette but still recognizable as a playable street rider rather than an enemy boss. Small squared battery cells and cyan ritual inscription ports integrated into the bracers and back. Primary emissive ELECTRIC AMBER and WARM GOLD, secondary cool VIOLET and clean WHITE; very limited cyan connectors as world continuity. A few small geometric holographic ward seals float beside one forearm. No skulls, skeletons, blood, flames, lightning bolts or firearms.\nHis unique ride: ONE connected wide stable industrial hoverboard, low-profile carbon and graphite shell, chamfered angular ends, recessed amber side rails and four compact flush violet lift cells under the deck. Chunkier and broader than a racing board but premium and sleek, not a tank or a motorcycle. Both compact shoes firmly placed in a believable broad sideways riding stance. No wheels, no independent floating shoes. Entire board and both ends must fit comfortably in frame.\nComposition: sophisticated landscape character-development sheet on charcoal-gray studio background with faint cyberpunk drafting lines. LEFT TWO THIRDS contain one large full-body three-quarter beauty render of ROOK on his hoverboard above a subtle wet reflective studio floor, complete head-to-board and strong readable silhouette. RIGHT THIRD: a smaller rear three-quarter design view of the same character, a detailed closeup of one capacitor bracer and an isolated side profile of the hoverboard. Lower-right action vignette: a translucent AMBER HEXAGONAL force shield curves around ROOK, and a low expanding violet repulsor ring pushes geometric debris outward from the board; clear energy, no explosion smoke or flames. Show shield and board physically separate with visible human silhouette. Soft neutral key light exposes all armor and dark fabric, warm neon rimlight, restrained bloom, sharp graphic VFX and convincing material response. Small amber/violet/ivory material swatches near detail views.\nText: only a small elegant header reading ROOK and SIGNAL WARDEN. No stats text, no invented logos or watermark. Original player design with readable top-down silhouette, concept approval art rather than an in-game screenshot.",
+      "image": "Rook-SignalWarden-v1.png"
+    }
+  ],
+  "balanceNote": "All numeric values are initial proposals for later playtesting, not implemented or measured balance.",
+  "visualApproval": {
+    "characters": [
+      "Vex",
+      "Rook"
+    ],
+    "source": "User: i like both of these. show me 2 more with different unique perks."
+  }
+}

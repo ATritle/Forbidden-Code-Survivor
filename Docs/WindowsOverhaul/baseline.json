@@ -1,0 +1,12 @@
+{
+  "path": "C:\\dev\\DeckBuilder\\Artifacts\\Baselines\\Windows-PreOverhaul-20261019T021817Z",
+  "result": "BASELINE_RESTORE_VERIFIED",
+  "snapshot_id": "Windows-PreOverhaul-20261019T021817Z",
+  "file_count": 2049,
+  "source_bytes": 4895309267,
+  "archive_bytes": 4015522901,
+  "archive_sha256": "f237b890ddaed08b508397b908774e273922549f4a5bacd458b469386fb775ae",
+  "manifest_sha256": "0c4d5ff77f0504a84c22322ee8a63593bdfd1c7eb7fd80e19c93ab9989bbce94",
+  "restored_project": "C:\\dev\\DeckBuilder\\Artifacts\\Baselines\\Windows-PreOverhaul-20261019T021817Z\\Project",
+  "verified_utc": "2026-10-19T02:20:45.454772+00:00"
+}

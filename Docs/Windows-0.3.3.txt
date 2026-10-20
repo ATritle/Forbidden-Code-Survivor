@@ -1,0 +1,51 @@
+Forbidden Code: Survivor — Windows 0.3.3 / Signal Dock
+
+PLAY
+Double-click Play-Forbidden-Routines.cmd to launch the latest packaged game.
+Play-Windows-0.3.2.cmd preserves direct access to the previous release.
+Earlier release packages and the original pre-overhaul snapshot remain separate.
+
+MAIN MENU MUSIC
+Neon Synthwave Drive / Alex Morgan is the default initial-menu track.
+The bottom Signal Dock provides PLAY, PAUSE, previous and next track controls,
+progress and time, a music volume slider, MUTE / UNMUTE, and TRACKS.
+TRACKS toggles an upward-opening playlist. Scroll the list with the mouse wheel
+or its scrollbar. Clicking a track starts it. Clicking outside dismisses the
+playlist without activating the deck control underneath. Selecting music does
+not change the deck or start a run.
+
+LIBRARY
+Neon Synthwave Drive — Alex Morgan
+Cyberpunk EDM — Humanstudioed
+Cyberpunk — Monume
+Synthwave — The Mountain
+
+GAMEPLAY
+Run music rotates Humanstudioed -> Monume -> The Mountain, wrapping when the
+stream finishes. Monume was the previous main-menu music. Card drafting,
+settings and pause menus preserve the gameplay track and its position.
+The Signal Dock is only displayed in the initial deck menu.
+
+PREFERENCES
+The dock and Settings use the same saved music volume; SFX remains independent.
+Mute is saved separately and restores the previous volume when unmuted.
+Moving the volume slider above zero unmutes music. Manual pause is per-session
+and remains in effect when entering the arena. Previous/next retains pause;
+selecting an item in the track list explicitly starts playback.
+
+CONCEPTS / SOURCE
+Docs/MusicPlayer/MiniPlayer-Concepts.png shows the three generated alternatives.
+Option A / Signal Dock was selected. The actual controls are native canvas UI,
+using the existing neon glass material; the concept sheet is not a UI texture.
+NeonMusicPlayer.cpp contains layout and interaction, NeonAudioDirector.* owns
+stream playback, context crossfades, playlist completion and saved mix state.
+Only two persistent music components are used (one outgoing during a crossfade)
+and the existing 18-voice SFX budget remains unchanged. Music streams from disk.
+
+REBUILD / VERIFY
+Scripts/prepare_audio.py decodes new MP3 sources with Blender's aud library.
+Existing matching WAVs are retained byte-for-byte. Scripts/import_audio.py
+creates non-looping SoundWaves; completion delegates advance the playlists.
+Scripts/Test-MusicPlayer.ps1 exercises actual canvas controls and the audio mixer,
+playlist completion, gameplay/draft continuity, and saved volume/mute in a fresh
+process. It uses an isolated ForbiddenQA save directory.

@@ -1,0 +1,70 @@
+{
+  "status": "Alternate visual designs awaiting user approval. Previous perk definitions retained exactly; no game implementation or Meshy generation.",
+  "tool": "Built-in image_gen",
+  "reference": "../NeonExorcist/Player-Concept-v8.png",
+  "balanceNote": "Initial proposed values for later playtesting.",
+  "concepts": [
+    {
+      "id": "Zero",
+      "name": "ZERO",
+      "role": "Vector Duelist",
+      "palette": [
+        "Cobalt blue",
+        "Cool white",
+        "Coral red"
+      ],
+      "perks": [
+        {
+          "name": "Target Lock",
+          "description": "Three direct player-weapon hits on one enemy within 2 seconds mark it for 4 seconds. Player weapons deal 25% extra damage to the marked enemy. Only one mark can be active; a new mark cannot replace a live mark. Summons, secondary explosions and damage-over-time ticks do not build the mark."
+        },
+        {
+          "name": "Perfect Line",
+          "description": "Every third projectile cast gives its first projectile two additional pierces, with a distinct cobalt-white trail. Other projectiles in the same volley are unchanged. Area pulses, beams and summons are excluded."
+        }
+      ],
+      "tradeoff": "20% smaller area-damage radius; targeting range and projectile collision size are unchanged.",
+      "deckSynergy": [
+        "Photon Lance",
+        "Kinetic Cards",
+        "Pulse Dart"
+      ],
+      "prompt": "Use case: stylized-concept / character redesign. Asset type: AAA character approval sheet for Forbidden Code: Survivor. Input image is ZERO's previous concept, supplied only for rendering quality, character name, neon cyberpunk setting, hoverboard gameplay and precision-energy role. The user likes his Target Lock and Perfect Line perks but wants a DIFFERENT character design. Radically redesign his appearance; do not preserve the previous face, hair, exposed nose visor, long black tunic, hanging seals, baggy pants or forked hoverboard. This must look like a new artistic direction, not a palette swap.\nNew direction: ZERO \u2014 GHOST EXECUTIVE. An adult male former corporate precision operative, lean, sharply tailored, almost unnervingly immaculate. Fully enclosed sculpted mirror-black helmet with a smooth rounded back and a single thin vertical cobalt optical slit; tiny horizontal white targeting brackets beside the slit, absolutely no human hair or exposed face and no goggle visor. Helmet is sleek and original, not insect-like or a known franchise design. His outfit is predominantly IVORY WHITE with graphite joints: a short fitted double-breasted technical executive jacket, asymmetric angular shoulder construction, opaque black compression underlayer, narrow cropped tactical trousers, compact black low-profile dress-shoe-like technical footwear. No loose cargo trousers, no long coat, no capes, no hanging talisman skirt. Small fine black seams, ceramic fabric panels, subtle worn corporate serial engravings that are not legible brand logos. Cobalt emissive pipelines run along the collar, cuffs and slim black mechanical gloves; tiny coral-red status markers. A narrow polished chrome targeting implant runs down the right forearm. His hand projects three concentric precise cobalt aiming rings and one needle-thin straight white-blue energy beam. No pistol, rifle, blade or other physical handheld weapon.\nONE connected hoverboard: a minimalist ivory-and-graphite rounded capsule-shaped deck with a continuous usable standing platform, subtly tapering nose, two slim inset carbon foot pads and two flush oval cobalt levitation apertures underneath. No forked ends, no bulky exposed engines. Both compact shoes fully supported in a natural diagonal stance, entire board visible floating above wet studio floor. Product-design elegance rather than racing graffiti.\nComposition: detailed landscape concept sheet on neutral dark graphite-gray studio background and subtle fine drafting lines. One large uncropped full-body three-quarter hero view on the left, poised upright with one hand casually aiming. On the right, a smaller rear three-quarter view, a closeup of helmet optical slit and ceramic jacket construction, and a clean isolated hoverboard side view. Small bottom-right action vignette: his thin cobalt-white shot pierces three minimal translucent enemy targets in one clean row, coral crosshair markers light up at each impact. No lightning branches, flames, blood, skeletons or explosions. Main render should show every outfit detail under a neutral soft key light; neon accents visibly emit controlled light and reflect on the wet floor. Premium physically realistic 3D game concept quality, sophisticated surfaces, strong top-down player silhouette. Maintain adult human anatomy and practical proportions.\nOnly elegant minimal text: ZERO and GHOST EXECUTIVE. No perk text or statistics, no watermark, no invented logos. Original cyberpunk player design, no resemblance to licensed characters. The precision perks are unchanged; this is visual concept exploration only.",
+      "image": "Zero-GhostExecutive-v2.png",
+      "previousImage": "Zero-VectorDuelist-v1.png",
+      "visualDirection": "Ghost Executive"
+    },
+    {
+      "id": "Mira",
+      "name": "MIRA",
+      "role": "Daemon Shepherd",
+      "palette": [
+        "Magenta",
+        "Lilac",
+        "Pearl white"
+      ],
+      "perks": [
+        {
+          "name": "Bound Daemon",
+          "description": "Starts with one permanent digital-spirit familiar firing a homing energy pulse every 1.2 seconds. Base damage is 12 plus 2 per player level after level 1. It benefits from summon modifiers and is separate from the player's normal loadout slots."
+        },
+        {
+          "name": "Signal Possession",
+          "description": "Every 20 direct summon hits, convert one nearby basic enemy into an ally for 8 seconds. Internal cooldown 10 seconds, maximum one converted ally. Elites, bosses and objective enemies cannot be possessed. Expiration grants no kill credit or essence. The temporary ally's own hits do not build possession progress."
+        }
+      ],
+      "tradeoff": "15% less damage from the player's own weapons; summon damage is unaffected.",
+      "deckSynergy": [
+        "Summon-focused energy builds",
+        "Talisman protection",
+        "Crowd-control programs"
+      ],
+      "prompt": "Use case: stylized-concept / character redesign. Asset type: AAA character approval sheet for Forbidden Code: Survivor. Input image is MIRA's previous concept, provided only for rendering quality, name, cyberpunk digital-spirit role and hoverboard gameplay. User likes Bound Daemon and Signal Possession perks but wants a DIFFERENT visual concept. Radically redesign her look; do not preserve previous pale bob-haired woman, visor, black ritual poncho, hanging paper seals, spirit-priestess outfit or crescent board. This must be a different silhouette and personality, not a recolor.\nNew direction: MIRA \u2014 NEON CONDUCTOR. An expressive adult Afro-Latina underground signal DJ and hacker, warm brown skin with freckles, a wide confident smile, visible human eyes and fully exposed face with NO visor, no mask and no helmet. Rich copper-orange hair in two thick long sculpted braids threaded with thin luminous lilac fiber optics. Large original black circular over-ear headphones with glowing ultraviolet rings and small electric-yellow adjustment tabs, compact and functional, no cat ears. Small magenta sound-wave tattoo lights trace her cheeks. Outfit: a short sleeveless translucent-smoke technical bomber vest with a broad padded collar and iridescent violet lining over a fully opaque fitted charcoal top, relaxed high-waisted utility shorts over fitted black technical leggings, compact human-scale high-top technical footwear. Distinct youthful adult underground music-culture silhouette, lively asymmetry, soft fabrics, practical buckles and cable organizers, no poncho, long robe or giant boots. A small circular programmable beat-controller sits at her waist and both wrists carry equalizer cuffs. Predominant neon ULTRAVIOLET and HOT PINK, lilac holograms, restrained electric-yellow accents; black graphite surfaces. No fire, lightning, blood or skull imagery.\nHer gestures conduct TWO friendly captured digital ghosts: translucent faceless little humanoid holograms made of lilac wireframes, each carrying a bright magenta core. They float beside her, one large knee-high and one small palm-high, surrounded by clean concentric beat rings and pixel motes rather than smoke or lightning. One ghost mirrors her hand gesture. They must not obscure her head, outfit, footwear or hoverboard. Small projected music-like geometric pulse bars float above her wrist, no musical note clich\u00e9s everywhere.\nONE connected hoverboard: a compact broad deck with rounded blunt ends, sleek graphite shell, purple edge strip and little pink segmented equalizer bars inset along the sides. Two round recessed levitation discs under the deck echo the headphone geometry. Both feet clearly on the same continuous deck in an expressive stable sideways riding pose. No physical turntables on the board, no wheels, no crescent outline, no detached hover shoes. Visible hovering air gap and colored reflection on wet floor.\nComposition: a sophisticated landscape character concept sheet on charcoal-gray studio background with fine drafting lines. Large uncropped full-body three-quarter hero on left, animated hands conducting the two digital familiars. Right side: smaller rear three-quarter view of the same woman, a closeup of her open face/headphones and one spirit, an isolated side view of the hoverboard. Bottom-right small action vignette shows her ghosts sending compact pink energy pulses toward an abstract hostile robot, red hostile interference breaking apart as lilac friendly code surrounds it, illustrating temporary digital possession. No gore and no giant explosions. Neutral key lighting reveals dark outfit details, gorgeous restrained magenta-violet rim glow and realistic high quality materials. AAA realistic 3D game character concept, original human anatomy, clear top-down silhouette, approachable irreverent personality.\nOnly minimal elegant text: MIRA and NEON CONDUCTOR. No stats or perk text, no brand logo and no watermark. Original character with a cyberpunk music-hacker identity, not a likeness of any existing franchise character. All summon and possession perks stay unchanged; this is appearance exploration only.",
+      "image": "Mira-NeonConductor-v2.png",
+      "previousImage": "Mira-DaemonShepherd-v1.png",
+      "visualDirection": "Neon Conductor"
+    }
+  ],
+  "perkConceptFeedback": "User likes both perk sets; retain them unchanged while exploring different character appearances.",
+  "visualStatus": "Previous images preserved; alternate visual concepts requested."
+}

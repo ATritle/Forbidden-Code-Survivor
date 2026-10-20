@@ -1,0 +1,39 @@
+{
+  "approvedCredits": 59,
+  "submittedCredits": 59,
+  "paidRetries": 0,
+  "tasks": {
+    "rider": {
+      "id": "01a14bd6-ddf5-7793-aa07-1a5c3677d5f6",
+      "type": "image-to-3d",
+      "credits": 30
+    },
+    "board": {
+      "id": "01a14bd6-eaba-7644-9cb5-d7587fef2362",
+      "type": "image-to-3d",
+      "credits": 15
+    },
+    "rig": {
+      "id": "01a14bd9-ec75-723f-9c3f-0eb7245a7c79",
+      "type": "rigging",
+      "credits": 5
+    },
+    "Idle": {
+      "id": "01a14bdb-3d24-7127-a1c8-5503f04b5f0c",
+      "type": "animation",
+      "credits": 3
+    },
+    "Cast": {
+      "id": "01a14bdb-4743-72ce-a9a2-6ba7df93a333",
+      "type": "animation",
+      "credits": 3
+    },
+    "Hit": {
+      "id": "01a14bdb-555b-769d-b266-a36d3086d4cd",
+      "type": "animation",
+      "credits": 3
+    }
+  },
+  "status": "All six Meshy tasks succeeded",
+  "spentCredits": 59
+}

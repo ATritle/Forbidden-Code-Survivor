@@ -1,0 +1,20 @@
+param([string]$Executable='',[string]$UserDirectory='Saved/QA/Workbench',[switch]$Compact,[switch]$SkipReload,[ValidateRange(0,7680)][int]$Width=0,[ValidateRange(0,4320)][int]$Height=0)
+$ErrorActionPreference='Stop'
+$root=Split-Path -Parent $PSScriptRoot
+$editor=-not $Executable
+if($editor){$Executable='C:/Program Files/Epic Games/UE_5.8/Engine/Binaries/Win64/UnrealEditor.exe'}
+$user=[IO.Path]::GetFullPath($UserDirectory)
+foreach($reload in $(if($SkipReload){@($false)}else{@($false,$true)})){
+    $report=Join-Path $user ('Saved/Review/Workbench/'+$(if($reload){'reload.json'}else{'report.json'}))
+    if(Test-Path -LiteralPath $report){Remove-Item -LiteralPath $report}
+    $testWidth=if($Width){$Width}elseif($Compact){1280}else{1600};$testHeight=if($Height){$Height}elseif($Compact){720}else{900}
+    $arguments=@('-WorkbenchSmoke','-ForbiddenQA','-ExecCmds=DisableAllScreenMessages',('-UserDir='+$user),'-dx12','-sm6','-RenderOffscreen','-windowed',('-ResX='+$testWidth),('-ResY='+$testHeight),'-ForceRes','-unattended','-nosplash')
+    if($reload){$arguments+='-WorkbenchReload'}
+    if($editor){$arguments=@((Join-Path $root 'DeckBuilder.uproject'),'/Game/Maps/NeonDistrict','-game')+$arguments}
+    $process=Start-Process -FilePath $Executable -WorkingDirectory $root -WindowStyle Hidden -PassThru -ArgumentList $arguments
+    if(-not $process.WaitForExit(180000)){Stop-Process -Id $process.Id -Force;throw 'Workbench validation timed out'}
+    if($process.ExitCode -ne 0 -or -not(Test-Path -LiteralPath $report)){throw ('Workbench validation failed; inspect '+$user)}
+    $result=Get-Content -LiteralPath $report -Raw|ConvertFrom-Json
+    if($result.result -ne 'WORKBENCH_PASS'){throw (Get-Content -LiteralPath $report -Raw)}
+    Get-Content -LiteralPath $report -Raw
+}

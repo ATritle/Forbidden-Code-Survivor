@@ -1,4 +1,8 @@
 #include "MortisProjectileBase.h"
+#include "ForbiddenEnemyBrain.h"
+#include "ForbiddenCombatSubsystem.h"
+#include "CodexDeckComponent.h"
+#include "EnemySpawner.h"
 #include "MVPGame.h"
 #include "NeonAudioDirector.h"
 #include "KineticCardVFXDirector.h"
@@ -101,7 +105,7 @@ void AMortisProjectileBase::Launch(FVector Origin,FVector Direction,float Damage
     FlightAge=0.f;SparkTrailAge=0.f;SpinPhase=FMath::FRandRange(0.f,360.f);Visual->SetRelativeLocation(FVector::ZeroVector);
     Visual->SetRelativeRotation(FRotator::ZeroRotator);
     ShotDamage=Damage; ShotModifiers=Snapshot; PiercingCount=FMath::Max(0,Snapshot.PiercingCount);
-    HitLives.Reset(); RemainingLife=1.7f; bActive=true;
+    HitLives.Reset(); RemainingLife=1.7f; bActive=true;Returning=false;
     SetActorHiddenInGame(false); SetActorTickEnabled(true);
     Collision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     ProjectileMovement->SetUpdatedComponent(Collision);
@@ -129,6 +133,7 @@ void AMortisProjectileBase::Deactivate()
     Visual->SetRelativeLocation(FVector::ZeroVector);Visual->SetRelativeRotation(FRotator::ZeroRotator);
     Collision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     ProjectileMovement->StopMovementImmediately(); ProjectileMovement->Deactivate();
+    ProjectileMovement->bIsHomingProjectile=false;ProjectileMovement->HomingTargetComponent.Reset();
     ProjectileMovement->SetComponentTickEnabled(false); Trail->DeactivateImmediate(); HitLives.Reset();
 }
 void AMortisProjectileBase::Stopped(const FHitResult& Hit)
@@ -149,7 +154,17 @@ void AMortisProjectileBase::OnProjectileImpact(const FHitResult& Hit)
     const FVector Impact=Enemy->GetActorLocation();
     if(auto* Game=Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this)); Game && Game->AudioDirector) Game->AudioDirector->PlayImpact(Impact);
     const float HealthBefore=Enemy->Health;
-    Enemy->TakeSpellDamage(ShotDamage,ProjectileMovement->Velocity);
+    Enemy->TakeSpellDamage(ShotDamage,ProjectileMovement->Velocity,ShotModifiers.ProgramID);
+    if(Enemy->IsPoolActive())
+    {
+        if(auto* Brain=Enemy->FindComponentByClass<UForbiddenEnemyBrain>())
+        {
+            if(ShotModifiers.ProgramID=="KineticCards" && ShotModifiers.Evolution==1) Brain->AddMark(ShotDamage);
+            if(ShotModifiers.ProgramID=="HaloNova" && ShotModifiers.Evolution==2) Brain->ApplySlow(0.25f,1.5f);
+        }
+    }
+    if(ShotModifiers.ProgramID=="PrismBurst" && ShotModifiers.Evolution==1)
+        if(auto* Fields=GetWorld()->GetSubsystem<UForbiddenCombatSubsystem>()) Fields->QueueField("PrismBurst",ENeonSpellStyle::Prism,Impact,ShotDamage*0.18f,140.f,0.25f,3,0.35f);
     if(auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());G && G->SpellImpactDirector)
         G->SpellImpactDirector->ConfirmDamage(SpellStyle,Enemy,FMath::Max(0.f,HealthBefore-FMath::Max(0.f,Enemy->Health)));
     PlayCinematicImpactVFX(Impact,GetActorForwardVector());
@@ -171,12 +186,28 @@ void AMortisProjectileBase::OnProjectileImpact(const FHitResult& Hit)
             {
                 Seen.Add(Other);FHitResult Wall;
                 if(GetWorld()->LineTraceSingleByObjectType(Wall,Impact,Other->GetActorLocation(),FCollisionObjectQueryParams(ECC_WorldStatic))) continue;
-                const float Before=Other->Health;Other->ReceiveSpellDamage(ShotDamage*0.6f);
+                const float Before=Other->Health;Other->TakeSpellDamage(ShotDamage*0.6f,FVector::ZeroVector,ShotModifiers.ProgramID,false);
                 if(auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());G && G->SpellImpactDirector)
                     G->SpellImpactDirector->ConfirmDamage(SpellStyle,Other,FMath::Max(0.f,Before-FMath::Max(0.f,Other->Health)));
             }
     }
-    if (PiercingCount--<=0 && ProjectileType!=EProjectileType::ContinuousBeam) Deactivate();
+    if(ShotModifiers.ProgramID=="KineticCards" && ShotModifiers.Evolution==2 && PiercingCount>0)
+    {
+        const auto* Player=Cast<AMVPPlayer>(GetOwner());AMVPEnemy* Next=nullptr;float Best=FMath::Square(350.f);
+        if(Player && Player->Deck && Player->Deck->EnemySpawner)
+            for(APooledEnemy* A:Player->Deck->EnemySpawner->GetActiveEnemies()) if(auto* E=Cast<AMVPEnemy>(A);E && E->IsPoolActive())
+            {
+                const auto* Previous=HitLives.Find(E);const float D=FVector::DistSquared(Impact,E->GetActorLocation());FHitResult Wall;
+                if((!Previous || *Previous!=E->Generation) && D<Best && !GetWorld()->LineTraceSingleByObjectType(Wall,Impact,E->GetActorLocation(),FCollisionObjectQueryParams(ECC_WorldStatic))) {Next=E;Best=D;}
+            }
+        if(Next) {ProjectileMovement->Velocity=(Next->GetActorLocation()-Impact).GetSafeNormal()*1250.f;SetActorLocation(Impact+ProjectileMovement->Velocity.GetSafeNormal()*25.f);}
+        else {Deactivate();return;}
+    }
+    if (PiercingCount--<=0 && ProjectileType!=EProjectileType::ContinuousBeam)
+    {
+        if(ShotModifiers.ProgramID=="HaloNova" && ShotModifiers.Evolution==1 && !Returning) {Returning=true;HitLives.Reset();PiercingCount=ShotModifiers.PiercingCount;ShotDamage*=0.7f;}
+        else Deactivate();
+    }
 }
 void AMortisProjectileBase::TraceDamage(FVector Start,FVector End)
 {
@@ -186,7 +217,7 @@ void AMortisProjectileBase::TraceDamage(FVector Start,FVector End)
     if (ProjectileType==EProjectileType::ContinuousBeam) GetWorld()->LineTraceMultiByObjectType(Hits,Start,End,FCollisionObjectQueryParams(ECC_GameTraceChannel1));
     else GetWorld()->SweepMultiByObjectType(Hits,Start,End,FQuat::Identity,FCollisionObjectQueryParams(ECC_GameTraceChannel1),FCollisionShape::MakeSphere(12));
     Hits.Sort([](const FHitResult& A,const FHitResult& B){return A.Time<B.Time;});
-    for (const auto& Hit:Hits) { OnProjectileImpact(Hit); if (!bActive || PiercingCount<0) break; }
+    for (const auto& Hit:Hits) { OnProjectileImpact(Hit); if (!bActive || PiercingCount<0 || (ShotModifiers.ProgramID=="KineticCards" && ShotModifiers.Evolution==2)) break; }
 }
 void AMortisProjectileBase::Tick(float Dt)
 {
@@ -194,6 +225,16 @@ void AMortisProjectileBase::Tick(float Dt)
     if (!bActive) return;
     if ((RemainingLife-=Dt)<=0) { Deactivate(); return; }
     FlightAge+=Dt;
+    if(ShotModifiers.ProgramID=="HaloNova" && ShotModifiers.Evolution==1 && GetOwner())
+    {
+        if(!Returning && FlightAge>0.65f) {Returning=true;HitLives.Reset();PiercingCount=ShotModifiers.PiercingCount;ShotDamage*=0.7f;}
+        if(Returning)
+        {
+            const FVector Delta=GetOwner()->GetActorLocation()-GetActorLocation();
+            if(Delta.SizeSquared()<FMath::Square(50.f)) {Deactivate();return;}
+            ProjectileMovement->Velocity=Delta.GetSafeNormal()*1150.f;
+        }
+    }
     if(ProjectileType!=EProjectileType::ContinuousBeam && !bBloodSpell)
     {
         const FVector Head=GetActorLocation();

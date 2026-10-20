@@ -1,0 +1,37 @@
+{
+  "tool": "built-in image_gen",
+  "reference": "Docs/MusicPlayer/MiniPlayer-Concepts.png, option A",
+  "embeddedArtInMP3s": false,
+  "assets": [
+    {
+      "name": "SignalControls",
+      "file": "SignalControls.png",
+      "generatedSourceFile": "exec-bd281719-8ca2-4c78-8ee0-a27835447cbb.png"
+    },
+    {
+      "name": "SignalFrame",
+      "file": "SignalFrame.png",
+      "generatedSourceFile": "exec-f231cc5d-994c-4a37-bfbc-2b8ad7f0a4b6.png"
+    },
+    {
+      "name": "CoverAlex",
+      "file": "CoverAlex.png",
+      "generatedSourceFile": "exec-2bfe7175-c382-4c72-bdf4-4dc41f9a58f7.png"
+    },
+    {
+      "name": "CoverHuman",
+      "file": "CoverHuman.png",
+      "generatedSourceFile": "exec-6e38a48f-5185-402f-a674-fd578b6f2458.png"
+    },
+    {
+      "name": "CoverMonume",
+      "file": "CoverMonume.png",
+      "generatedSourceFile": "exec-d7188d30-24f8-4ab7-a8d7-5ae4fdb5197a.png"
+    },
+    {
+      "name": "CoverMountain",
+      "file": "CoverMountain.png",
+      "generatedSourceFile": "exec-6d539fd3-75a0-42a4-8d09-931ed7f3cb20.png"
+    }
+  ]
+}

@@ -73,14 +73,14 @@ for name,color,metallic,roughness in [
     lib.set_material_instance_scalar_parameter_value(mi,'Metallic',metallic);lib.set_material_instance_scalar_parameter_value(mi,'Roughness',roughness)
     unreal.EditorAssetLibrary.save_loaded_asset(mi,only_if_is_dirty=False)
 
-m=material('M_WetConcrete',unreal.BlendMode.BLEND_MASKED);world=node(m,unreal.MaterialExpressionWorldPosition);time=node(m,unreal.MaterialExpressionTime)
+m=material('M_WetConcrete',unreal.BlendMode.BLEND_OPAQUE);m.set_editor_property('two_sided',False);world=node(m,unreal.MaterialExpressionWorldPosition);time=node(m,unreal.MaterialExpressionTime)
 base=custom(m,'float2 g=abs(frac((W.xy+200)/400)-0.5);float seam=1-smoothstep(0.485,0.499,max(g.x,g.y));float noise=0.8+0.12*sin(W.x*0.28)*sin(W.y*0.31)+0.08*sin(W.x*0.027+W.y*0.019);return float3(0.023,0.028,0.04)*noise*lerp(0.32,1,seam);',['W'])
 wire(world,'',base,'W');connect(base,unreal.MaterialProperty.MP_BASE_COLOR)
 rough=custom(m,'float2 q=W.xy/330;float2 i=floor(q),f=frac(q);f=f*f*(3-2*f);float4 h=frac(sin(float4(dot(i,float2(127.1,311.7)),dot(i+float2(1,0),float2(127.1,311.7)),dot(i+float2(0,1),float2(127.1,311.7)),dot(i+1,float2(127.1,311.7))))*43758.5453);float n=lerp(lerp(h.x,h.y,f.x),lerp(h.z,h.w,f.x),f.y);return lerp(0.43,0.11,smoothstep(0.46,0.8,n));',['W'],unreal.CustomMaterialOutputType.CMOT_FLOAT1)
 wire(world,'',rough,'W');connect(rough,unreal.MaterialProperty.MP_ROUGHNESS)
 normal=custom(m,'float2 cell=floor(W.xy/55);float2 q=frac(W.xy/55)-0.5;float seed=frac(sin(dot(cell,float2(17.21,71.33)))*43758);float age=frac(T*0.65+seed);float r=length(q);float ring=exp(-abs(r-age*0.65)*55)*(1-age);float2 dir=q/max(r,0.01);float2 slope=dir*cos(r*90-age*35)*ring*0.012+float2(cos(W.x*0.17),sin(W.y*0.13))*0.002;return normalize(float3(slope,1));',['W','T'])
 wire(world,'',normal,'W');wire(time,'',normal,'T');connect(normal,unreal.MaterialProperty.MP_NORMAL)
-connect(scalar(m,'Metallic',0.04),unreal.MaterialProperty.MP_METALLIC);connect(scalar(m,'Specular',0.6),unreal.MaterialProperty.MP_SPECULAR);connect(cutaway(m,world),unreal.MaterialProperty.MP_OPACITY_MASK);save(m)
+connect(scalar(m,'Metallic',0.04),unreal.MaterialProperty.MP_METALLIC);connect(scalar(m,'Specular',0.6),unreal.MaterialProperty.MP_SPECULAR);save(m)
 
 m=material('M_NeonGlow',unreal.BlendMode.BLEND_MASKED,True)
 world=node(m,unreal.MaterialExpressionWorldPosition);time=node(m,unreal.MaterialExpressionTime)

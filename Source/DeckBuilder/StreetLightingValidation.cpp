@@ -37,7 +37,7 @@ void RunStreetLightingSmoke(AMVPController* Controller)
     if(Phase==0)
     {
         if((!Street && !bBefore) || (Street && bBefore)) {Fail(TEXT("Comparison setup did not match command line"));return;}
-        Game->StartingCards={TEXT("PrismBurst")};
+        Game->StartingCards={TEXT("PrismBurst"),TEXT("PulseDart")};
         if(!Game->StartSelectedRun()) {Fail(TEXT("Cannot enter run"));return;}
         // Random challenge locations must not change the comparison's scenery/light sources.
         if(ArenaPlayer->Challenges)

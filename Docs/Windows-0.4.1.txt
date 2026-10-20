@@ -1,0 +1,50 @@
+FORBIDDEN CODE: SURVIVOR / WINDOWS 0.4.1
+Combined Loadout Workbench / approved layout A
+
+The initial menu combines a compact rider panel on the left with an eight-card
+program grid on the right. Five new fixed-pose illustrations preserve the approved
+identities and hoverboards. These are static images, not rotating 3D captures.
+The gameplay characters retain their imported models, animations and perks.
+
+The grid defaults to the saved eight-program draft pool. Browse Program Library
+shows all sixteen authored programs, including locked entries. School tabs and
+paging filter that same catalog. Cards display actual names, damage, cooldowns
+and descriptions, with aspect-correct illustration cropping and starter badges.
+
+Click a card to inspect it, replace a draft program, choose a starter or inspect
+its evolution branches. BACK returns directly to the Workbench. Three preset
+buttons save the current valid deck before loading another preset. SAVE DECK
+persists eight unique draft programs and two unique starters. ENTER ARENA starts
+the selected rider and deck together. Rider choice is also saved between runs.
+
+The Signal Dock, repeat-current-song behavior, compact track list, How To Play,
+Settings, leaderboard, Hideout and Close remain available. Help content explains
+the new combined flow. Menu hover remains silent; input/close cues remain intact.
+
+ART PROVENANCE
+Built-in imagegen, five approved-rider references, five new fixed poses, no Meshy
+credits or paid retries. Transparent RGBA 1024x1536 source images are saved in
+ContentSource/UI/LoadoutWorkbench; exact prompts and imported asset paths are
+recorded beside them. Assets import to /Game/UI/LoadoutWorkbench with UI RGBA
+compression, clamped UVs and no streaming. The original concepts remain intact.
+Layout reference: ContentSource/Concepts/CombinedLoadoutMenu/A-Loadout-Workbench-v2.png.
+
+REVERT
+Play-Windows-0.4.0.cmd launches the preceding untouched release. Earlier packages,
+installers and the original pre-overhaul baseline archive remain separate.
+The current launcher is Play-Forbidden-Routines.cmd. New outputs use separate
+Artifacts/Windows-0.4.1 and Artifacts/Installer-0.4.1 folders.
+
+VALIDATION
+27 verification reports and 16 in-game screenshots are collected in
+Docs/Windows-0.4.1-Validation. Both menu sizes, all five riders, saved presets,
+starters, gameplay perks, music, settings, Help and Close passed. The installer
+passed all 28 extracted-file hashes, installed launch and temporary uninstall.
+All eleven preceding release packages/installers and the original baseline
+archive retain their recorded checksums.
+
+Installer: 731,220,485 bytes
+SHA256: 734597729a4c08d743f24484436a7471bc7afeb02f9f724d6ca79a4d179ba723
+Full receipts: Docs/Windows-0.4.1-Validation/release-manifest.json.
+Tests use isolated automation profiles and do not overwrite the player's saves.
+The browser edition is unchanged.

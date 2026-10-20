@@ -18,6 +18,7 @@ public:
 protected:
     virtual void NativeOnInitialized() override;
     virtual void NativeTick(const FGeometry& Geometry,float Dt) override;
+    virtual FReply NativeOnPreviewKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
     virtual FReply NativeOnKeyDown(const FGeometry& Geometry,const FKeyEvent& Event) override;
 private:
     TWeakObjectPtr<UNeonChallengeComponent> ContractOwner;

@@ -1,4 +1,5 @@
 #include "CinematicExplosionDirector.h"
+#include "ForbiddenSettingsControls.h"
 #include "MVPGame.h"
 #include "NeonSpellImpactDirector.h"
 #include "NiagaraComponent.h"
@@ -83,7 +84,7 @@ bool ACinematicExplosionDirector::TriggerExplosion(FVector Position,float Radius
             S.Light->SetWorldLocation(Position+FVector(0,0,80));
             S.Light->SetAttenuationRadius(FMath::Clamp(Radius*3,250.f,1800.f));
             S.Light->SetCastShadows(S.bShadowed);
-            S.Light->SetIntensity(FMath::Max(0.f,PeakLumens)); S.Light->SetVisibility(true);
+            S.Light->SetIntensity(0); S.Light->SetVisibility(true);
             S.bFluid=!bCompact && Fluids<MaxFluidGrids && S.FX->GetAsset();
             if (S.bFluid)
             {
@@ -108,7 +109,7 @@ bool ACinematicExplosionDirector::TriggerExplosion(FVector Position,float Radius
             for (const auto& Other : Slots) if (Other.Age>=0 && Other.Age<0.2f) ++LiveFlashes;
             for (auto& Other : Slots)
                 if (Other.Age>=0 && Other.Age<0.2f)
-                    Other.Light->SetIntensity(FMath::Max(0.f,PeakLumens)*Other.EnergyScale/FMath::Max(1,LiveFlashes));
+                    Other.Light->SetIntensity(ForbiddenSettings::Get(this,"Flash",1)*(ForbiddenSettings::Get(this,"ReducedFlashes",0)>0.5f ? 0.15f : 1.f)*FMath::Max(0.f,PeakLumens)*Other.EnergyScale/FMath::Max(1,LiveFlashes));
             ++Accepted; return true;
         }
     ++Dropped; return false;
@@ -142,7 +143,8 @@ void ACinematicExplosionDirector::Tick(float Dt)
             }
         }
         const float Alpha=FlashCurve ? FMath::Clamp(FlashCurve->GetFloatValue(S.Age),0.f,1.f) : FMath::Square(1.f-FMath::Clamp(S.Age/0.2f,0.f,1.f));
-        S.Light->SetIntensity(S.Age<0.2f ? FMath::Max(0.f,PeakLumens)*S.EnergyScale*Alpha/FMath::Max(1,LiveFlashes) : 0.f);
+        const float Gain=ForbiddenSettings::Get(this,"Flash",1)*(ForbiddenSettings::Get(this,"ReducedFlashes",0)>0.5f ? 0.15f : 1.f);
+        S.Light->SetIntensity(S.Age<0.2f ? Gain*FMath::Max(0.f,PeakLumens)*S.EnergyScale*Alpha/FMath::Max(1,LiveFlashes) : 0.f);
         if (S.Age>=0.2f) { S.Light->SetVisibility(false); S.Light->SetCastShadows(false); }
         if (S.Age>=FMath::Max(0.2f,S.Lifetime))
         { S.FX->DeactivateImmediate(); S.Sparks->DeactivateImmediate(); S.Aura->DeactivateImmediate();S.Age=-1; S.bShadowed=false; S.bFluid=false; }

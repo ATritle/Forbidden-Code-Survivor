@@ -23,6 +23,8 @@ public:
     void TriggerRiderCast(FName Style=NAME_None);
     void TriggerRiderHit();
     FName GetRiderState() const { return RiderState; }
+    float GetRiderPlayRate() const {return RiderPlayRate;}
+    bool UsesBlendedRider() const {return bBlendedRider;}
     UPROPERTY(EditAnywhere, Category="Art")
     float FacingYawOffset = 0.f;
 private:
@@ -41,10 +43,13 @@ private:
     float RiderTimer=0.f;
     float CastCooldown=0.f;
     int32 AttackRotation=0;
+    int32 RiderAttackVariants=4;
     float LastRiderSpeed=0.f;
     float RiderIdleTime=0.f;
     float RiderYaw=0.f;
     int32 LastLandingCount=0;
     bool bWasFalling=false;
+    bool bBlendedRider=false;
+    float RiderPlayRate=1.f;
     void SetRiderState(FName State, float Duration=0.f);
 };

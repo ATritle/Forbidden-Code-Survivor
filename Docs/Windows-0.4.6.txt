@@ -1,0 +1,30 @@
+FORBIDDEN CODE: SURVIVOR — WINDOWS 0.4.6
+
+ALL SIXTEEN ATTACKS ARE NOW STANDARD
+Every arena run can retain all 16 distinct card programs simultaneously. Start with two unlocked cards from the selected rider preset, then earn new attacks, ranks and evolutions through normal three-unique-card essence drafts. Starting-card ownership never gates the arena draft. The regular launcher no longer needs an experimental flag to keep all 16. All 16 slots and their stats fit in the expanded combat HUD and Tab inspection.
+
+RARITY-BASED STARTER UNLOCKS
+Common: 75 Code Fragments.
+Rare: 150 Code Fragments.
+Epic: 300 Code Fragments.
+Legendary: 500 reserved for future cards; none of the current 16 programs is Legendary.
+
+The same catalog row defines each card's displayed rarity, unlock price, purchase confirmation and exact deduction. Locked cards show their rarity and price; UNLOCK appears when that card's cost is affordable. Purchases unlock a starting option for the selected rider's three presets and do not equip it automatically. Four free starter choices per new rider and two-card presets remain. Already owned cards remain owned and are never charged again.
+
+Fragment earnings retain their current rate: floor(kills / 20) + 4 per completed contract + 25 for victory, capped at 200 per run. Captured-code research still awards 4 fragments. Practice awards no permanent currency, and a run cannot bank rewards twice. The slower unlock pace comes from higher prices. For example, 1,000 kills, two completed contracts and victory bank 83 fragments before captured-code rewards: enough for a Common starter, about two such runs for a Rare, or four for an Epic if you save the rewards.
+
+RIDER-SPECIFIC FRAGMENTS
+Each rider has an independent wallet, saved with their decks and unlocks. Earn fragments on that rider's own arena runs to buy their starting cards. Kills, contract rewards, victory rewards and captured-code research credit the run's rider, even if the menu selection later changes. The workbench and Hideout display the selected rider's balance. Unlocking one rider's card cannot spend another rider's fragments. Existing card unlocks remain owned.
+
+Common catalog: Pulse Dart, Prism Burst, Kinetic Cards, Arc Relay, Ricochet Seal, Echo Petals.
+Rare catalog: Halo Nova, Photon Lance, Ghost Link, Orbit Razor, Strobe Rail, Shatter Sigil, Satellite Choir.
+Epic catalog: Talisman Guard, Neon Cataclysm, Event Horizon.
+
+SAVE COMPATIBILITY AND ROLLBACK
+The economy revision uses ForbiddenCode_Profile_v5, importing the previous v4 profile or its recovery copy without writing to the old slot. The previous shared balance transfers once to the last-selected rider; every other rider begins with zero fragments. Rider-specific unlocks, all fifteen presets, selected rider/deck, identity, history, research, settings and bindings carry forward. Direct migration from v3 remains supported, retaining its formerly account-wide ownership across riders. Old saves remain usable by preserved older builds.
+
+Play-Forbidden-Routines.cmd launches the regular 0.4.6 package. Play-Windows-0.4.5.cmd restores the preceding regular build. Play-All-16-Cards-0.4.5.cmd retains the original 16-card experiment. Play-All-16-Cards.cmd now opens the current game with separate playtest saves and disabled public submissions; the old playtest's v4 save also imports into v5 inside that separate user directory.
+
+The browser edition and its balance are unchanged. No new Meshy or generated-art charges. No spell damage, essence thresholds, enemy stats or rarity draft weighting were changed by the unlock-price pass.
+
+Validation receipts and screenshots: Docs/Windows-0.4.6-Validation.

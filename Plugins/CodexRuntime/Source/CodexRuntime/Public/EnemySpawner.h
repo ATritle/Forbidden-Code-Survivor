@@ -22,6 +22,9 @@ public:
     int32 PoolSize = 300;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Waves", meta=(ClampMin="0"))
     int32 MaxActiveEnemies = 200;
+    /** Normal waves reserve slots for explicitly admitted bosses/objectives. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Waves") int32 ReservedSlots = 0;
+    const TSet<TObjectPtr<APooledEnemy>>& GetActiveEnemies() const {return ActiveEnemies;}
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Waves", meta=(ClampMin="1"))
     int32 EnemiesPerWave = 10;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Waves", meta=(ClampMin="0.05"))

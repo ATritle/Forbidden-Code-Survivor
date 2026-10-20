@@ -1,0 +1,8 @@
+{
+  "newVersion": 5,
+  "result": "PROFILE_MIGRATION_PASS",
+  "previousVersion": 3,
+  "previousSlotSHA256": "8E4920B83508E144F716B321FB0FE0BD5E0AD3972F33D88EE6F04E4FDE7AD60C",
+  "oldSaveUnchanged": true,
+  "recoveryVerified": true
+}

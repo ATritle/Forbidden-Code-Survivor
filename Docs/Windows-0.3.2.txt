@@ -1,0 +1,30 @@
+FORBIDDEN CODE: SURVIVOR / WINDOWS 0.3.2
+
+Main menu: HOW TO PLAY / SETTINGS / CLOSE GAME, arranged together left to right.
+The old upper-right Settings location no longer draws or receives clicks in the initial menu.
+The in-game Settings shortcut keeps its existing position; Esc remains available everywhere.
+
+MENU AUDIO
+Selection/input: rescopicsound-ui-click-menu-modern-interface-select-medium-230477.mp3.
+Navigation/hover: the same medium recording at a quieter gain, played on entering a new control.
+Exit/back/close: rescopicsound-ui-click-menu-modern-interface-select-small-01-230473.mp3.
+Both recordings were already imported as SW_UI_Select and SW_UI_Click. No replacement or paid generation.
+Feedback follows the independent saved SFX volume, works during pause and never changes music state.
+
+The existing two UI voices are separated for navigation and input, within the same 18-effect voice cap.
+A hover cannot swallow a click. Repeated UI calls for one action are coalesced; exit cues have priority
+over automatic submenu updates. Main library filters, pagination, cards, presets, deck saving, Enter Arena,
+Help, Settings and leaderboard opening all provide input feedback. Shared choice buttons and guide pages
+also support mouse hover and keyboard/controller browsing. Closing Help, Settings and the board uses
+the exit cue. Close Game holds a pause-safe real-time delay so its 0.379-second cue can finish before quit.
+
+PLAY / PRESERVE
+Play-Forbidden-Routines.cmd launches Windows 0.3.2. The package and installer are versioned separately.
+Play-Windows-0.3.1.cmd retains the previous ramp/guide build. Windows 0.3.0 and the original baseline
+are also retained, together with their existing launchers and restore instructions.
+
+VERIFICATION
+Scripts/Test-MenuAudio.ps1 tests pointer navigation, the relocated Settings hit area, input versus close
+SoundWave identity, click priority immediately after navigation, SFX gain, paused playback, Help restoration
+and a real audio-mixer WAV capture. Scripts/Test-RampGuide.ps1 -QuitOnly exercises both exit buttons.
+Shipping/installer receipts and the updated menu still are stored in Docs/Windows-0.3.2-Validation.

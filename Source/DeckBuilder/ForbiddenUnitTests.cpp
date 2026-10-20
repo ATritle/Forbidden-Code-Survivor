@@ -1,0 +1,154 @@
+#if WITH_DEV_AUTOMATION_TESTS
+#include "Misc/AutomationTest.h"
+#include "Engine/World.h"
+#include "Engine/Engine.h"
+#include "CardDataAsset.h"
+#include "MVPGame.h"
+#include "CodexDeckComponent.h"
+#include "EnemySpawner.h"
+#include "ForbiddenPrograms.h"
+#include "ForbiddenProfile.h"
+#include "ForbiddenScoreService.h"
+#include "Dom/JsonObject.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
+
+namespace ForbiddenTests
+{
+    struct FWorld
+    {
+        UWorld* World;
+        FWorld()
+        {
+            const auto Settings=UWorld::InitializationValues().AllowAudioPlayback(false).CreatePhysicsScene(false).CreateNavigation(false).CreateAISystem(false).ShouldSimulatePhysics(false);
+            World=UWorld::CreateWorld(EWorldType::Game,false,NAME_None,nullptr,true,ERHIFeatureLevel::Num,&Settings);
+            GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);World->InitializeActorsForPlay(FURL());
+        }
+        ~FWorld() {World->DestroyWorld(false);GEngine->DestroyWorldContext(World);}
+    };
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FForbiddenProgramsTest,"Forbidden.Runtime.FinitePrograms",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FForbiddenProgramsTest::RunTest(const FString& Parameters)
+{
+    ForbiddenTests::FWorld W;auto* Owner=W.World->SpawnActor<AActor>();auto* Registry=W.World->SpawnActor<AEnemySpawner>();
+    for(FName ID:UForbiddenProfile::ProgramIDs())
+    {
+        auto* Card=NewObject<UCardDataAsset>();Card->CardID=ID;Card->BaseDamage=30;Card->Cooldown=1;ForbiddenPrograms::Configure(Card);
+        TestTrue(TEXT("All 16 programs opt into finite ranks"),Card->bUseProgramProgression);
+        TestFalse(TEXT("Distinct authored evolution branches"),Card->EvolutionA.EqualTo(Card->EvolutionB));
+        for(int32 Branch=0;Branch<2;++Branch)
+        {
+            auto* Spell=W.World->SpawnActor<AMVPBoltSpell>();Spell->SetOwner(Owner);Spell->InitializeSpell(Card,Registry);
+            for(int32 Rank=1;Rank<3;++Rank)
+            {
+                const auto Offers=Spell->GetAvailableMutationTags();TestEqual(TEXT("Only the next rank is eligible"),Offers.Num(),1);
+                if(Offers.IsEmpty()) return false;
+                TestTrue(TEXT("Rank applies"),Spell->ApplyMutation(Offers[0],1));
+                TestEqual(TEXT("Rank advances once"),Spell->Modifiers.Rank,Rank+1);
+            }
+            const auto Offers=Spell->GetAvailableMutationTags();TestEqual(TEXT("Exactly two structural evolutions"),Offers.Num(),2);
+            if(Offers.Num()!=2) return false;
+            TestTrue(TEXT("Evolution has a readable preview"),!Spell->DescribeMutation(Offers[Branch]).IsEmpty());
+            TestTrue(TEXT("Chosen evolution applies"),Spell->ApplyMutation(Offers[Branch],1));
+            TestFalse(TEXT("Other evolution cannot stack"),Spell->ApplyMutation(Offers[1-Branch],1));
+            TestTrue(TEXT("Fully evolved program leaves draft eligibility"),Spell->GetAvailableMutationTags().IsEmpty());
+            TestTrue(TEXT("Finite area bound"),Spell->Modifiers.RadiusMultiplier<=1.5f);
+            Spell->InitializeSpell(Card,Registry);TestEqual(TEXT("New run clears evolution"),Spell->Modifiers.Evolution,0);TestEqual(TEXT("New run resets rank"),Spell->Modifiers.Rank,1);Spell->Destroy();
+        }
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FForbiddenDeckCapacityTest,"Forbidden.Runtime.DeckTransactions",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FForbiddenDeckCapacityTest::RunTest(const FString& Parameters)
+{
+    ForbiddenTests::FWorld W;auto* Owner=W.World->SpawnActor<AActor>();auto* Registry=W.World->SpawnActor<AEnemySpawner>();
+    auto* Deck=NewObject<UCodexDeckComponent>(Owner);Deck->RegisterComponent();Deck->EnemySpawner=Registry;Deck->MaximumActiveWeapons=2;
+    for(int32 I=0;I<4;++I)
+    {auto* Card=NewObject<UCardDataAsset>(Deck);Card->CardID=*FString::Printf(TEXT("Test%d"),I);Card->SpellClass=AMVPBoltSpell::StaticClass();Deck->UnlockedCards.Add(Card);}
+    for(int32 I=0;I<2;++I) {Deck->EquippedDeck={Deck->UnlockedCards[I]};Deck->DrawLevelUpHand();TestNotNull(TEXT("Starter equips"),Deck->AddSelectedCardSpell(Deck->UnlockedCards[I]));}
+    auto* Old=Deck->FindOwnedSpell("Test0");Deck->EquippedDeck={Deck->UnlockedCards[2]};Deck->DrawLevelUpHand();
+    TestNull(TEXT("Full capacity requires explicit replacement"),Deck->AddSelectedCardSpell(Deck->UnlockedCards[2]));
+    TestEqual(TEXT("Rejected choice preserves old spell"),Deck->FindOwnedSpell("Test0"),Old);
+    TestFalse(TEXT("Unknown replacement rejected"),Deck->ReplaceSelectedSpell(Deck->UnlockedCards[2],"Missing"));
+    TestTrue(TEXT("Validated replacement commits"),Deck->ReplaceSelectedSpell(Deck->UnlockedCards[2],"Test0"));
+    TestNull(TEXT("Replaced spell removed"),Deck->FindOwnedSpell("Test0"));TestEqual(TEXT("Capacity remains exact"),Deck->ActiveWeapons.Num(),2);
+    Deck->EquippedDeck=Deck->UnlockedCards;Deck->DrawLevelUpHand();TestTrue(TEXT("First reroll"),Deck->RerollHand());TestTrue(TEXT("Second reroll"),Deck->RerollHand());TestFalse(TEXT("Reroll cannot exceed budget"),Deck->RerollHand());
+    if(Deck->CurrentHand.IsEmpty()) return false;const FName Banished=Deck->CurrentHand[0]->CardID;
+    TestTrue(TEXT("Banish consumes its budget"),Deck->BanishChoice(0));TestFalse(TEXT("Second banish denied"),Deck->BanishChoice(0));
+    TestFalse(TEXT("Banished program excluded"),Deck->CurrentHand.ContainsByPredicate([&](const UCardDataAsset* C){return C && C->CardID==Banished;}));return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FForbiddenPresetTest,"Forbidden.Runtime.PresetValidation",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FForbiddenPresetTest::RunTest(const FString& Parameters)
+{
+    FForbiddenDeckPreset Deck;const auto& IDs=UForbiddenProfile::ProgramIDs();Deck.DraftPool=IDs;Deck.Starters={IDs[0],IDs[1]};FString Error;
+    const TArray<FName> Owned={IDs[0],IDs[1],IDs[2],IDs[3]};
+    TestTrue(TEXT("Full draft catalog does not require starting unlocks"),UForbiddenProfile::ValidateDeck(Deck,Owned,Error));
+    Deck.Starters={IDs[0],IDs[0]};TestFalse(TEXT("Duplicate starter rejected"),UForbiddenProfile::ValidateDeck(Deck,Owned,Error));
+    Deck.Starters={IDs[0],IDs[15]};TestFalse(TEXT("Locked starter rejected"),UForbiddenProfile::ValidateDeck(Deck,Owned,Error));
+    Deck.Starters={IDs[0],IDs[1],IDs[2]};TestFalse(TEXT("Third starter rejected"),UForbiddenProfile::ValidateDeck(Deck,Owned,Error));
+    Deck.Starters={IDs[0]};TestTrue(TEXT("One-card edit can autosave"),UForbiddenProfile::ValidateDeck(Deck,Owned,Error));
+    Deck.Starters.Reset();TestTrue(TEXT("Empty edit can autosave"),UForbiddenProfile::ValidateDeck(Deck,Owned,Error));return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FForbiddenFullDraftTest,"Forbidden.Runtime.FullCatalogDraft",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FForbiddenFullDraftTest::RunTest(const FString& Parameters)
+{
+    ForbiddenTests::FWorld W;auto* Owner=W.World->SpawnActor<AActor>();auto* Registry=W.World->SpawnActor<AEnemySpawner>();
+    auto* Deck=NewObject<UCodexDeckComponent>(Owner);Deck->RegisterComponent();Deck->EnemySpawner=Registry;
+    for(FName ID:UForbiddenProfile::ProgramIDs())
+    {
+        auto* Card=NewObject<UCardDataAsset>(Deck);Card->CardID=ID;Card->BaseDamage=30;Card->Cooldown=1;
+        Card->SpellClass=AMVPBoltSpell::StaticClass();ForbiddenPrograms::Configure(Card);Deck->UnlockedCards.Add(Card);
+    }
+    Deck->EquippedDeck=Deck->UnlockedCards;TSet<FName> Seen;
+    for(int32 Trial=0;Trial<256;++Trial)
+    {
+        Deck->DiscardHand();const auto Hand=Deck->DrawLevelUpHand();TestEqual(TEXT("Three choices per fresh draft"),Hand.Num(),3);
+        TSet<FName> Unique;for(UCardDataAsset* Card:Hand) {Unique.Add(Card->CardID);Seen.Add(Card->CardID);}
+        TestEqual(TEXT("No duplicate choices"),Unique.Num(),3);
+        TestTrue(TEXT("Repeated access preserves the offered hand"),Hand==Deck->DrawLevelUpHand());
+    }
+    TestEqual(TEXT("All 16 cards reachable without starting unlocks"),Seen.Num(),16);
+    Deck->DiscardHand();UCardDataAsset* Card=Deck->UnlockedCards[0];Deck->EquippedDeck={Card};Deck->DrawLevelUpHand();auto* Spell=Deck->AddSelectedCardSpell(Card);
+    if(!Spell) return false;
+    const auto Rank=FGameplayTag::RequestGameplayTag(TEXT("Mutation.Program.Rank"));Spell->ApplyMutation(Rank,1);Spell->ApplyMutation(Rank,1);
+    Spell->ApplyMutation(FGameplayTag::RequestGameplayTag(TEXT("Mutation.Program.EvolutionA")),1);
+    Deck->EquippedDeck=Deck->UnlockedCards;Deck->DiscardHand();
+    for(int32 Trial=0;Trial<64;++Trial) {Deck->DiscardHand();for(UCardDataAsset* Offer:Deck->DrawLevelUpHand()) TestNotEqual(TEXT("Mastered spell excluded"),Offer->CardID,Card->CardID);}
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FForbiddenEconomyTest,"Forbidden.Runtime.RarityEconomy",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FForbiddenEconomyTest::RunTest(const FString& Parameters)
+{
+    TestEqual(TEXT("Common starter price"),ForbiddenPrograms::UnlockCost("ArcRelay"),75);
+    TestEqual(TEXT("Rare starter price"),ForbiddenPrograms::UnlockCost("GhostLink"),150);
+    TestEqual(TEXT("Epic starter price"),ForbiddenPrograms::UnlockCost("NeonCataclysm"),300);
+    TestEqual(TEXT("Unknown ID has no purchasable price"),ForbiddenPrograms::UnlockCost("MissingCard"),0);
+    TestEqual(TEXT("Future legendary price"),ForbiddenPrograms::CostForRarity(ECardRarity::Legendary),500);
+    for(FName ID:UForbiddenProfile::ProgramIDs())
+    {
+        auto* Card=NewObject<UCardDataAsset>();Card->CardID=ID;ForbiddenPrograms::Configure(Card);
+        TestEqual(TEXT("Runtime card rarity matches purchase catalog"),Card->Rarity,ForbiddenPrograms::Rarity(ID));
+    }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FForbiddenScoreSnapshotTest,"Forbidden.Runtime.ScoreSnapshots",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FForbiddenScoreSnapshotTest::RunTest(const FString& Parameters)
+{
+    TSharedPtr<FJsonObject> Row;
+    const FString JSON=TEXT(R"({"id":"fixture","username":"Sample","score":1000,"kills":10,"level":8,"seconds":100,"challenges":1,"won":false,"loadout":{"riderId":"Zero","cards":[{"id":"PulseDart","level":3,"evolution":1}]}})");
+    TestTrue(TEXT("JSON fixture"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(JSON),Row));
+    FForbiddenScoreEntry Parsed;TestTrue(TEXT("Valid profile parses"),UForbiddenScoreService::ParseEntry(Row,Parsed));
+    TestEqual(TEXT("Rider snapshot"),Parsed.RiderID,FName("Zero"));TestEqual(TEXT("Actual rank snapshot"),Parsed.Cards[0].Level,3);TestEqual(TEXT("Evolution snapshot"),Parsed.Cards[0].Evolution,1);
+    const auto Loadout=Row->GetObjectField(TEXT("loadout"));const auto Cards=Loadout->GetArrayField(TEXT("cards"));auto Duplicate=Cards;Duplicate.Add(Cards[0]);Loadout->SetArrayField(TEXT("cards"),Duplicate);
+    TestFalse(TEXT("Duplicate cards rejected"),UForbiddenScoreService::ParseEntry(Row,Parsed));Loadout->SetArrayField(TEXT("cards"),Cards);
+    Loadout->SetStringField(TEXT("riderId"),TEXT("Unknown"));TestFalse(TEXT("Unknown rider rejected"),UForbiddenScoreService::ParseEntry(Row,Parsed));Loadout->SetStringField(TEXT("riderId"),TEXT("Zero"));
+    Cards[0]->AsObject()->SetNumberField(TEXT("level"),1);TestFalse(TEXT("Evolution cannot claim rank one"),UForbiddenScoreService::ParseEntry(Row,Parsed));
+    return true;
+}
+
+#endif

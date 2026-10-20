@@ -1,4 +1,5 @@
 #include "CodexCardSelectionWidget.h"
+#include "ForbiddenUI.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/Border.h"
 #include "Components/Button.h"
@@ -26,6 +27,7 @@ void UCodexCardSelectionWidget::BuildCardFace(UButton* Button, const FCardDispla
     Button->SetBackgroundColor(FLinearColor::White);
     auto* Frame = WidgetTree->ConstructWidget<UBorder>();
     Frame->SetBrushColor(Data.RarityColor);
+    ForbiddenUI::Glass(Frame,FVector2D(350,590),Data.RarityColor);
     Frame->SetPadding(FMargin(2.f));
     Button->SetContent(Frame);
     if (auto* ButtonContentSlot = Cast<UButtonSlot>(Frame->Slot))
@@ -34,7 +36,7 @@ void UCodexCardSelectionWidget::BuildCardFace(UButton* Button, const FCardDispla
         ButtonContentSlot->SetVerticalAlignment(VAlign_Fill);
     }
     auto* Inner = WidgetTree->ConstructWidget<UBorder>();
-    Inner->SetBrushColor(FLinearColor(0.012f,0.019f,0.021f));
+    Inner->SetBrushColor(FLinearColor(0.006f,0.014f,0.025f,0.38f));
     Inner->SetPadding(FMargin(16.f)); Frame->SetContent(Inner);
     auto* Column = WidgetTree->ConstructWidget<UVerticalBox>();
     Inner->SetContent(Column);
@@ -94,7 +96,9 @@ void UCodexCardSelectionWidget::NativeTick(const FGeometry& Geometry, float Delt
         UButton* Button = Buttons[I]; if (!Button) continue;
         const float T = FMath::Clamp(float((Elapsed-I*0.1)/0.3),0.f,1.f);
         const float Ease = 1.f-FMath::Pow(1.f-T,3.f);
-        const float Hover = Button->IsHovered() ? 1.025f : 1.f;
+        if(Button->IsHovered() || Button->HasKeyboardFocus()) FocusedChoice=I;
+        const bool Focus=Button->IsHovered() || Button->HasKeyboardFocus();
+        const float Hover = Focus ? 1.025f : 1.f;
         Button->SetRenderOpacity(Ease);
         Button->SetRenderScale(FVector2D(FMath::Lerp(0.94f,Hover,Ease)));
         Button->SetRenderTranslation(FVector2D(0,(1.f-Ease)*28.f-(Button->IsHovered()?5.f:0.f)));

@@ -1,0 +1,264 @@
+#include "MVPGame.h"
+#include "ForbiddenWorkbenchLayout.h"
+#include "ForbiddenPrograms.h"
+#include "NeonMusicPlayerLayout.h"
+#include "ForbiddenRiderRoster.h"
+#include "ForbiddenRiderPreview.h"
+#include "ForbiddenCodeBranding.h"
+#include "NecromancyVisualComponent.h"
+#include "NeonMenuAudio.h"
+#include "CodexDeckComponent.h"
+#include "CardDataAsset.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/PointLightComponent.h"
+#include "Engine/Canvas.h"
+#include "CanvasItem.h"
+#include "Engine/Engine.h"
+#include "Engine/Font.h"
+#include "Misc/CommandLine.h"
+#include "Misc/Parse.h"
+#include "Engine/Texture.h"
+#include "Kismet/GameplayStatics.h"
+
+namespace
+{
+    FString SchoolName(EMagicSchool School)
+    {switch(School) {case EMagicSchool::Pulse:return TEXT("PULSE");case EMagicSchool::Prism:return TEXT("PRISM");case EMagicSchool::Kinetic:return TEXT("KINETIC");case EMagicSchool::Barrier:return TEXT("BARRIER");default:return TEXT("ENERGY");}}
+    TArray<FString> PerkCopy(FName ID)
+    {
+        if(ID=="Vex") return {TEXT("AFTERIMAGE"),TEXT("Boost decoy / 1.5s / 6s cooldown"),TEXT("GHOST ROUTING"),TEXT("+1 chain target / +15% jump reach"),TEXT("TRADEOFF"),TEXT("-20% maximum health")};
+        if(ID=="Rook") return {TEXT("WARD RECHARGE"),TEXT("25 essence: +15% shield / 30% cap"),TEXT("REPULSOR"),TEXT("35 damage / 350cm pulse / 6s cooldown"),TEXT("TRADEOFF"),TEXT("-10% movement speed")};
+        if(ID=="Zero") return {TEXT("TARGET LOCK"),TEXT("3 direct hits: +25% marked damage"),TEXT("PERFECT LINE"),TEXT("Every third cast: first shot +2 pierces"),TEXT("TRADEOFF"),TEXT("-20% damage-area radius")};
+        if(ID=="Mira") return {TEXT("BOUND DAEMON"),TEXT("Familiar / 1.2s shots / level scaling"),TEXT("POSSESSION"),TEXT("20 summon hits: 8s ally / 10s cooldown"),TEXT("TRADEOFF"),TEXT("-15% own-weapon damage")};
+        return {TEXT("OPEN SIGNAL"),TEXT("Flexible builds across energy schools"),TEXT("DECK FREEDOM"),TEXT("Choose any two starting programs"),TEXT("BASELINE"),TEXT("Standard health, speed and damage")};
+    }
+}
+
+bool AMVPPlayer::ApplySelectedRider()
+{
+    const auto* D=ForbiddenRiders::Find(ForbiddenRiders::Selected(this));if(!D) return false;
+    if(!CharacterArt->LoadCharacter(D->ID.ToString(),D->Height)) return false;
+    Visual->SetVisibility(false);if(!NeonHoverLight) InitializeNeonVFX();
+    if(NeonHoverLight) NeonHoverLight->SetLightColor(D->Color);return true;
+}
+void AMVPArenaGameMode::OpenRiderSelection()
+{
+    if(!bInCodex) return;
+    // Both controls now live on the same screen; never allocate a menu scene capture.
+    bCharacterSelectionOpen=false;if(RiderPreview) RiderPreview->SetPreviewVisible(false);
+}
+bool AMVPArenaGameMode::SelectRider(FName ID)
+{
+    if(!bInCodex || !ForbiddenRiders::Find(ID)) return false;
+    auto* PC=UGameplayStatics::GetPlayerController(this,0);auto* H=PC ? Cast<AMVPHUD>(PC->GetHUD()) : nullptr;
+    if(!H || !H->GetWorkbenchPortrait(ID)) {DeckMessage=TEXT("Rider artwork is unavailable. Your current rider is unchanged.");return false;}
+    const FName Previous=ForbiddenRiders::Selected(this);
+    if(!ForbiddenRiders::Select(this,ID)) {DeckMessage=TEXT("Could not save the rider selection. Please retry.");return false;}
+    if(auto* Player=GetArenaPlayer();!Player || !Player->ApplySelectedRider())
+    {ForbiddenRiders::Select(this,Previous);if(Player) Player->ApplySelectedRider();DeckMessage=TEXT("Rider gameplay assets are unavailable.");return false;}
+    LoadStartingDeck();LibraryPage=0;SchoolFilter=-1;
+    DeckMessage=TEXT("Rider saved. Each rider remembers 3 decks and their own starting-card unlocks.");NeonMenuAudio::Input(this);return true;
+}
+void AMVPArenaGameMode::ContinueToDeck() {OpenRiderSelection();}
+bool AMVPArenaGameMode::SelectDeckPreset(int32 Index)
+{
+    auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();
+    if(!bInCodex || !Profile || !Profile->Data || !Profile->Data->Decks.IsValidIndex(Index)) return false;
+    if(!SaveStartingDeck()) return false;
+    const int32 Previous=Profile->Data->SelectedDeck;Profile->Data->SelectedDeck=Index;
+    if(!Profile->Save()) {Profile->Data->SelectedDeck=Previous;DeckMessage=TEXT("Could not save the preset selection.");return false;}
+    LoadStartingDeck();LibraryPage=0;DeckMessage=FString::Printf(TEXT("Deck %d loaded. Card edits autosave to this deck only."),Index+1);
+    NeonMenuAudio::Input(this);return true;
+}
+UTexture* AMVPHUD::GetWorkbenchPortrait(FName ID)
+{
+    if(WorkbenchPortraits.Contains(ID)) return WorkbenchPortraits.FindRef(ID);
+    const auto* Definition=ForbiddenRiders::Find(ID);if(!Definition) return nullptr;
+    const FString Name=TEXT("T_Rider_")+Definition->ID.ToString();
+    UTexture* Image=LoadObject<UTexture>(nullptr,*(TEXT("/Game/UI/LoadoutWorkbench/")+Name+TEXT(".")+Name));
+    WorkbenchPortraits.Add(ID,Image);return Image;
+}
+TArray<UCardDataAsset*> AMVPHUD::GetWorkbenchCards(AMVPArenaGameMode* G) const
+{
+    TArray<UCardDataAsset*> Result;if(!G) return Result;
+    const auto Library=G->GetLibraryCards();
+    auto* Profile=G->GetGameInstance()->GetSubsystem<UForbiddenProfile>();
+    // Keep owned starters together. Locked cards remain visible and can still be drafted in-run.
+    for(int32 Owned=1;Owned>=0;--Owned)
+        for(UCardDataAsset* Card:Library) if(Card && int32(!Profile || Profile->IsUnlocked(Card->CardID))==Owned) Result.Add(Card);
+    return Result;
+}
+void AMVPHUD::WorkbenchPanel(FName Key,float X,float Y,float W,float H,FLinearColor Accent,float Over,bool Selected,bool Chamfer)
+{
+    Glass(Key,X,Y,W,H,Accent,Over,Selected,Chamfer ? 2.f : 1.f);
+    const float Cut=Chamfer ? 13.f : 5.f;
+    const FVector2D Points[]={{X+Cut,Y},{X+W-Cut,Y},{X+W,Y+Cut},{X+W,Y+H-Cut},{X+W-Cut,Y+H},{X+Cut,Y+H},{X,Y+H-Cut},{X,Y+Cut}};
+    // A filled tint makes hover visible even over the busy city backdrop.
+    const float Strength=FMath::Clamp(Over,0.f,1.f);
+    if(Strength>.001f) DrawRect(FLinearColor(Accent.R,Accent.G,Accent.B,Strength*.24f),OffsetX+(X+9)*UIScale,OffsetY+(Y+9)*UIScale,(W-18)*UIScale,(H-18)*UIScale);
+    const FLinearColor Border=Accent*(.66f+Strength*.34f+(Selected ? .12f : 0.f));
+    for(int32 I=0;I<8;++I)
+    {
+        const auto A=Points[I],B=Points[(I+1)%8];
+        FCanvasLineItem Line(FVector2D(OffsetX+A.X*UIScale,OffsetY+A.Y*UIScale),FVector2D(OffsetX+B.X*UIScale,OffsetY+B.Y*UIScale));
+        Line.SetColor(Border);Line.LineThickness=(1.f+Strength*.8f)*UIScale;Line.BlendMode=SE_BLEND_Translucent;Canvas->DrawItem(Line);
+    }
+}
+void AMVPHUD::WorkbenchImage(UTexture* Image,float X,float Y,float W,float H,bool Cover,FVector4 UV,FLinearColor Tint)
+{
+    if(!Image) return;
+    const float SourceAspect=FMath::Max(1.f,Image->GetSurfaceWidth())*UV.Z/(FMath::Max(1.f,Image->GetSurfaceHeight())*UV.W),TargetAspect=W/H;
+    if(Cover)
+    {
+        if(SourceAspect>TargetAspect) {const float Crop=UV.Z*TargetAspect/SourceAspect;UV.X+=(UV.Z-Crop)*.5f;UV.Z=Crop;}
+        else {const float Crop=UV.W*SourceAspect/TargetAspect;UV.Y+=(UV.W-Crop)*.5f;UV.W=Crop;}
+    }
+    else if(TargetAspect>SourceAspect) {const float Fit=H*SourceAspect;X+=(W-Fit)*.5f;W=Fit;}
+    else {const float Fit=W/SourceAspect;Y+=(H-Fit)*.5f;H=Fit;}
+    DrawTexture(Image,OffsetX+X*UIScale,OffsetY+Y*UIScale,W*UIScale,H*UIScale,UV.X,UV.Y,UV.Z,UV.W,Tint,BLEND_Translucent);
+}
+void AMVPHUD::WorkbenchCopy(const FString& Copy,float X,float Y,float W,float Size,FLinearColor Color,int32 MaxLines)
+{
+    UFont* Font=NeonFont ? NeonFont.Get() : GEngine->GetMediumFont();
+    const float Ratio=GEngine->GetMediumFont()->GetMaxCharHeight()/FMath::Max(1.f,Font->GetMaxCharHeight());
+    auto Fits=[&](const FString& Line){float Width,Height;Canvas->StrLen(Font,Line,Width,Height);return Width*Size*1.5f*Ratio<=W;};
+    TArray<FString> Words,Lines;Copy.Replace(TEXT("\n"),TEXT(" ")).ParseIntoArray(Words,TEXT(" "),true);FString Line;
+    for(const auto& Word:Words) {const FString Candidate=Line.IsEmpty() ? Word : Line+TEXT(" ")+Word;if(!Line.IsEmpty() && !Fits(Candidate)) {Lines.Add(Line);Line=Word;}else Line=Candidate;}
+    if(!Line.IsEmpty()) Lines.Add(Line);
+    if(Lines.Num()>MaxLines) {Lines.SetNum(MaxLines);auto& Last=Lines.Last();while(!Last.IsEmpty() && !Fits(Last+TEXT("..."))) Last.LeftChopInline(1);Last+=TEXT("...");}
+    for(int32 I=0;I<Lines.Num();++I) Text(Lines[I],X,Y+I*(Size*21.f+3.f),Size,Color);
+}
+void AMVPHUD::DrawRiderSelection(AMVPArenaGameMode* G)
+{
+    using namespace ForbiddenWorkbench;
+    HoveredWorkbenchCard=NAME_None;WorkbenchTooltipText.Reset();UCardDataAsset* HoveredCard=nullptr;float HoveredX=0,HoveredY=0;
+    const auto* D=ForbiddenRiders::Find(ForbiddenRiders::Selected(this));if(!D) return;
+    const FLinearColor Cyan=InterfaceAccent,White(.91f,.96f,1),Muted(.57f,.72f,.82f),Pink(1,.025f,.54f),Gold(1,.68f,.06f);
+    auto* Profile=G->GetGameInstance()->GetSubsystem<UForbiddenProfile>();
+    DrawRect(FLinearColor(.004f,.008f,.02f),0,0,Canvas->SizeX,Canvas->SizeY);
+    if(BackdropMaterial) DrawMaterialSimple(BackdropMaterial,OffsetX,OffsetY,1600*UIScale,900*UIScale);
+    auto Button=[&](FName Key,const FString& Copy,float X,float Y,float W,float H,FLinearColor Color,bool Selected=false)
+    {
+        const float Over=Hover(Key,X,Y,W,H);WorkbenchPanel(Key,X,Y,W,H,Color,Over,Selected,true);
+        UFont* Font=NeonFont ? NeonFont.Get() : GEngine->GetMediumFont();float Width,Height;Canvas->StrLen(Font,Copy,Width,Height);
+        const float TextScale=.78f*1.5f*GEngine->GetMediumFont()->GetMaxCharHeight()/FMath::Max(1.f,Font->GetMaxCharHeight());
+        Text(Copy,X+FMath::Max(8.f,(W-Width*TextScale)*.5f),Y+(H-Height*TextScale)*.5f,.78f,Selected ? White : Color);
+    };
+    auto Icon=[&](int32 Kind,float X,float Y,FLinearColor Color)
+    {
+        auto Line=[&](FVector2D A,FVector2D B){DrawLine(OffsetX+(X+A.X)*UIScale,OffsetY+(Y+A.Y)*UIScale,OffsetX+(X+B.X)*UIScale,OffsetY+(Y+B.Y)*UIScale,Color,1.4f*UIScale);};
+        if(Kind==0) {for(int32 Ring=0;Ring<2;++Ring) for(int32 I=0;I<24;++I){const float R=Ring==0 ? 10.f : 6.f,A=I*2*PI/24,B=(I+1)*2*PI/24;Line(FVector2D(FMath::Cos(A)*R,FMath::Sin(A)*R),FVector2D(FMath::Cos(B)*R,FMath::Sin(B)*R));}Line({-14,0},{14,0});Line({0,-14},{0,14});}
+        else if(Kind==1) {for(int32 I=0;I<2;++I){const float DX=I*8-9;Line({DX-4,-10},{DX+6,0});Line({DX+6,0},{DX-4,10});}}
+        else if(Kind==2) {Line({0,-12},{13,11});Line({13,11},{-13,11});Line({-13,11},{0,-12});Line({0,-4},{0,3});Line({0,6},{0,8});}
+        else if(Kind==3) {for(int32 I=0;I<3;++I){const float DY=I*5-6;Line({-11,DY},{0,DY-5});Line({0,DY-5},{11,DY});Line({11,DY},{0,DY+5});Line({0,DY+5},{-11,DY});}}
+        else {for(int32 I=0;I<10;++I){const float A=I*PI/5-PI/2,B=(I+1)*PI/5-PI/2,R=I%2 ? 5.f : 12.f,T=(I+1)%2 ? 5.f : 12.f;Line({FMath::Cos(A)*R,FMath::Sin(A)*R},{FMath::Cos(B)*T,FMath::Sin(B)*T});}}
+    };
+    WorkbenchPanel(TEXT("WorkbenchHeader"),145,48,1286,54,Cyan);
+    NeonTitle(ForbiddenCode::DisplayTitle,165,54,1.12f,White);Text(TEXT("LOADOUT WORKBENCH"),166,83,.56f,Cyan);
+    Button(TEXT("HowToPlay"),TEXT("HOW TO PLAY / F1"),HowToX,NavY,NavW,NavH,Cyan);
+    Button(TEXT("MenuSettings"),TEXT("SETTINGS"),SettingsX,NavY,NavW,NavH,Cyan);
+    Button(TEXT("RiderScores"),TEXT("LEADERBOARD [L]"),ScoresX,NavY,NavW,NavH,Cyan);
+    Button(TEXT("CloseGame"),TEXT("CLOSE GAME"),CloseX,NavY,NavW,NavH,Pink);
+    WorkbenchPanel(TEXT("WorkbenchRider"),145,118,330,674,Cyan);
+    WorkbenchCopy(D->Name,165,137,136,D->ID=="NeonExorcist" ? .78f : 1.f,White,1);WorkbenchCopy(D->Role,165,164,136,.64f,Muted,2);
+    const float PortraitOver=Hover(TEXT("WorkbenchPortrait"),165,187,132,198);
+    const float PortraitShade=1.f-PortraitOver*.22f;
+    WorkbenchImage(GetWorkbenchPortrait(D->ID),165,187,132,198,false,FVector4(0,0,1,1),FLinearColor(PortraitShade,PortraitShade,PortraitShade));
+    const auto& Riders=ForbiddenRiders::All();
+    for(int32 I=0;I<Riders.Num();++I)
+    {
+        const auto& R=Riders[I];const float Y=RiderY+I*RiderPitch;const FName Key=*FString::Printf(TEXT("WorkbenchRider%d"),I);
+        const float Over=Hover(Key,RiderX,Y,RiderW,RiderH);WorkbenchPanel(Key,RiderX,Y,RiderW,RiderH,R.ID==D->ID ? Cyan : R.Color,Over,R.ID==D->ID);
+        WorkbenchImage(GetWorkbenchPortrait(R.ID),RiderX+5,Y+5,30,30,true,FVector4(.28,.035,.44,.26),FLinearColor(1.f-Over*.25f,1.f-Over*.25f,1.f-Over*.25f));
+        Text(I==0 ? TEXT("NEON") : R.Name,RiderX+42,Y+13,.78f,R.ID==D->ID ? Cyan : White);
+    }
+    WorkbenchCopy(D->Name+TEXT(" / ")+D->Role,165,400,290,.77f,Cyan,1);
+    WorkbenchCopy(D->Description,165,425,290,.64f,Muted,2);
+    const auto Perks=PerkCopy(D->ID);
+    for(int32 I=0;I<3;++I)
+    {
+        const float Y=464+I*44;const FLinearColor C=I==2 ? Pink : Cyan;
+        WorkbenchPanel(*FString::Printf(TEXT("WorkbenchPerk%d"),I),165,Y,290,38,C);
+        Icon(I,185,Y+19,C);
+        Text(Perks[I*2],207,Y+4,.68f,C);WorkbenchCopy(Perks[I*2+1],207,Y+21,238,.64f,White,1);
+    }
+    Button(TEXT("WorkbenchHideout"),TEXT("HIDEOUT / RUN HISTORY [H]"),HideoutX,HideoutY,HideoutW,HideoutH,Cyan);
+    WorkbenchCopy(G->DeckMessage,165,651,290,.63f,Muted,2);
+    Text(TEXT("HOW YOUR DECK WORKS"),165,700,.69f,Cyan);
+    const TCHAR* Steps[]={TEXT("1. Pick Deck 1, 2 or 3 (separate saves)."),TEXT("2. Click a card to add or remove it."),TEXT("3. Unlock more starters with fragments."),TEXT("4. All 16 cards can appear in a run.")};
+    for(int32 I=0;I<4;++I) Text(Steps[I],165,723+I*16,.64f,White);
+    WorkbenchPanel(TEXT("WorkbenchDeck"),495,118,936,674,Cyan);
+    Text(FString::Printf(TEXT("DECK %d / STARTING CARDS"),Profile && Profile->Data ? Profile->Data->SelectedDeck+1 : 1),519,143,1.f,Cyan);
+    for(int32 I=0;I<3;++I) Button(*FString::Printf(TEXT("WorkbenchPreset%d"),I),FString::Printf(TEXT("DECK %d"),I+1),PresetX+I*PresetPitch,PresetY,PresetW,PresetH,Cyan,Profile && Profile->Data && Profile->Data->SelectedDeck==I);
+    Text(TEXT("AUTOSAVED"),1085,757,.59f,Cyan);
+    Button(TEXT("WorkbenchEnter"),TEXT("ENTER ARENA >>"),EnterX,ActionY,EnterW,ActionH,Pink);
+    const TCHAR* Schools[]={TEXT("ALL"),TEXT("PULSE"),TEXT("PRISM"),TEXT("KINETIC"),TEXT("BARRIER")};
+    for(int32 I=0;I<5;++I) Button(*FString::Printf(TEXT("WorkbenchSchool%d"),I),Schools[I],TabsX+I*TabPitch,TabsY,TabW,TabH,I==2 ? Pink : I==3 ? Gold : Cyan,G->SchoolFilter==(I==0 ? -1 : I+5));
+
+    auto Library=GetWorkbenchCards(G);const int32 Pages=FMath::Max(1,FMath::DivideAndRoundUp(Library.Num(),CardsPerPage));G->LibraryPage=FMath::Clamp(G->LibraryPage,0,Pages-1);
+    for(int32 I=0;I<CardsPerPage && Library.IsValidIndex(G->LibraryPage*CardsPerPage+I);++I)
+    {
+        auto* Card=Library[G->LibraryPage*CardsPerPage+I];const float X=CardX(I),Y=CardY(I);const FName Key=*FString::Printf(TEXT("WorkbenchCard%d"),I);
+        const bool Starter=G->StartingCards.Contains(Card->CardID),Unlocked=!Profile || Profile->IsUnlocked(Card->CardID);
+        const FLinearColor Accent=NeonSpellPalette::Color(NeonSpellPalette::ForCard(Card->CardID));const float Over=Hover(Key,X,Y,CardW,CardH);
+        WorkbenchPanel(Key,X,Y,CardW,CardH,Accent,Over,Starter);
+        if(Within(Cursor.X,Cursor.Y,X,Y,CardW,CardH) && (!bMusicPlaylistOpen || !NeonMusicLayout::ContainsPlaylist(Cursor.X,Cursor.Y))) {HoveredCard=Card;HoveredX=X;HoveredY=Y;}
+        const float Shade=1.f-Over*.34f;
+        WorkbenchImage(Card->Icon,X+5,Y+5,CardW-10,112,true,FVector4(0,0,1,1),Unlocked ? FLinearColor(Shade,Shade,Shade) : FLinearColor(.38f*Shade,.38f*Shade,.45f*Shade));
+        if(Starter)
+        {Box(X+3,Y+4,85,23,Cyan);Text(TEXT("STARTING"),X+12,Y+9,.59f,FLinearColor(.005f,.015f,.03f));}
+        if(!Unlocked)
+        {
+            const bool Affordable=Profile && Profile->Data && Profile->Data->CodeFragments>=ForbiddenPrograms::UnlockCost(Card->CardID);
+            const FLinearColor LockColor=Affordable ? Gold : Muted;
+            Box(X+15,Y+38,CardW-30,51,FLinearColor(.008f,.012f,.027f,.88f));
+            Text(Affordable ? TEXT("UNLOCK") : TEXT("LOCKED"),X+CardW*.5f-37,Y+43,.92f,LockColor);
+            Text(FString::Printf(TEXT("%s / %d FRAGMENTS"),*ForbiddenPrograms::RarityName(Card->CardID),ForbiddenPrograms::UnlockCost(Card->CardID)),X+25,Y+71,.56f,LockColor);
+        }
+        WorkbenchCopy(Card->Name.ToString(),X+12,Y+126,CardW-28,.96f,White,1);
+        Text(SchoolName(Card->MagicSchool)+TEXT(" / ")+ForbiddenPrograms::RarityName(Card->CardID),X+12,Y+152,.62f,Accent);
+
+        Text(FString::Printf(TEXT("%.0f DMG / %.2fs"),Card->BaseDamage,Card->Cooldown),X+12,Y+176,.70f,White);
+        if(Starter) Text(TEXT("+"),X+CardW-20,Y+128,.68f,Cyan);
+    }
+    if(Library.IsEmpty()) WorkbenchCopy(TEXT("No programs in this school."),543,350,830,.9f,White,3);
+    WorkbenchPanel(TEXT("WorkbenchFragments"),519,689,250,46,Cyan);Icon(3,539,712,Cyan);
+    Text(FString::Printf(TEXT("%d"),Profile && Profile->Data ? Profile->Data->CodeFragments : 0),559,697,.9f,Cyan);Text(TEXT("RIDER FRAGMENTS"),559,718,.59f,White);
+    WorkbenchPanel(TEXT("WorkbenchStarterCount"),785,689,622,46,Gold);Icon(4,805,712,Gold);Text(FString::Printf(TEXT("%d / 2"),G->StartingCards.Num()),827,698,.9f,Gold);Text(TEXT("ATTACKS EQUIPPED AT RUN START"),900,696,.59f,White);
+    FString StarterNames;for(FName ID:G->StartingCards) for(UCardDataAsset* Card:G->GetArenaPlayer()->Deck->UnlockedCards) if(Card && Card->CardID==ID) {if(!StarterNames.IsEmpty()) StarterNames+=TEXT(" + ");StarterNames+=Card->Name.ToString();break;}
+    if(G->StartingCards.Num()<2) StarterNames+=StarterNames.IsEmpty() ? TEXT("Click two unlocked cards to begin") : TEXT(" + [EMPTY SLOT]");
+    WorkbenchCopy(StarterNames,900,715,488,.70f,Gold,1);
+    Text(TEXT("ALL 16 CARDS IN THE RUN DRAFT"),ViewX,ViewY+9,.59f,Cyan);
+    Text(FString::Printf(TEXT("%d PROGRAMS / PAGE %d OF %d"),Library.Num(),G->LibraryPage+1,Pages),865,658,.55f,Muted);
+    Button(TEXT("WorkbenchPrev"),TEXT("< PREV"),PrevX,PageY,PageW,ViewH,Cyan);Button(TEXT("WorkbenchNext"),TEXT("NEXT >"),NextX,PageY,PageW,ViewH,Cyan);
+    Text(FParse::Param(FCommandLine::Get(),TEXT("AllCardsPlaytest")) ? TEXT("PLAYTEST / UP TO 16 ATTACKS IN RUN") : TEXT("ALL 16 ATTACKS CAN STAY IN YOUR RUN"),519,757,.59f,Muted);
+    DrawMusicPlayer(G);
+    if(HoveredCard) DrawWorkbenchTooltip(HoveredCard,HoveredX,HoveredY);
+}
+bool AMVPHUD::ClickRiderSelection(float X,float Y,AMVPArenaGameMode* G)
+{
+    using namespace ForbiddenWorkbench;
+    if(ClickMusicPlayer(X,Y,G)) return true;
+    auto In=[&](float L,float T,float W,float H){return Within(X,Y,L,T,W,H);};auto* PC=Cast<AMVPController>(PlayerOwner);
+    if(In(HowToX,NavY,NavW,NavH)) {if(PC) PC->OpenHelp();return true;}
+    if(In(SettingsX,NavY,NavW,NavH)) {if(PC) PC->ToggleSettings();return true;}
+    if(In(ScoresX,NavY,NavW,NavH)) {if(PC) PC->OpenLeaderboard();return true;}
+    if(In(CloseX,NavY,NavW,NavH)) {if(PC) PC->CloseGame();return true;}
+    for(int32 I=0;I<ForbiddenRiders::All().Num();++I) if(In(RiderX,RiderY+I*RiderPitch,RiderW,RiderH)) {G->SelectRider(ForbiddenRiders::All()[I].ID);return true;}
+    for(int32 I=0;I<3;++I) if(In(PresetX+I*PresetPitch,PresetY,PresetW,PresetH)) {G->SelectDeckPreset(I);return true;}
+    if(In(EnterX,ActionY,EnterW,ActionH)) {if(G->StartSelectedRun()) NeonMenuAudio::Input(this);return true;}
+    if(In(HideoutX,HideoutY,HideoutW,HideoutH)) {if(PC) PC->OpenHideout();return true;}
+    for(int32 I=0;I<5;++I) if(In(TabsX+I*TabPitch,TabsY,TabW,TabH)) {G->SchoolFilter=I==0 ? -1 : I+5;G->LibraryPage=0;NeonMenuAudio::Input(this);return true;}
+    const auto Library=GetWorkbenchCards(G);const int32 LastPage=FMath::Max(0,(Library.Num()-1)/CardsPerPage);
+    if(In(PrevX,PageY,PageW,ViewH)) {G->LibraryPage=FMath::Max(0,G->LibraryPage-1);NeonMenuAudio::Input(this);return true;}
+    if(In(NextX,PageY,PageW,ViewH)) {G->LibraryPage=FMath::Min(LastPage,G->LibraryPage+1);NeonMenuAudio::Input(this);return true;}
+    for(int32 I=0;I<CardsPerPage && Library.IsValidIndex(G->LibraryPage*CardsPerPage+I);++I) if(In(CardX(I),CardY(I),CardW,CardH))
+    {
+        const FName ID=Library[G->LibraryPage*CardsPerPage+I]->CardID;
+        auto* Profile=G->GetGameInstance()->GetSubsystem<UForbiddenProfile>();
+        if(!Profile || Profile->IsUnlocked(ID)) G->ToggleStartingCard(ID);
+        else {NeonMenuAudio::Input(this);G->bProgramEditorFromHideout=false;G->OpenProgramEditor(ID);}
+        return true;
+    }
+    return false;
+}

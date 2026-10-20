@@ -1,0 +1,38 @@
+Forbidden Code: Survivor — Windows 0.4.5
+
+RIDER LOADOUTS
+Select a rider, choose Deck 1/2/3, and click unlocked cards to add/remove starting attacks. Each rider remembers three independent presets and their last selected preset. Every preset holds at most two distinct cards. Enter Arena requires exactly two; incomplete edits still autosave. A third card never silently replaces an existing selection.
+
+Fresh profiles have four free starting-card choices for each rider:
+Neon Exorcist: Pulse Dart, Prism Burst, Kinetic Cards, Halo Nova.
+Vex: Arc Relay, Ghost Link, Ricochet Seal, Pulse Dart.
+Rook: Talisman Guard, Halo Nova, Event Horizon, Pulse Dart.
+Zero: Photon Lance, Strobe Rail, Kinetic Cards, Pulse Dart.
+Mira: Satellite Choir, Ghost Link, Talisman Guard, Prism Burst.
+
+Locked starter cards remain visible on the workbench. They show LOCKED, or UNLOCK when the shared wallet has enough currency. A confirmed purchase costs 30 Code Fragments and unlocks that starting card for the selected rider across all three presets. A purchase does not auto-equip it. Testing does not award fragments. '408' was a typo and is not used as an unlock price or currency name.
+
+LEVEL-UP DRAFT
+Every run uses all 16 programs, regardless of rider or starting-card unlocks. Essence level-ups offer three randomly sampled, distinct eligible cards. A card can install a new attack or rank/evolve an existing attack. Existing finite ranks, exclusive evolutions, banish, reroll budgets and six-active-program replacement remain in place. Mastered cards leave eligibility; Talisman Guard can offer charge replenishment. Esc defers the same hand and Tab resumes it. Selecting or reopening a menu never silently redraws an offer.
+
+The eight-card draft-pool editor and manual Save Deck action have been removed. Starter selections are the only pre-run card editing step. Full card hover descriptions, school filters, compact layout, music dock and layered Escape navigation remain.
+
+SAVE COMPATIBILITY AND ROLLBACK
+Profiles now use ForbiddenCode_Profile_v4 (QA uses its own Automation suffix). The loader imports the previous v3 slot if no usable v4 slot exists; it never writes to v3. Previously owned and purchased cards are retained for every rider because they were previously account-wide. The former three decks are retained on the previously selected rider. Wallet, identity, history, research, settings and bindings are preserved. Other riders receive their own three presets. An intentionally empty preset remains empty after restart.
+
+The previous complete v4 revision is kept as Recovery. Non-GVAS/short save headers are rejected before Unreal's legacy deserializer so that malformed-header recovery can work. This is a header guard and recovery mechanism, not a guarantee that arbitrary corruption inside an otherwise valid Unreal archive is recoverable.
+
+Play-Forbidden-Routines.cmd launches 0.4.5. Play-Windows-0.4.4.cmd launches the preserved previous build and its independent v3 profile. All earlier release folders and the original pre-overhaul baseline are retained.
+
+DAMAGE REVIEW
+The audit measures actual health removed and per-program run attribution. It covers all authored card base inputs, invalid inputs, Amplifier, Overload Orb, Deadman Battery, Glass Protocol, combined multipliers, directional armor, rider modifiers, chain falloff, expanding fields, scheduled pulses, finite ranks, Armor Decoder and overkill/death deduplication. Separate real timer-driven playback covers 16 spells at base and each of their two evolved forms (48 cases), including boss-safe Talisman Guard behavior.
+
+Confirmed correction: Unstable Echo power is based on an already confirmed hit. Rider weapon scaling was being applied again to that derived power. For Mira, a 100 base hit becomes 85 and its 2x echo must be 170, not 144.5. Echo now bypasses repeated rider scaling, while each victim's defenses still apply. Echo feedback now displays actual health removed, including mitigation and overkill.
+
+Damage pipeline: cast/rank/structural output -> contract and corrupt-perk scaling -> rider scaling -> target defenses -> remaining-HP-clamped damage attribution -> health/death processing. Echo power starts from confirmed source damage, so it does not repeat the source's contract or rider bonus. Card damage is a base hit value, not DPS: volleys, pierces, explosion splash, chain attenuation and pulse counts change total damage and depend on target arrangement. The Testing Area intentionally suppresses rider/contract bonuses and enemy mitigation to compare base spell behavior.
+
+Validation receipts and screenshots: Docs/Windows-0.4.5-Validation.
+No new Meshy or image-generation charges. The browser edition is unchanged.
+
+VALIDATED RELEASE
+Four native automation suites passed. Shipping validation passed 70 numeric damage checks, 48 real spell/evolution playback cases, 768 unique three-card RNG hands across three resolutions, rider/preset reloads, fresh profiles, v3 migration with unchanged old-save hash, malformed-header recovery, full tooltips and Escape navigation, Settings, help, click audio, and installed normal gameplay. All 28 installed files matched package hashes; temporary uninstall passed. Fifteen preceding releases and the original baseline matched recorded checksums. Installer SHA256: 6934e4b87a395b16bd3a03c9ec57ac0a4e40b3b8f0769250f236988d740bbe1d.

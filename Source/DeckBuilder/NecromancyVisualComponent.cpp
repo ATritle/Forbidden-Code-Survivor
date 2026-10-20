@@ -1,4 +1,5 @@
 #include "NecromancyVisualComponent.h"
+#include "ForbiddenRiderRoster.h"
 #include "Animation/AnimSequence.h"
 #include "Engine/SkeletalMesh.h"
 #include "Misc/PackageName.h"
@@ -16,7 +17,9 @@ UNecromancyVisualComponent::UNecromancyVisualComponent()
 bool UNecromancyVisualComponent::LoadCharacter(const FString& ID, float HeightCentimeters)
 {
     bArtReady=false;
-    bHoverRider=ID==TEXT("NeonExorcist");RiderClips.Reset();RiderState=NAME_None;RiderTimer=0.f;
+    bHoverRider=ForbiddenRiders::Find(FName(*ID))!=nullptr;bBlendedRider=false;RiderClips.Reset();RiderState=NAME_None;RiderTimer=0.f;
+    CastCooldown=0;AttackRotation=0;LastRiderSpeed=0;RiderIdleTime=0;LastLandingCount=0;RiderPlayRate=1;
+    RiderAttackVariants=ID==TEXT("NeonExorcist") ? 4 : 2;
     SetVisibility(false);
     const FString Folder = TEXT("/Game/Art/Characters/") + ID + TEXT("/");
     const FString MeshPackage = Folder + TEXT("SK_") + ID;
@@ -64,6 +67,11 @@ bool UNecromancyVisualComponent::LoadCharacter(const FString& ID, float HeightCe
     SetAnimationMode(EAnimationMode::AnimationSingleNode);
     if(bHoverRider) SetRiderState(TEXT("HoverIdle"));
     else UpdateLocomotion(FVector::ZeroVector, 0.f);
+    if(bHoverRider)
+    {
+        if(UClass* RiderClass=LoadClass<UAnimInstance>(nullptr,*(Folder+TEXT("ABP_NeonRider.ABP_NeonRider_C"))))
+        {bBlendedRider=true;SetAnimationMode(EAnimationMode::AnimationBlueprint);SetAnimInstanceClass(RiderClass);}
+    }
     return true;
 }
 

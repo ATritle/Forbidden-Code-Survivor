@@ -1,0 +1,100 @@
+{
+  "HoverIdle": {
+    "frames": 61,
+    "duration": 2.0,
+    "maxFootContactErrorMeters": 4.2077844800966944e-05,
+    "source": "idle",
+    "boardBone": "Hoverboard"
+  },
+  "Cruise": {
+    "frames": 46,
+    "duration": 1.5,
+    "maxFootContactErrorMeters": 4.967699259637228e-05,
+    "source": "idle",
+    "boardBone": "Hoverboard"
+  },
+  "Accelerate": {
+    "frames": 16,
+    "duration": 0.5,
+    "maxFootContactErrorMeters": 4.9998890514785235e-05,
+    "source": "idle",
+    "boardBone": "Hoverboard"
+  },
+  "Brake": {
+    "frames": 16,
+    "duration": 0.5,
+    "maxFootContactErrorMeters": 4.7976111587990377e-05,
+    "source": "idle",
+    "boardBone": "Hoverboard"
+  },
+  "TurnLeft": {
+    "frames": 37,
+    "duration": 1.2,
+    "maxFootContactErrorMeters": 4.1161738962701266e-05,
+    "source": "idle",
+    "boardBone": "Hoverboard"
+  },
+  "TurnRight": {
+    "frames": 37,
+    "duration": 1.2,
+    "maxFootContactErrorMeters": 4.1161738962701266e-05,
+    "source": "idle",
+    "boardBone": "Hoverboard"
+  },
+  "Cast": {
+    "frames": 25,
+    "duration": 0.8,
+    "maxFootContactErrorMeters": 4.621836271404259e-05,
+    "source": "cast",
+    "boardBone": "Hoverboard"
+  },
+  "Hit": {
+    "frames": 15,
+    "duration": 0.45,
+    "maxFootContactErrorMeters": 5.901624220350006e-05,
+    "source": "hit",
+    "boardBone": "Hoverboard"
+  },
+  "Fall": {
+    "frames": 31,
+    "duration": 1.0,
+    "maxFootContactErrorMeters": 5.3629621362324594e-05,
+    "source": "idle",
+    "boardBone": "Hoverboard"
+  },
+  "Land": {
+    "frames": 15,
+    "duration": 0.45,
+    "maxFootContactErrorMeters": 5.337192806298068e-05,
+    "source": "idle",
+    "boardBone": "Hoverboard"
+  },
+  "Defeat": {
+    "frames": 37,
+    "duration": 1.2,
+    "maxFootContactErrorMeters": 6.679449078760505e-05,
+    "source": "hit",
+    "boardBone": "Hoverboard"
+  },
+  "CastBlood": {
+    "frames": 25,
+    "duration": 0.8,
+    "maxFootContactErrorMeters": 4.621836271404259e-05,
+    "source": "attack135",
+    "boardBone": "Hoverboard"
+  },
+  "CastStorm": {
+    "frames": 25,
+    "duration": 0.8,
+    "maxFootContactErrorMeters": 4.621836271404259e-05,
+    "source": "cast133",
+    "boardBone": "Hoverboard"
+  },
+  "HoverIdleAlt": {
+    "frames": 121,
+    "duration": 4.0,
+    "maxFootContactErrorMeters": 4.621836271404259e-05,
+    "source": "idle250",
+    "boardBone": "Hoverboard"
+  }
+}

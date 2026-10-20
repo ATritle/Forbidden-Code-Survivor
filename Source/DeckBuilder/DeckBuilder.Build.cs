@@ -5,6 +5,6 @@ public class DeckBuilder : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         PublicDependencyModuleNames.AddRange(new[] { "Core", "CoreUObject", "Engine", "InputCore", "GameplayTags", "CodexRuntime", "Niagara", "NavigationSystem", "UMG", "Slate", "SlateCore" });
-        PrivateDependencyModuleNames.Add("AudioMixer");
+        PrivateDependencyModuleNames.AddRange(new[] {"AudioMixer", "HTTP", "Json", "JsonUtilities"});
     }
 }

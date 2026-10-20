@@ -1,0 +1,12 @@
+{
+  "result": "WINDOWS_BOARD_RESET_PASS",
+  "verifiedUTC": "2026-10-20T19:15:35.882Z",
+  "windowsRowsBefore": 3,
+  "windowsRowsAfter": 0,
+  "browserScoresUnchanged": true,
+  "browserRows": 2,
+  "perPlayerLimit": 3,
+  "boardLimit": 10,
+  "season": "WINDOWS / BUILD PROFILES 01",
+  "publicTestScoresInserted": 0
+}

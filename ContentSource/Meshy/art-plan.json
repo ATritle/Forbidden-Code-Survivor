@@ -1,0 +1,60 @@
+{
+  "status": "generated_imported",
+  "style": "Original dark fantasy necromancy: worn charcoal cloth, bone ivory, oxidized bronze, restrained spectral jade. Readable silhouettes for a top-down horde game.",
+  "model": "meshy-t2",
+  "model_type": "smart-topology",
+  "formats": ["fbx"],
+  "texture_resolution": "2k",
+  "credit_cap": 91,
+  "costs": {"five_mesh_previews": 25, "five_texture_refinements": 50, "two_character_rigs_with_walk_and_run": 10, "two_idle_animations": 6},
+  "retry_policy": "No paid regeneration, remesh, conversion, or additional animation outside the approved cap without approval.",
+  "assets": [
+    {
+      "id": "Necromancer",
+      "role": "player",
+      "faces": 6000,
+      "height_meters": 1.8,
+      "rigged": true,
+      "prompt": "Original stylized dark fantasy necromancer adventurer, full body humanoid in neutral T-pose, clearly separated arms and legs, empty open hands, no held props, no base. Broad readable silhouette for top-down game. Deep hood with visible pale masked face, compact bone shoulder armor, fitted charcoal tunic with split knee-length coat panels, leather trousers and tall boots. Small jade talisman on chest. Practical proportions, solid clean geometry, no loose chains or floating parts, no floor-length robe or cape. Detailed but restrained, game-ready low-poly style.",
+      "texture_prompt": "Painterly dark fantasy game character. Weathered charcoal and muted teal cloth, aged ivory bone shoulder plates, oxidized bronze clasps, brown leather boots, pale mask and subtle jade chest talisman. Strong readable material separation, restrained highlights, no lettering, no heavy baked directional shadows."
+    },
+    {
+      "id": "Gravebound",
+      "role": "enemy",
+      "faces": 3500,
+      "height_meters": 1.75,
+      "rigged": true,
+      "prompt": "Original stylized dark fantasy gravebound revenant, full body solid humanoid in neutral T-pose, arms and legs clearly separated, empty hands, no weapon, no base. Gaunt undead soldier with exposed skull-like pale face, sturdy ribbed bone breastplate over ragged fitted burial clothes, broken iron shoulder armor, wrapped forearms, leather trousers and boots. Menacing broad shoulders, compact limbs, readable top-down game silhouette. Closed solid surfaces rather than a fragile open skeleton. No cape, no floating pieces, no ground, clean low-poly game model.",
+      "texture_prompt": "Dark fantasy undead soldier. Weathered ivory skull and bone armor, desaturated crimson burial cloth, dark rusted iron shoulder plates, dry brown leather and wraps. Faint sickly green eyes. Distinct silhouette and materials, no gore, no lettering, no strong baked shadows."
+    },
+    {
+      "id": "Gravestone",
+      "role": "arena_prop",
+      "faces": 1200,
+      "rigged": false,
+      "prompt": "Single stylized gothic grave marker for a dark fantasy game. Tall weathered slate headstone with a broad stable foot, pointed arch crown, carved skull medallion and shallow abstract ritual grooves. Chunky solid geometry, chipped edges, compact readable silhouette, no surrounding ground or scenery, isolated prop, no readable lettering, low-poly game asset.",
+      "texture_prompt": "Weathered blue gray slate, dark cracks, pale worn carved skull, faint moss in recesses, subtle jade staining within ritual grooves. Painterly dark fantasy, restrained high contrast, no lettering."
+    },
+    {
+      "id": "SoulObelisk",
+      "role": "arena_prop",
+      "faces": 1800,
+      "rigged": false,
+      "prompt": "Single original necromancy soul obelisk for a stylized dark fantasy game. Short four-sided tapered black stone monolith on a sturdy square stepped plinth, carved shallow abstract ritual channels and a prominent skull-shaped bronze inset. Chunky solid structure, readable from above, no floating pieces, no ground plane, no landscape, no lettering, game-ready low-poly prop.",
+      "texture_prompt": "Near-black weathered basalt, oxidized bronze skull inset, thin luminous-looking jade channels, worn pale edges, painterly dark fantasy stone. Keep most of the stone dark, no lettering."
+    },
+    {
+      "id": "OssuaryAltar",
+      "role": "arena_prop",
+      "faces": 2200,
+      "rigged": false,
+      "prompt": "Single necromancer ossuary altar for a stylized dark fantasy game. Low rectangular black stone altar on a solid stepped base. Thick beveled tabletop with a shallow circular ritual basin, three sculpted skull reliefs on front and bronze corner brackets. Broad readable top-down silhouette, solid continuous geometry, no loose objects, no flames, no surrounding floor or scenery, no lettering, low-poly game prop.",
+      "texture_prompt": "Charcoal weathered stone, old ivory skull reliefs, oxidized bronze brackets, subtle jade ritual basin staining, deep crevices and worn edges. Painterly dark fantasy with restrained contrast, no lettering."
+    }
+  ],
+  "integration": {
+    "characters": "Import rigged FBX and matching animation FBX; retain current gameplay collision, rotate visual bodies only, normalize model height, suspend animation while pooled.",
+    "arena": "Replace grid with a worn stone ritual court, jade summoning rings, grave clusters, boundary obelisks and a peripheral altar. Keep the central combat lane clear and decorations nonblocking.",
+    "validation": "Build UE5.8, rerun native tests and standalone gameplay checks, inspect rendered combat and level-up screenshots, verify animation and pool reset."
+  }
+}

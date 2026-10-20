@@ -1,0 +1,21 @@
+{
+	"result": "SETTINGS_REVIEW_PASS",
+	"detail": "Native modes, physical window bounds, automatic previews, maximized restore, cached-mode mismatch, rollback and saved Windowed preference verified",
+	"case": "native-display",
+	"checks": [
+		"Borderless applied to the real native window and RHI viewport while confirmation remained pending",
+		"Real 15-second confirmation timeout restored windowed mode while paused and hidden",
+		"Actual native viewport resolution verified at 2560 x 1440",
+		"Mode 1 confirmed on native window, RHI viewport and GameUserSettings",
+		"Actual native viewport resolution verified at 2560 x 1440",
+		"Mode 0 confirmed on native window, RHI viewport and GameUserSettings",
+		"Actual native viewport resolution verified at 1280 x 720",
+		"Mode 2 confirmed on native window, RHI viewport and GameUserSettings",
+		"Closing settings reverted unconfirmed display changes",
+		"Committed Windowed selection automatically restored a non-maximized 1600 x 900 native window inside 2560 x 1392 work area",
+		"Windowed reapplied successfully when cached settings said Windowed but the real window was borderless",
+		"Native window confirmed maximized before testing restore",
+		"Reapplying the active Windowed setting restores a maximized native window",
+		"Committed resolution selection auto-previewed and saved a 1280 x 720 native viewport"
+	]
+}

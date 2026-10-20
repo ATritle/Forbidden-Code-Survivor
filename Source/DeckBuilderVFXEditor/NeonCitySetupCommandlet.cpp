@@ -226,6 +226,17 @@ int32 UNeonCitySetupCommandlet::Main(const FString& Params)
         }
         return true;
     };
+    auto StreetDetail=[&](const TCHAR* Name,FVector P,float Width,float Yaw)
+    {
+        const FString Asset=FString(TEXT("/Game/Art/City/Overhaul/"))+Name+TEXT("/SM_")+Name;
+        auto* Mesh=LoadObject<UStaticMesh>(nullptr,*(Asset+TEXT(".SM_")+Name));if(!Mesh) return;
+        const auto B=Mesh->GetBounds();const float Scale=Width/FMath::Max(1.f,float(B.BoxExtent.X*2));
+        const FRotator Rotation(0,Yaw,0);const FVector Bottom=B.Origin-FVector(0,0,B.BoxExtent.Z);
+        const FVector Offset=Rotation.RotateVector(FVector(-B.Origin.X,-B.Origin.Y,-Bottom.Z)*Scale);
+        Group(FString(TEXT("Overhaul_"))+Name,Mesh,TEXT(""),false)->AddInstance(FTransform(Rotation,P+Offset,FVector(Scale)));
+        const FVector Size(B.BoxExtent.X*2*Scale*0.86f,B.BoxExtent.Y*2*Scale*0.86f,B.BoxExtent.Z*2*Scale);
+        Proxy(P+FVector(0,0,Size.Z*0.5f),Size,Rotation);
+    };
 
     // A visible, genuinely walkable static floor supplies both PBR reflections and baked navigation.
     Part(TEXT("MI_Panel"),FVector(0,0,-115),FVector(11000,11000,200),true);
@@ -239,10 +250,16 @@ int32 UNeonCitySetupCommandlet::Main(const FString& Params)
     Tower(FVector(-3500,-3300,0),FVector(1400,1300,0),1500,0);
     Tower(FVector(3600,-1650,0),FVector(1700,1600,0),2100,1);
     Tower(FVector(4450,1250,0),FVector(1300,1400,0),1750,2);
-    Tower(FVector(-4650,2550,0),FVector(1000,1800,0),2300,3);
-    Tower(FVector(-2600,4350,0),FVector(1600,1000,0),1600,4);
+    Tower(FVector(-4650,2550,0),FVector(1000,1800,0),950,3);
+    Tower(FVector(-2600,4350,0),FVector(1600,1000,0),850,4);
     Tower(FVector(2650,-4400,0),FVector(1600,1000,0),1850,5);
     Tower(FVector(-1250,-4650,0),FVector(950,850,0),1250,6);
+    for(int32 I=0;I<3;++I)
+    {
+        StreetDetail(TEXT("Shopfront"),FVector(-3950+I*430,-2600,-15),400.f,180.f);
+        StreetDetail(TEXT("Shopfront"),FVector(2690,-2150+I*430,-15),400.f,90.f);
+    }
+    for(const FVector P:{FVector(-1700,-800,-15),FVector(900,-1050,-15),FVector(2650,1700,-15),FVector(-1850,2150,-15),FVector(-4000,-2200,-15),FVector(4100,-3400,-15)}) StreetDetail(TEXT("ServiceCabinet"),P,180.f,0);
     if(ArtistProp(TEXT("ShoppingBlock"),FVector(3350,3600,-15),2400,145,false))
     {
         Proxy(FVector(3350,3600,735),FVector(2150,2100,1500),FRotator(0,-35,0));NullRoof(FVector(3350,3600,0),FVector(3400,3400,0));
@@ -265,30 +282,33 @@ int32 UNeonCitySetupCommandlet::Main(const FString& Params)
     Part(TEXT("MI_Wall"),FVector(2400,650,152.5f),FVector(1100,1500,335),true);
     Part(TEXT("M_WetConcrete"),FVector(2400,650,312),FVector(1100,1500,16));
     Ramp(FVector(650,650,-15),FVector(1850,650,320),600);
+    Ramp(FVector(2400,-1700,-15),FVector(2400,-100,320),650);
     Rail(FVector(1850,1400,0),FVector(2950,1400,0),320);
     Rail(FVector(2950,-100,0),FVector(2950,1400,0),320);
     for(int32 I=0;I<3;++I)
     {
-        const FVector P(2450,-50+I*550,320);Part(TEXT("MI_Panel"),P+FVector(0,0,100),FVector(160,100,200),true);
+        const FVector P(2750,-50+I*550,320);Part(TEXT("MI_Panel"),P+FVector(0,0,100),FVector(160,100,200),true);
         Sign(P+FVector(-85,0,120),FVector(-1,0,0),75,130,3+I*4);
     }
     // Reachable rooftop shrine with a wide ramp and an open arrival edge.
     Part(TEXT("MI_Wall"),FVector(0,3700,342.5f),FVector(2000,1800,715),true);
     Part(TEXT("M_WetConcrete"),FVector(0,3700,692),FVector(2000,1800,16));
     Ramp(FVector(600,1000,-15),FVector(600,2800,700),650);
-    Rail(FVector(-1000,2800,0),FVector(-1000,4600,0),700);
+    Ramp(FVector(-2250,3600,-15),FVector(-1000,3600,700),650);
+    Rail(FVector(-1000,2800,0),FVector(-1000,3250,0),700);
+    Rail(FVector(-1000,3950,0),FVector(-1000,4600,0),700);
     Rail(FVector(-1000,4600,0),FVector(1000,4600,0),700);
     Rail(FVector(1000,4600,0),FVector(1000,2800,0),700);
     Rail(FVector(-1000,2800,0),FVector(180,2800,0),700);
     for(float S:{-1.f,1.f})
     {
-        Part(TEXT("MI_Shrine"),FVector(S*300,3450,880),FVector(50,70,360),true);
+        Part(TEXT("MI_Shrine"),FVector(S*400,3450,1010),FVector(50,70,620),true);
         Part(TEXT("MI_Trim"),FVector(S*300,3450,710),FVector(100,110,25));
     }
-    Part(TEXT("MI_Shrine"),FVector(0,3450,1030),FVector(760,100,55));
-    Group(TEXT("Canopies"),CanopyMesh,TEXT("MI_Panel"),false)->AddInstance(FTransform(FRotator::ZeroRotator,FVector(0,3450,1030),FVector(8,2,2)));
-    Sign(FVector(0,3390,1010),FVector(0,-1,0),160,140,14);
-    Sign(FVector(0,3510,1010),FVector(0,1,0),160,140,14);
+    Part(TEXT("MI_Shrine"),FVector(0,3450,1320),FVector(960,100,55));
+    Group(TEXT("Canopies"),CanopyMesh,TEXT("MI_Panel"),false)->AddInstance(FTransform(FRotator::ZeroRotator,FVector(0,3450,1320),FVector(10,2,2)));
+    Sign(FVector(0,3390,1300),FVector(0,-1,0),160,140,14);
+    Sign(FVector(0,3510,1300),FVector(0,1,0),160,140,14);
     if(!ArtistProp(TEXT("RooftopShrine"),FVector(0,4170,700),460,0,true))
     {
         Part(TEXT("MI_Shrine"),FVector(0,4160,800),FVector(380,230,200),true);
@@ -305,6 +325,7 @@ int32 UNeonCitySetupCommandlet::Main(const FString& Params)
     Part(TEXT("MI_Wall"),FVector(-3200,1500,272.5f),FVector(1200,1600,575),true);
     Part(TEXT("M_WetConcrete"),FVector(-3200,1500,552),FVector(1200,1600,16));
     Ramp(FVector(-1500,1500,-15),FVector(-2600,1500,560),600);
+    Ramp(FVector(-4700,1500,-15),FVector(-3800,1500,560),650);
     Part(TEXT("MI_Trim"),FVector(-3200,2750,530),FVector(550,900,60),true);
     for(float Side:{-1.f,1.f}) Rail(FVector(-3200+Side*275,2300,0),FVector(-3200+Side*275,3200,0),560);
     Rail(FVector(-3475,3200,0),FVector(-2925,3200,0),560);
@@ -384,15 +405,7 @@ int32 UNeonCitySetupCommandlet::Main(const FString& Params)
         const FVector P(-1150+(I%6)*460,-700+(I/6)*700,-10);
         for(int32 G=0;G<7;++G) Part(TEXT("MI_Panel"),P+FVector(G*6,0,0),FVector(3,70,2));
     }
-    // Non-colliding translucent digital pedestrians, assembled as actual 3D silhouettes.
-    for(int32 I=0;I<18;++I)
-    {
-        const FVector P=I<12 ? FVector(-3750+(I%3)*240,-1700+(I/3)*510,0) : FVector(420+(I%2)*220,-3550-(I-12)*180,0);
-        Group(TEXT("GhostBodies"),Cone,TEXT("M_DigitalGhost"),false)->AddInstance(FTransform(FRotator::ZeroRotator,P+FVector(0,0,75),FVector(0.48f,0.48f,1.25f)));
-        Group(TEXT("GhostHeads"),Sphere,TEXT("M_DigitalGhost"),false)->AddInstance(FTransform(FRotator::ZeroRotator,P+FVector(0,0,154),FVector(0.32f)));
-        Pipe(P+FVector(0,-22,120),P+FVector(0,-39,75),12,TEXT("M_DigitalGhost"));
-        Pipe(P+FVector(0,22,120),P+FVector(0,39,75),12,TEXT("M_DigitalGhost"));
-    }
+    // Animated Meshy digital pedestrians are prewarmed by the run manager.
     // Perimeter and explicit collision bounds.
     for(int32 I=0;I<4;++I)
     {

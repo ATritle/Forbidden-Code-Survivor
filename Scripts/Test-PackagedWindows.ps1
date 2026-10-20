@@ -1,9 +1,11 @@
+param([string]$PackageDirectory='',[string]$ReportDirectory='')
 $ErrorActionPreference='Stop'
 $projectRoot=Split-Path -Parent $PSScriptRoot
-$packageRoot=Join-Path $projectRoot 'Artifacts\Windows'
+$packageRoot=if($PackageDirectory){[IO.Path]::GetFullPath($PackageDirectory)}else{Join-Path $projectRoot 'Artifacts\Windows-0.4.7\Windows'}
+if(-not $PackageDirectory -and -not(Test-Path -LiteralPath (Join-Path $packageRoot 'ForbiddenCodeSurvivor.exe'))){$packageRoot=Join-Path $projectRoot 'Artifacts\Windows-0.4.7'}
 $executable=Join-Path $packageRoot 'ForbiddenCodeSurvivor.exe'
 if(-not(Test-Path -LiteralPath $executable)){throw 'Build the Windows package first.'}
-$reports=Join-Path $projectRoot 'Saved\ReleaseSmoke'
+$reports=if($ReportDirectory){[IO.Path]::GetFullPath($ReportDirectory)}else{Join-Path $projectRoot 'Saved\Review\OverhaulPackagedSmoke'}
 New-Item -ItemType Directory -Path $reports -Force | Out-Null
 foreach($name in @('report.json','ForbiddenCode-Windows-Menu.png','ForbiddenCode-Windows-Gameplay.png')){
     $oldFile=Join-Path $reports $name

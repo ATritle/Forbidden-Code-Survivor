@@ -1,0 +1,27 @@
+{
+	"result": "ALL16_PASS",
+	"detail": "Sixteen distinct weapons acquired through real three-card essence drafts; no replacements; all 16 dealt damage together; full HUD and inspection captured",
+	"expanded": false,
+	"capacity": 16,
+	"weapons": 16,
+	"hands": 28,
+	"damageByCard":
+	{
+		"TalismanGuard": 3000000,
+		"PulseDart": 669.60009765625,
+		"PhotonLance": 384,
+		"KineticCards": 576,
+		"RicochetSeal": 864,
+		"PrismBurst": 1587.2005615234375,
+		"ArcRelay": 524.989013671875,
+		"EchoPetals": 694.40020751953125,
+		"OrbitRazor": 1041.599609375,
+		"HaloNova": 540,
+		"GhostLink": 355.45468139648438,
+		"ShatterSigil": 190.40000915527344,
+		"SatelliteChoir": 403.20004272460938,
+		"StrobeRail": 184,
+		"EventHorizon": 640,
+		"NeonCataclysm": 873.59991455078125
+	}
+}

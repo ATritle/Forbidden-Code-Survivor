@@ -1,0 +1,12 @@
+FORBIDDEN CODE: SURVIVOR — ALL 16 CARDS PLAYTEST
+
+Launch Play-All-16-Cards.cmd. Choose a rider and two starting cards, then ENTER ARENA.
+This is a normal arena run with normal health, enemy pressure, essence requirements and random three-card level-ups. Cards are not automatically equipped. Every newly chosen attack can stay installed, up to all 16 card programs simultaneously. Starting-card locks do not restrict in-run choices. Ranks, evolutions, rerolls and banish keep their existing rules.
+
+The combat HUD displays two rows of eight attack slots. Hold Tab to inspect the full build in two columns. The playtest indicator shows the equipped count. Interact prompts remain above the expanded hotbar.
+
+The separate launcher enables -AllCardsPlaytest and uses Saved/All16Playtest as its Unreal user directory. It has separate loadouts, progression and preferences. Playtest runs cannot submit to the public leaderboard. The original Play-Forbidden-Routines.cmd continues to launch the preserved regular 0.4.5 package.
+
+Build again with Scripts/Package-All16Playtest.ps1. Opt-in capacity is 16; without the flag, the source retains the regular six-weapon limit. The pre-run deck stays at two starters in both modes.
+
+Validation: Scripts/Test-All16Cards.ps1 exercises real essence level-ups and RNG hands, selects new cards when offered, confirms that all previously installed weapon objects remain, then runs all 16 together against static combat probes. It requires confirmed damage from every card and captures the complete HUD and Tab inspection at 1600x900 and 1280x720. Verification receipts are in Docs/All16-Playtest-Validation.

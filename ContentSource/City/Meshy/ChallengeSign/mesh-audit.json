@@ -1,0 +1,20 @@
+{
+  "meshy_task": "01a15029-1807-72aa-b8cd-1d0b5da4bc3f",
+  "consumed_credits": 15,
+  "target_triangles": 12000,
+  "actual_triangles": 12085,
+  "objects": 1,
+  "panel_front_x": 36,
+  "height_cm": 480,
+  "width_cm": 365,
+  "bounds_min": [
+    -46.400146484375,
+    -182.5,
+    0.0
+  ],
+  "bounds_max": [
+    85.81968688964844,
+    182.5,
+    480.0
+  ]
+}

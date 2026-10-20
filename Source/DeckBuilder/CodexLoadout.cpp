@@ -4,6 +4,11 @@
 #include "MortisProgressionManager.h"
 #include "EngineUtils.h"
 #include "CodexLoadoutSave.h"
+#include "ForbiddenProfile.h"
+#include "ForbiddenPrograms.h"
+#include "ForbiddenRiderPreview.h"
+#include "ForbiddenRiderSubsystem.h"
+#include "ForbiddenScoreService.h"
 #include "CardDataAsset.h"
 #include "CodexDeckComponent.h"
 #include "EnemySpawner.h"
@@ -14,7 +19,7 @@
 FString AMVPArenaGameMode::DeckSaveSlot() const
 {
     // Automated runs must never overwrite a player's deck.
-    return FParse::Param(FCommandLine::Get(), TEXT("MVPSmoke")) ? TEXT("CodexDeck_Automation") : TEXT("CodexDeck");
+    return FParse::Param(FCommandLine::Get(), TEXT("MVPSmoke")) ? TEXT("ForbiddenDeck_v3_Automation") : TEXT("ForbiddenDeck_v3");
 }
 
 TArray<UCardDataAsset*> AMVPArenaGameMode::GetLibraryCards() const
@@ -30,6 +35,12 @@ TArray<UCardDataAsset*> AMVPArenaGameMode::GetLibraryCards() const
 void AMVPArenaGameMode::LoadStartingDeck()
 {
     if (!bInCodex) return;
+    if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>())
+    {
+        const auto Preset=Profile->GetDeck();StartingCards=Preset.Starters;DraftPool=UForbiddenProfile::ProgramIDs();
+        DeckMessage=TEXT("Click cards to add or remove 2 starting attacks. Your changes save automatically.");
+        return;
+    }
     StartingCards.Reset();
     const bool Exists = UGameplayStatics::DoesSaveGameExist(DeckSaveSlot(), 0);
     UCodexLoadoutSave* Save = Exists ? Cast<UCodexLoadoutSave>(UGameplayStatics::LoadGameFromSlot(DeckSaveSlot(), 0)) : nullptr;
@@ -55,17 +66,27 @@ bool AMVPArenaGameMode::ToggleStartingCard(FName ID)
 {
     AMVPPlayer* Player = GetArenaPlayer();
     if (!bInCodex || !Player || !Player->Deck->UnlockedCards.ContainsByPredicate([ID](const UCardDataAsset* C) { return C && C->CardID == ID && C->SpellClass; })) return false;
+    if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();Profile && !Profile->IsUnlocked(ID)) {DeckMessage=FString::Printf(TEXT("Unlock this %s starter for %d Code Fragments."),*ForbiddenPrograms::RarityName(ID),ForbiddenPrograms::UnlockCost(ID));return false;}
+    const auto Previous=StartingCards;
     if (StartingCards.Contains(ID)) StartingCards.Remove(ID);
     else if (StartingCards.Num() < 2) StartingCards.Add(ID);
     else { DeckMessage = TEXT("Two starting slots are full. Remove a spell first."); if(AudioDirector) AudioDirector->PlayUI(TEXT("UI_Deny")); return false; }
     if(AudioDirector) AudioDirector->PlayUI(TEXT("UI_Click"));
-    DeckMessage = TEXT("Unsaved changes. Entering the arena also saves this deck.");
-    return true;
+    if(SaveStartingDeck()) return true;
+    StartingCards=Previous;return false;
 }
 
 bool AMVPArenaGameMode::SaveStartingDeck()
 {
     if(FParse::Param(FCommandLine::Get(),TEXT("ExplosionBenchmark"))) return true;
+    if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>())
+    {
+        if(!bInCodex) return false;
+        FForbiddenDeckPreset Preset=Profile->GetDeck();Preset.Starters=StartingCards;Preset.DraftPool=UForbiddenProfile::ProgramIDs();
+        const bool OK=Profile->SaveDeck(Profile->Data->SelectedDeck,Preset);
+        DeckMessage=OK ? FString::Printf(TEXT("Deck %d saved automatically / %d of 2 starting cards."),Profile->Data->SelectedDeck+1,StartingCards.Num()) : Profile->LastError;
+        return OK;
+    }
     if (!bInCodex || StartingCards.IsEmpty() || StartingCards.Num() > 2)
     { DeckMessage = TEXT("Choose one or two starting spells before saving."); return false; }
     if(!StartingCards.ContainsByPredicate([](FName ID){return ID!=TEXT("TalismanGuard");}))
@@ -82,15 +103,17 @@ bool AMVPArenaGameMode::SaveStartingDeck()
     Save->StartingCards = StartingCards;
     const bool Saved = UGameplayStatics::SaveGameToSlot(Save, DeckSaveSlot(), 0);
     DeckMessage = Saved ? TEXT("Deck saved. Your starting spells will be remembered between runs.") : TEXT("Could not save the deck. Check disk space and folder permissions, then retry.");
-    if(AudioDirector) AudioDirector->PlayUI(Saved ? TEXT("UI_Confirm") : TEXT("UI_Deny"));
+    if(AudioDirector) {if(Saved) AudioDirector->PlayMenuFeedback();else AudioDirector->PlayUI(TEXT("UI_Deny"));}
     return Saved;
 }
 
 bool AMVPArenaGameMode::StartSelectedRun()
 {
-    if(const auto* PC=Cast<AMVPController>(UGameplayStatics::GetPlayerController(this,0)); PC && PC->IsSettingsOpen()) return false;
+    if(const auto* PC=Cast<AMVPController>(UGameplayStatics::GetPlayerController(this,0)); PC && (PC->HelpWidget || PC->IsSettingsOpen() || PC->ScoreWidget || DecisionWidget)) return false;
     AMVPPlayer* Player = GetArenaPlayer();
-    if (!bInCodex || !bRunInitialized || !Player || !SaveStartingDeck()) return false;
+    if (!bInCodex || !bRunInitialized || !Player) return false;
+    if(StartingCards.Num()!=2) {DeckMessage=TEXT("Choose two different starting cards before entering the arena.");if(AudioDirector) AudioDirector->PlayUI(TEXT("UI_Deny"));return false;}
+    if(!SaveStartingDeck()) return false;
     // Reuse validated offer/equip logic one card at a time; never mutate authored data.
     for (const FName ID : StartingCards)
     {
@@ -103,8 +126,14 @@ bool AMVPArenaGameMode::StartSelectedRun()
         if (!Player->Deck->AddSelectedCardSpell(Card))
         { DeckMessage = TEXT("Spell could not be equipped. Retry entering the arena."); return false; }
     }
-    Player->Deck->EquippedDeck = Player->Deck->UnlockedCards;
-    bInCodex = false;
+    Player->Deck->EquippedDeck.Reset();
+    for(UCardDataAsset* Card:Player->Deck->UnlockedCards) if(Card && Card->SpellClass && UForbiddenProfile::ProgramIDs().Contains(Card->CardID)) Player->Deck->EquippedDeck.Add(Card);
+    bInCodex = false;bCharacterSelectionOpen=false;
+    if(RiderPreview) RiderPreview->SetPreviewVisible(false);
+    if(auto* Rider=GetWorld()->GetSubsystem<UForbiddenRiderSubsystem>()) Rider->BeginRun(Player);
+    RunRecord.ID=FGuid::NewGuid().ToString(EGuidFormats::Digits);
+    if(const auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();Profile && Profile->Data) RunRecord.RiderID=Profile->Data->SelectedRider;
+    if(auto* Scores=GetGameInstance()->GetSubsystem<UForbiddenScoreService>()) Scores->BeginRun();
     if(Player->Challenges) Player->Challenges->BeginRun();
     if (auto* PC = Cast<AMVPController>(Player->GetController()))
     {

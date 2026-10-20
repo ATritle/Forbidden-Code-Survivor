@@ -1,0 +1,62 @@
+[
+  {
+    "id": "ArcRelay",
+    "mode": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Asset type: square spell card illustration, full bleed, no border and absolutely no text. Primary request: a branching electric blue hardlight relay lattice jumping between four tiny dark chrome cyborg silhouettes, sharp segmented energy ribbons, glittering blue charged particles. Premium cinematic cyberpunk energy spell art for Neon Exorcist, pure original design, dark midnight navy background, strong clean readable central silhouette with bright white hot energy details, glossy reflections, nuanced volumetric glow and sharp graphic effects. Square composition with generous margin so the entire effect remains visible inside a square game card. No medieval fantasy, no blood, no skeletons, no logos, no watermark.",
+    "path": "ContentSource/UI/NeonArsenal/ArcRelay.png"
+  },
+  {
+    "id": "GhostLink",
+    "mode": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Asset type: square spell card illustration, full bleed, no border and absolutely no text. Primary request: six spectral violet digital ghost silhouettes connected by elegant irregular luminous purple energy threads, wispy holographic mist and floating ritual glyph fragments. Premium cinematic cyberpunk energy spell art for Neon Exorcist, pure original design, dark midnight navy background, strong clean readable central silhouette with bright white hot energy details, glossy reflections, nuanced volumetric glow and sharp graphic effects. Square composition with generous margin so the entire effect remains visible inside a square game card. No medieval fantasy, no blood, no skeletons, no logos, no watermark.",
+    "path": "ContentSource/UI/NeonArsenal/GhostLink.png"
+  },
+  {
+    "id": "NeonCataclysm",
+    "mode": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Asset type: square spell card illustration, full bleed, no border and absolutely no text. Primary request: a compact hot pink spherical energy charge bursting into a concentric neon magenta shockwave, faceted sparks and shimmering aura over wet black concrete, no orange fire. Premium cinematic cyberpunk energy spell art for Neon Exorcist, pure original design, dark midnight navy background, strong clean readable central silhouette with bright white hot energy details, glossy reflections, nuanced volumetric glow and sharp graphic effects. Square composition with generous margin so the entire effect remains visible inside a square game card. No medieval fantasy, no blood, no skeletons, no logos, no watermark.",
+    "path": "ContentSource/UI/NeonArsenal/NeonCataclysm.png"
+  },
+  {
+    "id": "OrbitRazor",
+    "mode": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Asset type: square spell card illustration, full bleed, no border and absolutely no text. Primary request: two acid yellow lime crescent energy blades curving along a looping return path, razor-sharp arcs and fine dotted neon motion trails. Premium cinematic cyberpunk energy spell art for Neon Exorcist, pure original design, dark midnight navy background, strong clean readable central silhouette with bright white hot energy details, glossy reflections, nuanced volumetric glow and sharp graphic effects. Square composition with generous margin so the entire effect remains visible inside a square game card. No medieval fantasy, no blood, no skeletons, no logos, no watermark.",
+    "path": "ContentSource/UI/NeonArsenal/OrbitRazor.png"
+  },
+  {
+    "id": "RicochetSeal",
+    "mode": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Asset type: square spell card illustration, full bleed, no border and absolutely no text. Primary request: a brilliant jade green rotating hexagonal holographic seal skipping between angular trajectories, six-sided sacred circuit glyph, rich jade particle shards. Premium cinematic cyberpunk energy spell art for Neon Exorcist, pure original design, dark midnight navy background, strong clean readable central silhouette with bright white hot energy details, glossy reflections, nuanced volumetric glow and sharp graphic effects. Square composition with generous margin so the entire effect remains visible inside a square game card. No medieval fantasy, no blood, no skeletons, no logos, no watermark.",
+    "path": "ContentSource/UI/NeonArsenal/RicochetSeal.png"
+  },
+  {
+    "id": "StrobeRail",
+    "mode": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Asset type: square spell card illustration, full bleed, no border and absolutely no text. Primary request: a piercing ice white and pale blue rail of coherent energy crossing diagonal through darkness, stacked luminous rings and crisp ionized blue vapor. Premium cinematic cyberpunk energy spell art for Neon Exorcist, pure original design, dark midnight navy background, strong clean readable central silhouette with bright white hot energy details, glossy reflections, nuanced volumetric glow and sharp graphic effects. Square composition with generous margin so the entire effect remains visible inside a square game card. No medieval fantasy, no blood, no skeletons, no logos, no watermark.",
+    "path": "ContentSource/UI/NeonArsenal/StrobeRail.png"
+  },
+  {
+    "id": "EchoPetals",
+    "mode": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Asset type: square spell card illustration, full bleed, no border and absolutely no text. Primary request: six luminous coral orange pink translucent energy petals forming a swirling spiral flower, elegant curved neon trails and tiny glittering fragments. Premium cinematic cyberpunk energy spell art for Neon Exorcist, pure original design, dark midnight navy background, strong clean readable central silhouette with bright white hot energy details, glossy reflections, nuanced volumetric glow and sharp graphic effects. Square composition with generous margin so the entire effect remains visible inside a square game card. No medieval fantasy, no blood, no skeletons, no logos, no watermark.",
+    "path": "ContentSource/UI/NeonArsenal/EchoPetals.png"
+  },
+  {
+    "id": "EventHorizon",
+    "mode": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Asset type: square spell card illustration, full bleed, no border and absolutely no text. Primary request: a deep ultraviolet singularity encircled by four sweeping violet concentric hardlight rings, distorted cybernetic ritual glyphs and dense purple ion motes. Premium cinematic cyberpunk energy spell art for Neon Exorcist, pure original design, dark midnight navy background, strong clean readable central silhouette with bright white hot energy details, glossy reflections, nuanced volumetric glow and sharp graphic effects. Square composition with generous margin so the entire effect remains visible inside a square game card. No characters, no medieval fantasy, no blood, no skeletons, no logos, no watermark.",
+    "path": "ContentSource/UI/NeonArsenal/EventHorizon.png"
+  },
+  {
+    "id": "ShatterSigil",
+    "mode": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Asset type: square spell card illustration, full bleed, no border and absolutely no text. Primary request: an amber orange triangular holographic sigil shattering into five smaller sharp geometric energy fragments, fractured gold circuit runes and fine spark trails. Premium cinematic cyberpunk energy spell art for Neon Exorcist, pure original design, dark midnight navy background, strong clean readable central silhouette with bright white hot energy details, glossy reflections, nuanced volumetric glow and sharp graphic effects. Square composition with generous margin so the entire effect remains visible inside a square game card. No characters, no medieval fantasy, no blood, no skeletons, no logos, no watermark.",
+    "path": "ContentSource/UI/NeonArsenal/ShatterSigil.png"
+  },
+  {
+    "id": "SatelliteChoir",
+    "mode": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Asset type: square spell card illustration, full bleed, no border and absolutely no text. Primary request: three aquamarine turquoise energy satellites orbiting an invisible center then launching forward with delicate comet trails, small concentric halos and brilliant mint cores. Premium cinematic cyberpunk energy spell art for Neon Exorcist, pure original design, dark midnight navy background, strong clean readable central silhouette with bright white hot energy details, glossy reflections, nuanced volumetric glow and sharp graphic effects. Square composition with generous margin so the entire effect remains visible inside a square game card. No characters, no medieval fantasy, no blood, no skeletons, no logos, no watermark.",
+    "path": "ContentSource/UI/NeonArsenal/SatelliteChoir.png"
+  }
+]

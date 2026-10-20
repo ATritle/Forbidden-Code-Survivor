@@ -1,0 +1,104 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "TWISTER",
+			"instance": "A00A61A34A8F018FAAB229BD5B7AB25D",
+			"instanceName": "TWISTER-31044",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (25H2) [10.0.26200.9711] ",
+			"model": "Default",
+			"gPU": "AMD Radeon RX 7900 XTX",
+			"cPUModel": "AMD Ryzen 9 7900X3D 12-Core Processor          ",
+			"rAMInGB": 32,
+			"renderMode": "SM6",
+			"rHI": "",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.20-18.21.08",
+	"succeeded": 5,
+	"succeededWithWarnings": 0,
+	"failed": 0,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 0.051331806927919388,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "DeckTransactions",
+			"fullTestPath": "Forbidden.Runtime.DeckTransactions",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A00A61A34A8F018FAAB229BD5B7AB25D"
+			],
+			"duration": 0.01873050257563591,
+			"dateTime": "2026.10.20-18.21.08",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "FinitePrograms",
+			"fullTestPath": "Forbidden.Runtime.FinitePrograms",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A00A61A34A8F018FAAB229BD5B7AB25D"
+			],
+			"duration": 0.0079558007419109344,
+			"dateTime": "2026.10.20-18.21.08",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "FullCatalogDraft",
+			"fullTestPath": "Forbidden.Runtime.FullCatalogDraft",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A00A61A34A8F018FAAB229BD5B7AB25D"
+			],
+			"duration": 0.011378701776266098,
+			"dateTime": "2026.10.20-18.21.08",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "PresetValidation",
+			"fullTestPath": "Forbidden.Runtime.PresetValidation",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A00A61A34A8F018FAAB229BD5B7AB25D"
+			],
+			"duration": 0.0051546022295951843,
+			"dateTime": "2026.10.20-18.21.08",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "RarityEconomy",
+			"fullTestPath": "Forbidden.Runtime.RarityEconomy",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A00A61A34A8F018FAAB229BD5B7AB25D"
+			],
+			"duration": 0.008112199604511261,
+			"dateTime": "2026.10.20-18.21.08",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		}
+	]
+}

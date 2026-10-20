@@ -1,0 +1,12 @@
+{
+  "result": "FORBIDDEN_SYSTEMS_PASS",
+  "detail": "Complete rendered run; invulnerable QA rider; normal enemy timing, movement, attacks, XP and card progression",
+  "phase": 101,
+  "runSeconds": 402.4795227050781,
+  "kills": 1621,
+  "level": 13,
+  "activePrograms": 6,
+  "checks": [
+    "Real-time automated six-minute district run, earned essence drafts, natural timed boss kill and victory"
+  ]
+}

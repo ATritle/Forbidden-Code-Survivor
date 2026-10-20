@@ -1,0 +1,104 @@
+{
+  "approved_cap": 91,
+  "consumed_credits": 91,
+  "jobs": [
+    {
+      "id": "Necromancer",
+      "stage": "preview",
+      "task_id": "01a14866-7cb4-7122-adfa-8077d0d9c135",
+      "credits": 5,
+      "status": "SUCCEEDED"
+    },
+    {
+      "id": "Gravebound",
+      "stage": "preview",
+      "task_id": "01a14866-9ecb-754c-b4c0-9caeedfd9491",
+      "credits": 5,
+      "status": "SUCCEEDED"
+    },
+    {
+      "id": "Gravestone",
+      "stage": "preview",
+      "task_id": "01a14866-ae89-7374-baf5-4df1af6a1af3",
+      "credits": 5,
+      "status": "SUCCEEDED"
+    },
+    {
+      "id": "SoulObelisk",
+      "stage": "preview",
+      "task_id": "01a14866-bc94-7448-88a3-dc63225fcb9e",
+      "credits": 5,
+      "status": "SUCCEEDED"
+    },
+    {
+      "id": "OssuaryAltar",
+      "stage": "preview",
+      "task_id": "01a14866-caac-7792-a376-1a81bc05da8d",
+      "credits": 5,
+      "status": "SUCCEEDED"
+    },
+    {
+      "id": "Necromancer",
+      "stage": "refine",
+      "task_id": "01a14868-6250-76be-8604-918e233048f3",
+      "credits": 10,
+      "status": "SUCCEEDED"
+    },
+    {
+      "id": "Gravebound",
+      "stage": "refine",
+      "task_id": "01a14868-cbba-7034-9fe6-e416973ce0e7",
+      "credits": 10,
+      "status": "SUCCEEDED"
+    },
+    {
+      "id": "Gravestone",
+      "stage": "refine",
+      "task_id": "01a14868-ddec-7241-8131-f4005a2318f7",
+      "credits": 10,
+      "status": "SUCCEEDED"
+    },
+    {
+      "id": "SoulObelisk",
+      "stage": "refine",
+      "task_id": "01a14868-ee25-73eb-8d17-59a421fe0948",
+      "credits": 10,
+      "status": "SUCCEEDED"
+    },
+    {
+      "id": "OssuaryAltar",
+      "stage": "refine",
+      "task_id": "01a14869-046a-77be-a4a4-abaad4aa16d0",
+      "credits": 10,
+      "status": "SUCCEEDED"
+    },
+    {
+      "id": "Necromancer",
+      "stage": "rig",
+      "task_id": "01a14869-d264-7724-a871-e5bf5bace2fb",
+      "credits": 5,
+      "status": "SUCCEEDED"
+    },
+    {
+      "id": "Gravebound",
+      "stage": "rig",
+      "task_id": "01a14869-e813-71c3-8859-976f4fce6517",
+      "credits": 5,
+      "status": "SUCCEEDED"
+    },
+    {
+      "id": "Necromancer",
+      "stage": "idle",
+      "task_id": "01a1486b-178a-7024-9ee3-e1c2a449a9fc",
+      "credits": 3,
+      "status": "SUCCEEDED"
+    },
+    {
+      "id": "Gravebound",
+      "stage": "idle",
+      "task_id": "01a1486b-27a2-7784-a0f8-2feddbbad757",
+      "credits": 3,
+      "status": "SUCCEEDED"
+    }
+  ]
+}

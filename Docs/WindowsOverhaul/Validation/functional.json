@@ -1,0 +1,247 @@
+{
+	"largeEnemyRoutes": 3,
+	"result": "OVERHAUL_FUNCTIONAL_PASS",
+	"detail": "48 real timer-driven spell cases; blended rider; three large-enemy routes; armor; corrupt perk; boss-safe talismans; drafting pause; boss victory; isolated QA rewards",
+	"cards": [
+		{
+			"card": "PulseDart",
+			"evolution": 0,
+			"damage": 270
+		},
+		{
+			"card": "PrismBurst",
+			"evolution": 0,
+			"damage": 384
+		},
+		{
+			"card": "HaloNova",
+			"evolution": 0,
+			"damage": 270
+		},
+		{
+			"card": "KineticCards",
+			"evolution": 0,
+			"damage": 345.60003662109375
+		},
+		{
+			"card": "PhotonLance",
+			"evolution": 0,
+			"damage": 192
+		},
+		{
+			"card": "TalismanGuard",
+			"evolution": 0,
+			"damage": 3000000
+		},
+		{
+			"card": "ArcRelay",
+			"evolution": 0,
+			"damage": 267.8515625
+		},
+		{
+			"card": "GhostLink",
+			"evolution": 0,
+			"damage": 131.19650268554688
+		},
+		{
+			"card": "NeonCataclysm",
+			"evolution": 0,
+			"damage": 858
+		},
+		{
+			"card": "OrbitRazor",
+			"evolution": 0,
+			"damage": 336
+		},
+		{
+			"card": "RicochetSeal",
+			"evolution": 0,
+			"damage": 480
+		},
+		{
+			"card": "StrobeRail",
+			"evolution": 0,
+			"damage": 92
+		},
+		{
+			"card": "EchoPetals",
+			"evolution": 0,
+			"damage": 288
+		},
+		{
+			"card": "EventHorizon",
+			"evolution": 0,
+			"damage": 512
+		},
+		{
+			"card": "ShatterSigil",
+			"evolution": 0,
+			"damage": 92
+		},
+		{
+			"card": "SatelliteChoir",
+			"evolution": 0,
+			"damage": 162
+		},
+		{
+			"card": "PulseDart",
+			"evolution": 1,
+			"damage": 1004.4002075195312
+		},
+		{
+			"card": "PrismBurst",
+			"evolution": 1,
+			"damage": 1442.3677978515625
+		},
+		{
+			"card": "HaloNova",
+			"evolution": 1,
+			"damage": 341.49600219726562
+		},
+		{
+			"card": "KineticCards",
+			"evolution": 1,
+			"damage": 2165.041259765625
+		},
+		{
+			"card": "PhotonLance",
+			"evolution": 1,
+			"damage": 793.59991455078125
+		},
+		{
+			"card": "TalismanGuard",
+			"evolution": 1,
+			"damage": 8000000
+		},
+		{
+			"card": "ArcRelay",
+			"evolution": 1,
+			"damage": 332.135986328125
+		},
+		{
+			"card": "GhostLink",
+			"evolution": 1,
+			"damage": 162.68368530273438
+		},
+		{
+			"card": "NeonCataclysm",
+			"evolution": 1,
+			"damage": 2079.479736328125
+		},
+		{
+			"card": "OrbitRazor",
+			"evolution": 1,
+			"damage": 1270.7518310546875
+		},
+		{
+			"card": "RicochetSeal",
+			"evolution": 1,
+			"damage": 148.80000305175781
+		},
+		{
+			"card": "StrobeRail",
+			"evolution": 1,
+			"damage": 114.08000183105469
+		},
+		{
+			"card": "EchoPetals",
+			"evolution": 1,
+			"damage": 535.67999267578125
+		},
+		{
+			"card": "EventHorizon",
+			"evolution": 1,
+			"damage": 872.96044921875
+		},
+		{
+			"card": "ShatterSigil",
+			"evolution": 1,
+			"damage": 1041.599365234375
+		},
+		{
+			"card": "SatelliteChoir",
+			"evolution": 1,
+			"damage": 290.1600341796875
+		},
+		{
+			"card": "PulseDart",
+			"evolution": 2,
+			"damage": 313.8751220703125
+		},
+		{
+			"card": "PrismBurst",
+			"evolution": 2,
+			"damage": 248.00001525878906
+		},
+		{
+			"card": "HaloNova",
+			"evolution": 2,
+			"damage": 241.05598449707031
+		},
+		{
+			"card": "KineticCards",
+			"evolution": 2,
+			"damage": 1392.7686767578125
+		},
+		{
+			"card": "PhotonLance",
+			"evolution": 2,
+			"damage": 976.1278076171875
+		},
+		{
+			"card": "TalismanGuard",
+			"evolution": 2,
+			"damage": 8000000
+		},
+		{
+			"card": "ArcRelay",
+			"evolution": 2,
+			"damage": 397.60800170898438
+		},
+		{
+			"card": "GhostLink",
+			"evolution": 2,
+			"damage": 162.68368530273438
+		},
+		{
+			"card": "NeonCataclysm",
+			"evolution": 2,
+			"damage": 1392.767822265625
+		},
+		{
+			"card": "OrbitRazor",
+			"evolution": 2,
+			"damage": 1249.91943359375
+		},
+		{
+			"card": "RicochetSeal",
+			"evolution": 2,
+			"damage": 664.13897705078125
+		},
+		{
+			"card": "StrobeRail",
+			"evolution": 2,
+			"damage": 319.42404174804688
+		},
+		{
+			"card": "EchoPetals",
+			"evolution": 2,
+			"damage": 785.66412353515625
+		},
+		{
+			"card": "EventHorizon",
+			"evolution": 2,
+			"damage": 1309.4403076171875
+		},
+		{
+			"card": "ShatterSigil",
+			"evolution": 2,
+			"damage": 250.47996520996094
+		},
+		{
+			"card": "SatelliteChoir",
+			"evolution": 2,
+			"damage": 334.800048828125
+		}
+	]
+}

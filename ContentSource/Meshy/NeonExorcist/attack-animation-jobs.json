@@ -1,0 +1,35 @@
+{
+  "approvedCredits": 6,
+  "submittedCredits": 6,
+  "paidRetries": 0,
+  "userProvided": {
+    "action": 135,
+    "id": "01a14c6c-094c-726c-bc0a-8d84878c4ab7",
+    "role": "CastBlood",
+    "additionalCredits": 0
+  },
+  "generated": {
+    "Cast133": {
+      "id": "01a14c71-4cba-73e0-affc-227cab4a5420",
+      "action": 133,
+      "role": "CastStorm",
+      "credits": 3
+    },
+    "Idle250": {
+      "id": "01a14c71-59ab-73d0-abe0-83cf059a2f4b",
+      "action": 250,
+      "role": "HoverIdleAlt",
+      "credits": 3
+    }
+  },
+  "status": "Complete: generated, imported and validated",
+  "spentCredits": 6,
+  "rigTask": "01a14bd9-ec75-723f-9c3f-0eb7245a7c79",
+  "validation": {
+    "clips": 14,
+    "maxImportedFootSlipCm": 0.6482,
+    "bloodCastHandTravelCm": 48.046,
+    "stormCastHandTravelCm": 57.649,
+    "smokeLog": "Saved/NeonAttackSmoke.log"
+  }
+}

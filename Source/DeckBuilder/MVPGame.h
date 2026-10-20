@@ -8,9 +8,16 @@
 #include "PooledEnemy.h"
 #include "SpellBase.h"
 #include "MortisProjectileBase.h"
+#include "ForbiddenProfile.h"
 #include "MVPGame.generated.h"
 
 class ABloodSurfaceDirector;
+class AForbiddenDistrictDirector;
+class AMVPEnemy;
+class UForbiddenChoiceWidget;
+class AForbiddenSpirit;
+class AForbiddenRiderPreview;
+class UForbiddenScoreWidget;
 class UNeonChallengeComponent;
 class ANeonAudioDirector;
 class UNeonSettingsWidget;
@@ -56,6 +63,7 @@ public:
     void UpdateGroundPhysics(float Dt);
     void TriggerSpellCastVisual(FName Style=NAME_None);
     void InitializeNeonVFX();
+    bool ApplySelectedRider();
     void UpdateNeonVFX(float Dt,bool bVisible);
     /** Fixed prewarmed charges; refills occur only through deck selections. */
     UFUNCTION(BlueprintCallable,Category="Talismans") int32 AddTalismans(int32 Count);
@@ -71,6 +79,18 @@ public:
     UFUNCTION(BlueprintCallable, Category="Camera") void LoadCameraPreference();
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera") float PreferredCameraDistance = 2100.f;
     void ReceiveContactDamage(float Amount);
+    void Boost();
+    void CycleTargetPriority();
+    void MarkTarget();
+    UPROPERTY(BlueprintReadOnly) float BoostCooldown=0.f;
+    UPROPERTY(BlueprintReadOnly) float LandingCharge=0.f;
+    UPROPERTY(BlueprintReadOnly) int32 TargetPriority=0;
+    TWeakObjectPtr<AMVPEnemy> MarkedEnemy;
+    uint32 MarkedGeneration=0;
+    float LandingRewardCooldown=0.f;
+    float BoostRemaining=0.f;
+    float TalismanRecoveryRemaining=18.f;
+    FVector BoostDirection=FVector::ZeroVector;
     /** Contract penalties deliberately bypass ordinary contact invulnerability. */
     void ReceiveChallengeDamage(float Amount,bool bPlayHitFeedback=true);
     UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Challenges") TObjectPtr<UNeonChallengeComponent> Challenges;
@@ -135,7 +155,8 @@ public:
     FVector GetCombatVFXLocation() const;
     void SetCombatHitFlash(FLinearColor Color,float Strength);
     UFUNCTION(BlueprintCallable, Category="Combat")
-    void TakeSpellDamage(float DamageAmount, FVector ImpactVelocity);
+    void TakeSpellDamage(float DamageAmount, FVector ImpactVelocity, FName ProgramID=NAME_None, bool TriggerEcho=true);
+    float StaggerRemaining=0.f;
     UFUNCTION(BlueprintImplementableEvent, Category="Combat|VFX")
     void PlayHighDetailDeathVFX(FVector Location, FVector ImpactVelocity);
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat", meta=(ClampMin="1"))
@@ -211,6 +232,7 @@ class DECKBUILDER_API AMVPBoltSpell : public ASpellBase
 public:
     AMVPBoltSpell();
 protected:
+    virtual APooledEnemy* ResolveTarget() const override;
     virtual void FireSpell_Implementation(APooledEnemy* Target, const FSpellModifiers& Snapshot) override;
     bool bBlood=false;
     EProjectileType ShotType=EProjectileType::ConcentratedElemental;
@@ -274,9 +296,19 @@ public:
     void SetMenuInput(bool bMenu);
     UFUNCTION(BlueprintCallable,Category="Settings") void ToggleSettings();
     void CloseSettings();
+    /** Escape/controller Back closes the topmost UI layer; it never selects a reward. */
+    void NavigateBack();
+    void ResumeDraft();
+    UFUNCTION(BlueprintCallable,Category="Help") void OpenHelp();
+    void CloseHelp();
+    UFUNCTION(BlueprintCallable,Category="Menu") void CloseGame();
+    UPROPERTY(Transient) TObjectPtr<class UForbiddenHelpWidget> HelpWidget;
     bool IsSettingsOpen() const { return SettingsWidget!=nullptr; }
     bool IsChallengeOpen() const;
     void InteractChallenge();
+    void OpenHideout();
+    void OpenLeaderboard();
+    UPROPERTY(Transient) TObjectPtr<UForbiddenScoreWidget> ScoreWidget;
     UPROPERTY(Transient) TObjectPtr<UNeonSettingsWidget> SettingsWidget;
     UPROPERTY(Transient) TObjectPtr<UNeonTestingWidget> TestingWidget;
     void OpenTestingArea();
@@ -286,6 +318,7 @@ public:
     void ExitTestingArea();
 private:
     bool bSettingsOwnPause=false;
+    bool bHelpWasPaused=false;
     void TickSettingsSmokeTest();
     void TickNeonPolishSmokeTest();
     void ChooseOne();
@@ -294,6 +327,8 @@ private:
     void Click();
     void RestartRun();
     void BeginSelectedRun();
+    void ScrollMusicUp();
+    void ScrollMusicDown();
     void TestExplosion();
     void TickSmokeTest();
     void TickCitySmokeTest();
@@ -311,15 +346,40 @@ class DECKBUILDER_API AMVPHUD : public AHUD
 public:
     virtual void DrawHUD() override;
     void ClickAt(float X, float Y);
+    void ScrollMusicPlaylist(int32 Direction);
+    bool IsMusicPlaylistOpen() const {return bMusicPlaylistOpen;}
     FName GetHoveredTestingCard() const {return HoveredTestingCard;}
+    UTexture* GetWorkbenchPortrait(FName ID);
+    TArray<UCardDataAsset*> GetWorkbenchCards(AMVPArenaGameMode* Game) const;
+    bool IsWorkbenchDraftView() const {return bWorkbenchDraftView;}
+    bool BackFromWorkbench();
+    FName GetHoveredWorkbenchCard() const {return HoveredWorkbenchCard;}
+    const FString& GetWorkbenchTooltipText() const {return WorkbenchTooltipText;}
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Neon UI") FLinearColor InterfaceAccent=FLinearColor(0.03f,0.85f,1.f);
     UFUNCTION(BlueprintCallable,Category="Neon UI") void SetInterfaceAccent(FLinearColor Color) { InterfaceAccent=Color; }
 private:
     FName HoveredTestingCard=NAME_None;
+    FName HoveredWorkbenchCard=NAME_None;
+    FString WorkbenchTooltipText;
+    void DrawWorkbenchTooltip(const UCardDataAsset* Card,float CardX,float CardY);
     void Text(const FString& Value, float X, float Y, float Size, FLinearColor Color);
     void CenteredText(const FString& Value, float Y, float Size, FLinearColor Color);
     void Box(float X, float Y, float W, float H, FLinearColor Color);
     void DrawCodex(AMVPArenaGameMode* Game);
+    void DrawRiderSelection(AMVPArenaGameMode* Game);
+    bool ClickRiderSelection(float X,float Y,AMVPArenaGameMode* Game);
+    UPROPERTY() TMap<FName,TObjectPtr<UTexture>> WorkbenchPortraits;
+    bool bWorkbenchDraftView=true;
+    void WorkbenchPanel(FName Key,float X,float Y,float W,float H,FLinearColor Accent,float Hover=0,bool Selected=false,bool Chamfer=false);
+    void WorkbenchImage(UTexture* Image,float X,float Y,float W,float H,bool Cover=false,FVector4 UV=FVector4(0,0,1,1),FLinearColor Tint=FLinearColor::White);
+    void WorkbenchCopy(const FString& Copy,float X,float Y,float W,float Size,FLinearColor Color,int32 MaxLines=3);
+    void DrawMusicPlayer(AMVPArenaGameMode* Game);
+    bool ClickMusicPlayer(float X,float Y,AMVPArenaGameMode* Game);
+    bool bMusicPlaylistOpen=false,bDraggingMusicVolume=false,bDraggingMusicScroll=false,bDraggingMusicSeek=false;
+    int32 MusicScrollOffset=0;
+    float MusicSeekPreview=0;
+    UPROPERTY() TMap<FName,TObjectPtr<UTexture>> MusicGraphics;
+    void MusicGraphic(FName Name,float X,float Y,float W,float H,FLinearColor Tint=FLinearColor::White,FVector4 UV=FVector4(0,0,1,1));
     void DrawSettingsButton();
     void PrepareNeonInterface();
     float Hover(FName Key,float X,float Y,float W,float H);
@@ -359,13 +419,50 @@ public:
     /** One extra eligible draft, without altering level or saved starting loadout. */
     void AwardChallengeReward(int32 BonusEssence);
     bool ChooseCard(int32 Index);
+    void DeferCardSelection();
+    void ResumeCardSelection();
+    bool bDraftDeferred=false;
     UPROPERTY(EditDefaultsOnly, Category="UI")
     TSubclassOf<UCodexCardSelectionWidget> CardSelectionWidgetClass;
     UPROPERTY(Transient, BlueprintReadOnly, Category="UI")
     TObjectPtr<UCodexCardSelectionWidget> SelectionWidget;
-    void FinishRun();
+    void FinishRun(bool Victory=false);
+    void RecordProgramDamage(FName CardID,float Amount);
+    void ContractSucceeded(FName ContractID);
+    void OnArchetypeKilled(int32 Archetype,FVector Position);
+    void ShowDecision(const FString& Title,const TArray<FString>& Choices,TFunction<void(int32)> Callback);
+    void OpenHideout();
+    void OpenProgramEditor(FName ID);
+    bool bProgramEditorFromHideout=false;
+    void ChooseCorruptPerk();
+    void OfferCapturedCode(int32 Archetype);
+    UPROPERTY() TObjectPtr<UForbiddenChoiceWidget> DecisionWidget;
+    UPROPERTY(BlueprintReadOnly) TArray<FName> CorruptPerks;
+    UPROPERTY(BlueprintReadOnly) int32 PendingCorruptRewards=0;
+    UPROPERTY(BlueprintReadOnly) float CapturedRoutineRemaining=0;
+    UPROPERTY(BlueprintReadOnly) int32 CapturedRoutine=INDEX_NONE;
+    UPROPERTY() TObjectPtr<AForbiddenSpirit> SupportSpirit;
+    UPROPERTY() TObjectPtr<AForbiddenSpirit> DecoySpirit;
+    float PerkDamageMultiplier() const;
+    float PerkIncomingMultiplier() const;
+    float CapturedRoutineTimer=0;
+    float EssenceRemainder=0;
+    UPROPERTY(BlueprintReadOnly) FForbiddenRunRecord RunRecord;
+    UPROPERTY(BlueprintReadOnly) bool bVictory=false;
+    UPROPERTY(BlueprintReadOnly) int32 CompletedContracts=0;
+    UPROPERTY(BlueprintReadOnly) int32 RunSalvage=0;
+    UPROPERTY(BlueprintReadOnly) FString LastDamageCause=TEXT("Contact damage");
+    UPROPERTY() TObjectPtr<AForbiddenDistrictDirector> DistrictDirector;
+    UPROPERTY(BlueprintReadOnly) bool bBossRequested=false;
+    bool bSuppressBossSelection=false;
     /** Pre-run loadout: one or two starting spells; all unlocked spells remain level-up offers. */
     bool StartSelectedRun();
+    bool SelectRider(FName ID);
+    bool SelectDeckPreset(int32 Index);
+    void ContinueToDeck();
+    void OpenRiderSelection();
+    bool bCharacterSelectionOpen=false;
+    UPROPERTY(Transient) TObjectPtr<AForbiddenRiderPreview> RiderPreview;
     bool ToggleStartingCard(FName ID);
     bool SaveStartingDeck();
     void LoadStartingDeck();
@@ -374,6 +471,7 @@ public:
     int32 SchoolFilter = -1;
     int32 LibraryPage = 0;
     TArray<FName> StartingCards;
+    TArray<FName> DraftPool;
     FString DeckMessage;
     void EmitProjectile(FVector Origin, FVector Direction, float Damage, const FSpellModifiers& Snapshot, FLinearColor Color, EProjectileType Type=EProjectileType::PhysicalMesh, bool bBlood=false,ENeonSpellStyle Style=ENeonSpellStyle::Prism);
     void EmitImpactPulse(FVector Position, float Radius);
@@ -402,6 +500,7 @@ public:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     bool bRunEnded = false;
     float RunSeconds = 0.f;
+    uint64 DroppedProjectiles=0;
     bool bBroadcastBossSpawned=false;
     int32 PendingLevels = 0;
 private:

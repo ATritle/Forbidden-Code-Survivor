@@ -108,7 +108,7 @@ void AEnemySpawner::SpawnWave()
     FVector Center;
     float Radius;
     if (!GetSpawnRing(Center, Radius)) return;
-    const int32 Count = FMath::Max(0, FMath::Min3(EnemiesPerWave, MaxActiveEnemies - ActiveEnemies.Num(), AvailableEnemies.Num()));
+    const int32 Count = FMath::Max(0, FMath::Min3(EnemiesPerWave, MaxActiveEnemies - FMath::Max(0,ReservedSlots) - ActiveEnemies.Num(), AvailableEnemies.Num()));
     // City walls/nav exclusions can reject candidates. Bound the work but give
     // each wave enough attempts to fill its requested count at wider zooms.
     int32 Spawned=0;

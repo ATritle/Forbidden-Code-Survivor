@@ -9,9 +9,9 @@ void AMVPHUD::DrawChallengeHUD(AMVPPlayer* Player)
     if(!Tracker.IsEmpty())
     {
         const FLinearColor Accent=Contracts->ActiveStation && Contracts->ActiveStation->Definition ? Contracts->ActiveStation->Definition->Accent : FLinearColor(0.05f,0.85f,1);
-        Box(452,24,710,86,FLinearColor(0.006f,0.012f,0.028f,0.94f));Box(452,24,3,86,Accent);
+        Box(452,82,710,74,FLinearColor(0.006f,0.012f,0.028f,0.94f));Box(452,82,3,74,Accent);
         TArray<FString> Lines;Tracker.ParseIntoArrayLines(Lines);
-        for(int32 I=0;I<Lines.Num();++I) Text(Lines[I],470,39+I*30,I==0 ? 0.8f : 0.7f,Accent);
+        for(int32 I=0;I<Lines.Num();++I) Text(Lines[I],470,91+I*27,I==0 ? 0.78f : 0.67f,Accent);
     }
     if(auto* Station=Contracts->GetNearbyStation())
     {

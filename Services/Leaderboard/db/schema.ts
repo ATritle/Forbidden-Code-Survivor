@@ -1,11 +1,14 @@
-import {sqliteTable,text,integer,index} from 'drizzle-orm/sqlite-core';
+import {sqliteTable,text,integer,index,primaryKey} from 'drizzle-orm/sqlite-core';
 export const runs=sqliteTable('runs',{
- id:text('id').primaryKey(),playerHash:text('player_hash').notNull(),tokenHash:text('token_hash').notNull(),
+ id:text('id').primaryKey(),playerHash:text('player_hash').notNull(),tokenHash:text('token_hash').notNull(),edition:text('edition').notNull().default('browser'),
  createdAt:integer('created_at').notNull(),expiresAt:integer('expires_at').notNull(),submittedAt:integer('submitted_at'),
- username:text('username'),score:integer('score'),kills:integer('kills'),level:integer('level'),seconds:integer('seconds'),challenges:integer('challenges'),won:integer('won')
+ riderId:text('rider_id'),loadoutJson:text('loadout_json'),username:text('username'),score:integer('score'),kills:integer('kills'),level:integer('level'),seconds:integer('seconds'),challenges:integer('challenges'),won:integer('won')
 },t=>[index('runs_player_created').on(t.playerHash,t.createdAt),index('runs_expiry').on(t.expiresAt)]);
 export const scores=sqliteTable('scores',{
- playerHash:text('player_hash').notNull(),id:text('id').primaryKey(),username:text('username').notNull(),score:integer('score').notNull(),
- kills:integer('kills').notNull(),level:integer('level').notNull(),seconds:integer('seconds').notNull(),challenges:integer('challenges').notNull(),won:integer('won').notNull(),
+ playerHash:text('player_hash').notNull(),id:text('id').primaryKey(),username:text('username').notNull(),score:integer('score').notNull(),edition:text('edition').notNull().default('browser'),
+ loadoutJson:text('loadout_json'),kills:integer('kills').notNull(),level:integer('level').notNull(),seconds:integer('seconds').notNull(),challenges:integer('challenges').notNull(),won:integer('won').notNull(),
  recordedAt:integer('recorded_at').notNull(),runId:text('run_id').notNull().unique()
-},t=>[index('scores_ranking').on(t.score,t.recordedAt),index('scores_player_ranking').on(t.playerHash,t.score,t.recordedAt)]);
+},t=>[index('scores_ranking').on(t.score,t.recordedAt),index('scores_player_ranking').on(t.playerHash,t.score,t.recordedAt),index('scores_edition_ranking').on(t.edition,t.score,t.recordedAt),index('scores_edition_player').on(t.edition,t.playerHash,t.score)]);
+
+export const boardResets=sqliteTable('board_resets',{id:text('id').primaryKey(),edition:text('edition').notNull(),resetAt:integer('reset_at').notNull()});
+export const scoreArchives=sqliteTable('score_archives',{resetId:text('reset_id').notNull(),scoreId:text('score_id').notNull(),payload:text('payload').notNull()},t=>[primaryKey({columns:[t.resetId,t.scoreId]})]);

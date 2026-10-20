@@ -1,0 +1,52 @@
+FORBIDDEN CODE: SURVIVOR / WINDOWS 0.3.1
+
+Ramp and field-guide update
+
+PLAY
+Double-click Play-Forbidden-Routines.cmd for 0.3.1.
+Play-Windows-0.3.0.cmd starts the previous Forbidden Routines package.
+Play-Original-Windows.cmd and Restore-Original-Windows.cmd retain the original pre-overhaul rollback.
+The 0.3.1 package and installer use separate versioned folders; neither previous package is overwritten.
+
+WALKABLE SURFACES
+The original ramp wedge's faces pointed inward. Rebuilt it with outward faces and explicit convex collision.
+The wet-concrete floor material is opaque. The runtime street pass now assigns ramps their own
+opaque MI_RampFloor variant instead of the masked courtyard material.
+Wet aggregate, puddle highlights and animated rain normals remain. Building and bridge cutaways remain.
+The eight existing ramps keep their dimensions and routes. The city does not need to be regenerated.
+The source kit and material authoring scripts carry the same corrections so a future rebuild preserves them.
+
+MENU
+CLOSE GAME on the main menu or near the top of Settings exits to desktop and saves preferences.
+A live run is not resumable after quitting. The HOW TO PLAY guide states this explicitly.
+
+ILLUSTRATED FIELD GUIDE
+HOW TO PLAY is on the main menu, at the top of Settings, or accessible with F1.
+Seven topic tabs organize 52 entries:
+  Start Here: movement, boost, targeting, terrain, landing, essence, drafting and combat warnings.
+  Programs: all 16 base programs, actual stats, rank rules and both evolution branches.
+  Enemies: all ten designs, tier, HP, contact damage, speed, essence, timing and counterplay.
+  District: routes/relays, caches, clinic, ward, subway rails, captured code/spirits and contract signs.
+  Contracts: all seven NO PAIN - NO GAIN challenges and the corrupt-perk reward choices.
+  Progression: deck construction/presets, research, unlocks, Blackout, history and leaderboard scoring.
+  Settings: audio/VFX/accessibility, Close Game and the multi-program Testing Area.
+
+Illustrations use existing approved card/enemy art and real game screenshots. Enemy artwork is labeled
+as a design reference. Card stats are read from the same live data as combat; no extra Meshy credits spent.
+Only the selected illustration is retained by the widget. Source provenance lives in ContentSource/UI/Help.
+
+Click tabs and entries, use arrow keys or D-pad to turn pages, LB/RB to switch topics, Page Up/Down
+or the mouse wheel to read long pages, and Esc/controller B/RETURN to close. The panel scales to fit.
+Opening the guide pauses a live run. Returning restores the previous menu, settings or pending card
+draft and its original pause state. Underlying Enter Arena, card selection and HUD clicks are blocked.
+The old Testing Area Talisman tooltip was also corrected: bosses take bounded damage, never an execution.
+
+REPRODUCIBLE CHECKS
+Scripts/fix_city_ramp_mesh.py runs in Blender and writes the corrected FBX plus a top-normal receipt.
+Scripts/fix_walkable_materials.py runs in the UE editor Python commandlet to import and save the fix.
+Scripts/import_help_art.py imports approved art/stills and records source hashes.
+Scripts/Test-RampGuide.ps1 exercises real native guide state, verifies every illustration, samples all
+eight ramp surfaces and captures them. A separate process clicks the actual main-menu Close Game button.
+It accepts -Executable for testing the Shipping package as well as the editor game.
+
+Validation receipts and selected screenshots for this release are in Docs/Windows-0.3.1-Validation.

@@ -1,0 +1,98 @@
+[
+  {
+    "asset": "/Game/Audio/SW_Music_Gameplay.SW_Music_Gameplay",
+    "seconds": 162.34666442871094,
+    "looping": false,
+    "channels": 2
+  },
+  {
+    "asset": "/Game/Audio/SW_Music_Menu.SW_Music_Menu",
+    "seconds": 167.52000427246094,
+    "looping": false,
+    "channels": 2
+  },
+  {
+    "asset": "/Game/Audio/SW_Music_Monume.SW_Music_Monume",
+    "seconds": 73.9330825805664,
+    "looping": false,
+    "channels": 2
+  },
+  {
+    "asset": "/Game/Audio/SW_Music_Synthwave.SW_Music_Synthwave",
+    "seconds": 197.5118408203125,
+    "looping": false,
+    "channels": 2
+  },
+  {
+    "asset": "/Game/Audio/SW_Pulse.SW_Pulse",
+    "seconds": 0.9866666793823242,
+    "looping": false,
+    "channels": 1
+  },
+  {
+    "asset": "/Game/Audio/SW_Plasma.SW_Plasma",
+    "seconds": 1.2586666345596313,
+    "looping": false,
+    "channels": 1
+  },
+  {
+    "asset": "/Game/Audio/SW_Impact.SW_Impact",
+    "seconds": 1.1786667108535767,
+    "looping": false,
+    "channels": 1
+  },
+  {
+    "asset": "/Game/Audio/SW_Laser.SW_Laser",
+    "seconds": 1.5893332958221436,
+    "looping": false,
+    "channels": 1
+  },
+  {
+    "asset": "/Game/Audio/SW_Blaster.SW_Blaster",
+    "seconds": 0.874666690826416,
+    "looping": false,
+    "channels": 1
+  },
+  {
+    "asset": "/Game/Audio/SW_Enemy_Metal.SW_Enemy_Metal",
+    "seconds": 1.6426666975021362,
+    "looping": false,
+    "channels": 1
+  },
+  {
+    "asset": "/Game/Audio/SW_Enemy_Glitch.SW_Enemy_Glitch",
+    "seconds": 2.1653332710266113,
+    "looping": false,
+    "channels": 1
+  },
+  {
+    "asset": "/Game/Audio/SW_UI_Deny.SW_UI_Deny",
+    "seconds": 0.5173333287239075,
+    "looping": false,
+    "channels": 2
+  },
+  {
+    "asset": "/Game/Audio/SW_UI_Confirm.SW_UI_Confirm",
+    "seconds": 1.3706666231155396,
+    "looping": false,
+    "channels": 2
+  },
+  {
+    "asset": "/Game/Audio/SW_UI_Select.SW_UI_Select",
+    "seconds": 0.6826666593551636,
+    "looping": false,
+    "channels": 2
+  },
+  {
+    "asset": "/Game/Audio/SW_UI_Click.SW_UI_Click",
+    "seconds": 0.3786666691303253,
+    "looping": false,
+    "channels": 2
+  },
+  {
+    "asset": "/Game/Audio/SW_LowHealth.SW_LowHealth",
+    "seconds": 9.898666381835938,
+    "looping": false,
+    "channels": 2
+  }
+]

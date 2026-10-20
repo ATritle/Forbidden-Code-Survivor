@@ -1,0 +1,27 @@
+[
+  {
+    "rider": "NeonExorcist",
+    "asset": "/Game/UI/LoadoutWorkbench/T_Rider_NeonExorcist.T_Rider_NeonExorcist",
+    "source": "..\\..\\..\\..\\..\\..\\dev\\DeckBuilder\\ContentSource\\UI\\LoadoutWorkbench\\Rider-NeonExorcist-v1.png"
+  },
+  {
+    "rider": "Vex",
+    "asset": "/Game/UI/LoadoutWorkbench/T_Rider_Vex.T_Rider_Vex",
+    "source": "..\\..\\..\\..\\..\\..\\dev\\DeckBuilder\\ContentSource\\UI\\LoadoutWorkbench\\Rider-Vex-v1.png"
+  },
+  {
+    "rider": "Rook",
+    "asset": "/Game/UI/LoadoutWorkbench/T_Rider_Rook.T_Rider_Rook",
+    "source": "..\\..\\..\\..\\..\\..\\dev\\DeckBuilder\\ContentSource\\UI\\LoadoutWorkbench\\Rider-Rook-v1.png"
+  },
+  {
+    "rider": "Zero",
+    "asset": "/Game/UI/LoadoutWorkbench/T_Rider_Zero.T_Rider_Zero",
+    "source": "..\\..\\..\\..\\..\\..\\dev\\DeckBuilder\\ContentSource\\UI\\LoadoutWorkbench\\Rider-Zero-v1.png"
+  },
+  {
+    "rider": "Mira",
+    "asset": "/Game/UI/LoadoutWorkbench/T_Rider_Mira.T_Rider_Mira",
+    "source": "..\\..\\..\\..\\..\\..\\dev\\DeckBuilder\\ContentSource\\UI\\LoadoutWorkbench\\Rider-Mira-v1.png"
+  }
+]

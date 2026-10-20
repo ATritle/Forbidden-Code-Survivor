@@ -8,9 +8,13 @@
 #include "CodexCardSelectionWidget.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Kismet/GameplayStatics.h"
+#include "NeonMenuAudio.h"
 
 void AMVPController::ToggleSettings()
 {
+    if(HelpWidget) {CloseHelp();return;}
+    if(ScoreWidget) return;
+    if(auto* G=Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this));G && G->DecisionWidget) return;
     if(IsChallengeOpen()) {if(auto* P=Cast<AMVPPlayer>(GetPawn())) P->Challenges->DeclineOffer();return;}
     if(TestingWidget) {CloseTestingConfiguration();return;}
     if(IsSettingsOpen()) {CloseSettings();return;}
@@ -18,6 +22,8 @@ void AMVPController::ToggleSettings()
     if(!Game || !Game->AudioDirector) return;
     SettingsWidget=CreateWidget<UNeonSettingsWidget>(this,UNeonSettingsWidget::StaticClass());
     if(!SettingsWidget) return;
+    if(!SettingsWidget->SavePreferences()) return;
+    NeonMenuAudio::Input(this);
     bSettingsOwnPause=!IsPaused();
     if(bSettingsOwnPause) SetPause(true);
     if(Game->SelectionWidget) Game->SelectionWidget->SetIsEnabled(false);
@@ -32,6 +38,7 @@ void AMVPController::CloseSettings()
     auto* Game=Cast<AMVPArenaGameMode>(UGameplayStatics::GetGameMode(this));
     if(Game && Game->AudioDirector && !Game->AudioDirector->SaveAudioSettings()) return;
     if(Game && Game->SpellImpactDirector && !Game->SpellImpactDirector->SaveVFXSettings()) return;
+    NeonMenuAudio::Exit(this);
     SettingsWidget->RemoveFromParent();SettingsWidget=nullptr;
     if(Game && Game->bChoosingCard && Game->SelectionWidget)
     {
@@ -47,11 +54,12 @@ void AMVPController::OpenTestingArea()
     if(!SettingsWidget || TestingWidget) return;
     TestingWidget=CreateWidget<UNeonTestingWidget>(this,UNeonTestingWidget::StaticClass());if(!TestingWidget) return;
     SettingsWidget->SetVisibility(ESlateVisibility::Collapsed);TestingWidget->AddToViewport(110);
+    NeonMenuAudio::Input(this);
     FInputModeGameAndUI Input;Input.SetHideCursorDuringCapture(false);Input.SetWidgetToFocus(TestingWidget->TakeWidget());SetInputMode(Input);
 }
 void AMVPController::CloseTestingConfiguration()
 {
-    if(!TestingWidget) return;TestingWidget->RemoveFromParent();TestingWidget=nullptr;
+    if(!TestingWidget) return;NeonMenuAudio::Exit(this);TestingWidget->RemoveFromParent();TestingWidget=nullptr;
     if(SettingsWidget) {SettingsWidget->SetVisibility(ESlateVisibility::Visible);FInputModeGameAndUI Input;Input.SetHideCursorDuringCapture(false);Input.SetWidgetToFocus(SettingsWidget->TakeWidget());SetInputMode(Input);}
 }
 bool AMVPController::StartTestingSession(FName CardID,const TArray<int32>& Counts,bool bAutoReset,float GridSpacing)

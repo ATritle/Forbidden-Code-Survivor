@@ -9,6 +9,7 @@ const TCHAR* ValidateNeonRider(AMVPPlayer* Player)
     const FName BoardBone=Live && Live->GetBoneIndex(TEXT("Hoverboard"))!=INDEX_NONE ? TEXT("Hoverboard") : TEXT("Hoverboard1");
     if(!Live || !Live->IsHoverRider() || Live->GetBoneIndex(BoardBone)==INDEX_NONE)
         return TEXT("Main player is not the rigged hoverboard rider");
+    if(!Live->UsesBlendedRider() || !Live->GetAnimInstance()) return TEXT("Main player has no blended rider animation blueprint");
     auto* Probe=NewObject<UNecromancyVisualComponent>(Player);Probe->RegisterComponent();
     if(!Probe->LoadCharacter(TEXT("NeonExorcist"),170.f)) {Probe->DestroyComponent();return TEXT("Rider animation assets missing");}
     Probe->VisibilityBasedAnimTickOption=EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;

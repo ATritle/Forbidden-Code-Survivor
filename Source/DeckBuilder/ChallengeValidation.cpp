@@ -1,4 +1,5 @@
 #include "MVPGame.h"
+#include "ForbiddenChoiceWidget.h"
 #include "NeonChallenge.h"
 #include "NeonChallengeWidget.h"
 #include "NeonSpellImpactDirector.h"
@@ -28,7 +29,7 @@ void RunChallengeSmoke(AMVPController* C)
     auto Station=[&](ENeonChallenge Kind)->ANeonChallengeStation*
     {for(ANeonChallengeStation* S:H->Stations) if(S && S->Definition->Contract==Kind) return S;return nullptr;};
     auto Approach=[&](ANeonChallengeStation* S)
-    {if(!S) return false;P->SetActorLocation(S->GetActorLocation()+FVector(-230,0,55));P->VerticalSpeed=0;return H->GetNearbyStation()==S;};
+    {if(G->PendingCorruptRewards>0) G->ChooseCorruptPerk();if(G->DecisionWidget) G->DecisionWidget->Select(3);if(!S) return false;P->SetActorLocation(S->GetActorLocation()+FVector(-230,0,55));P->VerticalSpeed=0;return H->GetNearbyStation()==S;};
     auto Click=[&](FName Name)
     {auto* B=H->OfferWidget ? Cast<UButton>(H->OfferWidget->WidgetTree->FindWidget(Name)) : nullptr;if(!B) return false;B->OnClicked.Broadcast();return true;};
     auto Capture=[](const TCHAR* Name){FScreenshotRequest::RequestScreenshot(FPaths::ProjectSavedDir()/TEXT("Screenshots")/Name,true,false);};
@@ -36,7 +37,7 @@ void RunChallengeSmoke(AMVPController* C)
     if(Phase==0)
     {
         if(H->IsContractActive() || !H->Stations.IsEmpty() || H->Definitions.Num()!=7) {Fail(TEXT("Contracts spawned into the initial menu, or library is incomplete"));return;}
-        G->StartingCards={TEXT("PulseDart")};if(!G->StartSelectedRun()) {Fail(TEXT("Run did not start"));return;}
+        G->StartingCards={TEXT("PulseDart"),TEXT("PrismBurst")};if(!G->StartSelectedRun()) {Fail(TEXT("Run did not start"));return;}
         G->Spawner->StopWaves();for(ASpellBase* S:P->Deck->ActiveWeapons) if(S) S->StopCasting();Next(1);
     }
     else if(Phase==1 && Age>1)
