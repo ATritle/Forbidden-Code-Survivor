@@ -1,36 +1,38 @@
 # Forbidden Code: Survivor
 
-A cyberpunk deckbuilding survivor. Ride a hoverboard through rain-soaked neon streets, combine forbidden energy spells, draft mutations and fight escalating cyborg hordes.
+A cyberpunk deckbuilding survivor. Ride through rain-soaked neon streets, combine forbidden energy programs and fight escalating cyborg hordes.
 
-**[Play in your browser](https://ATritle.github.io/Forbidden-Code-Survivor/)** · **[Download the UE5 Windows installer](https://github.com/ATritle/Forbidden-Code-Survivor/releases/download/v0.2.0/ForbiddenCode-Survivor-Setup.exe)** · [Release notes and checksum](https://github.com/ATritle/Forbidden-Code-Survivor/releases/tag/v0.2.0)
+**[Play browser 0.5.0](https://atritle.github.io/Forbidden-Code-Survivor/)** · **[Download Windows 0.4.7](https://github.com/ATritle/Forbidden-Code-Survivor/releases/download/v0.4.7-windows/ForbiddenCode-Survivor-0.4.7-Setup.exe)** · [Windows release/checksum](https://github.com/ATritle/Forbidden-Code-Survivor/releases/tag/v0.4.7-windows)
 
-## Two playable editions
+## Two editions
 
-- **Browser:** Complete self-contained WebGL 2 game. Sixteen energy spells, ten cyborg types, seven risk contracts, structural mutations, a saved pre-run loadout, a multi-spell testing range, settings and animated Meshy models. Rendering and navigation are adapted for the browser, with a 90-enemy cap.
-- **Windows:** Unreal Engine 5 Shipping edition with Nanite, Lumen, Niagara and the full native city. Download the 464 MiB installer from Releases and launch using the Start Menu shortcut. The installer is an early playable test release.
+- **Browser:** Native WebGL 2, five riders with perks, three two-card presets per rider, rider-specific starter unlocks, all sixteen programs in the draft, thirty-two evolutions, seven risk contracts, district objectives, phased bosses, captures, research, settings, a music player and a multi-card testing range. Enemies route through ramps to the rider's elevation, including bridges with a separate street beneath them.
+- **Windows:** Unreal Engine 5 Shipping build with the native city, Nanite, Lumen and Niagara. The existing verified installer is 731,296,939 bytes. The [Windows source branch](https://github.com/ATritle/Forbidden-Code-Survivor/tree/windows/forbidden-routines-overhaul) is the native 0.4.7 source; main is the browser publishing branch.
 
-Both editions share authored card/enemy tuning. Their saved games are separate. See [architecture and parity limits](Docs/TwoEditions.md).
+Rendering budgets and display controls are adapted for browsers. The editions keep separate progression saves. [Release details, adaptations and rollback](Docs/Browser-0.5.0.md).
 
-## Controls
+## Controls and progression
 
-WASD / arrows move; mouse wheel zooms; E interacts with challenge signs; Esc opens settings. Choose up to two starting spells, collect essence and draft a card or mutation when you level up. A touch movement stick is included.
+WASD/arrows move; Shift boosts; wheel zooms; E interacts; middle mouse marks; Q changes target priority; Tab inspects or resumes a deferred draft; ESC backs out of menus. Touch movement and standard-mapped gamepads are supported.
 
-## Run locally
+Choose a rider and one of three saved presets. Click to add or remove exactly two starting cards. Four starters are free per rider; other starters cost 75/150/300 fragments by rarity. Every program remains available in the in-run draft. Programs reach rank three, then choose an exclusive evolution. Runs have two rerolls and one banish.
 
-With Node.js installed, run `node Web/serve.mjs`, then open http://127.0.0.1:4173. Windows users can double-click `Play-Browser.cmd`; `Stop-Browser.cmd` stops that local server. No npm install or build step is needed. Modern WebGL 2 support is required.
+The shared leaderboard keeps each browser identity's best three submitted runs and displays the global top ten. New entries include immutable rider/card/rank/evolution details; hover, focus or tap a score to inspect them. Practice is unranked. Older scores are preserved with a legacy-details notice.
 
-## Development and publishing
+## Run and validate locally
 
-Run `node --test Web/tests/*.test.mjs`. After changing native authored tuning, run `python Scripts/export_browser_rules.py` and commit both generated snapshots. Push relevant changes to `main` to deploy the browser game through GitHub Actions.
+Run `node Web/serve.mjs`, then open `http://127.0.0.1:4173`. On Windows, `Play-Browser.cmd` and `Stop-Browser.cmd` manage the local server. No npm installation or build is required; enable WebGL 2 hardware acceleration.
 
-This repository includes browser assets and native source/configuration. Large native Unreal assets and original source art/audio remain in the development workspace, so a fresh clone cannot rebuild the Windows game without those folders. The Windows installer contains the cooked assets needed to play. See [publishing notes](Docs/GitHubPublishing.md).
+```text
+python Scripts/export_browser_rules.py
+node --test Web/tests/*.test.mjs
+node --test Services/Leaderboard/tests/*.test.mjs
+```
 
-Three.js is vendored under its MIT license in `Web/vendor/three/LICENSE`. Game art provenance is recorded in `Web/assets/model-manifest.json` and `Web/assets/art-manifest.json`. No license for the original game code or art is granted by the bundled third-party license.
+Use Low + Adaptive Resolution on slower hardware. `?profile=1&quality=low&evolution=1` runs an unranked stress profile; use high and/or evolution=2 for the alternate budgets/branches. `?qa=1` adds visible diagnostics and isolates saves in session storage.
 
-## Browser performance update (0.2.1)
+## Publishing and assets
 
-Use **Low + Adaptive Resolution** for responsiveness. Settings now displays gameplay FPS and render resolution. The renderer batches the city, uses animated low LODs and lightweight shading on Low, pools chain effects, and fixes slow motion caused by low frame rates. See [measurements and quality budgets](Docs/BrowserPerformance.md). The Windows download remains the UE5 v0.2.0 build.
+Main deploys `Web/` through GitHub Pages after checks pass. Native authored data is pinned in `GameData/browser-native-source.json`; the exporter reads that snapshot so CI does not need the full Windows asset tree. See the release notes before capturing a newer native snapshot.
 
-## Shared leaderboard (browser 0.2.2)
-
-Open **LEADERBOARD** in the top navigation or HUD. After a run ends, enter a username to publish the result or choose **SKIP & RETURN**. Scores reward kills, survival, levels, completed contracts and victory. The top fifty rank each browser profile's personal best. Testing runs are excluded. [Details and score rules](Docs/Leaderboard.md).
+Approved art provenance is recorded in `Web/assets/model-manifest.json`, `art-manifest.json` and `parity-manifest.json`. Native assets are required to rebuild Windows and regenerate the Meshy conversions; the installer already contains the cooked assets needed to play. Three.js is vendored under its MIT license in `Web/vendor/three/LICENSE`. That third-party license grants no additional rights to the game code or art.

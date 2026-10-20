@@ -1,0 +1,60 @@
+{
+  "browserVersion": "0.5.0",
+  "nativeVersion": "0.4.7",
+  "nativeCommit": "9ae0d6d28187ab09d0c29f2110286bae41f7eb4a",
+  "scoreServiceCommit": "18ffdf686260a2ac94af1d3fe0e12a401a8aed58",
+  "scoreServiceVersion": 5,
+  "windowsInstaller": {
+    "url": "https://github.com/ATritle/Forbidden-Code-Survivor/releases/download/v0.4.7-windows/ForbiddenCode-Survivor-0.4.7-Setup.exe",
+    "bytes": 731296939,
+    "sha256": "942a31e2fc84508ddec19ca2814fa627606b73a300ada423ed6e9e2978d3be17"
+  },
+  "tests": {
+    "browser": 91,
+    "scoreService": 15,
+    "rooftops": 6,
+    "clearances": [
+      0.34,
+      0.58,
+      0.9
+    ],
+    "liveOverpass": {
+      "enemy": "BroadcastSovereign",
+      "startedBelowRider": true,
+      "arrivalHeight": 6.2,
+      "result": "ROUTE PASS"
+    }
+  },
+  "renderedChecks": [
+    "five-rider fixed-pose workbench",
+    "three two-starter presets with rider-specific locks",
+    "finite program draft and exclusive branch selection",
+    "chain spacing warning",
+    "multi-attack, mixed-tier stationary range",
+    "suspended run restores original clock, rider and weapons",
+    "low/high material-instance regression fixed",
+    "live large-enemy overpass ascent",
+    "Mira run with companion and installed draft",
+    "ESC preserves draft choices; Tab resumes",
+    "ESC closes Settings from a focused slider",
+    "shared board loads existing legacy scores and keyboard inspector",
+    "explicit Apply Display Mode enters fullscreen and returns to windowed, verified with :fullscreen"
+  ],
+  "adaptations": [
+    "WebGL geometry/material/particle budgets instead of UE5 Nanite/Lumen/Niagara",
+    "browser window/fullscreen instead of OS-exclusive display modes",
+    "Close explains tab closing when the browser blocks scripted window.close",
+    "native and browser saves remain separate"
+  ],
+  "unverified": [
+    "physical gamepad hardware; standard-mapped polling and menu navigation implemented",
+    "performance on lower-end mobile hardware"
+  ],
+  "scoreServicePublicCheck": {
+    "status": 200,
+    "preservedEntriesAtCheck": 3,
+    "limit": 10,
+    "perPlayerLimit": 3
+  },
+  "browserBaselineSha256Verified": "8739215c67a34f56920f2715a09f19f6b799d3ba6664ca725ca0166733d9b5da"
+}

@@ -1,92 +1,132 @@
 {
   "models": [
     {
-      "id": "NeonExorcist",
-      "path": "assets/models/low/NeonExorcist.glb",
-      "bytes": 304440,
-      "triangles": 2930,
-      "sourceSha256": "8f4137088148d91ac90e2c22f43e49b45073b4facc0f2b39f0571e94aac1cc9f",
-      "sourcePath": "assets/models/NeonExorcist.glb"
-    },
-    {
       "id": "WireThrall",
       "path": "assets/models/low/WireThrall.glb",
-      "bytes": 87588,
+      "bytes": 87608,
       "triangles": 980,
-      "sourceSha256": "df4775522c1a4e8efe77ae9c57404d00ad8d0c70625a2f709f8c52ef80caf503",
+      "sourceSha256": "f9b7d1be2e519aaf2b400c3863a3279b3cb66793fb4c5a007c6ec795acc4f96e",
       "sourcePath": "assets/models/WireThrall.glb"
     },
     {
       "id": "RelayRunner",
       "path": "assets/models/low/RelayRunner.glb",
-      "bytes": 100836,
+      "bytes": 100868,
       "triangles": 980,
-      "sourceSha256": "b6f8af8d5cc37a68aa12648babf2fd7395412cc0cf92207ee97845cfb4eafbea",
+      "sourceSha256": "3c8d02d519080afdf47f57c00752e41a9cedb7871890a0b0142317444407416b",
       "sourcePath": "assets/models/RelayRunner.glb"
     },
     {
       "id": "ChromeVagrant",
       "path": "assets/models/low/ChromeVagrant.glb",
-      "bytes": 110876,
+      "bytes": 111004,
       "triangles": 980,
-      "sourceSha256": "586d467c493ab66408388c2b5483673bb70d86508f2d8430b21e5cdf9337a5fb",
+      "sourceSha256": "0021a41bef2ae31757101d76f54812bfb14ee7408df228622dbb0f4c6029490d",
       "sourcePath": "assets/models/ChromeVagrant.glb"
     },
     {
       "id": "GlitchAcolyte",
       "path": "assets/models/low/GlitchAcolyte.glb",
-      "bytes": 94616,
+      "bytes": 94564,
       "triangles": 980,
-      "sourceSha256": "de34b6132586d0cd7d36dc4646887f03a8caa27c831e41402bd92eda98ed0b54",
+      "sourceSha256": "acf933c88b810ea2d1507e5e200200c89f0c4c0cc8c526bb71807aaf802688d8",
       "sourcePath": "assets/models/GlitchAcolyte.glb"
     },
     {
       "id": "RiotBulwark",
       "path": "assets/models/low/RiotBulwark.glb",
-      "bytes": 95456,
+      "bytes": 95268,
       "triangles": 980,
-      "sourceSha256": "f26ced67126d2f63a7ca4c9b496a5f98d0f9ed4f6a4b89a6ae79d238d726672e",
+      "sourceSha256": "ba84d02615509b92e3a43456ca93933fb5b0ad346cf685e70155cf128a2a2336",
       "sourcePath": "assets/models/RiotBulwark.glb"
     },
     {
       "id": "CoilHarrier",
       "path": "assets/models/low/CoilHarrier.glb",
-      "bytes": 96424,
+      "bytes": 96500,
       "triangles": 980,
-      "sourceSha256": "c7216ceced6157950730ea39453a18abfa725b7758d0101d6ab08c5562eab776",
+      "sourceSha256": "9bebf0c62a408be11bee712ea553aedbfd64b65291e60284c37ea5d91fe6e0e5",
       "sourcePath": "assets/models/CoilHarrier.glb"
     },
     {
       "id": "NullBishop",
       "path": "assets/models/low/NullBishop.glb",
-      "bytes": 100704,
+      "bytes": 100604,
       "triangles": 980,
-      "sourceSha256": "c4388fb8b29eb9f5cf66ee4dabe148118c99f3b0311bd11d3819a80d4978456e",
+      "sourceSha256": "a0d6660adc827dda7ea6ca0d4f230d7eb4a9d13e2f98c579be1c6926558a85de",
       "sourcePath": "assets/models/NullBishop.glb"
     },
     {
       "id": "RazorSeraph",
       "path": "assets/models/low/RazorSeraph.glb",
-      "bytes": 90860,
+      "bytes": 90912,
       "triangles": 979,
-      "sourceSha256": "b13a2295c80896dc774a71eda15cddf0a00a2160a680ebf8866eb3d3b022f587",
+      "sourceSha256": "f4baceddb6f776663099aff9aa7d556715f8418ee940e6d7fe8d76a25e5624e0",
       "sourcePath": "assets/models/RazorSeraph.glb"
     },
     {
       "id": "FurnaceOni",
       "path": "assets/models/low/FurnaceOni.glb",
-      "bytes": 112664,
+      "bytes": 112448,
       "triangles": 980,
-      "sourceSha256": "acbe619216fc60123a4973efd29b731dd6f7df725741f21142b2c26669941194",
+      "sourceSha256": "fdb7cf80a6c39ca4c7c8b332a32a50a16129271e05ba576cb4d1272907338cb3",
       "sourcePath": "assets/models/FurnaceOni.glb"
     },
     {
       "id": "BroadcastSovereign",
       "path": "assets/models/low/BroadcastSovereign.glb",
-      "bytes": 184476,
+      "bytes": 184564,
       "triangles": 1880,
-      "sourceSha256": "048ae41dee3b9380c563abdc7ecf267cc48341cc87a2bf74520a2725f2087757",
+      "sourceSha256": "f0cbd88ff41a4c335e7e00406a232230993f6b3128f6b16e1d0ab92c2ed9f2c3",
       "sourcePath": "assets/models/BroadcastSovereign.glb"
+    },
+    {
+      "id": "DigitalSpirit",
+      "path": "assets/models/low/DigitalSpirit.glb",
+      "bytes": 88756,
+      "triangles": 980,
+      "sourceSha256": "401cc6caf0c286f7da0fabe1699faca90e60e09b78b6e5ebffa460297167b17e",
+      "sourcePath": "assets/models/DigitalSpirit.glb"
+    },
+    {
+      "id": "NeonExorcist",
+      "path": "assets/models/low/NeonExorcist.glb",
+      "bytes": 304440,
+      "triangles": 2930,
+      "sourceSha256": "7e79877c4be2a8405e6dd6f2316d6f2ef9decd0a730de3345e79c4772e27650e",
+      "sourcePath": "assets/models/NeonExorcist.glb"
+    },
+    {
+      "id": "Vex",
+      "path": "assets/models/low/Vex.glb",
+      "bytes": 191500,
+      "triangles": 1880,
+      "sourceSha256": "c60fa8ec45f47ae386208c9542fce4dba8503e38edafb6cbc8eafc9ab550ceab",
+      "sourcePath": "assets/models/Vex.glb"
+    },
+    {
+      "id": "Rook",
+      "path": "assets/models/low/Rook.glb",
+      "bytes": 217412,
+      "triangles": 1880,
+      "sourceSha256": "d065d8c2b2f7e42f441f0cf01851bdc192a8d85e6da752191fcd064f573b2ba7",
+      "sourcePath": "assets/models/Rook.glb"
+    },
+    {
+      "id": "Zero",
+      "path": "assets/models/low/Zero.glb",
+      "bytes": 206940,
+      "triangles": 1880,
+      "sourceSha256": "c02d9a221d2a1599d615161f424abbc464355f8639bccbb01382f530cda82d2a",
+      "sourcePath": "assets/models/Zero.glb"
+    },
+    {
+      "id": "Mira",
+      "path": "assets/models/low/Mira.glb",
+      "bytes": 195488,
+      "triangles": 1880,
+      "sourceSha256": "d1687d76deaa2320c64c2ccf2652d7d36241431bb092c99482a1425a41b11a77",
+      "sourcePath": "assets/models/Mira.glb"
     }
   ]
 }

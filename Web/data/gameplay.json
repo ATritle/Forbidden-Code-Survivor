@@ -1,12 +1,18 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "title": "Forbidden Code: Survivor",
-  "source": "UE5 authored C++ tuning; regenerate with Scripts/export_browser_rules.py",
+  "source": "Pinned Windows 0.4.7 gameplay snapshot; regenerate using Scripts/export_browser_rules.py",
   "sourceHashes": {
-    "MVPGame.cpp": "56f8dff83f51cc69f0de867f25ffb9d7f5df3c51ebacc7bfd490d4287be83262",
-    "NeonArsenal.cpp": "8518d17e144904110e59dee25de08e9da3e04ef76d77ae0e0a584205d7c839be",
-    "CyberEnemyRoster.cpp": "05a0a40d3386cd1b957e424c7fec291ff908db87268f58c511cab96536fd1ca4",
-    "NeonChallenge.cpp": "886721696cfe9afc49d1548cf2646ce466718ad409bc160d030b9974d2ee62ae"
+    "MVPGame.cpp": "fe36e7cb3950f0d4abc9e62c8d3fe81d1ae5c00eafc0899c7053d2278b8f0e6d",
+    "NeonArsenal.cpp": "eb9e2a7e6656ef2224bd04d1cac49ebb5471a90363980fd9c05918cd50125d78",
+    "CyberEnemyRoster.cpp": "e6b48a53cb11b001704e211837efc2253440a79444dbc0ff5ca86ffa51d2c9eb",
+    "NeonChallenge.cpp": "1ecd2fedd6ac17efadfe8f3679459261dcc252e7bb8c0e767e2b40725345b07b",
+    "ForbiddenPrograms.cpp": "4fa7be70acf5096159900afca795db41df55fda44d10c20b673e6d4375939d42",
+    "ForbiddenProfile.cpp": "2dbd8da8f2de6b3cb936e553b8549ad9a54b3a7d4b6603581882805bc56da22c",
+    "ForbiddenRiderRoster.cpp": "5d98f335a47e29770ccaa9a6dd7e5fc5a7a98594907c1974745d66bccc7ecbc3",
+    "ForbiddenEnemyBrain.cpp": "d7e871f3e3fbb7d131fcdcc91c37a7bf60b0186e90c5a7edacbce9d3c3e9cbfc",
+    "ForbiddenDistrictDirector.cpp": "ccca22d58a1ce32c6d4a25c75f11812032955970fa364dcbec8f5302f9c81521",
+    "ForbiddenRiderSubsystem.cpp": "a614baa73bbcdc99f091d55a837ed1c89dc682884978980dddfb9be1074030cb"
   },
   "cards": [
     {
@@ -21,7 +27,19 @@
       "count": 1,
       "mode": "bolt",
       "color": "#36ff93",
-      "art": "assets/art/PulseDart.webp"
+      "art": "assets/art/PulseDart.webp",
+      "rarity": "Common",
+      "unlockCost": 75,
+      "evolutions": [
+        {
+          "name": "WEAKPOINT COMPILER",
+          "description": "Repeated hits on the same living target build up to 3 precision stacks, +15% damage each."
+        },
+        {
+          "name": "PACKET NOVA",
+          "description": "Eight radial darts share a 1.5x volley damage budget. Each dart deals 18.75% damage; maximum 6 pierces."
+        }
+      ]
     },
     {
       "id": "PrismBurst",
@@ -35,7 +53,19 @@
       "count": 3,
       "mode": "spread",
       "color": "#ff258c",
-      "art": "assets/art/PrismBurst.webp"
+      "art": "assets/art/PrismBurst.webp",
+      "rarity": "Common",
+      "unlockCost": 75,
+      "evolutions": [
+        {
+          "name": "AURA CASCADE",
+          "description": "Pink impact bursts leave a short damaging aura. Secondary damage cannot trigger itself."
+        },
+        {
+          "name": "PRISM NOVA",
+          "description": "Eight compact charges form a circle. Each deals 50% volley damage; area remains capped."
+        }
+      ]
     },
     {
       "id": "HaloNova",
@@ -49,7 +79,19 @@
       "count": 8,
       "mode": "nova",
       "color": "#a449ff",
-      "art": "assets/art/HaloNova.webp"
+      "art": "assets/art/HaloNova.webp",
+      "rarity": "Rare",
+      "unlockCost": 150,
+      "evolutions": [
+        {
+          "name": "RETURNING HALO",
+          "description": "Shards return to the rider and can hit once again on their return leg."
+        },
+        {
+          "name": "SANCTUARY RING",
+          "description": "An expanding ring briefly slows enemies it reaches. Boss slow is reduced."
+        }
+      ]
     },
     {
       "id": "KineticCards",
@@ -63,7 +105,19 @@
       "count": 1,
       "mode": "card",
       "color": "#ffb52f",
-      "art": "assets/art/KineticCards.webp"
+      "art": "assets/art/KineticCards.webp",
+      "rarity": "Common",
+      "unlockCost": 75,
+      "evolutions": [
+        {
+          "name": "LOADED DECK",
+          "description": "Cards lodge energy marks. The third mark detonates for 90% card damage in 150cm."
+        },
+        {
+          "name": "HOUSE EDGE",
+          "description": "Three cards ricochet between nearby targets. Each card uses 60% damage; 3 hits maximum."
+        }
+      ]
     },
     {
       "id": "PhotonLance",
@@ -77,12 +131,24 @@
       "count": 1,
       "mode": "pierce",
       "color": "#22baff",
-      "art": "assets/art/PhotonLance.webp"
+      "art": "assets/art/PhotonLance.webp",
+      "rarity": "Rare",
+      "unlockCost": 150,
+      "evolutions": [
+        {
+          "name": "ARMOR DECODER",
+          "description": "Lances deal 50% bonus damage against elites and bosses and bypass directional armor."
+        },
+        {
+          "name": "CROSS COMPILER",
+          "description": "Fire a perpendicular cross through the target. Each lance deals 60% damage."
+        }
+      ]
     },
     {
       "id": "TalismanGuard",
       "name": "TALISMAN GUARD",
-      "description": "Gain 3 protective orbiting cards.\nContact kills a foe and consumes a card.\nRepeat drafts add 2; no auto recharge.",
+      "description": "Three consumable wards. Basic: 1 charge; medium: 2; elite: 3. Bosses cost 4 charges for 8% max HP. Rank-ups replenish charges; cap 8.",
       "school": "Barrier",
       "damage": 0.0,
       "cooldown": 1.0,
@@ -91,7 +157,19 @@
       "count": 3,
       "mode": "guard",
       "color": "#20ffca",
-      "art": "assets/art/TalismanGuard.webp"
+      "art": "assets/art/TalismanGuard.webp",
+      "rarity": "Epic",
+      "unlockCost": 300,
+      "evolutions": [
+        {
+          "name": "RECOVERY SIGILS",
+          "description": "Gain 4 charges. Recover one charge every 18s while at least one charge remains. Maximum 8."
+        },
+        {
+          "name": "REACTIVE WARD",
+          "description": "Gain 4 charges. A consumed charge emits a 100cm pulse for 45 damage. No recursive echoes."
+        }
+      ]
     },
     {
       "id": "ArcRelay",
@@ -105,7 +183,19 @@
       "count": 4,
       "mode": "chain",
       "color": "#058cff",
-      "art": "assets/art/ArcRelay.webp"
+      "art": "assets/art/ArcRelay.webp",
+      "rarity": "Common",
+      "unlockCost": 75,
+      "evolutions": [
+        {
+          "name": "LONG NETWORK",
+          "description": "Chain reach grows to 500cm; damage falls 18% each hop. Maximum 8 targets."
+        },
+        {
+          "name": "RETURN SIGNAL",
+          "description": "A final bolt returns to the first surviving target for 60% initial damage."
+        }
+      ]
     },
     {
       "id": "GhostLink",
@@ -119,7 +209,19 @@
       "count": 6,
       "mode": "chain",
       "color": "#a633ff",
-      "art": "assets/art/GhostLink.webp"
+      "art": "assets/art/GhostLink.webp",
+      "rarity": "Rare",
+      "unlockCost": 150,
+      "evolutions": [
+        {
+          "name": "SOUL CACHE",
+          "description": "Linked enemies are slowed 25% for 1.5s and yield research toward a stolen routine."
+        },
+        {
+          "name": "GHOST DECOY",
+          "description": "Create a digital decoy at the final link for 2s. Basic enemies investigate it."
+        }
+      ]
     },
     {
       "id": "NeonCataclysm",
@@ -133,7 +235,19 @@
       "count": 1,
       "mode": "charge",
       "color": "#ff0361",
-      "art": "assets/art/NeonCataclysm.webp"
+      "art": "assets/art/NeonCataclysm.webp",
+      "rarity": "Epic",
+      "unlockCost": 300,
+      "evolutions": [
+        {
+          "name": "AFTERSHOCK",
+          "description": "A second 50% damage burst follows the clearly marked primary blast after 0.35s."
+        },
+        {
+          "name": "DENSE CORE",
+          "description": "Shrink the blast to 230cm and deal 80% extra damage. Maximum two simultaneous charges."
+        }
+      ]
     },
     {
       "id": "OrbitRazor",
@@ -147,7 +261,19 @@
       "count": 2,
       "mode": "return",
       "color": "#d9ff14",
-      "art": "assets/art/OrbitRazor.webp"
+      "art": "assets/art/OrbitRazor.webp",
+      "rarity": "Rare",
+      "unlockCost": 150,
+      "evolutions": [
+        {
+          "name": "RECALL EDGE",
+          "description": "Returning blades may hit each enemy once per leg. Return damage is 70%."
+        },
+        {
+          "name": "CLOSE ORBIT",
+          "description": "Blades orbit the rider before release, covering nearby enemies. Maximum 4 blades."
+        }
+      ]
     },
     {
       "id": "RicochetSeal",
@@ -161,7 +287,19 @@
       "count": 1,
       "mode": "ricochet",
       "color": "#1fff4c",
-      "art": "assets/art/RicochetSeal.webp"
+      "art": "assets/art/RicochetSeal.webp",
+      "rarity": "Common",
+      "unlockCost": 75,
+      "evolutions": [
+        {
+          "name": "BANK SHOT",
+          "description": "Rebound off one wall and gain 35% damage after the wall bounce."
+        },
+        {
+          "name": "JADE NETWORK",
+          "description": "Ricochet to 6 distinct enemies within 420cm; damage falls 12% each hop."
+        }
+      ]
     },
     {
       "id": "StrobeRail",
@@ -175,7 +313,19 @@
       "count": 1,
       "mode": "rail",
       "color": "#a6e6ff",
-      "art": "assets/art/StrobeRail.webp"
+      "art": "assets/art/StrobeRail.webp",
+      "rarity": "Rare",
+      "unlockCost": 150,
+      "evolutions": [
+        {
+          "name": "PERFECT ALIGNMENT",
+          "description": "Each successive enemy on the rail takes 12% more damage, capped at +60%."
+        },
+        {
+          "name": "TWIN TRACKS",
+          "description": "Fire two parallel 24cm rails, each dealing 70% damage. Walls stop both rails."
+        }
+      ]
     },
     {
       "id": "EchoPetals",
@@ -189,7 +339,19 @@
       "count": 6,
       "mode": "petal",
       "color": "#ff381f",
-      "art": "assets/art/EchoPetals.webp"
+      "art": "assets/art/EchoPetals.webp",
+      "rarity": "Common",
+      "unlockCost": 75,
+      "evolutions": [
+        {
+          "name": "BLOOM ORBIT",
+          "description": "Petals orbit for 0.5s before curving outward. Maximum 8 petals."
+        },
+        {
+          "name": "PETAL REPRISE",
+          "description": "Petals curve back toward the rider and may hit once on each leg at 65% return damage."
+        }
+      ]
     },
     {
       "id": "EventHorizon",
@@ -203,7 +365,19 @@
       "count": 4,
       "mode": "field",
       "color": "#4c0aff",
-      "art": "assets/art/EventHorizon.webp"
+      "art": "assets/art/EventHorizon.webp",
+      "rarity": "Epic",
+      "unlockCost": 300,
+      "evolutions": [
+        {
+          "name": "GRAVITY WELL",
+          "description": "Four pulses pull basic enemies toward the center. Elite pull is reduced; bosses resist it."
+        },
+        {
+          "name": "COLLAPSE",
+          "description": "The final pulse implodes for 3x pulse damage within the same capped field."
+        }
+      ]
     },
     {
       "id": "ShatterSigil",
@@ -217,7 +391,19 @@
       "count": 5,
       "mode": "shatter",
       "color": "#ff6106",
-      "art": "assets/art/ShatterSigil.webp"
+      "art": "assets/art/ShatterSigil.webp",
+      "rarity": "Rare",
+      "unlockCost": 150,
+      "evolutions": [
+        {
+          "name": "SHAPED CHARGE",
+          "description": "Seven fragments fan forward from impact. Each deals 14 damage and pierces one enemy."
+        },
+        {
+          "name": "AMBER RING",
+          "description": "Eight fragments radiate from impact for 10 damage each. Fragments cannot split again."
+        }
+      ]
     },
     {
       "id": "SatelliteChoir",
@@ -231,7 +417,19 @@
       "count": 3,
       "mode": "homing",
       "color": "#04ffb8",
-      "art": "assets/art/SatelliteChoir.webp"
+      "art": "assets/art/SatelliteChoir.webp",
+      "rarity": "Rare",
+      "unlockCost": 150,
+      "evolutions": [
+        {
+          "name": "HUNTER CHOIR",
+          "description": "Orbs prioritize the marked target, then the strongest visible enemy; +35% elite damage."
+        },
+        {
+          "name": "FINISHER CHOIR",
+          "description": "Orbs seek the lowest health fraction and gain +60% damage against targets below 30% HP."
+        }
+      ]
     }
   ],
   "enemies": [
@@ -360,7 +558,7 @@
       "height": 5.2,
       "speed": 1.15,
       "unlock": 360.0,
-      "contactDamage": 48.0,
+      "contactDamage": 32.0,
       "radius": 0.9,
       "essence": 40,
       "model": "assets/models/BroadcastSovereign.glb"
@@ -385,13 +583,13 @@
       "id": "HostileBroadcast",
       "title": "HOSTILE BROADCAST",
       "reward": "DOUBLE essence dropped by enemies defeated during this 60-second contract.",
-      "risk": "Your location is broadcast. TWO ELITE HUNTERS arrive at 15, 30 and 45 seconds. Watch the reinforcement countdown. Hunters remain until defeated; normal enemy limits still apply.",
+      "risk": "Two hunters arrive at 15, 30 and 45 seconds. Medium patrols early; elites after 180s with a developed loadout. A three-second warning precedes each wave. Hunters remain until defeated.",
       "duration": 60.0
     },
     {
       "id": "DeadmanBattery",
       "title": "DEADMAN BATTERY",
-      "reward": "DOUBLE outgoing spell damage for 30 seconds. Every confirmed enemy kill restores 4% of maximum health.",
+      "reward": "DOUBLE outgoing spell damage for 30 seconds. Kills restore 1% maximum health, limited to three heals per second.",
       "risk": "The battery drains 2% of MAXIMUM health per second, even during hit immunity. The drain CAN KILL you. Keep defeating enemies to stay charged.",
       "duration": 30.0
     },
@@ -460,5 +658,125 @@
         "d": 31
       }
     ]
+  },
+  "riders": [
+    {
+      "id": "NeonExorcist",
+      "name": "NEON EXORCIST",
+      "role": "STREET MEDIUM",
+      "description": "The original rider. Forbidden energy programs, captured spirits and a custom neon board.",
+      "perks": [
+        "OPEN SIGNAL / Flexible builds across every energy school.",
+        "DECK FREEDOM / Choose two unlocked starters; draft every program during a run.",
+        "BASELINE / Standard health, movement and damage."
+      ],
+      "color": "#ff0a8c",
+      "free": [
+        "PulseDart",
+        "PrismBurst",
+        "KineticCards",
+        "HaloNova"
+      ],
+      "portrait": "assets/riders/NeonExorcist.webp",
+      "model": "assets/models/NeonExorcist.glb"
+    },
+    {
+      "id": "Vex",
+      "name": "VEX",
+      "role": "GHOST COURIER",
+      "description": "An agile street courier who redirects the horde and extends energy networks.",
+      "perks": [
+        "AFTERIMAGE / Boost leaves a 1.5s decoy. 6s cooldown; basic enemies only.",
+        "GHOST ROUTING / Chain attacks gain one target and 15% more jump reach.",
+        "TRADEOFF / 20% less maximum health."
+      ],
+      "color": "#05ffa6",
+      "free": [
+        "ArcRelay",
+        "GhostLink",
+        "RicochetSeal",
+        "PulseDart"
+      ],
+      "portrait": "assets/riders/Vex.webp",
+      "model": "assets/models/Vex.glb"
+    },
+    {
+      "id": "Rook",
+      "name": "ROOK",
+      "role": "SIGNAL WARDEN",
+      "description": "An armored street protector who turns collected essence into defensive energy.",
+      "perks": [
+        "WARD RECHARGE / Every 25 essence restores 15% max-health shield; cap 30%.",
+        "REPULSOR / Boost emits a 35-damage, 350cm push pulse. 6s cooldown.",
+        "TRADEOFF / 10% lower movement speed."
+      ],
+      "color": "#ff8009",
+      "free": [
+        "TalismanGuard",
+        "HaloNova",
+        "EventHorizon",
+        "PulseDart"
+      ],
+      "portrait": "assets/riders/Rook.webp",
+      "model": "assets/models/Rook.glb"
+    },
+    {
+      "id": "Zero",
+      "name": "ZERO",
+      "role": "PRECISION ASSASSIN",
+      "description": "A disciplined cyberpunk assassin. Lock a priority target and pierce the line.",
+      "perks": [
+        "TARGET LOCK / Three direct hits in 2s mark one foe for 4s: +25% damage.",
+        "PERFECT LINE / Every third projectile cast adds two pierces to its first shot.",
+        "TRADEOFF / 20% smaller damage-area radius."
+      ],
+      "color": "#0a4cff",
+      "free": [
+        "PhotonLance",
+        "StrobeRail",
+        "KineticCards",
+        "PulseDart"
+      ],
+      "portrait": "assets/riders/Zero.webp",
+      "model": "assets/models/Zero.glb"
+    },
+    {
+      "id": "Mira",
+      "name": "MIRA",
+      "role": "NEON CONDUCTOR",
+      "description": "An underground signal DJ who conducts captured digital spirits into combat.",
+      "perks": [
+        "BOUND DAEMON / Permanent familiar fires every 1.2s; damage grows with level.",
+        "POSSESSION / Every 20 summon hits converts a basic enemy for 8s. 10s cooldown.",
+        "TRADEOFF / Own weapons deal 15% less damage; summons retain full power."
+      ],
+      "color": "#e60fff",
+      "free": [
+        "SatelliteChoir",
+        "GhostLink",
+        "TalismanGuard",
+        "PrismBurst"
+      ],
+      "portrait": "assets/riders/Mira.webp",
+      "model": "assets/models/Mira.glb"
+    }
+  ],
+  "nativeVersion": "0.4.7",
+  "browserVersion": "0.5.0",
+  "nativeSourceCommit": "9ae0d6d28187ab09d0c29f2110286bae41f7eb4a",
+  "meta": {
+    "historyLimit": 32,
+    "commonCost": 75,
+    "rareCost": 150,
+    "epicCost": 300,
+    "legendaryCost": 500,
+    "killFragmentDivisor": 20,
+    "contractFragments": 4,
+    "victoryFragments": 25,
+    "maxRunFragments": 200,
+    "rankCap": 3,
+    "activeCardCap": 16,
+    "rerolls": 2,
+    "banishes": 1
   }
 }

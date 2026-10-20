@@ -1,0 +1,237 @@
+{
+  "nativeVersion": "0.4.7",
+  "assets": [
+    {
+      "source": "ContentSource/UI/LoadoutWorkbench/Rider-NeonExorcist-v1.png",
+      "path": "assets/riders/NeonExorcist.webp",
+      "kind": "portrait",
+      "enemyOnly": false,
+      "bytes": 95932,
+      "sha256": "7950676ea42707088ee9cd17d428c2e129e20a87d73c5d5e7e229a85a5b1470a"
+    },
+    {
+      "source": "ContentSource/UI/LoadoutWorkbench/Rider-Vex-v1.png",
+      "path": "assets/riders/Vex.webp",
+      "kind": "portrait",
+      "enemyOnly": false,
+      "bytes": 101462,
+      "sha256": "d647725d0ba1d7398eedfbe48f0d0756892246fb1b9d4cfc70c64fa565de897f"
+    },
+    {
+      "source": "ContentSource/UI/LoadoutWorkbench/Rider-Rook-v1.png",
+      "path": "assets/riders/Rook.webp",
+      "kind": "portrait",
+      "enemyOnly": false,
+      "bytes": 96868,
+      "sha256": "d3954ac8a3fc7f5185e7fe8cca57fda5177b1e3335966551bee3a3f52ef13a17"
+    },
+    {
+      "source": "ContentSource/UI/LoadoutWorkbench/Rider-Zero-v1.png",
+      "path": "assets/riders/Zero.webp",
+      "kind": "portrait",
+      "enemyOnly": false,
+      "bytes": 70956,
+      "sha256": "4b8ae8b1f045d3bbbdbd68f21ce6ba3e578b3ced99b554fdc94560a0d5b514d7"
+    },
+    {
+      "source": "ContentSource/UI/LoadoutWorkbench/Rider-Mira-v1.png",
+      "path": "assets/riders/Mira.webp",
+      "kind": "portrait",
+      "enemyOnly": false,
+      "bytes": 105308,
+      "sha256": "af02ca51b70a6182fa5300401db99a95f0cc7ec1e810d7ecd9cdd3f0577e4c5f"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/CoverAlex.png",
+      "path": "assets/music/CoverAlex.webp",
+      "kind": "music-art",
+      "enemyOnly": false,
+      "bytes": 489058,
+      "sha256": "237cd11c17750d8a545340e2253022d920cb3ff43ef4030ba57df65d00b696ad"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/CoverHuman.png",
+      "path": "assets/music/CoverHuman.webp",
+      "kind": "music-art",
+      "enemyOnly": false,
+      "bytes": 664426,
+      "sha256": "2590257caa364a1e32223cec486400ed27f70f6779d9f3b8438285013cb75a1c"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/CoverMonume.png",
+      "path": "assets/music/CoverMonume.webp",
+      "kind": "music-art",
+      "enemyOnly": false,
+      "bytes": 639342,
+      "sha256": "7b98dda524f842e1e39401745cc9310f1445aff40396a3d48ae69e7c9711e338"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/CoverMountain.png",
+      "path": "assets/music/CoverMountain.webp",
+      "kind": "music-art",
+      "enemyOnly": false,
+      "bytes": 491142,
+      "sha256": "282c2316f955eb422e6fbe2497ec7c6525e6669a043885a3fa7c64438aa692d0"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/SignalControls.png",
+      "path": "assets/music/SignalControls.webp",
+      "kind": "music-art",
+      "enemyOnly": false,
+      "bytes": 276620,
+      "sha256": "1b93a61c9a2bcecd3264a669138b8bab5c9bfdebb10c952fe4183bbd40f7f3ad"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/SignalFrame.png",
+      "path": "assets/music/SignalFrame.webp",
+      "kind": "music-art",
+      "enemyOnly": false,
+      "bytes": 144362,
+      "sha256": "0ac21bd58f48e108d686228c5d75299b6d5941119b731df938b6f072a9a9beee"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/SignalControls.png",
+      "path": "assets/music/previous.webp",
+      "kind": "music-control",
+      "enemyOnly": false,
+      "bytes": 18974,
+      "sha256": "551f72a396b82dc620462eb04dba23a3ada4065adef52a5a32e8f3d2868937f3"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/SignalControls.png",
+      "path": "assets/music/play.webp",
+      "kind": "music-control",
+      "enemyOnly": false,
+      "bytes": 41904,
+      "sha256": "931f825ed0b3473ca619c10a6a8b3b72b924d50f21fff17713e65237a7dfb716"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/SignalControls.png",
+      "path": "assets/music/pause.webp",
+      "kind": "music-control",
+      "enemyOnly": false,
+      "bytes": 41052,
+      "sha256": "46b654f60ee9094d5bc4b659450dfb7821fb469e54b5178573065b1adc3da34c"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/SignalControls.png",
+      "path": "assets/music/next.webp",
+      "kind": "music-control",
+      "enemyOnly": false,
+      "bytes": 18490,
+      "sha256": "dcb97bc4d356e2ecc26f36b2cea6528195008d6f4342d750871bacc905915a3e"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/SignalControls.png",
+      "path": "assets/music/speaker.webp",
+      "kind": "music-control",
+      "enemyOnly": false,
+      "bytes": 23688,
+      "sha256": "9a1b6fbb0ece4cb07f2b0f8fd0b3afae60c3c94c8a9d2f996acfada8c531989b"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/SignalControls.png",
+      "path": "assets/music/muted.webp",
+      "kind": "music-control",
+      "enemyOnly": false,
+      "bytes": 23996,
+      "sha256": "4b054f43c204e18d5884e2891eccd4c29c616da57e0e89828b97cbb1c3b5485e"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/SignalControls.png",
+      "path": "assets/music/tracks.webp",
+      "kind": "music-control",
+      "enemyOnly": false,
+      "bytes": 37326,
+      "sha256": "b0d1cdfb09790b50a750b1649bc4316eb1ba9f66e6430947c8a193b449692f1c"
+    },
+    {
+      "source": "ContentSource/UI/SignalDock/SignalFrame.png",
+      "path": "assets/music/dock.webp",
+      "kind": "music-frame",
+      "enemyOnly": false,
+      "bytes": 143576,
+      "sha256": "6b14bd9689b18368fb88f84403596a51ae2d8ae2b05fb1b40c0609185c531316"
+    },
+    {
+      "source": "SFX/music/humanstudioed-cyberpunk-edm-525044.mp3",
+      "path": "assets/audio/Music_Gameplay.mp3",
+      "kind": "audio",
+      "enemyOnly": false,
+      "bytes": 5194752,
+      "sha256": "278823a46ff5609406cae629164b57cda09095d4430a01331aa73baf8c305cbf"
+    },
+    {
+      "source": "SFX/music/alex-morgan-neon-synthwave-drive-537447.mp3",
+      "path": "assets/audio/Music_Menu.mp3",
+      "kind": "audio",
+      "enemyOnly": false,
+      "bytes": 5360640,
+      "sha256": "557f4c4edb6b3f07461134f158e612d5d72fd1249b7c7439ed315e887bce8734"
+    },
+    {
+      "source": "SFX/music/monume-cyberpunk-519219.mp3",
+      "path": "assets/audio/Music_Monume.mp3",
+      "kind": "audio",
+      "enemyOnly": false,
+      "bytes": 2365649,
+      "sha256": "5f1a14b72cacc5339ad392766909fd852a3635d864be3142b7d1e744b1071263"
+    },
+    {
+      "source": "SFX/music/the_mountain-synthwave-593074.mp3",
+      "path": "assets/audio/Music_Synthwave.mp3",
+      "kind": "audio",
+      "enemyOnly": false,
+      "bytes": 6320378,
+      "sha256": "e7f989747cc1eeb039098d0ea6cb47a34685ec3308bb7164dd839c60fe07aa50"
+    },
+    {
+      "source": "SFX/enemy/rescopicsound-sci-fi-weapon-futuristic-mechanical-mechanism-metal-233833.mp3",
+      "path": "assets/audio/Enemy_Metal.mp3",
+      "kind": "audio",
+      "enemyOnly": true,
+      "bytes": 52224,
+      "sha256": "32850ce535def53226be020accf9ac57bfc9fdeab1e8d111605b004d72268d93"
+    },
+    {
+      "source": "SFX/enemy/rescopicsound-sci-fi-weapon-mechanism-robotic-glitch-medium-duration-233841.mp3",
+      "path": "assets/audio/Enemy_Glitch.mp3",
+      "kind": "audio",
+      "enemyOnly": true,
+      "bytes": 69120,
+      "sha256": "d87775be0b105100ccf2f5c6ba5d6586e96c4dbc7a5394fd88e092b5a8dc8ab1"
+    },
+    {
+      "source": "SFX/menu/rescopicsound-ui-alert-menu-modern-interface-deny-small-230476.mp3",
+      "path": "assets/audio/UI_Deny.mp3",
+      "kind": "audio",
+      "enemyOnly": false,
+      "bytes": 16128,
+      "sha256": "a3e2a98f22fc5dcc82b8cf476fcc095bc4be32e1070e2b0fe749905459514bc7"
+    },
+    {
+      "source": "SFX/menu/rescopicsound-ui-beep-menu-positive-228336.mp3",
+      "path": "assets/audio/UI_Confirm.mp3",
+      "kind": "audio",
+      "enemyOnly": false,
+      "bytes": 43776,
+      "sha256": "b75d92e0e0211257e1fa653c59d9df8c82dc0521c7aa7bfa44471a9afb76e4df"
+    },
+    {
+      "source": "SFX/menu/rescopicsound-ui-click-menu-modern-interface-select-medium-230477.mp3",
+      "path": "assets/audio/UI_Select.mp3",
+      "kind": "audio",
+      "enemyOnly": false,
+      "bytes": 21504,
+      "sha256": "02760ea233305c205c3ac1e8c1c4cea9aa282affb0e55b359bcfed3430431d98"
+    },
+    {
+      "source": "SFX/menu/rescopicsound-ui-click-menu-modern-interface-select-small-01-230473.mp3",
+      "path": "assets/audio/UI_Click.mp3",
+      "kind": "audio",
+      "enemyOnly": false,
+      "bytes": 11520,
+      "sha256": "60e089eeac138ce5301fb59dc9d649c0404a556499c8f78c15c81a7cdfde1969"
+    }
+  ]
+}

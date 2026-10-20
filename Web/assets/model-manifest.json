@@ -5,59 +5,9 @@
   "forward": "+Z",
   "models": [
     {
-      "id": "NeonExorcist",
-      "path": "assets/models/NeonExorcist.glb",
-      "bytes": 3038488,
-      "heightMeters": 1.8,
-      "up": "+Y",
-      "forward": "+Z",
-      "origin": "feet or hoverboard underside, centered XZ",
-      "triangles": 20130,
-      "animations": [
-        {
-          "name": "HoverIdle",
-          "duration": 1.9999999999999998
-        },
-        {
-          "name": "Cruise",
-          "duration": 1.5
-        },
-        {
-          "name": "Cast",
-          "duration": 0.8
-        },
-        {
-          "name": "Attack135",
-          "duration": 0.8
-        },
-        {
-          "name": "Cast133",
-          "duration": 0.8
-        },
-        {
-          "name": "Attack250",
-          "duration": 4.0
-        },
-        {
-          "name": "Hit",
-          "duration": 0.4666666666666667
-        },
-        {
-          "name": "Land",
-          "duration": 0.4666666666666667
-        },
-        {
-          "name": "Fall",
-          "duration": 1.0
-        }
-      ],
-      "source": "ContentSource/Meshy/NeonExorcist/assembled/NeonExorcist-RidingRig.blend",
-      "textureSize": 1024
-    },
-    {
       "id": "WireThrall",
       "path": "assets/models/WireThrall.glb",
-      "bytes": 434024,
+      "bytes": 481288,
       "heightMeters": 1.5,
       "up": "+Y",
       "forward": "+Z",
@@ -65,12 +15,16 @@
       "triangles": 3500,
       "animations": [
         {
-          "name": "Walk",
-          "duration": 1.0333333333333332
+          "name": "Run",
+          "duration": 0.5
         },
         {
-          "name": "Run",
-          "duration": 0.6333333333333333
+          "name": "Walk",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack",
+          "duration": 3.166666666666667
         }
       ],
       "source": "ContentSource/Meshy/WireThrall/rig.fbx + walk.fbx + run.fbx",
@@ -79,7 +33,7 @@
     {
       "id": "RelayRunner",
       "path": "assets/models/RelayRunner.glb",
-      "bytes": 459764,
+      "bytes": 572152,
       "heightMeters": 1.45,
       "up": "+Y",
       "forward": "+Z",
@@ -87,12 +41,16 @@
       "triangles": 3500,
       "animations": [
         {
-          "name": "Walk",
-          "duration": 1.0333333333333332
+          "name": "Run",
+          "duration": 0.5
         },
         {
-          "name": "Run",
-          "duration": 0.6333333333333333
+          "name": "Walk",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack",
+          "duration": 9.333333333333334
         }
       ],
       "source": "ContentSource/Meshy/RelayRunner/rig.fbx + walk.fbx + run.fbx",
@@ -101,7 +59,7 @@
     {
       "id": "ChromeVagrant",
       "path": "assets/models/ChromeVagrant.glb",
-      "bytes": 524304,
+      "bytes": 548388,
       "heightMeters": 1.75,
       "up": "+Y",
       "forward": "+Z",
@@ -109,12 +67,16 @@
       "triangles": 3500,
       "animations": [
         {
-          "name": "Walk",
-          "duration": 1.0333333333333332
+          "name": "Run",
+          "duration": 0.5
         },
         {
-          "name": "Run",
-          "duration": 0.6333333333333333
+          "name": "Walk",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack",
+          "duration": 1.0
         }
       ],
       "source": "ContentSource/Meshy/ChromeVagrant/rig.fbx + walk.fbx + run.fbx",
@@ -123,7 +85,7 @@
     {
       "id": "GlitchAcolyte",
       "path": "assets/models/GlitchAcolyte.glb",
-      "bytes": 436752,
+      "bytes": 473640,
       "heightMeters": 1.65,
       "up": "+Y",
       "forward": "+Z",
@@ -131,12 +93,16 @@
       "triangles": 3500,
       "animations": [
         {
-          "name": "Walk",
-          "duration": 1.0333333333333332
+          "name": "Run",
+          "duration": 0.5
         },
         {
-          "name": "Run",
-          "duration": 0.6333333333333333
+          "name": "Walk",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack",
+          "duration": 2.2
         }
       ],
       "source": "ContentSource/Meshy/GlitchAcolyte/rig.fbx + walk.fbx + run.fbx",
@@ -145,7 +111,7 @@
     {
       "id": "RiotBulwark",
       "path": "assets/models/RiotBulwark.glb",
-      "bytes": 401688,
+      "bytes": 440968,
       "heightMeters": 2.35,
       "up": "+Y",
       "forward": "+Z",
@@ -153,12 +119,16 @@
       "triangles": 3500,
       "animations": [
         {
-          "name": "Walk",
-          "duration": 1.0333333333333332
+          "name": "Run",
+          "duration": 0.5
         },
         {
-          "name": "Run",
-          "duration": 0.6333333333333333
+          "name": "Walk",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack",
+          "duration": 2.3666666666666667
         }
       ],
       "source": "ContentSource/Meshy/RiotBulwark/rig.fbx + walk.fbx + run.fbx",
@@ -167,7 +137,7 @@
     {
       "id": "CoilHarrier",
       "path": "assets/models/CoilHarrier.glb",
-      "bytes": 448868,
+      "bytes": 494064,
       "heightMeters": 2.15,
       "up": "+Y",
       "forward": "+Z",
@@ -175,12 +145,16 @@
       "triangles": 3498,
       "animations": [
         {
-          "name": "Walk",
-          "duration": 1.0333333333333332
+          "name": "Run",
+          "duration": 0.5
         },
         {
-          "name": "Run",
-          "duration": 0.6333333333333333
+          "name": "Walk",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack",
+          "duration": 3.0
         }
       ],
       "source": "ContentSource/Meshy/CoilHarrier/rig.fbx + walk.fbx + run.fbx",
@@ -189,7 +163,7 @@
     {
       "id": "NullBishop",
       "path": "assets/models/NullBishop.glb",
-      "bytes": 487036,
+      "bytes": 528896,
       "heightMeters": 2.95,
       "up": "+Y",
       "forward": "+Z",
@@ -197,12 +171,16 @@
       "triangles": 3500,
       "animations": [
         {
-          "name": "Walk",
-          "duration": 1.0333333333333332
+          "name": "Run",
+          "duration": 0.5
         },
         {
-          "name": "Run",
-          "duration": 0.6333333333333333
+          "name": "Walk",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack",
+          "duration": 2.666666666666667
         }
       ],
       "source": "ContentSource/Meshy/NullBishop/rig.fbx + walk.fbx + run.fbx",
@@ -211,7 +189,7 @@
     {
       "id": "RazorSeraph",
       "path": "assets/models/RazorSeraph.glb",
-      "bytes": 500024,
+      "bytes": 610148,
       "heightMeters": 2.8,
       "up": "+Y",
       "forward": "+Z",
@@ -219,12 +197,16 @@
       "triangles": 3499,
       "animations": [
         {
-          "name": "Walk",
-          "duration": 1.0333333333333332
+          "name": "Run",
+          "duration": 0.5
         },
         {
-          "name": "Run",
-          "duration": 0.6333333333333333
+          "name": "Walk",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack",
+          "duration": 5.666666666666667
         }
       ],
       "source": "ContentSource/Meshy/RazorSeraph/rig.fbx + walk.fbx + run.fbx",
@@ -233,7 +215,7 @@
     {
       "id": "FurnaceOni",
       "path": "assets/models/FurnaceOni.glb",
-      "bytes": 545224,
+      "bytes": 592968,
       "heightMeters": 3.25,
       "up": "+Y",
       "forward": "+Z",
@@ -241,12 +223,16 @@
       "triangles": 3500,
       "animations": [
         {
-          "name": "Walk",
-          "duration": 1.0333333333333332
+          "name": "Run",
+          "duration": 0.5
         },
         {
-          "name": "Run",
-          "duration": 0.6333333333333333
+          "name": "Walk",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack",
+          "duration": 3.0
         }
       ],
       "source": "ContentSource/Meshy/FurnaceOni/rig.fbx + walk.fbx + run.fbx",
@@ -255,7 +241,7 @@
     {
       "id": "BroadcastSovereign",
       "path": "assets/models/BroadcastSovereign.glb",
-      "bytes": 738396,
+      "bytes": 789012,
       "heightMeters": 5.2,
       "up": "+Y",
       "forward": "+Z",
@@ -263,12 +249,16 @@
       "triangles": 6000,
       "animations": [
         {
-          "name": "Walk",
-          "duration": 1.0333333333333332
+          "name": "Run",
+          "duration": 0.5
         },
         {
-          "name": "Run",
-          "duration": 0.6333333333333333
+          "name": "Walk",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack",
+          "duration": 2.3000000000000003
         }
       ],
       "source": "ContentSource/Meshy/BroadcastSovereign/rig.fbx + walk.fbx + run.fbx",
@@ -336,6 +326,441 @@
       "animations": [],
       "textureSize": 512,
       "collision": "visual mesh only; use independent simplified collision boxes"
+    },
+    {
+      "id": "DigitalSpirit",
+      "path": "assets/models/DigitalSpirit.glb",
+      "bytes": 332668,
+      "heightMeters": 0.85,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 1800,
+      "animations": [
+        {
+          "name": "Walk",
+          "duration": 1.0333333333333332
+        },
+        {
+          "name": "Run",
+          "duration": 0.6333333333333333
+        }
+      ],
+      "source": "ContentSource\\WindowsOverhaul\\DigitalSpirit",
+      "textureSize": 512
+    },
+    {
+      "id": "Shopfront",
+      "kind": "environment",
+      "path": "assets/models/Shopfront.glb",
+      "bytes": 350496,
+      "dimensionsMeters": {
+        "x": 4.0,
+        "y": 2.8399839401245117,
+        "z": 0.9404158592224121
+      },
+      "maxHorizontalWidthMeters": 4,
+      "heightMeters": 2.8399839401245117,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "bottom at Y0, centered XZ",
+      "triangles": 5877,
+      "source": "ContentSource/WindowsOverhaul/Shopfront/model.fbx",
+      "animations": [],
+      "textureSize": 512,
+      "collision": "visual mesh only; use independent simplified collision boxes"
+    },
+    {
+      "id": "ServiceCabinet",
+      "kind": "environment",
+      "path": "assets/models/ServiceCabinet.glb",
+      "bytes": 274772,
+      "dimensionsMeters": {
+        "x": 1.3,
+        "y": 0.6866937845945359,
+        "z": 0.7091383129358292
+      },
+      "maxHorizontalWidthMeters": 1.3,
+      "heightMeters": 0.6866937845945359,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "bottom at Y0, centered XZ",
+      "triangles": 3858,
+      "source": "ContentSource/WindowsOverhaul/ServiceCabinet/model.fbx",
+      "animations": [],
+      "textureSize": 512,
+      "collision": "visual mesh only; use independent simplified collision boxes"
+    },
+    {
+      "id": "ChallengeSign",
+      "kind": "environment",
+      "path": "assets/models/ChallengeSign.glb",
+      "bytes": 615008,
+      "dimensionsMeters": {
+        "x": 3.4,
+        "y": 4.772525862966573,
+        "z": 1.314630396468086
+      },
+      "maxHorizontalWidthMeters": 3.4,
+      "heightMeters": 4.772525862966573,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "bottom at Y0, centered XZ",
+      "triangles": 12085,
+      "source": "ContentSource/City/Meshy/ChallengeSign/model.fbx",
+      "animations": [],
+      "textureSize": 512,
+      "collision": "visual mesh only; use independent simplified collision boxes"
+    },
+    {
+      "id": "NeonExorcist",
+      "path": "assets/models/NeonExorcist.glb",
+      "bytes": 3133740,
+      "heightMeters": 1.8,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 20130,
+      "animations": [
+        {
+          "name": "HoverIdle",
+          "duration": 1.9999999999999998
+        },
+        {
+          "name": "Cruise",
+          "duration": 1.5
+        },
+        {
+          "name": "Accelerate",
+          "duration": 0.5
+        },
+        {
+          "name": "Brake",
+          "duration": 0.5
+        },
+        {
+          "name": "TurnLeft",
+          "duration": 1.2
+        },
+        {
+          "name": "TurnRight",
+          "duration": 1.2
+        },
+        {
+          "name": "Cast",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack135",
+          "duration": 0.8
+        },
+        {
+          "name": "Cast133",
+          "duration": 0.8
+        },
+        {
+          "name": "Attack250",
+          "duration": 4.0
+        },
+        {
+          "name": "Land",
+          "duration": 0.4666666666666667
+        },
+        {
+          "name": "Fall",
+          "duration": 1.0
+        },
+        {
+          "name": "Hit",
+          "duration": 0.4666666666666667
+        },
+        {
+          "name": "Defeat",
+          "duration": 1.2
+        }
+      ],
+      "source": "ContentSource\\Meshy\\NeonExorcist\\assembled\\NeonExorcist-RidingRig.blend",
+      "textureSize": 1024
+    },
+    {
+      "id": "Vex",
+      "path": "assets/models/Vex.glb",
+      "bytes": 1954452,
+      "heightMeters": 1.8,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 10784,
+      "animations": [
+        {
+          "name": "HoverIdle",
+          "duration": 2.5
+        },
+        {
+          "name": "Cruise",
+          "duration": 1.875
+        },
+        {
+          "name": "Accelerate",
+          "duration": 0.625
+        },
+        {
+          "name": "Brake",
+          "duration": 0.625
+        },
+        {
+          "name": "TurnLeft",
+          "duration": 1.5
+        },
+        {
+          "name": "TurnRight",
+          "duration": 1.5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.0
+        },
+        {
+          "name": "Attack135",
+          "duration": 1.0
+        },
+        {
+          "name": "Cast133",
+          "duration": 1.0
+        },
+        {
+          "name": "Attack250",
+          "duration": 5.0
+        },
+        {
+          "name": "Land",
+          "duration": 0.5833333333333334
+        },
+        {
+          "name": "Fall",
+          "duration": 1.25
+        },
+        {
+          "name": "Hit",
+          "duration": 0.5833333333333334
+        },
+        {
+          "name": "Defeat",
+          "duration": 1.5
+        }
+      ],
+      "source": "ContentSource\\Meshy\\Vex\\assembled\\Vex-RidingRig.blend",
+      "textureSize": 512
+    },
+    {
+      "id": "Rook",
+      "path": "assets/models/Rook.glb",
+      "bytes": 2032704,
+      "heightMeters": 1.95,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 9939,
+      "animations": [
+        {
+          "name": "HoverIdle",
+          "duration": 2.5
+        },
+        {
+          "name": "Cruise",
+          "duration": 1.875
+        },
+        {
+          "name": "Accelerate",
+          "duration": 0.625
+        },
+        {
+          "name": "Brake",
+          "duration": 0.625
+        },
+        {
+          "name": "TurnLeft",
+          "duration": 1.5
+        },
+        {
+          "name": "TurnRight",
+          "duration": 1.5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.0
+        },
+        {
+          "name": "Attack135",
+          "duration": 1.0
+        },
+        {
+          "name": "Cast133",
+          "duration": 1.0
+        },
+        {
+          "name": "Attack250",
+          "duration": 5.0
+        },
+        {
+          "name": "Land",
+          "duration": 0.5833333333333334
+        },
+        {
+          "name": "Fall",
+          "duration": 1.25
+        },
+        {
+          "name": "Hit",
+          "duration": 0.5833333333333334
+        },
+        {
+          "name": "Defeat",
+          "duration": 1.5
+        }
+      ],
+      "source": "ContentSource\\Meshy\\Rook\\assembled\\Rook-RidingRig.blend",
+      "textureSize": 512
+    },
+    {
+      "id": "Zero",
+      "path": "assets/models/Zero.glb",
+      "bytes": 1830764,
+      "heightMeters": 1.88,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 10494,
+      "animations": [
+        {
+          "name": "HoverIdle",
+          "duration": 2.5
+        },
+        {
+          "name": "Cruise",
+          "duration": 1.875
+        },
+        {
+          "name": "Accelerate",
+          "duration": 0.625
+        },
+        {
+          "name": "Brake",
+          "duration": 0.625
+        },
+        {
+          "name": "TurnLeft",
+          "duration": 1.5
+        },
+        {
+          "name": "TurnRight",
+          "duration": 1.5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.0
+        },
+        {
+          "name": "Attack135",
+          "duration": 1.0
+        },
+        {
+          "name": "Cast133",
+          "duration": 1.0
+        },
+        {
+          "name": "Attack250",
+          "duration": 5.0
+        },
+        {
+          "name": "Land",
+          "duration": 0.5833333333333334
+        },
+        {
+          "name": "Fall",
+          "duration": 1.25
+        },
+        {
+          "name": "Hit",
+          "duration": 0.5833333333333334
+        },
+        {
+          "name": "Defeat",
+          "duration": 1.5
+        }
+      ],
+      "source": "ContentSource\\Meshy\\Zero\\assembled\\Zero-RidingRig.blend",
+      "textureSize": 512
+    },
+    {
+      "id": "Mira",
+      "path": "assets/models/Mira.glb",
+      "bytes": 2068712,
+      "heightMeters": 1.8,
+      "up": "+Y",
+      "forward": "+Z",
+      "origin": "feet or hoverboard underside, centered XZ",
+      "triangles": 10647,
+      "animations": [
+        {
+          "name": "HoverIdle",
+          "duration": 2.5
+        },
+        {
+          "name": "Cruise",
+          "duration": 1.875
+        },
+        {
+          "name": "Accelerate",
+          "duration": 0.625
+        },
+        {
+          "name": "Brake",
+          "duration": 0.625
+        },
+        {
+          "name": "TurnLeft",
+          "duration": 1.5
+        },
+        {
+          "name": "TurnRight",
+          "duration": 1.5
+        },
+        {
+          "name": "Cast",
+          "duration": 1.0
+        },
+        {
+          "name": "Attack135",
+          "duration": 1.0
+        },
+        {
+          "name": "Cast133",
+          "duration": 1.0
+        },
+        {
+          "name": "Attack250",
+          "duration": 5.0
+        },
+        {
+          "name": "Land",
+          "duration": 0.5833333333333334
+        },
+        {
+          "name": "Fall",
+          "duration": 1.25
+        },
+        {
+          "name": "Hit",
+          "duration": 0.5833333333333334
+        },
+        {
+          "name": "Defeat",
+          "duration": 1.5
+        }
+      ],
+      "source": "ContentSource\\Meshy\\Mira\\assembled\\Mira-RidingRig.blend",
+      "textureSize": 512
     }
   ]
 }

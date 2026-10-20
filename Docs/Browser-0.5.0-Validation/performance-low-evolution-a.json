@@ -1,0 +1,13 @@
+{
+  "quality": "low",
+  "samples": 1801,
+  "fps": 179.95064096799658,
+  "frameMs": 5.557079400333148,
+  "p95FrameMs": 5.600000000000364,
+  "cpuMs": 2.6726263187213415,
+  "drawCalls": 170.39144919489172,
+  "triangles": 184645.3392559689,
+  "activeEnemies": 88,
+  "renderWidth": 960,
+  "renderHeight": 540
+}

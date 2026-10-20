@@ -1,0 +1,23 @@
+✔ shared board starts empty and supports cross-origin preflight (18.5767ms)
+✔ server computes points, retries are idempotent, public rows hide credentials (6.0331ms)
+✔ each browser keeps its three highest distinct runs and changing names cannot bypass the cap (6.9145ms)
+✔ global board caps at ten rows, at most three per player, with correct global submission ranks (16.2413ms)
+✔ equal-score runs are distinct, older runs win ties, and retry never adds a duplicate (5.402ms)
+✔ schema upgrade preserves existing personal bests and permits multiple rows per identity (1.1505ms)
+✔ forged credentials, implausible timing and unsafe names are rejected (2.6547ms)
+✔ run creation is bounded and expired sessions cannot submit (3.8067ms)
+✔ Windows has an independent top three per identity and does not displace browser scores (6.8741ms)
+✔ registered objective builds in both editions may submit early relay-boss victories (3.51ms)
+✔ Windows metadata is immutable on retry, validated and public without credentials (3.797ms)
+✔ requested reset archives and clears only Windows once, invalidating old sessions (2.978ms)
+✔ Windows replaces the weakest personal run with its own rider and card snapshot (5.2254ms)
+✔ new browser builds retain immutable rider/card profiles; legacy scores remain readable (3.482ms)
+✔ legacy browser sessions cannot claim early bosses; objective bonus drafts have bounded budgets (2.2534ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 150.6095

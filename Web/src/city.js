@@ -1,13 +1,14 @@
 import * as T from 'three';
+import {ARENA_WALLS,ARENA_PLATFORMS,WalkableWorld,LayeredNavigation} from './navigation.mjs?v=0.5.0';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
-import {rng} from './rules.mjs?v=0.2.1';
-import {QUALITY_PROFILES,segmentHitsRect} from './performance.mjs?v=0.2.1';
-import {applyRenderQuality,attachLowGeometry,qualityMaterial} from './render-assets.js?v=0.2.1';
+import {rng} from './rules.mjs?v=0.5.0';
+import {QUALITY_PROFILES,segmentHitsRect} from './performance.mjs?v=0.5.0';
+import {applyRenderQuality,attachLowGeometry,qualityMaterial,instanceMaterial} from './render-assets.js?v=0.5.0';
 
 const box=new T.BoxGeometry(),random=rng(89312),v=new T.Vector3(),neighbors=[[1,0],[-1,0],[0,1],[0,-1]];
 export class City {
- constructor(scene,rules){this.scene=scene;this.rules=rules;this.walls=[];this.materials=[];this.materialCache=new Map();this.staticMeshes=[];this.templates=new Map();this.loader=new GLTFLoader();this.lamps=[];this.signs=[];this.platforms=[];this.build();this.batchStatic();this.lightSlots=Array.from({length:4},()=>{const l=new T.PointLight(0xffd7ad,0,12,2);scene.add(l);return l;});this.setQuality('low');this.makeFlow();}
+ constructor(scene,rules){this.scene=scene;this.rules=rules;this.walls=[];this.materials=[];this.materialCache=new Map();this.staticMeshes=[];this.templates=new Map();this.loader=new GLTFLoader();this.lamps=[];this.signs=[];this.platforms=[];this.world=new WalkableWorld({walls:this.walls,platforms:this.platforms});this.build();this.batchStatic();this.lightSlots=Array.from({length:4},()=>{const l=new T.PointLight(0xffd7ad,0,12,2);scene.add(l);return l;});this.environmentRoots=scene.children.filter(o=>!o.isLight);this.setQuality('low');this.makeFlow();}
  cube(x,y,z,w,h,d,material){const m=new T.Mesh(box,material);m.position.set(x,y,z);m.scale.set(w,h,d);m.receiveShadow=true;m.castShadow=h>.1;this.scene.add(m);this.staticMeshes.push(m);return m;}
  material(color,extra={}){const key=color+':'+JSON.stringify(extra,(k,v)=>v?.isTexture?v.uuid:v);if(!this.materialCache.has(key))this.materialCache.set(key,new T.MeshStandardMaterial({color,roughness:.6,...extra}));return this.materialCache.get(key);}
  glow(color){return this.material(color,{emissive:color,emissiveIntensity:2.6,roughness:.3});}
@@ -24,17 +25,17 @@ export class City {
  for(let a=-len/2+1.8;a<len/2;a+=3.6)if(!inside(r.x+(ew?a:0),r.z+(ew?0:a),index,1.6))for(const s of[-1,1])place(a,s*.08,.027,1.45,.01,.06,amber);
  });
  for(const x of[0,-32.5])for(const side of[-1,1])for(let j=0;j<7;j++)this.cube(x-3.3+j*1.1,.03,-4.5+side*6.2,.58,.02,2.5,white);
- const towers=[[-35,-33,14,13,15],[36,-16.5,17,16,4.2],[44.5,12.5,13,14,3.6],[-46.5,25.5,10,18,23],[-26,43.5,16,10,16],[26.5,-44,16,10,18.5],[-12.5,-46.5,9.5,8.5,12.5],[-14,8,9,5,5],[14,-20,7,9,7]];
+ const towers=ARENA_WALLS.map(b=>[b.x,b.z,b.w,b.d,b.h]);
  const colors=[0x35eaff,0xff2994,0xffb64c,0x71ffb3];
  for(const [x,z,w,d,h]of towers){this.walls.push({x,z,w,d,h});this.cube(x,h/2,z,w,h,d,wall);this.cube(x,h+.12,z,w+.4,.25,d+.4,metal);for(const side of[-1,1]){this.cube(x+side*(w/2+.04),1.5,z,.12,3,d-.2,metal);for(let y=2;y<h-1;y+=2.5)for(let j=0;j<Math.floor(w/1.5)-1;j++){const xx=x-w/2+1.3+j*1.5;this.cube(xx,y,z+side*(d/2+.025),.35+random()*.35,1,.055,this.glow(random()<.3?colors[Math.floor(random()*4)]:0x284553));}}
  this.makeSign('GHOST / NET',x-w*.22,Math.min(5,h-.5),z+d/2+.1,4,colors[Math.floor(random()*4)]);this.makeSign('禁 / SIGNAL',x+w*.25,h*.7,z+d/2+.1,2.5,colors[Math.floor(random()*4)]);
  for(let p=0;p<3;p++){this.cube(x-w/2+.3,h/2,z-d/2+.4+p*.45,.13,h,.13,metal);}this.cube(x, .18,z+d/2+.5,w+.6,.35,.65,curb);}
- this.addPlatform(24,6.5,11,15,3.2,{axis:'x',lo:6.5,hi:18.5,across:6.5,width:6});
+ this.addPlatformDefinition('east');
  // Keep the camera-facing district low so rooftops cannot hide nearby combat.
- this.addPlatform(0,37,20,18,2.2,{axis:'z',lo:10,hi:28,across:6,width:6.5});
+ this.addPlatformDefinition('shrine');
  this.addMarketTerraces();
- this.addPlatform(-32,15,12,16,5.6,{axis:'x',lo:-26,hi:-15,across:15,width:6,reverse:true});
- this.addPlatform(0,-30,30,4.5,6.2,{axis:'z',lo:-26,hi:-14,across:15,width:5.5,reverse:true},true);
+ this.addPlatformDefinition('west');
+ this.addPlatformDefinition('overpass');
  for(const p of[[-13.6,-10.2,0],[13.6,-10.2,Math.PI],[-39.3,-21.3,0],[-39.3,-11.3,0],[-39.3,-.7,0],[-26.3,-21.3,Math.PI],[-26.3,-11.3,Math.PI],[-26.3,-.7,Math.PI],[25.4,-24.6,Math.PI],[10.4,-39,Math.PI],[-8,-39,0],[28.6,1.7,Math.PI]])this.makeLamp(...p,metal);
  for(const x of[-6.2,-4,5,7.2])this.cube(x,.035,-41,.07,.08,20,metal);
  for(const z of[-37,-41.7,-46.4])this.makeSign('SUBWAY ↓',7.8,2.5,z,1.8,0x38d9ff);
@@ -44,8 +45,8 @@ export class City {
  addMarketTerraces(){
  const metal=this.material(0x263440,{metalness:.65,roughness:.4});
  // Walkable replacements for the former 15-metre shopping-block collider.
- this.addPlatform(31,34,10,12,1.2,{axis:'x',lo:19,hi:26,across:34,width:6});
- this.addPlatform(41,41,8,8,2,{axis:'z',lo:28,hi:37,across:41,width:5});
+ this.addPlatformDefinition('market');
+ this.addPlatformDefinition('marketUpper');
  const cyan=this.glow(0x35eaff),pink=this.glow(0xff2994);
  for(const [x,z,color]of [[29,39.5,cyan],[33,39.5,pink],[39,44.5,pink],[43,44.5,cyan]]){
  const y=this.height(x,z,0);
@@ -56,25 +57,28 @@ export class City {
  this.makeSign('GHOST / NET',41,2.7,45,2.5,0x35eaff);
  }
  rampEntry(x,z){return(x>2.25&&x<10&&z>8&&z<28)||(x>5&&x<19.5&&z>2.7&&z<10.3)||(x>-27&&x<-14&&z>11.5&&z<18.5)||(Math.abs(Math.abs(x)-15)<3.8&&z>-27&&z<-13);}
+ addPlatformDefinition(id){const p=ARENA_PLATFORMS.find(p=>p.id===id);this.addPlatform(p.x,p.z,p.w,p.d,p.h,p.ramp,p.bridge);this.platforms.at(-1).extraRamps=p.extraRamps;for(const r of p.extraRamps||[])this.addRamp(r,p.h,this.pavement(true));}
  addPlatform(x,z,w,d,h,ramp,bridge=false){const mat=this.pavement(true);this.cube(x,bridge?h-.25:h/2-.1,z,w,bridge?.45:h-.2,d,this.material(0x1a2332));if(bridge)for(const side of[-1,1])this.cube(side*11,h/2,z,.35,h,.35,this.material(0x334457));this.cube(x,h-.05,z,w,.1,d,mat);const p={x,z,w,d,h,ramp,bridge};this.platforms.push(p);
- const low=ramp.lo,high=ramp.hi,axis=ramp.axis;const a=ramp.reverse?h:0,b=ramp.reverse?0:h;const geometry=new T.BufferGeometry();const verts=axis==='x'?[low,a,ramp.across-ramp.width/2,high,b,ramp.across-ramp.width/2,high,b,ramp.across+ramp.width/2,low,a,ramp.across+ramp.width/2]:[ramp.across-ramp.width/2,a,low,ramp.across+ramp.width/2,a,low,ramp.across+ramp.width/2,b,high,ramp.across-ramp.width/2,b,high];geometry.setAttribute('position',new T.Float32BufferAttribute(verts,3));geometry.setIndex([0,2,1,0,3,2]);geometry.computeVertexNormals();const m=new T.Mesh(geometry,mat);m.material.side=T.DoubleSide;m.receiveShadow=true;this.scene.add(m);
+ this.addRamp(ramp,h,mat);
  const neon=this.glow(0x20c8ff);for(const side of[-1,1]){this.cube(x+side*(w/2-.1),h+.45,z,.08,.85,d, this.material(0x253746));this.cube(x+side*(w/2-.1),h+.9,z,.045,.045,d,neon);}
  }
- height(x,z,current=0){let height=0;for(const p of this.platforms){const r=p.ramp,along=r.axis==='x'?x:z,across=r.axis==='x'?z:x;if(along>=r.lo&&along<=r.hi&&Math.abs(across-r.across)<=r.width/2){const t=(along-r.lo)/(r.hi-r.lo);height=Math.max(height,p.h*(r.reverse?1-t:t));}if(Math.abs(x-p.x)<p.w/2&&Math.abs(z-p.z)<p.d/2&&(!p.bridge||current>p.h-.6))height=Math.max(height,p.h);}return height;}
- blocked(x,z,r=.32){return Math.abs(x)>53-r||Math.abs(z)>53-r||this.walls.some(b=>Math.abs(x-b.x)<b.w/2+r&&Math.abs(z-b.z)<b.d/2+r);}
- move(entity,dx,dz){const p=entity.position,y=p.y;const tryStep=(x,z)=>!this.blocked(x,z,entity.radius??.32)&&this.height(x,z,y)<=y+.6;if(tryStep(p.x+dx,p.z))p.x+=dx;if(tryStep(p.x,p.z+dz))p.z+=dz;}
- clear(a,b){for(const wall of this.walls)if(segmentHitsRect(a.x,a.z,b.x,b.z,wall))return false;return true;}
+ addRamp(ramp,h,mat){ const low=ramp.lo,high=ramp.hi,axis=ramp.axis;const a=ramp.reverse?h:0,b=ramp.reverse?0:h;const geometry=new T.BufferGeometry();const verts=axis==='x'?[low,a,ramp.across-ramp.width/2,high,b,ramp.across-ramp.width/2,high,b,ramp.across+ramp.width/2,low,a,ramp.across+ramp.width/2]:[ramp.across-ramp.width/2,a,low,ramp.across+ramp.width/2,a,low,ramp.across+ramp.width/2,b,high,ramp.across-ramp.width/2,b,high];geometry.setAttribute('position',new T.Float32BufferAttribute(verts,3));geometry.setIndex([0,2,1,0,3,2]);geometry.computeVertexNormals();const m=new T.Mesh(geometry,mat);m.material.side=T.DoubleSide;m.receiveShadow=true;this.scene.add(m);}
+ setRangeMode(active){this.primaryWorld??=this.world;this.rangeWorld??=new WalkableWorld({walls:[],platforms:[]});if(!this.rangeFloor){this.rangeFloor=new T.Group();const floor=new T.Mesh(new T.PlaneGeometry(110,110),this.pavement());floor.rotation.x=-Math.PI/2;floor.position.y=-.05;floor.receiveShadow=true;this.rangeFloor.add(floor);const grid=new T.GridHelper(106,53,0x1ab3c4,0x163746);grid.position.y=.005;this.rangeFloor.add(grid);this.scene.add(this.rangeFloor);}this.rangeFloor.visible=active;for(const root of this.environmentRoots)root.visible=!active;this.world=active?this.rangeWorld:this.primaryWorld;this.rangeMode=active;}
+ height(x,z,current=0){return this.world.height(x,z,current);}
+ blocked(x,z,r=.32,y=0){return this.world.collides(x,z,r,y);}
+ move(entity,dx,dz){this.world.move(entity,dx,dz);}
+ clear(a,b){return this.world.clear(a,b);}
  makeSign(label,x,y,z,width,color){const c=document.createElement('canvas');c.width=512;c.height=256;const g=c.getContext('2d');g.fillStyle='#061019';g.fillRect(0,0,512,256);g.strokeStyle='#536c7a';g.lineWidth=10;g.strokeRect(8,8,496,240);g.fillStyle='#'+new T.Color(color).getHexString();g.shadowColor=g.fillStyle;g.shadowBlur=18;g.textAlign='center';g.font='bold 55px sans-serif';const lines=label.split('\n');lines.forEach((s,i)=>g.fillText(s,256,lines.length>1?105+i*70:152,470));const texture=new T.CanvasTexture(c);texture.colorSpace=T.SRGBColorSpace;const material=this.material(0xffffff,{map:texture,emissiveMap:texture,emissive:0xffffff,emissiveIntensity:1.8,side:T.DoubleSide});this.materials.push(material);const mesh=new T.Mesh(new T.PlaneGeometry(width,width/2),material);mesh.position.set(x,y,z);this.scene.add(mesh);return mesh;}
  makeLamp(x,z,yaw,metal){this.cube(x,1.95,z,.12,3.9,.14,metal);const dx=Math.cos(yaw),dz=Math.sin(yaw);this.cube(x+dx*.65,3.9,z+dz*.65,Math.abs(dx)>0.5?1.45:.15,.12,Math.abs(dx)>0.5?.15:1.45,metal);this.cube(x+dx*1.2,3.8,z+dz*1.2,.65,.09,.4,this.glow(0xffdcb2));const light=new T.PointLight(0xffd7ad,27,12,2);light.position.set(x+dx*1.2,3.55,z+dz*1.2);this.lamps.push(light);}
- async assets(progress){const ids=['NeonExorcist',...this.rules.enemies.map(x=>x.id),'MarketKiosk','RooftopShrine'];let loaded=0;await Promise.all(ids.map(async id=>{const data=await this.loader.loadAsync('assets/models/'+id+'.glb');data.scene.traverse(m=>{if(m.isMesh){m.castShadow=true;m.receiveShadow=true;if(m.material){m.material.envMapIntensity=.8;}}});if(!['MarketKiosk','RooftopShrine'].includes(id)){const low=await this.loader.loadAsync('assets/models/low/'+id+'.glb');attachLowGeometry(data,low);}this.templates.set(id,data);progress(++loaded/ids.length);}));
- const add=(id,x,y,z,yaw=0)=>{const root=clone(this.templates.get(id).scene);root.position.set(x,y,z);root.rotation.y=yaw;this.scene.add(root);return root;};for(let i=0;i<6;i++)add('MarketKiosk',i<3?-43:-22.5,0,-18.5+(i%3)*6,i<3?Math.PI/2:-Math.PI/2);add('RooftopShrine',0,2.2,41.7);this.makeFlow();applyRenderQuality(this.scene,this.quality.bloom?'high':'low');}
+ async assets(progress){const ids=[...this.rules.riders.map(r=>r.id),...this.rules.enemies.map(x=>x.id),'DigitalSpirit','MarketKiosk','RooftopShrine','Shopfront','ServiceCabinet','ChallengeSign'];let loaded=0;await Promise.all(ids.map(async id=>{const data=await this.loader.loadAsync('assets/models/'+id+'.glb?v=0.5.0');data.scene.traverse(m=>{if(m.isMesh){m.castShadow=true;m.receiveShadow=true;if(m.material){m.material.envMapIntensity=.8;}}});if(!['MarketKiosk','RooftopShrine','Shopfront','ServiceCabinet','ChallengeSign'].includes(id)){const low=await this.loader.loadAsync('assets/models/low/'+id+'.glb?v=0.5.0');attachLowGeometry(data,low);}this.templates.set(id,data);progress(++loaded/ids.length);}));
+ const add=(id,x,y,z,yaw=0)=>{const root=clone(this.templates.get(id).scene);root.position.set(x,y,z);root.rotation.y=yaw;this.scene.add(root);this.environmentRoots.push(root);return root;};for(let i=0;i<6;i++)add('MarketKiosk',i<3?-43:-22.5,0,-18.5+(i%3)*6,i<3?Math.PI/2:-Math.PI/2);add('RooftopShrine',0,2.2,41.7);for(const wall of this.walls){add('Shopfront',wall.x,0,wall.z+wall.d/2-.3);add('ServiceCabinet',wall.x+wall.w/2-.7,0,wall.z+wall.d/2-.3);}for(const station of this.signs){const housing=add('ChallengeSign',station.anchorX,0,station.anchorZ);station.mesh.attach(housing);this.environmentRoots=this.environmentRoots.filter(r=>r!==housing);}this.pedestrians=[];for(const [x,z]of[[-42,-15],[-23,-10],[24,34],[8,36],[-38,-7],[29,40]]){const art=this.character('DigitalSpirit');art.mesh.position.set(x,this.height(x,z,3),z);art.mesh.traverse(m=>{if(m.isMesh){m.material=instanceMaterial(m.material,{transparent:true,opacity:.35});m.castShadow=false;}});this.scene.add(art.mesh);this.environmentRoots.push(art.mesh);this.pedestrians.push(art);}this.makeFlow();applyRenderQuality(this.scene,this.quality.bloom?'high':'low');}
  character(id){const data=this.templates.get(id);if(!data)throw Error('Missing model '+id);const mesh=clone(data.scene);const mixer=new T.AnimationMixer(mesh);const actions=new Map(data.animations.map(a=>[a.name,mixer.clipAction(a)]));const idle=actions.get(id==='NeonExorcist'?'Cruise':'Run')??actions.values().next().value;idle?.play();applyRenderQuality(mesh,this.quality.bloom?'high':'low');return{mesh,mixer,actions,active:idle};}
- makeFlow(){this.cell=1.2;this.N=90;const n=this.N*this.N;this.distance=new Int32Array(n);this.queue=new Int32Array(n);this.navBlocked=new Uint8Array(n);this.navHeight=new Float32Array(n);for(let i=0;i<n;i++){const x=(i%this.N+.5)*this.cell-54,z=(Math.floor(i/this.N)+.5)*this.cell-54;this.navBlocked[i]=this.blocked(x,z,.5)?1:0;this.navHeight[i]=this.height(x,z,10);}}
- cellIndex(x,z){return Math.max(0,Math.min(this.N-1,Math.floor((z+54)/this.cell)))*this.N+Math.max(0,Math.min(this.N-1,Math.floor((x+54)/this.cell)));}
- updateFlow(position){this.distance.fill(2147483647);const first=this.cellIndex(position.x,position.z);this.distance[first]=0;let head=0,tail=0;this.queue[tail++]=first;while(head<tail){const i=this.queue[head++],x=i%this.N,z=Math.floor(i/this.N);for(const[dx,dz]of neighbors){const xx=x+dx,zz=z+dz;if(xx<0||zz<0||xx>=this.N||zz>=this.N)continue;const j=zz*this.N+xx;if(this.navBlocked[j]||this.distance[j]!==2147483647||Math.abs(this.navHeight[i]-this.navHeight[j])>.8)continue;this.distance[j]=this.distance[i]+1;this.queue[tail++]=j;}}}
- direction(position,goal,out=new T.Vector3()){if(this.clear(position,goal)&&Math.abs(this.height(goal.x,goal.z,goal.y)-position.y)<.6)return out.set(goal.x-position.x,0,goal.z-position.z).normalize();const i=this.cellIndex(position.x,position.z),x=i%this.N,z=Math.floor(i/this.N);let best=i,cost=this.distance[i];for(const[dx,dz]of neighbors){const xx=x+dx,zz=z+dz;if(xx<0||zz<0||xx>=this.N||zz>=this.N)continue;const j=zz*this.N+xx;if(this.distance[j]<cost){best=j;cost=this.distance[j];}}if(best===i)return out.set(0,0,0);return out.set((best%this.N+.5)*this.cell-54-position.x,0,(Math.floor(best/this.N)+.5)*this.cell-54-position.z).normalize();}
+ makeFlow(){this.navigations??=[.4,.65,.95].map(radius=>new LayeredNavigation(this.world,{radius}));this.navigation=this.navigations[0];}
+ cellIndex(x,z,y=0){return this.navigation.locate({x,y,z});}
+ updateFlow(position){for(const nav of this.navigations)nav.update(position);}
+ direction(position,goal,out=new T.Vector3(),radius=.4){const nav=this.navigations[radius>.65?2:radius>.4?1:0],d=nav.direction(position);return out.set(d.x,0,d.z).normalize();}
  batchStatic(){const groups=new Map();for(const mesh of this.staticMeshes){if(mesh.parent!==this.scene)continue;const key=mesh.material.uuid;let group=groups.get(key);if(!group)groups.set(key,group=[]);group.push(mesh);}this.staticObjectCount=0;this.staticBatchCount=0;for(const meshes of groups.values()){const batch=new T.InstancedMesh(box,meshes[0].material,meshes.length);batch.castShadow=meshes.some(m=>m.castShadow);batch.receiveShadow=true;batch.matrixAutoUpdate=false;for(let i=0;i<meshes.length;i++){const m=meshes[i];m.updateMatrix();batch.setMatrixAt(i,m.matrix);this.scene.remove(m);}batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();this.scene.add(batch);this.staticObjectCount+=meshes.length;this.staticBatchCount++;}this.staticMeshes.length=0;}
  setQuality(quality){this.quality=QUALITY_PROFILES[quality]??QUALITY_PROFILES.low;for(let i=0;i<this.lightSlots.length;i++)this.lightSlots[i].visible=i<this.quality.lamps;this.rain.geometry.setDrawRange(0,this.quality.rain);this.lampTimer=0;applyRenderQuality(this.scene,quality);this.activeSigns=this.materials.map(m=>qualityMaterial(m,quality==='low'));}
- tick(dt,time,position){const p=this.rain.geometry.attributes.position;if(dt>0){for(let i=0;i<this.quality.rain;i++){p.array[i*3+1]-=dt*14;if(p.array[i*3+1]<0)p.array[i*3+1]=24;}p.needsUpdate=true;}for(let i=0;i<this.activeSigns.length;i++)this.activeSigns[i].emissiveIntensity=1.6+Math.sin(time*1.9+i)*.18;
+ tick(dt,time,position){this.pedestrianTime=(this.pedestrianTime||0)+dt;if(this.pedestrianTime>.1){for(const [i,art]of(this.pedestrians||[]).entries()){art.mesh.visible=!this.rangeMode&&i<(this.quality.bloom?6:3);if(art.mesh.visible)art.mixer.update(this.pedestrianTime*.4);}this.pedestrianTime=0;}const p=this.rain.geometry.attributes.position;if(dt>0){for(let i=0;i<this.quality.rain;i++){p.array[i*3+1]-=dt*14;if(p.array[i*3+1]<0)p.array[i*3+1]=24;}p.needsUpdate=true;}for(let i=0;i<this.activeSigns.length;i++)this.activeSigns[i].emissiveIntensity=1.6+Math.sin(time*1.9+i)*.18;
  this.lampTimer-=dt;if(this.quality.lamps&&this.lampTimer<=0){this.lampTimer=.25;const nearest=this.lamps.filter(l=>l.position.distanceToSquared(position)<32*32).sort((a,b)=>a.position.distanceToSquared(position)-b.position.distanceToSquared(position));for(let i=0;i<this.lightSlots.length;i++){const source=nearest[i],slot=this.lightSlots[i];slot.intensity=source?27:0;if(source)slot.position.copy(source.position);}}}
 }

@@ -1,9 +1,9 @@
-import * as T from 'three';
+import * as T from '../vendor/three/build/three.module.js';
 
 // Low retains textures/emission and a cheap wet specular response, without PBR.
 const lowMaterials=new Map(),lodByGeometry=new WeakMap();
 export function qualityMaterial(material,low){
- const original=material.userData.fullMaterial??material;
+ const original=material.userData.fullMaterial?.isMaterial?material.userData.fullMaterial:material;
  if(!low||!original.isMeshStandardMaterial)return original;
  if(lowMaterials.has(original.uuid))return lowMaterials.get(original.uuid);
  const m=new T.MeshPhongMaterial({name:original.name+' / low',color:original.color,map:original.map,emissive:original.emissive,emissiveMap:original.emissiveMap,emissiveIntensity:original.emissiveIntensity,shininess:45,specular:0x35475b,side:original.side,transparent:original.transparent,opacity:original.opacity,alphaTest:original.alphaTest,depthWrite:original.depthWrite,vertexColors:original.vertexColors});
@@ -14,6 +14,8 @@ export function qualityMaterial(material,low){
  }
  lowMaterials.set(original.uuid,m);return m;
 }
+// Material.clone() JSON-copies userData. Never turn the saved full material into a plain object.
+export function instanceMaterial(source,settings={}){const full=source.userData.fullMaterial?.isMaterial?source.userData.fullMaterial:source,copy=full.clone();delete copy.userData.fullMaterial;Object.assign(copy,settings);return qualityMaterial(copy,source!==full);}
 export function applyRenderQuality(root,quality){root.traverse(o=>{if(!o.isMesh)return;const lod=lodByGeometry.get(o.geometry);if(lod){const next=quality==='low'?lod.low:lod.full;if(o.geometry!==next){o.geometry=next;o.boundingSphere=null;o.boundingBox=null;}}if(Array.isArray(o.material))o.material=o.material.map(m=>qualityMaterial(m,quality==='low'));else o.material=qualityMaterial(o.material,quality==='low');});}
 
 // Bone indices are remapped by name after export; animations keep the original rig.
