@@ -1,0 +1,426 @@
+{
+	"result": "DAMAGE_AUDIT_PASS",
+	"checks": [
+		{
+			"case": "PulseDart base health",
+			"expected": 30,
+			"actual": 30,
+			"pass": true
+		},
+		{
+			"case": "PulseDart actual attribution",
+			"expected": 30,
+			"actual": 30,
+			"pass": true
+		},
+		{
+			"case": "PrismBurst base health",
+			"expected": 20,
+			"actual": 20,
+			"pass": true
+		},
+		{
+			"case": "PrismBurst actual attribution",
+			"expected": 20,
+			"actual": 20,
+			"pass": true
+		},
+		{
+			"case": "HaloNova base health",
+			"expected": 18,
+			"actual": 18,
+			"pass": true
+		},
+		{
+			"case": "HaloNova actual attribution",
+			"expected": 18,
+			"actual": 18,
+			"pass": true
+		},
+		{
+			"case": "KineticCards base health",
+			"expected": 36,
+			"actual": 36,
+			"pass": true
+		},
+		{
+			"case": "KineticCards actual attribution",
+			"expected": 36,
+			"actual": 36,
+			"pass": true
+		},
+		{
+			"case": "PhotonLance base health",
+			"expected": 32,
+			"actual": 32,
+			"pass": true
+		},
+		{
+			"case": "PhotonLance actual attribution",
+			"expected": 32,
+			"actual": 32,
+			"pass": true
+		},
+		{
+			"case": "TalismanGuard base health",
+			"expected": 0,
+			"actual": 0,
+			"pass": true
+		},
+		{
+			"case": "TalismanGuard actual attribution",
+			"expected": 0,
+			"actual": 0,
+			"pass": true
+		},
+		{
+			"case": "ArcRelay base health",
+			"expected": 22,
+			"actual": 22,
+			"pass": true
+		},
+		{
+			"case": "ArcRelay actual attribution",
+			"expected": 22,
+			"actual": 22,
+			"pass": true
+		},
+		{
+			"case": "GhostLink base health",
+			"expected": 14,
+			"actual": 14,
+			"pass": true
+		},
+		{
+			"case": "GhostLink actual attribution",
+			"expected": 14,
+			"actual": 14,
+			"pass": true
+		},
+		{
+			"case": "NeonCataclysm base health",
+			"expected": 78,
+			"actual": 78,
+			"pass": true
+		},
+		{
+			"case": "NeonCataclysm actual attribution",
+			"expected": 78,
+			"actual": 78,
+			"pass": true
+		},
+		{
+			"case": "OrbitRazor base health",
+			"expected": 28,
+			"actual": 28,
+			"pass": true
+		},
+		{
+			"case": "OrbitRazor actual attribution",
+			"expected": 28,
+			"actual": 28,
+			"pass": true
+		},
+		{
+			"case": "RicochetSeal base health",
+			"expected": 24,
+			"actual": 24,
+			"pass": true
+		},
+		{
+			"case": "RicochetSeal actual attribution",
+			"expected": 24,
+			"actual": 24,
+			"pass": true
+		},
+		{
+			"case": "StrobeRail base health",
+			"expected": 46,
+			"actual": 46,
+			"pass": true
+		},
+		{
+			"case": "StrobeRail actual attribution",
+			"expected": 46,
+			"actual": 46,
+			"pass": true
+		},
+		{
+			"case": "EchoPetals base health",
+			"expected": 16,
+			"actual": 16,
+			"pass": true
+		},
+		{
+			"case": "EchoPetals actual attribution",
+			"expected": 16,
+			"actual": 16,
+			"pass": true
+		},
+		{
+			"case": "EventHorizon base health",
+			"expected": 16,
+			"actual": 16,
+			"pass": true
+		},
+		{
+			"case": "EventHorizon actual attribution",
+			"expected": 16,
+			"actual": 16,
+			"pass": true
+		},
+		{
+			"case": "ShatterSigil base health",
+			"expected": 34,
+			"actual": 34,
+			"pass": true
+		},
+		{
+			"case": "ShatterSigil actual attribution",
+			"expected": 34,
+			"actual": 34,
+			"pass": true
+		},
+		{
+			"case": "SatelliteChoir base health",
+			"expected": 18,
+			"actual": 18,
+			"pass": true
+		},
+		{
+			"case": "SatelliteChoir actual attribution",
+			"expected": 18,
+			"actual": 18,
+			"pass": true
+		},
+		{
+			"case": "Invalid damage rejected",
+			"expected": 99982,
+			"actual": 99982,
+			"pass": true
+		},
+		{
+			"case": "Amplifier outgoing",
+			"expected": 115,
+			"actual": 115,
+			"pass": true
+		},
+		{
+			"case": "OVERLOAD ORB",
+			"expected": 300,
+			"actual": 300,
+			"pass": true
+		},
+		{
+			"case": "OVERLOAD ORB + Amplifier",
+			"expected": 345,
+			"actual": 345,
+			"pass": true
+		},
+		{
+			"case": "DEADMAN BATTERY",
+			"expected": 200,
+			"actual": 200,
+			"pass": true
+		},
+		{
+			"case": "DEADMAN BATTERY + Amplifier",
+			"expected": 230,
+			"actual": 230,
+			"pass": true
+		},
+		{
+			"case": "GLASS PROTOCOL",
+			"expected": 175,
+			"actual": 175,
+			"pass": true
+		},
+		{
+			"case": "GLASS PROTOCOL + Amplifier",
+			"expected": 201.25,
+			"actual": 201.25,
+			"pass": true
+		},
+		{
+			"case": "Directional front armor",
+			"expected": 55,
+			"actual": 55,
+			"pass": true
+		},
+		{
+			"case": "Directional rear weakness",
+			"expected": 130,
+			"actual": 130,
+			"pass": true
+		},
+		{
+			"case": "Shield carrier front armor",
+			"expected": 40,
+			"actual": 40,
+			"pass": true
+		},
+		{
+			"case": "Mira own weapon",
+			"expected": 85,
+			"actual": 85,
+			"pass": true
+		},
+		{
+			"case": "Mira summon remains full power",
+			"expected": 100,
+			"actual": 100,
+			"pass": true
+		},
+		{
+			"case": "Zero marked target",
+			"expected": 125,
+			"actual": 125,
+			"pass": true
+		},
+		{
+			"case": "Zero summon bypasses own weapon perk",
+			"expected": 100,
+			"actual": 100,
+			"pass": true
+		},
+		{
+			"case": "ArcRelay hop 1",
+			"expected": 22,
+			"actual": 22,
+			"pass": true
+		},
+		{
+			"case": "ArcRelay hop 2",
+			"expected": 18.039999008178711,
+			"actual": 18.0390625,
+			"pass": true
+		},
+		{
+			"case": "ArcRelay hop 3",
+			"expected": 14.792799949645996,
+			"actual": 14.7890625,
+			"pass": true
+		},
+		{
+			"case": "ArcRelay hop 4",
+			"expected": 12.130096435546875,
+			"actual": 12.1328125,
+			"pass": true
+		},
+		{
+			"case": "ArcRelay hop 5",
+			"expected": 0,
+			"actual": 0,
+			"pass": true
+		},
+		{
+			"case": "ArcRelay hop 6",
+			"expected": 0,
+			"actual": 0,
+			"pass": true
+		},
+		{
+			"case": "GhostLink hop 1",
+			"expected": 14,
+			"actual": 14,
+			"pass": true
+		},
+		{
+			"case": "GhostLink hop 2",
+			"expected": 12.59999942779541,
+			"actual": 12.6015625,
+			"pass": true
+		},
+		{
+			"case": "GhostLink hop 3",
+			"expected": 11.339999198913574,
+			"actual": 11.34375,
+			"pass": true
+		},
+		{
+			"case": "GhostLink hop 4",
+			"expected": 10.205998420715332,
+			"actual": 10.203125,
+			"pass": true
+		},
+		{
+			"case": "GhostLink hop 5",
+			"expected": 9.185399055480957,
+			"actual": 9.1875,
+			"pass": true
+		},
+		{
+			"case": "GhostLink hop 6",
+			"expected": 8.2668590545654297,
+			"actual": 8.265625,
+			"pass": true
+		},
+		{
+			"case": "Expanding field hits once across frames",
+			"expected": 30,
+			"actual": 30,
+			"pass": true
+		},
+		{
+			"case": "Scheduled field four pulses",
+			"expected": 64,
+			"actual": 64,
+			"pass": true
+		},
+		{
+			"case": "Mira direct hit before echo",
+			"expected": 255,
+			"actual": 255,
+			"pass": true
+		},
+		{
+			"case": "Echo is twice the confirmed hit without double rider scaling",
+			"expected": 170,
+			"actual": 170,
+			"pass": true
+		},
+		{
+			"case": "Rank 2 damage",
+			"expected": 35.840000152587891,
+			"actual": 35.840000152587891,
+			"pass": true
+		},
+		{
+			"case": "Rank 3 damage",
+			"expected": 39.680000305175781,
+			"actual": 39.680000305175781,
+			"pass": true
+		},
+		{
+			"case": "Rank 3 cooldown",
+			"expected": 0.68999999761581421,
+			"actual": 0.68999999761581421,
+			"pass": true
+		},
+		{
+			"case": "Armor Decoder bypasses front armor",
+			"expected": 100,
+			"actual": 100,
+			"pass": true
+		},
+		{
+			"case": "Armor Decoder elite bonus",
+			"expected": 150,
+			"actual": 150,
+			"pass": true
+		},
+		{
+			"case": "Overkill credits only remaining HP once",
+			"expected": 7,
+			"actual": 7,
+			"pass": true
+		},
+		{
+			"case": "Pooled corpse cannot die twice",
+			"expected": 1,
+			"actual": 1,
+			"pass": true
+		}
+	],
+	"scope": "Numeric health and attribution integration; separate overhaul playback validates 16 timer-driven spells at base and both evolutions"
+}

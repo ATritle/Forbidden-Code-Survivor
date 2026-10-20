@@ -8,6 +8,10 @@
 #include "EnemySpawner.h"
 #include "ForbiddenPrograms.h"
 #include "ForbiddenProfile.h"
+#include "ForbiddenScoreService.h"
+#include "Dom/JsonObject.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
 
 namespace ForbiddenTests
 {
@@ -129,6 +133,21 @@ bool FForbiddenEconomyTest::RunTest(const FString& Parameters)
         auto* Card=NewObject<UCardDataAsset>();Card->CardID=ID;ForbiddenPrograms::Configure(Card);
         TestEqual(TEXT("Runtime card rarity matches purchase catalog"),Card->Rarity,ForbiddenPrograms::Rarity(ID));
     }
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FForbiddenScoreSnapshotTest,"Forbidden.Runtime.ScoreSnapshots",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FForbiddenScoreSnapshotTest::RunTest(const FString& Parameters)
+{
+    TSharedPtr<FJsonObject> Row;
+    const FString JSON=TEXT(R"({"id":"fixture","username":"Sample","score":1000,"kills":10,"level":8,"seconds":100,"challenges":1,"won":false,"loadout":{"riderId":"Zero","cards":[{"id":"PulseDart","level":3,"evolution":1}]}})");
+    TestTrue(TEXT("JSON fixture"),FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(JSON),Row));
+    FForbiddenScoreEntry Parsed;TestTrue(TEXT("Valid profile parses"),UForbiddenScoreService::ParseEntry(Row,Parsed));
+    TestEqual(TEXT("Rider snapshot"),Parsed.RiderID,FName("Zero"));TestEqual(TEXT("Actual rank snapshot"),Parsed.Cards[0].Level,3);TestEqual(TEXT("Evolution snapshot"),Parsed.Cards[0].Evolution,1);
+    const auto Loadout=Row->GetObjectField(TEXT("loadout"));const auto Cards=Loadout->GetArrayField(TEXT("cards"));auto Duplicate=Cards;Duplicate.Add(Cards[0]);Loadout->SetArrayField(TEXT("cards"),Duplicate);
+    TestFalse(TEXT("Duplicate cards rejected"),UForbiddenScoreService::ParseEntry(Row,Parsed));Loadout->SetArrayField(TEXT("cards"),Cards);
+    Loadout->SetStringField(TEXT("riderId"),TEXT("Unknown"));TestFalse(TEXT("Unknown rider rejected"),UForbiddenScoreService::ParseEntry(Row,Parsed));Loadout->SetStringField(TEXT("riderId"),TEXT("Zero"));
+    Cards[0]->AsObject()->SetNumberField(TEXT("level"),1);TestFalse(TEXT("Evolution cannot claim rank one"),UForbiddenScoreService::ParseEntry(Row,Parsed));
     return true;
 }
 

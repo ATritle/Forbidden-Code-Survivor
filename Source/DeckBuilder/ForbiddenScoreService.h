@@ -4,7 +4,14 @@
 #include "ForbiddenProfile.h"
 #include "ForbiddenScoreService.generated.h"
 class FJsonObject;
-struct FForbiddenScoreEntry {int32 Rank=0,Score=0,Kills=0;FString Username;};
+struct FForbiddenScoreEntry
+{
+    int32 Rank=0,Score=0,Kills=0,Level=1,Seconds=0,Contracts=0;
+    bool Victory=false;
+    FString ID,Username;
+    FName RiderID;
+    TArray<FForbiddenCardSnapshot> Cards;
+};
 
 /** Run credentials exist only in memory. Public submissions require an explicit username action. */
 UCLASS()
@@ -17,6 +24,8 @@ public:
     void FetchBoard();
     bool Submit(const FString& Username);
     FString Status;
+    FString SubmissionSummary;
+    static bool ParseEntry(const TSharedPtr<FJsonObject>& Object,FForbiddenScoreEntry& Entry);
     TArray<FForbiddenScoreEntry> Entries;
     int32 Revision=0;
     bool Eligible=false,Posting=false,Submitted=false,Loading=false;

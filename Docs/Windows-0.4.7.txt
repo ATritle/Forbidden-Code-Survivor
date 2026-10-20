@@ -1,0 +1,22 @@
+FORBIDDEN CODE: SURVIVOR — WINDOWS 0.4.7
+
+LEADERBOARD RUN PROFILES
+Hover a score to inspect its final run on the right. The panel shows the rider portrait, name, role and profile, plus player level, survival time, kills, outcome, score and completed contracts. The card grid supports all sixteen programs and displays each card's actual final rank (LV 1–3), separately from the player's essence level. EVOLVED identifies a branch choice; hover that card to read its exact evolution name. Keyboard/controller row focus also updates the panel. Escape closes the board safely even while the username field has focus.
+
+Run profiles are captured from active spell instances when the run ends, before weapons are stopped, and retained in local history as plain data. A later change to a rider, deck or preset does not change a submitted run's rider, card ranks or evolution branch. Incoming data is bounded and validated against the five riders and sixteen programs. The server checks rank/evolution ranges, uniqueness, draft budget and the rider registered at run start. Public responses contain no player identity hashes or run credentials. Older Windows clients can view the board, but must update to 0.4.7 to submit the new profile format. Practice and validation cannot post scores.
+
+YOUR BEST THREE, GLOBAL TOP TEN
+Any qualifying new run can be submitted. For each saved player identity and edition, the service keeps its three highest distinct runs. A higher fourth result replaces the lowest retained result automatically. A lower result does not replace a better score. Equal scores are distinct runs, with earlier results winning ties. Retrying the same submission never creates another entry or changes its run profile. Username changes do not bypass the limit. The public board contains the global top ten rows; a personal result can remain saved outside that visible ten. Identity remains the existing saved profile token, not a newly introduced online account; separate installations or lost save files are not linked automatically.
+
+Example: personal results 30,000 / 25,000 / 20,000 become 30,000 / 27,000 / 25,000 after submitting 27,000. A later 19,000 does not displace any of them.
+
+WINDOWS BOARD RESET
+The owner's requested one-time reset was deployed to the existing public service. Three former Windows rows were archived transactionally before clearing the Windows score rows and registered Windows sessions. The reset marker makes subsequent visits and deployments idempotent. Both browser entries were verified unchanged. No example, QA or synthetic scores were inserted into the public board. Archived records remain private in D1; there is no public archive or reset endpoint. Clearing scores does not delete local run history, fragments or card unlocks.
+
+COMPATIBILITY AND REVERTING
+Play-Forbidden-Routines.cmd launches Windows 0.4.7. Play-Windows-0.4.6.cmd retains the previous verified Windows package and installer. The existing v5 profile remains compatible, with optional final-card snapshots added to new history records. Older history entries lack those details and are not assigned invented loadouts. Older clients may discard new optional history fields when saving, and cannot post to the updated Windows board. The archived public-board reset is independent of rolling back the local executable.
+
+The browser game and its leaderboard were not reset or rebuilt. Gameplay balance, rider wallets, fragment prices, essence thresholds, cards, damage and VFX are unchanged.
+
+EVIDENCE
+Docs/Windows-0.4.7-Validation contains the actual Shipping captures, hover/keyboard/end-run checks, native tests, local service test report, live reset/deployment receipts, save migration and numeric damage checks, installer roundtrip, preserved-release verification and package hashes. Example captures are labeled sample data and are never public scores.

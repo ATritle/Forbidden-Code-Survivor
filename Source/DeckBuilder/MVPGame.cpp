@@ -579,6 +579,8 @@ void AMVPController::BeginPlay()
     InstallProfileValidation(this);
     extern void InstallAllCardsValidation(AMVPController* Controller);
     InstallAllCardsValidation(this);
+    extern void InstallLeaderboardValidation(AMVPController* Controller);
+    InstallLeaderboardValidation(this);
     extern void InstallDamageAudit(AMVPController* Controller);
     InstallDamageAudit(this);
     extern void InstallMenuNavigationValidation(AMVPController* Controller);
@@ -951,9 +953,11 @@ void AMVPArenaGameMode::FinishRun(bool Victory)
     RunRecord.DateUTC=FDateTime::UtcNow().ToIso8601();RunRecord.Victory=Victory;
     RunRecord.Seconds=RunSeconds;RunRecord.Kills=Kills;RunRecord.Level=Level;RunRecord.Contracts=CompletedContracts;
     RunRecord.DeathCause=Victory ? TEXT("Broadcast Sovereign defeated") : LastDamageCause;
+    RunRecord.Cards.Reset();
     if(auto* P=GetArenaPlayer()) for(ASpellBase* Spell:P->Deck->ActiveWeapons) if(Spell && Spell->CardDefinition)
     {
         RunRecord.Programs.AddUnique(Spell->CardDefinition->CardID);
+        FForbiddenCardSnapshot Card;Card.CardID=Spell->CardDefinition->CardID;Card.Level=Spell->Modifiers.Rank;Card.Evolution=Spell->Modifiers.Evolution;RunRecord.Cards.Add(Card);
         if(Spell->Modifiers.Evolution>0) RunRecord.Evolutions.AddUnique(*FString::Printf(TEXT("%s.%d"),*Spell->CardDefinition->CardID.ToString(),Spell->Modifiers.Evolution));
     }
     if(auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>())

@@ -26,6 +26,16 @@ struct FForbiddenRiderLoadouts
     UPROPERTY() int32 SelectedDeck = 0;
 };
 
+/** Final run state, independent of mutable spell actors and pre-run presets. */
+USTRUCT(BlueprintType)
+struct FForbiddenCardSnapshot
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadOnly) FName CardID;
+    UPROPERTY(BlueprintReadOnly) int32 Level = 1;
+    UPROPERTY(BlueprintReadOnly) int32 Evolution = 0;
+};
+
 USTRUCT(BlueprintType)
 struct FForbiddenRunRecord
 {
@@ -43,6 +53,7 @@ struct FForbiddenRunRecord
     UPROPERTY(BlueprintReadOnly) FString DeathCause;
     UPROPERTY(BlueprintReadOnly) TMap<FName, float> DamageByCard;
     UPROPERTY(BlueprintReadOnly) TArray<FName> Programs;
+    UPROPERTY(BlueprintReadOnly) TArray<FForbiddenCardSnapshot> Cards;
     UPROPERTY(BlueprintReadOnly) TArray<FName> Evolutions;
 };
 

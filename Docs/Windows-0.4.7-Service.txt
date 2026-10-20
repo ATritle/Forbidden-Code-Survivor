@@ -1,0 +1,12 @@
+# Forbidden Code: Survivor score service
+
+A public Sites Worker with D1 storage. Browser and Windows scores have independent top-ten boards, with three best distinct runs retained per saved player identity and edition.
+
+- `POST /v1/runs` registers an anonymous profile-token run and returns an in-memory submission credential. Windows requires a known `riderId`.
+- `POST /v1/scores` validates results and computes points server-side. Windows also requires `riderId` and 1–16 unique `{id, level, evolution}` card snapshots, captured at run end. Credentials, rider registration, card ranges and available drafts are checked. Duplicate requests are idempotent.
+- `GET /v1/leaderboard?edition=windows` returns up to ten public Windows entries with normalized `loadout` details. Omit the edition or use `browser` for the separate browser board.
+- A higher fourth personal result replaces the weakest retained result. Lower results do not displace the top three. Username aliases do not bypass the saved identity cap. Public rows never expose identity hashes or run credentials.
+
+The owner's 2026-10-20 Windows-only reset is gated by a durable marker. Runtime D1 batch execution archives affected rows before clearing Windows scores and sessions; schema migrations create tables/columns only. Repeated requests or deployments cannot repeat the reset. Archives have no public endpoint. Browser data is preserved. Do not change the reset identifier without a new explicit owner request.
+
+Run `node --test tests/*.test.mjs`, `node scripts/build.mjs`, and `node scripts/validate-artifact.mjs`. Follow the Sites source/publishing workflow and retain `.openai/hosting.json` identity and audience. The `dist` artifact bundles the worker and score policy; append schema changes with Drizzle instead of rewriting applied migrations.
