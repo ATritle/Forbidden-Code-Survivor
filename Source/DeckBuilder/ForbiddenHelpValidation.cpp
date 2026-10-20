@@ -1,3 +1,4 @@
+#include "ForbiddenWorkbenchLayout.h"
 #include "MVPGame.h"
 #include "ForbiddenHelpWidget.h"
 #include "NeonSettingsWidget.h"
@@ -66,7 +67,7 @@ struct FGuideQA
                     auto* Button=PC->SettingsWidget ? Cast<UButton>(PC->SettingsWidget->WidgetTree->FindWidget(TEXT("QuitGame"))) : nullptr;
                     if(!Button) return End(false,TEXT("Settings Close Game button missing"));Button->OnClicked.Broadcast();
                 }
-                else if(auto* HUD=Cast<AMVPHUD>(PC->GetHUD())) HUD->ClickAt(720,160);
+                else if(auto* HUD=Cast<AMVPHUD>(PC->GetHUD())) HUD->ClickAt(ForbiddenWorkbench::CloseX+80,ForbiddenWorkbench::NavY+17);
                 Next(99);return true;
             }
             Capture(TEXT("Menu"));Next(12);

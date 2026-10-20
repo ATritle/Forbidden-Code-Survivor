@@ -1,0 +1,283 @@
+{
+  "result": "WORKBENCH_RELEASE_PASS",
+  "version": "0.4.1",
+  "createdUTC": "2026-10-20T02:34:42.259406+00:00",
+  "configuration": "Shipping",
+  "engine": "UE 5.8.2",
+  "installer": "Artifacts/Installer-0.4.1/ForbiddenCode-Survivor-0.4.1-Setup.exe",
+  "installerBytes": 731220485,
+  "installerSHA256": "734597729a4c08d743f24484436a7471bc7afeb02f9f724d6ca79a4d179ba723",
+  "previousPackagesVerified": [
+    "0.3.0",
+    "0.3.1",
+    "0.3.2",
+    "0.3.3",
+    "0.3.4",
+    "0.3.5",
+    "0.3.6",
+    "0.3.7",
+    "0.3.8",
+    "0.3.9",
+    "0.4.0"
+  ],
+  "originalBaselineVerified": true,
+  "meshyCredits": 0,
+  "imagegenPortraits": 5,
+  "paidRetries": 0,
+  "reports": [
+    "MusicPlayer",
+    "MusicPlayer-Restart",
+    "Guide",
+    "Quit-MainMenu",
+    "Quit-Settings",
+    "MenuAudio",
+    "Settings-Wide",
+    "Settings-Compact",
+    "Package",
+    "Installer",
+    "Installer-Hashes",
+    "NeonExorcist-report",
+    "NeonExorcist-reload",
+    "Vex-report",
+    "Vex-reload",
+    "Rook-report",
+    "Rook-reload",
+    "Zero-report",
+    "Zero-reload",
+    "Mira-report",
+    "Mira-reload",
+    "Zero-Compact",
+    "Mira-Compact",
+    "Workbench-Wide-report",
+    "Workbench-Wide-reload",
+    "Workbench-Compact-report",
+    "Workbench-Compact-reload"
+  ],
+  "musicSources": [
+    {
+      "asset": "Music_Gameplay",
+      "source": "SFX/music/humanstudioed-cyberpunk-edm-525044.mp3",
+      "seconds": 162.34666666666666,
+      "sha256": "278823a46ff5609406cae629164b57cda09095d4430a01331aa73baf8c305cbf"
+    },
+    {
+      "asset": "Music_Menu",
+      "source": "SFX/music/alex-morgan-neon-synthwave-drive-537447.mp3",
+      "seconds": 167.52,
+      "sha256": "557f4c4edb6b3f07461134f158e612d5d72fd1249b7c7439ed315e887bce8734"
+    },
+    {
+      "asset": "Music_Monume",
+      "source": "SFX/music/monume-cyberpunk-519219.mp3",
+      "seconds": 73.93308333333333,
+      "sha256": "5f1a14b72cacc5339ad392766909fd852a3635d864be3142b7d1e744b1071263"
+    },
+    {
+      "asset": "Music_Synthwave",
+      "source": "SFX/music/the_mountain-synthwave-593074.mp3",
+      "seconds": 197.51183333333333,
+      "sha256": "e7f989747cc1eeb039098d0ea6cb47a34685ec3308bb7164dd839c60fe07aa50"
+    }
+  ],
+  "packageFiles": [
+    {
+      "path": "DeckBuilder/Binaries/Win64/D3D12/x64/D3D12Core.dll",
+      "bytes": 4831768,
+      "sha256": "c41711499e13244fd07ca28a9b32ece29e4454ecc38fb50681f74254b333a9b3"
+    },
+    {
+      "path": "DeckBuilder/Binaries/Win64/D3D12/x64/d3d12SDKLayers.dll",
+      "bytes": 4943344,
+      "sha256": "e36f1ee4371798892529762368907d19b997493ad6f30aa8acbfd0132881804f"
+    },
+    {
+      "path": "DeckBuilder/Binaries/Win64/DeckBuilder-Win64-Shipping.exe",
+      "bytes": 166998016,
+      "sha256": "200dec3fc5bbafeab24aa5c40d1c50beafd4aac4ba2fdc3193370d2d3509b997"
+    },
+    {
+      "path": "DeckBuilder/Binaries/Win64/DML/x64/DirectML.dll",
+      "bytes": 18538488,
+      "sha256": "f97b69379ecbdbab7e1dcd2b6170e7f285d367c86ee6718bc401c4d7cef1275c"
+    },
+    {
+      "path": "DeckBuilder/Binaries/Win64/tbb12.dll",
+      "bytes": 342456,
+      "sha256": "de15a5f93bfd334d4fe32343a81d76f9de0824af8e31b2189637d12545af2673"
+    },
+    {
+      "path": "DeckBuilder/Binaries/Win64/tbbmalloc.dll",
+      "bytes": 117176,
+      "sha256": "74edc04a8f5bc2593a5a555b675c1251d6d90e693ee6a67cfa11dd3b2d17a856"
+    },
+    {
+      "path": "DeckBuilder/Content/Paks/DeckBuilder-Windows.pak",
+      "bytes": 10946237,
+      "sha256": "2ae5dcf583376b0da0e15600f109bf9439ceae6d38fe549456e0996093c54924"
+    },
+    {
+      "path": "DeckBuilder/Content/Paks/DeckBuilder-Windows.ucas",
+      "bytes": 642356048,
+      "sha256": "007760e4c8badcf29aa19a87821956cd54d3e37d1e9377a2bde27c36bbd004e1"
+    },
+    {
+      "path": "DeckBuilder/Content/Paks/DeckBuilder-Windows.utoc",
+      "bytes": 370393,
+      "sha256": "15aedf96740c1c20f70edfb8dbec19eb5f4dfa1b662fd8608268d254be062405"
+    },
+    {
+      "path": "DeckBuilder/Content/Paks/global.ucas",
+      "bytes": 3232960,
+      "sha256": "24b3fb8a2f0636b207a2daa11e4e990f2d008a265500765c890c89171cd0bd19"
+    },
+    {
+      "path": "DeckBuilder/Content/Paks/global.utoc",
+      "bytes": 794,
+      "sha256": "64ef63eb71a50506156ba0e00bf53e30381d6677c8287f554c8275d6b30375b0"
+    },
+    {
+      "path": "Engine/Binaries/ThirdParty/DbgHelp/dbghelp.dll",
+      "bytes": 2232688,
+      "sha256": "36795e47d9724ee68349efbbe64aba94db108b9cad1e3dfe8bc510f359136f53"
+    },
+    {
+      "path": "Engine/Binaries/ThirdParty/MsQuic/v220/win64/msquic.dll",
+      "bytes": 2547080,
+      "sha256": "5c6b07bf263dd8b85cb146b59468a22eb1fbd8635d4a6c56a8e41b67ce5eca2b"
+    },
+    {
+      "path": "Engine/Binaries/ThirdParty/NVIDIA/NVaftermath/Win64/GFSDK_Aftermath_Lib.x64.dll",
+      "bytes": 5799016,
+      "sha256": "82d7a3e50710d660927db2f318cbed471049c962b7c05de12c2b2b3e40a35af9"
+    },
+    {
+      "path": "Engine/Binaries/ThirdParty/Ogg/Win64/VS2015/libogg_64.dll",
+      "bytes": 59832,
+      "sha256": "f23df1213c4bf23b5c666bafa7ec18743847a2e18192ae8e0d096a2fb7c28bf9"
+    },
+    {
+      "path": "Engine/Binaries/ThirdParty/Vorbis/Win64/VS2015/libvorbis_64.dll",
+      "bytes": 1724856,
+      "sha256": "a56d43a98e197f5e73a1dadf5c1dc7a07ad40327b199faa4ff1247abd6eccd5b"
+    },
+    {
+      "path": "Engine/Binaries/ThirdParty/Vorbis/Win64/VS2015/libvorbisfile_64.dll",
+      "bytes": 48568,
+      "sha256": "d64e67ca918716be8b6056a6f7a1f6256e910754425db8369d952943264b40eb"
+    },
+    {
+      "path": "Engine/Binaries/ThirdParty/Windows/XAudio2_9/x64/xaudio2_9redist.dll",
+      "bytes": 858152,
+      "sha256": "0ca010abcabe52493fdb744d79c4c8132ae6756046b68aa7c88bdc03ec1effcd"
+    },
+    {
+      "path": "Engine/Config/StagedBuild_DeckBuilder.ini",
+      "bytes": 3,
+      "sha256": "f1945cd6c19e56b3c1c78943ef5ec18116907a4ca1efc40a57d48ab1db7adfc5"
+    },
+    {
+      "path": "Engine/Content/Renderer/TessellationTable.bin",
+      "bytes": 259568,
+      "sha256": "edc4f3b628a139c5e185bbaeca661c95c1f427368d3b92892c5cff36c56dd941"
+    },
+    {
+      "path": "Engine/Content/Slate/Cursor/invisible.cur",
+      "bytes": 326,
+      "sha256": "fef3980fa567e9c45d5d8dcaa432a2c1a3f3bb17fe67d7ab198164f56c142aa1"
+    },
+    {
+      "path": "Engine/Extras/Redist/en-us/vc_redist.arm64.exe",
+      "bytes": 11751688,
+      "sha256": "9a4540c1ed0ac2a0755c0093a9c01e4b3dbe21b25805318ba495648fc890e14f"
+    },
+    {
+      "path": "Engine/Extras/Redist/en-us/vc_redist.x64.exe",
+      "bytes": 18569648,
+      "sha256": "c458c6841310561ef6fadef893092ed02d840da205ad0ae9843fb0d2579b3378"
+    },
+    {
+      "path": "Engine/Plugins/NNE/NNERuntimeORT/Binaries/ThirdParty/Onnxruntime/Win64/onnxruntime.dll",
+      "bytes": 17339384,
+      "sha256": "5df3d744b5cc4421181e9e2c97cadff4e9b1b2b25e80202160e80fc94ff948f2"
+    },
+    {
+      "path": "ForbiddenCodeSurvivor.exe",
+      "bytes": 171520,
+      "sha256": "617ab664fee32263b4115c5c14d82cf279ab8c48fff2423c39f49f25b58c4157"
+    },
+    {
+      "path": "Manifest_NonUFSFiles_Win64.txt",
+      "bytes": 1616,
+      "sha256": "3a740cd5715a823e259bc4d476964069ffeb928756dc6cd65d76fc180cf7347b"
+    },
+    {
+      "path": "Manifest_UFSFiles_Win64.txt",
+      "bytes": 277241,
+      "sha256": "6bf7d20f9838848e3671fb6397964dcee6346f44d2509d554fa4a5fe9c7c4a33"
+    },
+    {
+      "path": "NOTICES.txt",
+      "bytes": 111,
+      "sha256": "ba49ae5586f817b36a2772269f71f899cb1f54b5f2720fad951319edd5e140b8"
+    }
+  ],
+  "layoutReference": "ContentSource/Concepts/CombinedLoadoutMenu/A-Loadout-Workbench-v2.png",
+  "layoutReferenceSHA256": "29e56a14f704ff365409038991cc0bc34583e60b74bbdc79cf7f03a24ca75420",
+  "riderArtwork": [
+    {
+      "rider": "NeonExorcist",
+      "source": "ContentSource/UI/LoadoutWorkbench/Rider-NeonExorcist-v1.png",
+      "sha256": "766fb75d7b84a61d3bb872d7bb97fe6c63bb8f2520ff020524ad861efd8752f9",
+      "size": [
+        1024,
+        1536
+      ],
+      "generation": "built-in imagegen",
+      "menuAnimation": "fixed pose"
+    },
+    {
+      "rider": "Vex",
+      "source": "ContentSource/UI/LoadoutWorkbench/Rider-Vex-v1.png",
+      "sha256": "2835b3302483e4cfd9038813fffa88da69c2357cbebceec7132061c26758d6a9",
+      "size": [
+        1024,
+        1536
+      ],
+      "generation": "built-in imagegen",
+      "menuAnimation": "fixed pose"
+    },
+    {
+      "rider": "Rook",
+      "source": "ContentSource/UI/LoadoutWorkbench/Rider-Rook-v1.png",
+      "sha256": "1ec7a87aac6ca49280996b712c14ebd028b390d7e87593dec3da0b327ca24cee",
+      "size": [
+        1024,
+        1536
+      ],
+      "generation": "built-in imagegen",
+      "menuAnimation": "fixed pose"
+    },
+    {
+      "rider": "Zero",
+      "source": "ContentSource/UI/LoadoutWorkbench/Rider-Zero-v1.png",
+      "sha256": "2eecd96c692b7be4610c24f42a533dacbc8d9896d84d07a218771dcc59e65311",
+      "size": [
+        1024,
+        1536
+      ],
+      "generation": "built-in imagegen",
+      "menuAnimation": "fixed pose"
+    },
+    {
+      "rider": "Mira",
+      "source": "ContentSource/UI/LoadoutWorkbench/Rider-Mira-v1.png",
+      "sha256": "b7703d04165c0c43646c3dd81ec100d90b762951d7b911c15f8ab6fcc5f5e83e",
+      "size": [
+        1024,
+        1536
+      ],
+      "generation": "built-in imagegen",
+      "menuAnimation": "fixed pose"
+    }
+  ]
+}

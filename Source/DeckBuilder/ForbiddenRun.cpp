@@ -36,7 +36,7 @@ void AMVPArenaGameMode::OnArchetypeKilled(int32 Archetype,FVector Position)
 void AMVPPlayer::Boost()
 {
     auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());
-    if(G && G->bInCodex) {if(G->bCharacterSelectionOpen) G->ContinueToDeck();else G->StartSelectedRun();return;}
+    if(G && G->bInCodex) {G->StartSelectedRun();return;}
     if(!G || G->bInCodex || G->bRunEnded || G->bChoosingCard || BoostCooldown>0 || bFalling || UGameplayStatics::IsGamePaused(this)) return;
     BoostDirection=Movement->Velocity.GetSafeNormal2D();
     if(BoostDirection.IsNearlyZero()) BoostDirection=GetActorForwardVector();

@@ -1,3 +1,4 @@
+#include "ForbiddenWorkbenchLayout.h"
 #include "MVPGame.h"
 #include "NeonAudioDirector.h"
 #include "NeonMenuAudio.h"
@@ -46,7 +47,7 @@ void InstallNeonMenuAudioValidation(AMVPController* PC)
         {
             if(A->MenuNavigationPlays!=0) return End(false,TEXT("Pointer hover played an unwanted cue"));
             State->Navigations=A->MenuNavigationPlays;State->Inputs=A->MenuInputPlays;
-            HUD->ClickAt(450,160);
+            HUD->ClickAt(ForbiddenWorkbench::SettingsX+80,ForbiddenWorkbench::NavY+17);
             if(!C->SettingsWidget || A->MenuInputPlays!=State->Inputs+1 || !Cue(TEXT("SW_UI_Select"))) return End(false,TEXT("Relocated Settings button did not open with the medium click"));Next(2);
         }
         else if(State->Phase==2 && Age>.8)
@@ -65,7 +66,7 @@ void InstallNeonMenuAudioValidation(AMVPController* PC)
         }
         else if(State->Phase==4 && Age>.8)
         {
-            A->SetSFXVolume(1);HUD->ClickAt(200,160);if(!C->HelpWidget || !Cue(TEXT("SW_UI_Select"))) return End(false,TEXT("How To button did not select with requested sound"));Next(5);
+            A->SetSFXVolume(1);HUD->ClickAt(ForbiddenWorkbench::HowToX+80,ForbiddenWorkbench::NavY+17);if(!C->HelpWidget || !Cue(TEXT("SW_UI_Select"))) return End(false,TEXT("How To button did not select with requested sound"));Next(5);
         }
         else if(State->Phase==5 && Age>.8)
         {

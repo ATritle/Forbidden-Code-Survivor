@@ -16,8 +16,8 @@
   },
   {
     "id": "Menu",
-    "source": "Saved\\QA\\MenuAudio\\Saved\\Review\\MenuAudio\\MainMenu.png",
-    "sha256": "74d38135c9055b70005f93aa8d9581e5b87df444c857152c01afc0224b793da7"
+    "source": "ContentSource\\UI\\LoadoutWorkbench\\Menu.png",
+    "sha256": "213959a9c58971c5dc6381a24691c033ca8ffeaaefdebae564c5358045737034"
   },
   {
     "id": "Sign",

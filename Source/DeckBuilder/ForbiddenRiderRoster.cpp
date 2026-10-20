@@ -24,6 +24,6 @@ bool ForbiddenRiders::Select(const UObject* Context,FName ID)
 {
     if(!Find(ID)) return false;
     if(auto* GI=UGameplayStatics::GetGameInstance(Context))
-        if(auto* P=GI->GetSubsystem<UForbiddenProfile>();P && P->Data) {P->Data->SelectedRider=ID;return P->Save();}
+        if(auto* P=GI->GetSubsystem<UForbiddenProfile>();P && P->Data) {const FName Previous=P->Data->SelectedRider;P->Data->SelectedRider=ID;if(P->Save()) return true;P->Data->SelectedRider=Previous;return false;}
     return false;
 }

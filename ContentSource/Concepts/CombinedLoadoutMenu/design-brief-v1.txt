@@ -1,0 +1,28 @@
+Forbidden Code: Survivor / Combined Rider and Deck Menu
+Scope: design proposals for review, not an implemented screen rebuild.
+
+Shared requirements
+- One combined screen: player selection on the left, deck controls on the right.
+- Deck building receives about 75% of the useful screen width.
+- Character image becomes a small supporting element, approximately 160-210px high in a 1920x1080 mockup.
+- Single quiet idle for a real-time model: an approximately 8-10 second breathing loop, with tiny chest/shoulder movement and planted feet. Remove attack previews, alternate-idle controls and automatic spinning from the normal menu. Drag rotation can remain optional for the 3D option.
+- Portrait alternatives use detailed art in a calm resting pose. They do not imply a rigged or animated image; an animated portrait would need a separate treatment.
+- Keep five riders, role/perk/tradeoff information, eight draft programs, two starters, saved presets, school filters, save/start actions, How To, Settings, leaderboard, Close and the compact Signal Dock.
+- Do not change card rules or gameplay stats. Kinetic Cards remains 36 base damage / 0.85s cooldown.
+
+Option A / Loadout Workbench
+Small real-time-model-style view and compact rider controls on the left. A 4x2 card grid dominates the right. Two starter flags are applied directly to cards. Most direct deck-editing layout.
+
+Option B / Deck Presets
+Small detailed rectangular portrait on the left. Named deck presets, an eight-card deck strip, a compact library and selected-card inspector occupy the right. Best for choosing and adjusting saved builds; recommended portrait route.
+
+Option C / Signal Console
+Small circular portrait and slim rider list on the left. Organized spell rows with draft/starter toggles, a narrow inspector and an eight-slot deck ribbon dominate the right. Best for comparing numbers and editing quickly.
+
+Render-quality assessment from current source
+The current turntable allocates a 1000x800 render target and displays it in a 675x540 UI rectangle. It manually poses the model while the menu is paused and uses three point lights. A smaller display area can conceal visible mesh/shading limitations, but increasing render-target resolution alone cannot add missing geometry or texture detail. A separate menu material/normal/lighting review is appropriate before commissioning replacement Meshy models. An illustrated portrait can preserve approved concept-art detail without changing gameplay meshes.
+
+Generated visual proposals are target mockups, not screenshots or proof of engine-render quality. Image generation uses the built-in image_gen tool, with the existing menu as the style/feature reference and the latest ZERO concept as the identity reference. No paid Meshy jobs or runtime code changes are part of this pass. Exact prompts are in concept-prompts-v1.json.
+
+Review-ready images: A-Loadout-Workbench-v2.png, B-Deck-Presets-v2.png, C-Signal-Console-v1.png. Size refinements are recorded in concept-refinements-v2.json.
+Generated card descriptions, stats, schools, extra example library names and preset labels are illustrative layout content only. They are not authority for changing the game catalog or mechanics. Any implementation must bind real existing card data and saved preset names. Nonselected rider thumbnails are placeholders; actual portraits must preserve the separately approved rider identities.

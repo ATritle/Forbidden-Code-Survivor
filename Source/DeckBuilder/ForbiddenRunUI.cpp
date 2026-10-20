@@ -34,6 +34,7 @@ void AMVPArenaGameMode::ShowDecision(const FString& Title,const TArray<FString>&
 }
 void AMVPArenaGameMode::OpenHideout()
 {
+    bProgramEditorFromHideout=true;
     auto* Profile=GetGameInstance()->GetSubsystem<UForbiddenProfile>();if(!bInCodex || !Profile || !Profile->Data) return;
     TArray<FString> Options;
     for(int32 I=0;I<3;++I) Options.Add(FString::Printf(TEXT("PRESET %d / %s%s"),I+1,*Profile->Data->Decks[I].Name,I==Profile->Data->SelectedDeck ? TEXT(" / ACTIVE") : TEXT("")));
@@ -77,7 +78,7 @@ void AMVPArenaGameMode::OpenProgramEditor(FName ID)
     const FString Detail=Card->Name.ToString()+FString::Printf(TEXT(" / %.1f DMG / %.2fs\n"),Card->BaseDamage,Card->Cooldown)+Card->Description.ToString();
     if(!Profile->IsUnlocked(ID))
     {
-        ShowDecision(Detail,{TEXT("UNLOCK / 30 CODE FRAGMENTS"),TEXT("BACK")},[this,Profile,ID](int32 I){if(I==0) {Profile->UnlockProgram(ID);OpenProgramEditor(ID);}else OpenHideout();});return;
+        ShowDecision(Detail,{TEXT("UNLOCK / 30 CODE FRAGMENTS"),TEXT("BACK")},[this,Profile,ID](int32 I){if(I==0) {Profile->UnlockProgram(ID);OpenProgramEditor(ID);}else if(bProgramEditorFromHideout) OpenHideout();});return;
     }
     ShowDecision(Detail,{DraftPool.Contains(ID) ? TEXT("IN DRAFT POOL / SWAP ANOTHER PROGRAM TO CHANGE IT") : TEXT("ADD TO DRAFT POOL / REPLACE ONE OF EIGHT"),TEXT("SET AS STARTER / TWO SLOTS"),TEXT("EVOLUTIONS / DISCOVER STRUCTURAL BRANCHES"),TEXT("BACK")},[this,ID,Card](int32 I)
     {
@@ -101,7 +102,7 @@ void AMVPArenaGameMode::OpenProgramEditor(FName ID)
             {if(Pick<2 && !StartingCards.Contains(ID)) {StartingCards[Pick]=ID;SaveStartingDeck();}OpenProgramEditor(ID);});
         }
         else if(I==2) ShowDecision(Card->Name.ToString(),{Card->EvolutionA.ToString()+TEXT("\n")+Card->EvolutionDescriptionA.ToString(),Card->EvolutionB.ToString()+TEXT("\n")+Card->EvolutionDescriptionB.ToString(),TEXT("BACK")},[this,ID](int32){OpenProgramEditor(ID);});
-        else OpenHideout();
+        else if(bProgramEditorFromHideout) OpenHideout();
     });
 }
 float AMVPArenaGameMode::PerkDamageMultiplier() const {return CorruptPerks.Contains("Amplifier") ? 1.15f : 1.f;}

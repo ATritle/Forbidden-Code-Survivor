@@ -11,7 +11,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/TextureRenderTarget2D.h"
-#include "TextureResource.h"
+#include "ForbiddenWorkbenchLayout.h"
+#include "Engine/Texture.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Containers/Ticker.h"
 #include "Misc/CommandLine.h"
@@ -50,18 +51,7 @@ namespace
         }
         Probe->DestroyComponent();return Worst>1.5f ? TEXT("Imported feet slide more than 1.5cm relative to board") : TEXT("");
     }
-    bool CheckImage(AForbiddenRiderPreview* Preview,FString& Detail)
-    {
-        if(!Preview || !Preview->GetImage()) {Detail=TEXT("No 3D render target");return false;}
-        TArray<FColor> Pixels;auto* Image=Preview->GetImage();
-        if(!Image->GameThread_GetRenderTargetResource()->ReadPixels(Pixels)) {Detail=TEXT("Render target readback failed");return false;}
-        int32 Count=0,MinX=Image->SizeX,MinY=Image->SizeY,MaxX=0,MaxY=0;
-        for(int32 Y=0;Y<Image->SizeY;++Y) for(int32 X=0;X<Image->SizeX;++X)
-        {const auto& P=Pixels[Y*Image->SizeX+X];if(FMath::Max3(P.R,P.G,P.B)>45) {++Count;MinX=FMath::Min(MinX,X);MaxX=FMath::Max(MaxX,X);MinY=FMath::Min(MinY,Y);MaxY=FMath::Max(MaxY,Y);}}
-        if(Count<Pixels.Num()/100 || MinX<2 || MinY<2 || MaxX>Image->SizeX-3 || MaxY>Image->SizeY-3)
-        {Detail=FString::Printf(TEXT("3D image blank or cropped: pixels=%d bounds=%d,%d to %d,%d"),Count,MinX,MinY,MaxX,MaxY);return false;}
-        return true;
-    }
+
 }
 void InstallRiderSelectionValidation(AMVPController* PC)
 {
@@ -90,32 +80,22 @@ void InstallRiderSelectionValidation(AMVPController* PC)
             G->OpenRiderSelection();if(!G->SelectRider(S->ID)) return End(false,TEXT("Could not select the requested rider"));
             const FString Error=CheckFootContacts(C,S->ID,S->Worst);if(!Error.IsEmpty()) return End(false,Error);
             if(!C->IsPaused()) return End(false,TEXT("Selection menu did not keep gameplay paused"));
-            S->Yaw=G->RiderPreview->GetYaw();Next(1);
+            if(G->RiderPreview || G->bCharacterSelectionOpen) return End(false,TEXT("Combined menu allocated an obsolete 3D preview"));
+            for(const auto& Rider:ForbiddenRiders::All()) {auto* Image=H->GetWorkbenchPortrait(Rider.ID);if(!Image || Image->GetSurfaceHeight()<1024) return End(false,TEXT("Fixed rider artwork missing or too small"));}
+            if(H->GetWorkbenchCards(G).Num()!=8 || G->StartingCards.Num()!=2) return End(false,TEXT("Combined menu lost the saved eight/two loadout"));
+            Next(1);
         }
-        else if(S->Phase==1 && Age>1.6)
+        else if(S->Phase==1 && Age>1.2)
         {
-            if(G->RiderPreview->GetYaw()==S->Yaw) return End(false,TEXT("Turntable did not rotate while the world was paused"));
-            FString Error;if(!CheckImage(G->RiderPreview,Error)) return End(false,Error);
-            G->RiderPreview->AutoRotate=false;G->RiderPreview->ResetView();Next(2);
+            int32 W,VH;C->GetViewportSize(W,VH);const float Scale=FMath::Min(W/1600.f,VH/900.f);
+            const int32 Index=ForbiddenRiders::All().IndexOfByPredicate([&](const auto& Definition){return Definition.ID==S->ID;});
+            H->ClickAt((W-1600*Scale)*.5f+(ForbiddenWorkbench::RiderX+80)*Scale,(VH-900*Scale)*.5f+(ForbiddenWorkbench::RiderY+Index*ForbiddenWorkbench::RiderPitch+25)*Scale);
+            if(ForbiddenRiders::Selected(C)!=S->ID) return End(false,TEXT("Combined menu rider hit test failed"));
+            FScreenshotRequest::RequestScreenshot(Folder/(S->ID.ToString()+TEXT("-Menu.png")),true,false);Next(5);
         }
-        else if(S->Phase==2 && Age>.35)
-        {
-            FString Error;if(!CheckImage(G->RiderPreview,Error)) return End(false,Error);
-            FScreenshotRequest::RequestScreenshot(Folder/FString::Printf(TEXT("%s-View-%d.png"),*S->ID.ToString(),S->Angle),true,false);
-            Next(20);
-        }
-        else if(S->Phase==20 && Age>.25) {++S->Angle;if(S->Angle<4) {G->RiderPreview->RotateBy(90);Next(2);}else Next(3);}
-        else if(S->Phase==3 && Age>.35) {G->RiderPreview->ResetView();G->RiderPreview->SetClip(2);Next(4);}
-        else if(S->Phase==4 && Age>.35)
-        {
-            if(G->RiderPreview->GetClip()!=2) return End(false,TEXT("Attack preview selection failed"));
-            FScreenshotRequest::RequestScreenshot(Folder/(S->ID.ToString()+TEXT("-Attack.png")),true,false);
-            Next(21);
-        }
-        else if(S->Phase==21 && Age>.25) {G->ContinueToDeck();if(G->bCharacterSelectionOpen) return End(false,TEXT("Continue did not open deckbuilding"));Next(5);}
         else if(S->Phase==5 && Age>.35)
         {
-            G->OpenRiderSelection();if(G->RiderPreview->GetRider()!=S->ID) return End(false,TEXT("Returning from deck changed the selected rider"));
+            G->OpenRiderSelection();if(ForbiddenRiders::Selected(C)!=S->ID) return End(false,TEXT("Combined menu changed the selected rider"));
             if(!G->StartSelectedRun()) return End(false,TEXT("Selected rider could not enter a run"));G->Spawner->StopWaves();
             auto* Art=P->FindComponentByClass<UNecromancyVisualComponent>();
             if(!Art || !Art->GetSkeletalMeshAsset() || Art->GetSkeletalMeshAsset()->GetName()!=TEXT("SK_")+S->ID.ToString() || !Art->UsesBlendedRider()) return End(false,TEXT("Gameplay did not use the selected rider and animation Blueprint"));
@@ -180,7 +160,7 @@ void InstallRiderSelectionValidation(AMVPController* PC)
         {
             if(R->ConfirmedSummonHits!=S->Hits) return End(false,TEXT("Practice altered saved summon-hit progress"));
             G->TestingDirector->Exit(C);if(C->GetPawn()!=S->OriginalPawn.Get() || ForbiddenRiders::Selected(C)!=S->ID) return End(false,TEXT("Practice failed to restore selected rider"));
-            return End(true,TEXT("Saved choice/restart, four lit 3D angles, paused-world rotation, 14 board-safe clips, attack preview, deck navigation, gameplay perks and isolated card-testing restore verified"));
+            return End(true,TEXT("Saved choice/restart, five fixed portraits, unified deck menu, no scene capture, 14 board-safe gameplay clips, rider perks and isolated card-testing restore verified"));
         }
         return true;
     }));

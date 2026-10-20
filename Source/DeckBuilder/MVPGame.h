@@ -346,6 +346,9 @@ public:
     void ScrollMusicPlaylist(int32 Direction);
     bool IsMusicPlaylistOpen() const {return bMusicPlaylistOpen;}
     FName GetHoveredTestingCard() const {return HoveredTestingCard;}
+    UTexture* GetWorkbenchPortrait(FName ID);
+    TArray<UCardDataAsset*> GetWorkbenchCards(AMVPArenaGameMode* Game) const;
+    bool IsWorkbenchDraftView() const {return bWorkbenchDraftView;}
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Neon UI") FLinearColor InterfaceAccent=FLinearColor(0.03f,0.85f,1.f);
     UFUNCTION(BlueprintCallable,Category="Neon UI") void SetInterfaceAccent(FLinearColor Color) { InterfaceAccent=Color; }
 private:
@@ -356,8 +359,11 @@ private:
     void DrawCodex(AMVPArenaGameMode* Game);
     void DrawRiderSelection(AMVPArenaGameMode* Game);
     bool ClickRiderSelection(float X,float Y,AMVPArenaGameMode* Game);
-    bool bDraggingRider=false;
-    float PreviousRiderMouseX=0;
+    UPROPERTY() TMap<FName,TObjectPtr<UTexture>> WorkbenchPortraits;
+    bool bWorkbenchDraftView=true;
+    void WorkbenchPanel(FName Key,float X,float Y,float W,float H,FLinearColor Accent,float Hover=0,bool Selected=false,bool Chamfer=false);
+    void WorkbenchImage(UTexture* Image,float X,float Y,float W,float H,bool Cover=false,FVector4 UV=FVector4(0,0,1,1),FLinearColor Tint=FLinearColor::White);
+    void WorkbenchCopy(const FString& Copy,float X,float Y,float W,float Size,FLinearColor Color,int32 MaxLines=3);
     void DrawMusicPlayer(AMVPArenaGameMode* Game);
     bool ClickMusicPlayer(float X,float Y,AMVPArenaGameMode* Game);
     bool bMusicPlaylistOpen=false,bDraggingMusicVolume=false,bDraggingMusicScroll=false,bDraggingMusicSeek=false;
@@ -415,6 +421,7 @@ public:
     void ShowDecision(const FString& Title,const TArray<FString>& Choices,TFunction<void(int32)> Callback);
     void OpenHideout();
     void OpenProgramEditor(FName ID);
+    bool bProgramEditorFromHideout=false;
     void ChooseCorruptPerk();
     void OfferCapturedCode(int32 Archetype);
     UPROPERTY() TObjectPtr<UForbiddenChoiceWidget> DecisionWidget;
@@ -439,9 +446,10 @@ public:
     /** Pre-run loadout: one or two starting spells; all unlocked spells remain level-up offers. */
     bool StartSelectedRun();
     bool SelectRider(FName ID);
+    bool SelectDeckPreset(int32 Index);
     void ContinueToDeck();
     void OpenRiderSelection();
-    bool bCharacterSelectionOpen=true;
+    bool bCharacterSelectionOpen=false;
     UPROPERTY(Transient) TObjectPtr<AForbiddenRiderPreview> RiderPreview;
     bool ToggleStartingCard(FName ID);
     bool SaveStartingDeck();

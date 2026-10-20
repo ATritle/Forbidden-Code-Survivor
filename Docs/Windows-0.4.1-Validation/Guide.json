@@ -1,0 +1,14 @@
+{
+	"result": "RAMP_GUIDE_PASS",
+	"detail": "Native guide navigation/modal regression and eight ramp renders; inspect screenshots for visual acceptance",
+	"illustratedEntries": 52,
+	"ramps": 8,
+	"checks": [
+		"Main-menu guide blocks underlying start and pauses safely",
+		"Guide uses Settings typography: 28-point heading and 13-point explanatory text",
+		"Every guide entry has a cooked illustration and text; all 16 programs, 10 enemies and seven contracts plus perks covered",
+		"Guide returns to the same settings widget, focus and pause owner",
+		"Live help freezes run time; closing resumes play; card drafts stay paused, disabled while covered and intact afterward",
+		"All eight ramp instances have opaque material and three upward-facing, height-correct complex-collision samples"
+	]
+}

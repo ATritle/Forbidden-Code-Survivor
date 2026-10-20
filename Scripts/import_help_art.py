@@ -25,7 +25,8 @@ for name in ['OverloadOrb','UnstableEcho','HostileBroadcast','DeadmanBattery','G
     filename='Broadcast' if name=='HostileBroadcast' else name
     images[name]=root/'Saved/Screenshots'/('Challenge-'+filename+'.png')
 for path in (root/'ContentSource/Enemies/CyberRoster').glob('*.png'): images[path.stem]=path
-menu_still=root/'Saved/QA/MenuAudio/Saved/Review/MenuAudio/MainMenu.png'
+menu_still=root/'ContentSource/UI/LoadoutWorkbench/Menu.png'
+if not menu_still.exists():menu_still=root/'Saved/QA/MenuAudio/Saved/Review/MenuAudio/MainMenu.png'
 if menu_still.exists():images['Menu']=menu_still
 if '-HelpMenuOnly' in unreal.SystemLibrary.get_command_line():images={'Menu':images['Menu']}
 tools=unreal.AssetToolsHelpers.get_asset_tools()

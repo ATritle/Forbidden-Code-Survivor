@@ -1,3 +1,4 @@
+#include "ForbiddenWorkbenchLayout.h"
 #include "MVPGame.h"
 #include "NeonAudioDirector.h"
 #include "NeonSpellImpactDirector.h"
@@ -45,10 +46,10 @@ void AMVPController::TickNeonPolishSmokeTest()
     else if(SmokePhase==2 && Elapsed>0.7)
     {
         auto* HUD=Cast<AMVPHUD>(GetHUD());if(!HUD) {Fail(TEXT("Missing HUD"));return;}
-        HUD->ClickAt(420,205);if(Game->SchoolFilter!=7) {Fail(TEXT("School tab hit testing failed"));return;}
-        HUD->ClickAt(100,205);HUD->ClickAt(1440,205);
+        HUD->ClickAt(ForbiddenWorkbench::TabsX+2*ForbiddenWorkbench::TabPitch+30,ForbiddenWorkbench::TabsY+17);if(Game->SchoolFilter!=7) {Fail(TEXT("School tab hit testing failed"));return;}
+        HUD->ClickAt(ForbiddenWorkbench::TabsX+30,ForbiddenWorkbench::TabsY+17);HUD->ClickAt(ForbiddenWorkbench::ViewX+30,ForbiddenWorkbench::ViewY+10);HUD->ClickAt(ForbiddenWorkbench::NextX+30,ForbiddenWorkbench::PageY+10);
         if(Game->LibraryPage!=1 || Game->GetLibraryCards().Num()!=16) {Fail(TEXT("Neon menu paging failed"));return;}
-        HUD->ClickAt(1300,205);Game->StartingCards={TEXT("PulseDart"),TEXT("PrismBurst")};
+        HUD->ClickAt(ForbiddenWorkbench::PrevX+30,ForbiddenWorkbench::PageY+10);Game->StartingCards={TEXT("PulseDart"),TEXT("PrismBurst")};
         if(!Game->StartSelectedRun()) {Fail(TEXT("Starting loadout failed"));return;}
         Game->Spawner->StopWaves();ArenaPlayer->bBenchmarkInvulnerable=true;
         // Equip the entire collection through the normal validated deck flow.

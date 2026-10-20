@@ -573,6 +573,8 @@ void AMVPController::BeginPlay()
     InstallMusicPlayerValidation(this);
     extern void InstallRiderSelectionValidation(AMVPController* Controller);
     InstallRiderSelectionValidation(this);
+    extern void InstallWorkbenchValidation(AMVPController* Controller);
+    InstallWorkbenchValidation(this);
     extern void InstallSettingsReviewValidation(AMVPController* Controller);
     InstallSettingsReviewValidation(this);
 #if !UE_BUILD_SHIPPING
@@ -643,7 +645,7 @@ void AMVPController::OpenLeaderboard()
     ScoreWidget->WasPaused=IsPaused();SetPause(true);SetMenuInput(true);ScoreWidget->AddToViewport(90);
     FInputModeGameAndUI Input;Input.SetHideCursorDuringCapture(false);Input.SetWidgetToFocus(ScoreWidget->TakeWidget());SetInputMode(Input);
 }
-void AMVPController::BeginSelectedRun() { if (!HelpWidget && !SettingsWidget && !ScoreWidget) if (auto* Game = MVP::Mode(this)) {if(Game->bInCodex && Game->bCharacterSelectionOpen) Game->ContinueToDeck();else Game->StartSelectedRun();} }
+void AMVPController::BeginSelectedRun() { if (!HelpWidget && !SettingsWidget && !ScoreWidget) if (auto* Game = MVP::Mode(this)) Game->StartSelectedRun(); }
 void AMVPController::ChooseOne() { if (!HelpWidget && !IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(0); }
 void AMVPController::ChooseTwo() { if (!HelpWidget && !IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(1); }
 void AMVPController::ChooseThree() { if (!HelpWidget && !IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(2); }

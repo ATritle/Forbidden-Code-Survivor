@@ -293,39 +293,8 @@ void AMVPHUD::ClickAt(float X, float Y)
     const float LocalX = (X - OffsetX) / UIScale;
     const float LocalY = (Y - OffsetY) / UIScale;
     if(!Game->bInCodex && InChamfer(LocalX,LocalY,1360,142,190,36)) {if(PC) PC->ToggleSettings();return;}
-    if((!Game->bInCodex && InChamfer(LocalX,LocalY,1360,186,190,36)) || (Game->bInCodex && !Game->bCharacterSelectionOpen && InChamfer(LocalX,LocalY,920,182,230,46)) || (Game->bRunEnded && InChamfer(LocalX,LocalY,490,580,620,36))) {if(PC) PC->OpenLeaderboard();return;}
-    if (Game->bInCodex)
-    {
-        if(Game->bCharacterSelectionOpen) {ClickRiderSelection(LocalX,LocalY,Game);return;}
-        if(InChamfer(LocalX,LocalY,850,145,255,34)) {Game->OpenRiderSelection();return;}
-        if(ClickMusicPlayer(LocalX,LocalY,Game)) return;
-        if(InChamfer(LocalX,LocalY,80,145,255,34)) {if(PC) PC->OpenHelp();return;}
-        if(InChamfer(LocalX,LocalY,350,145,255,34)) {if(PC) PC->ToggleSettings();return;}
-        if(InChamfer(LocalX,LocalY,620,145,205,34)) {if(PC) PC->CloseGame();return;}
-        if (LocalY >= 182 && LocalY <= 228)
-            for (int32 I=0; I<5; ++I)
-                if (LocalX >= 80+I*160 && LocalX <= 230+I*160) { NeonMenuAudio::Input(this);Game->SchoolFilter = I==0 ? -1 : I+5; Game->LibraryPage=0; return; }
-        const auto Library = Game->GetLibraryCards();
-        const int32 LastPage=FMath::Max(0,(Library.Num()-1)/3);
-        if (LocalY>=182 && LocalY<=228)
-        {
-            if (InChamfer(LocalX,LocalY,1240,182,120,46)) {NeonMenuAudio::Input(this);Game->LibraryPage=FMath::Max(0,Game->LibraryPage-1);}
-            if (InChamfer(LocalX,LocalY,1380,182,120,46)) {NeonMenuAudio::Input(this);Game->LibraryPage=FMath::Min(LastPage,Game->LibraryPage+1);}
-        }
-        if (LocalY >= 270 && LocalY <= 570)
-            for (int32 I=0; I<3 && Library.IsValidIndex(Game->LibraryPage*3+I); ++I)
-                if (LocalX >= 80+I*485 && LocalX <= 540+I*485) { NeonMenuAudio::Input(this);Game->OpenProgramEditor(Library[Game->LibraryPage*3+I]->CardID); return; }
-        if (LocalY >= 640 && LocalY <= 696)
-            for (int32 I=0; I<Game->StartingCards.Num(); ++I)
-                if (LocalX >= 80+I*400 && LocalX <= 460+I*400) { NeonMenuAudio::Input(this);Game->OpenProgramEditor(Game->StartingCards[I]); return; }
-        if (LocalY >= 756 && LocalY <= 820)
-        {
-            if (InChamfer(LocalX,LocalY,80,756,290,64)) Game->SaveStartingDeck();
-            if (InChamfer(LocalX,LocalY,410,756,330,64)) {if(PC) PC->OpenHideout();}
-            if (InChamfer(LocalX,LocalY,1080,756,440,64)) Game->StartSelectedRun();
-        }
-        return;
-    }
+    if((!Game->bInCodex && InChamfer(LocalX,LocalY,1360,186,190,36)) || (Game->bRunEnded && InChamfer(LocalX,LocalY,490,580,620,36))) {if(PC) PC->OpenLeaderboard();return;}
+    if (Game->bInCodex) {ClickRiderSelection(LocalX,LocalY,Game);return;}
     if (Game->bRunEnded)
     {
         if (LocalX >= 490 && LocalX <= 1110 && LocalY >= 510 && LocalY <= 570)

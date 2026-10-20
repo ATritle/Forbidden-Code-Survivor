@@ -1,3 +1,4 @@
+#include "ForbiddenWorkbenchLayout.h"
 #include "MVPGame.h"
 #include "NeonAudioDirector.h"
 #include "NeonSettingsWidget.h"
@@ -47,7 +48,7 @@ void AMVPController::TickSettingsSmokeTest()
         }
         if(!Game->bInCodex || !IsPaused() || !Audio->IsReady()) {Fail(TEXT("Initial menu/audio missing"));return;}
         auto* HUD=Cast<AMVPHUD>(GetHUD());if(!HUD) {Fail(TEXT("Missing HUD"));return;}
-        HUD->ClickAt(450,160);
+        HUD->ClickAt(ForbiddenWorkbench::SettingsX+80,ForbiddenWorkbench::NavY+17);
         if(!IsSettingsOpen() || !IsPaused()) {Fail(TEXT("Main-menu settings button failed"));return;}
         auto* Music=Cast<USlider>(SettingsWidget->WidgetTree->FindWidget(TEXT("MusicVolumeSlider")));
         auto* SFX=Cast<USlider>(SettingsWidget->WidgetTree->FindWidget(TEXT("SFXVolumeSlider")));
