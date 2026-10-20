@@ -10,7 +10,7 @@
     "sha256": "942a31e2fc84508ddec19ca2814fa627606b73a300ada423ed6e9e2978d3be17"
   },
   "tests": {
-    "browser": 91,
+    "browser": 94,
     "scoreService": 15,
     "rooftops": 6,
     "clearances": [
@@ -56,5 +56,17 @@
     "limit": 10,
     "perPlayerLimit": 3
   },
-  "browserBaselineSha256Verified": "8739215c67a34f56920f2715a09f19f6b799d3ba6664ca725ca0166733d9b5da"
+  "browserBaselineSha256Verified": "8739215c67a34f56920f2715a09f19f6b799d3ba6664ca725ca0166733d9b5da",
+  "pagesDeployment": {
+    "baseCommit": "54ec05686ab62d58aff2ed22a978c5a61a0948fa",
+    "baseWorkflow": "https://github.com/ATritle/Forbidden-Code-Survivor/actions/runs/39500315992",
+    "baseResult": "success",
+    "liveRoute": "ROUTE PASS / 6.20m / 0.0m remaining"
+  },
+  "followUp": [
+    "enemy-body collision for Overload Orb",
+    "effective evolved chain range in practice spacing warnings",
+    "native contact attacks outside telegraph control for advanced enemies",
+    "live ward charge counter"
+  ]
 }

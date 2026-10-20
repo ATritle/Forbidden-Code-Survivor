@@ -1,4 +1,6 @@
 export const SAVE_KEY='forbidden-code-survivor.web.v1';
+// Enemy positions are at their feet. Test the full vertical body, not a sphere at ground level.
+export function sphereTouchesEnemy(position,radius,enemy){const p=enemy.position,vertical=Math.max(p.y-position.y,0,position.y-p.y-enemy.data.height);return Math.hypot(p.x-position.x,p.z-position.z,vertical)<enemy.radius+radius;}
 export function chooseStationLocations(points,origin,count=3,random=Math.random){const chosen=[];for(const p of sampleUnique(points.map(p=>({x:p.x,z:p.z,id:p.x+','+p.z})),points.length,random)){if(Math.hypot(p.x-origin.x,p.z-origin.z)<14||chosen.some(q=>Math.hypot(p.x-q.x,p.z-q.z)<15))continue;chosen.push(p);if(chosen.length===count)break;}return chosen;}
 export function rng(seed=1739){let s=seed>>>0;return()=>{s+=0x6d2b79f5;let t=Math.imul(s^s>>>15,1|s);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;};}
 export function sampleUnique(items,count,random=Math.random){const seen=new Set(),bag=items.filter(x=>{const id=x.id??x;if(seen.has(id))return false;seen.add(id);return true;});for(let i=bag.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[bag[i],bag[j]]=[bag[j],bag[i]];}return bag.slice(0,Math.max(0,count));}
