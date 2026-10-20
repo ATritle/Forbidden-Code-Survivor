@@ -126,12 +126,13 @@ void ASkeletonMinion::Tick(float Dt)
     if (M.BoneArcher)
     {
         FSpellModifiers Shot;
+        Shot.ProgramID="RaiseSkeletons";
         Shot.ExplodeOnImpact=M.GraveBurst;
         Game->EmitProjectile(GetActorLocation(),Delta,Spell->Damage,Shot,FLinearColor(0.2f,0.8f,1.f));
     }
     else
     {
-        Target->ReceiveSpellDamage(Spell->Damage);
+        Target->TakeSpellDamage(Spell->Damage,FVector::ZeroVector,"RaiseSkeletons");
         if (M.GraveBurst)
         {
             Game->EmitImpactPulse(Impact,120);

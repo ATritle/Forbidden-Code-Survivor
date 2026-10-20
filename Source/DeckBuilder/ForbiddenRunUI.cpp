@@ -1,4 +1,5 @@
 #include "MVPGame.h"
+#include "ForbiddenRiderSubsystem.h"
 #include "ForbiddenChoiceWidget.h"
 #include "ForbiddenProfile.h"
 #include "ForbiddenSpirit.h"
@@ -119,6 +120,7 @@ void AMVPArenaGameMode::ChooseCorruptPerk()
         if(auto* P=GetArenaPlayer())
         {
             P->Movement->MaxSpeed=CorruptPerks.Contains("Collector") ? 423.f : 470.f;
+            if(const auto* Rider=GetWorld()->GetSubsystem<UForbiddenRiderSubsystem>();Rider && Rider->RiderID()=="Rook") P->Movement->MaxSpeed*=.9f;
             P->Deck->GlobalCooldownScale=CorruptPerks.Contains("Overclock") ? 0.85f : 1.f;
             for(ASpellBase* Spell:P->Deck->ActiveWeapons) if(Spell) Spell->SetGlobalCooldownScale(P->Deck->GlobalCooldownScale);
         }

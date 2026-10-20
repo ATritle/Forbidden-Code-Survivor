@@ -1,4 +1,5 @@
 #include "MVPGame.h"
+#include "ForbiddenRiderSubsystem.h"
 #include "ForbiddenPrograms.h"
 #include "ForbiddenDistrictDirector.h"
 #include "ForbiddenEnemyBrain.h"
@@ -157,7 +158,7 @@ void AMVPPlayer::BeginPlay()
     for(TActorIterator<ANeonCityDirector> City(GetWorld());City;++City)
     {CameraBoom->SetRelativeRotation(FRotator(-55.f,-35.f,0));break;}
     LandingDust->SetAsset(LoadObject<UNiagaraSystem>(nullptr,TEXT("/Game/Art/Spells/NS_LandingDust.NS_LandingDust")));
-    if (CharacterArt->LoadCharacter(TEXT("NeonExorcist"), 170.f)) {Visual->SetVisibility(false);InitializeNeonVFX();}
+    if (ApplySelectedRider()) {Visual->SetVisibility(false);}
     else if (CharacterArt->LoadCharacter(TEXT("Necromancer"),145.f)) Visual->SetVisibility(false);
     CharacterArt->SetCastShadow(GetWorld()->GetMapName().Contains(TEXT("NeonDistrict")) || FParse::Param(FCommandLine::Get(), TEXT("CinematicFX")) || FParse::Param(FCommandLine::Get(), TEXT("CinematicTest")));
 }
@@ -222,7 +223,9 @@ void AMVPPlayer::ReceiveContactDamage(float Amount)
     if(bBenchmarkInvulnerable) return;
     AMVPArenaGameMode* Game = MVP::Mode(this);
     if (!Game || Game->bInCodex || Game->bRunEnded || Game->bChoosingCard || UGameplayStatics::IsGamePaused(this) || InvulnerabilityRemaining > 0.f || !FMath::IsFinite(Amount) || Amount <= 0.f) return;
-    Health = FMath::Max(0.f, Health - Amount*(Challenges ? Challenges->GetIncomingDamageMultiplier() : 1.f));
+    float EffectiveDamage=Amount*(Challenges ? Challenges->GetIncomingDamageMultiplier() : 1.f);
+    if(auto* Rider=GetWorld()->GetSubsystem<UForbiddenRiderSubsystem>()) EffectiveDamage=Rider->AbsorbContact(EffectiveDamage);
+    Health = FMath::Max(0.f, Health - EffectiveDamage);
     InvulnerabilityRemaining = 0.8f;
     CharacterArt->TriggerRiderHit();
     OnPlayerDamagedVFX(Health / MaxHealth);
@@ -345,7 +348,9 @@ void AMVPEnemy::Tick(float DeltaSeconds)
     const float ContactRange=CastChecked<USphereComponent>(RootComponent)->GetScaledSphereRadius()+34.f;
     float ChaseSpeed=BaseMovementSpeed*(Target->Challenges ? Target->Challenges->GetPursuerSpeedMultiplier() : 1.f);
     FVector ChaseGoal=Target->GetActorLocation();
-    if(auto* Brain=FindComponentByClass<UForbiddenEnemyBrain>();Brain && Brain->Advance(DeltaSeconds,Target.Get(),ChaseGoal,ChaseSpeed)) return;
+    const auto* Rider=GetWorld()->GetSubsystem<UForbiddenRiderSubsystem>();
+    if(Rider && Rider->DecoyGoal(this,ChaseGoal)) {if(auto* Brain=FindComponentByClass<UForbiddenEnemyBrain>()) Brain->CancelChannel();}
+    else if(auto* Brain=FindComponentByClass<UForbiddenEnemyBrain>();Brain && Brain->Advance(DeltaSeconds,Target.Get(),ChaseGoal,ChaseSpeed)) return;
     CharacterArt->UpdateLocomotion(ToPlayer, ToPlayer.SizeSquared2D() <= FMath::Square(ContactRange) ? 0.f : ChaseSpeed);
     if (ToPlayer.SizeSquared2D() <= FMath::Square(ContactRange) && FMath::Abs(ToPlayer.Z)<150.f && UMortisTerrain::ClearSight(this,Target->GetActorLocation()))
     {
@@ -363,10 +368,13 @@ void AMVPEnemy::TakeSpellDamage(float Amount, FVector ImpactVelocity, FName Prog
     auto* ArenaMode=MVP::Mode(this);
     auto* Contracts=ArenaMode && ArenaMode->GetArenaPlayer() ? ArenaMode->GetArenaPlayer()->Challenges.Get() : nullptr;
     if(!bTrainingTarget && Contracts && ProgramID!="TalismanGuard") Amount*=Contracts->GetDamageMultiplier();
+    auto* Rider=GetWorld()->GetSubsystem<UForbiddenRiderSubsystem>();
+    if(Rider) Amount=Rider->ModifyDamage(this,Amount,ProgramID,TriggerEcho);
     if(auto* Brain=FindComponentByClass<UForbiddenEnemyBrain>()) Amount=Brain->ModifyIncoming(Amount,ImpactVelocity,ProgramID);
     const float Actual=FMath::Min(Amount,FMath::Max(0.f,Health));
     if(ArenaMode) ArenaMode->RecordProgramDamage(ProgramID,Actual);
     Health -= Amount;
+    if(Rider) Rider->OnDamageConfirmed(this,ProgramID,TriggerEcho,Actual);
     if(!bTrainingTarget && Contracts && TriggerEcho) Contracts->OnConfirmedSpellHit(GetActorLocation(),FMath::Min(Actual,250.f));
     if(bTrainingTarget)
     {
@@ -508,12 +516,13 @@ void AMVPBoltSpell::FireSpell_Implementation(APooledEnemy* Target, const FSpellM
         Player->OnWeaponAim(Origin, Aim);
         Player->TriggerSpellCastVisual();
     }
+    auto* Rider=GetWorld()->GetSubsystem<UForbiddenRiderSubsystem>();
+    FSpellModifiers Pattern=Rider ? Rider->ModifySnapshot(Snapshot) : Snapshot;float Power=Damage;
     if(Snapshot.ProgramID=="HaloNova" && Snapshot.Evolution==2)
     {
-        if(auto* Fields=GetWorld()->GetSubsystem<UForbiddenCombatSubsystem>()) Fields->QueueField("HaloNova",ENeonSpellStyle::Halo,Origin,Damage*1.8f,350.f*Snapshot.RadiusMultiplier,0,1,0.65f,true);
+        if(auto* Fields=GetWorld()->GetSubsystem<UForbiddenCombatSubsystem>()) Fields->QueueField("HaloNova",ENeonSpellStyle::Halo,Origin,Damage*1.8f,350.f*Pattern.RadiusMultiplier,0,1,0.65f,true);
         return;
     }
-    FSpellModifiers Pattern=Snapshot;float Power=Damage;
     if(UsesProgramProgression())
     {
         if(Snapshot.ProgramID=="PulseDart" && Snapshot.Evolution==2) {Pattern.NovaPattern=true;Pattern.ProjectileCount=8;Power*=0.1875f;}
@@ -521,6 +530,7 @@ void AMVPBoltSpell::FireSpell_Implementation(APooledEnemy* Target, const FSpellM
         if(Snapshot.ProgramID=="KineticCards" && Snapshot.Evolution==2) {Pattern.ProjectileCount=3;Power*=0.6f;Pattern.ExplodeOnImpact=false;Pattern.PiercingCount=2;}
         if(Snapshot.ProgramID=="PhotonLance" && Snapshot.Evolution==2) {Pattern.ProjectileCount=2;Power*=0.6f;}
     }
+    const int32 FirstShotBonus=Rider && !Pattern.NovaPattern && Snapshot.ProgramID!="HaloNova" ? Rider->ProjectileCast() : 0;
     for (int32 Index = 0; Index < Pattern.ProjectileCount; ++Index)
     {
         const float Angle = Pattern.NovaPattern ? 360.f * Index / Pattern.ProjectileCount : Snapshot.ProgramID=="PhotonLance" && Snapshot.Evolution==2 ? Index*90.f : (Index - (Pattern.ProjectileCount - 1) * 0.5f) * 9.f;
@@ -532,7 +542,8 @@ void AMVPBoltSpell::FireSpell_Implementation(APooledEnemy* Target, const FSpellM
             FHitResult Wall;
             if(GetWorld()->LineTraceSingleByObjectType(Wall,Target->GetActorLocation(),LaunchOrigin,FCollisionObjectQueryParams(ECC_WorldStatic))) LaunchOrigin=Wall.ImpactPoint+Cross*10.f;
         }
-        Game->EmitProjectile(LaunchOrigin, Aim.RotateAngleAxis(Angle, FVector::UpVector), Power, Pattern, BoltColor, ShotType, bBlood,SpellStyle);
+        FSpellModifiers Shot=Pattern;if(Index==0) Shot.PiercingCount+=FirstShotBonus;
+        Game->EmitProjectile(LaunchOrigin, Aim.RotateAngleAxis(Angle, FVector::UpVector), Power, Shot, BoltColor, ShotType, bBlood,SpellStyle);
     }
 }
 APooledEnemy* AMVPBoltSpell::ResolveTarget() const
@@ -560,6 +571,8 @@ void AMVPController::BeginPlay()
     InstallNeonMenuAudioValidation(this);
     extern void InstallMusicPlayerValidation(AMVPController* Controller);
     InstallMusicPlayerValidation(this);
+    extern void InstallRiderSelectionValidation(AMVPController* Controller);
+    InstallRiderSelectionValidation(this);
     extern void InstallSettingsReviewValidation(AMVPController* Controller);
     InstallSettingsReviewValidation(this);
 #if !UE_BUILD_SHIPPING
@@ -630,7 +643,7 @@ void AMVPController::OpenLeaderboard()
     ScoreWidget->WasPaused=IsPaused();SetPause(true);SetMenuInput(true);ScoreWidget->AddToViewport(90);
     FInputModeGameAndUI Input;Input.SetHideCursorDuringCapture(false);Input.SetWidgetToFocus(ScoreWidget->TakeWidget());SetInputMode(Input);
 }
-void AMVPController::BeginSelectedRun() { if (!HelpWidget && !SettingsWidget && !ScoreWidget) if (auto* Game = MVP::Mode(this)) Game->StartSelectedRun(); }
+void AMVPController::BeginSelectedRun() { if (!HelpWidget && !SettingsWidget && !ScoreWidget) if (auto* Game = MVP::Mode(this)) {if(Game->bInCodex && Game->bCharacterSelectionOpen) Game->ContinueToDeck();else Game->StartSelectedRun();} }
 void AMVPController::ChooseOne() { if (!HelpWidget && !IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(0); }
 void AMVPController::ChooseTwo() { if (!HelpWidget && !IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(1); }
 void AMVPController::ChooseThree() { if (!HelpWidget && !IsSettingsOpen() && !IsChallengeOpen()) if (auto* Game = MVP::Mode(this)) Game->ChooseCard(2); }
@@ -830,6 +843,7 @@ void AMVPArenaGameMode::AddXP(int32 Amount)
     const float BonusRate=(CorruptPerks.Contains("Collector") ? 0.25f : 0.f)+(ForbiddenSettings::Get(this,"District",0)>0.5f ? 0.2f : 0.f);
     if(BonusRate>0) {EssenceRemainder+=Amount*BonusRate;const int32 Bonus=FMath::FloorToInt(EssenceRemainder);EssenceRemainder-=Bonus;Amount+=Bonus;}
     XP += Amount;
+    if(auto* Rider=GetWorld()->GetSubsystem<UForbiddenRiderSubsystem>()) Rider->OnEssence(Amount);
     while (XP >= GetXPRequirement())
     {
         XP -= GetXPRequirement();
@@ -918,6 +932,7 @@ bool AMVPArenaGameMode::ChooseCard(int32 Index)
 void AMVPArenaGameMode::FinishRun(bool Victory)
 {
     if (bRunEnded) return;
+    if(auto* Rider=GetWorld()->GetSubsystem<UForbiddenRiderSubsystem>()) Rider->EndRun();
     if(DecisionWidget) {DecisionWidget->RemoveFromParent();DecisionWidget=nullptr;}
     bVictory=Victory;
     RunRecord.ID=RunRecord.ID.IsEmpty() ? FGuid::NewGuid().ToString(EGuidFormats::Digits) : RunRecord.ID;

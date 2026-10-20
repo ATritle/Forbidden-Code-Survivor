@@ -79,6 +79,7 @@ void AMVPHUD::DrawHealthAlert(AMVPPlayer* Player)
 
 void AMVPHUD::DrawCodex(AMVPArenaGameMode* Game)
 {
+    if(Game->bCharacterSelectionOpen) {DrawRiderSelection(Game);return;}
     const FLinearColor White(0.88f,0.95f,1),Muted(0.48f,0.66f,0.77f),Cyan=InterfaceAccent,Pink(1,0.04f,0.5f);
     DrawRect(FLinearColor(0.004f,0.008f,0.02f),0,0,Canvas->SizeX,Canvas->SizeY);
     if(BackdropMaterial) DrawMaterialSimple(BackdropMaterial,OffsetX,OffsetY,1600*UIScale,900*UIScale);
@@ -156,4 +157,6 @@ void AMVPHUD::DrawCodex(AMVPArenaGameMode* Game)
     NeonTitle(TEXT("ENTER ARENA  >>"),1134,774-H*2,1.2f,Valid ? White : Muted);
     Text(TEXT("ENTER"),1433,802,0.54f,Cyan);
     DrawMusicPlayer(Game);
+    Glass(TEXT("ChangeRider"),850,145,255,34,Cyan,Hover(TEXT("ChangeRider"),850,145,255,34),false,2);
+    Text(TEXT("CHANGE RIDER"),875,153,.72f,Cyan);
 }

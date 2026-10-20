@@ -43,6 +43,7 @@ private:
     float RiderTimer=0.f;
     float CastCooldown=0.f;
     int32 AttackRotation=0;
+    int32 RiderAttackVariants=4;
     float LastRiderSpeed=0.f;
     float RiderIdleTime=0.f;
     float RiderYaw=0.f;

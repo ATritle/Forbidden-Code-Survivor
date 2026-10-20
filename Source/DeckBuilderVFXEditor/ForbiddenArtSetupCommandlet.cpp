@@ -17,13 +17,16 @@
 #include "UObject/SavePackage.h"
 #include "UObject/UnrealType.h"
 #include "Misc/PackageName.h"
+#include "Misc/Parse.h"
 #include "Modules/ModuleManager.h"
 
 UForbiddenArtSetupCommandlet::UForbiddenArtSetupCommandlet() {IsEditor=true;IsClient=false;IsServer=false;LogToConsole=true;}
 int32 UForbiddenArtSetupCommandlet::Main(const FString& Params)
 {
-    const FString Folder=TEXT("/Game/Art/Characters/NeonExorcist");
-    auto* Mesh=LoadObject<USkeletalMesh>(nullptr,*(Folder/TEXT("SK_NeonExorcist.SK_NeonExorcist")));if(!Mesh) return 1;
+    FString Rider=TEXT("NeonExorcist");FParse::Value(*Params,TEXT("Rider="),Rider);
+    if(Rider!=TEXT("NeonExorcist") && Rider!=TEXT("Vex") && Rider!=TEXT("Rook") && Rider!=TEXT("Zero") && Rider!=TEXT("Mira")) return 13;
+    const FString Folder=TEXT("/Game/Art/Characters/")+Rider;
+    auto* Mesh=LoadObject<USkeletalMesh>(nullptr,*(Folder/TEXT("SK_")+Rider+TEXT(".SK_")+Rider));if(!Mesh) return 1;
     auto* BP=LoadObject<UAnimBlueprint>(nullptr,*(Folder/TEXT("ABP_NeonRider.ABP_NeonRider")));
     if(!BP)
     {

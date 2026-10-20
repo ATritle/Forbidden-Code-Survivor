@@ -1,4 +1,5 @@
 #include "ForbiddenProfile.h"
+#include "ForbiddenRiderRoster.h"
 #include "CodexLoadoutSave.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/CommandLine.h"
@@ -61,6 +62,7 @@ void UForbiddenProfile::Initialize(FSubsystemCollectionBase& Collection)
 
 void UForbiddenProfile::Sanitize()
 {
+    if(!ForbiddenRiders::Find(Data->SelectedRider)) Data->SelectedRider=TEXT("NeonExorcist");
     Data->PlayerToken.ToLowerInline();
     Data->CodeFragments=FMath::Clamp(Data->CodeFragments,0,1000000);
     if(Data->PlayerToken.Len()!=64) Data->PlayerToken=FGuid::NewGuid().ToString(EGuidFormats::Digits)+FGuid::NewGuid().ToString(EGuidFormats::Digits);

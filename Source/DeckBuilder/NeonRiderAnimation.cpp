@@ -14,7 +14,7 @@ void UNecromancyVisualComponent::TriggerRiderCast(FName Style)
     if(bHoverRider && CastCooldown<=0.f && RiderState!=TEXT("Hit") && RiderState!=TEXT("Defeat"))
     {
         const FName Rotation[]={TEXT("Cast"),TEXT("CastBlood"),TEXT("CastStorm"),TEXT("HoverIdleAlt")};
-        if(Style.IsNone()) Style=Rotation[AttackRotation++ % UE_ARRAY_COUNT(Rotation)];
+        if(Style.IsNone()) Style=Rotation[AttackRotation++ % RiderAttackVariants];
         const UAnimSequence* Clip=RiderClips.FindRef(Style);
         if(!Clip) return;
         const float Duration=Style==TEXT("HoverIdleAlt") ? 1.2f : 0.8f;

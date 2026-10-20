@@ -1,4 +1,5 @@
 #include "NeonArsenal.h"
+#include "ForbiddenRiderSubsystem.h"
 #include "ForbiddenCombatSubsystem.h"
 #include "ForbiddenEnemyBrain.h"
 #include "ForbiddenSpirit.h"
@@ -63,9 +64,12 @@ void ANeonArsenalSpell::FireSpell_Implementation(APooledEnemy* Target,const FSpe
 {
     auto* Game=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());
     const auto* Caster=Cast<AMVPPlayer>(GetOwner());
-    const FSpellModifiers Effective=Caster && Caster->Challenges ? Caster->Challenges->ModifySpellSnapshot(Snapshot) : Snapshot;
+    FSpellModifiers Effective=Caster && Caster->Challenges ? Caster->Challenges->ModifySpellSnapshot(Snapshot) : Snapshot;
+    auto* Rider=GetWorld()->GetSubsystem<UForbiddenRiderSubsystem>();
+    if(Rider && ProfileIndex!=5) Effective=Rider->ModifySnapshot(Effective,ProfileIndex<=1);
+    const int32 Bonus=Rider && (ProfileIndex==3 || ProfileIndex==4 || ProfileIndex==6 || ProfileIndex==8 || ProfileIndex==9) ? Rider->ProjectileCast() : 0;
     if(Game && Game->ArsenalDirector && ProfileIndex!=INDEX_NONE && IsValid(GetOwner()))
-        Game->ArsenalDirector->FirePattern(ProfileIndex,GetOwner(),Cast<AMVPEnemy>(Target),Damage,Effective);
+        Game->ArsenalDirector->FirePattern(ProfileIndex,GetOwner(),Cast<AMVPEnemy>(Target),Damage,Effective,Bonus);
 }
 APooledEnemy* ANeonArsenalSpell::ResolveTarget() const
 {
@@ -127,11 +131,11 @@ AMVPEnemy* ANeonArsenalDirector::Nearest(FVector Origin,float Range,const TMap<T
         if((!Life || *Life!=E->Generation) && D<Distance && Clear(Origin,E->GetActorLocation())) {Distance=D;Best=E;}
     }return Best;
 }
-void ANeonArsenalDirector::DamageEnemy(int32 P,AMVPEnemy* Enemy,float Damage,FVector Direction,FName Source)
+void ANeonArsenalDirector::DamageEnemy(int32 P,AMVPEnemy* Enemy,float Damage,FVector Direction,FName Source,bool Direct)
 {
     if(IsValid(Enemy) && Enemy->IsPoolActive())
     {
-        const float Before=Enemy->Health;++Hits[P];Enemy->TakeSpellDamage(Damage,Direction*350,Source.IsNone() ? NeonArsenal::Profiles()[P].ID : Source);
+        const float Before=Enemy->Health;++Hits[P];Enemy->TakeSpellDamage(Damage,Direction*350,Source.IsNone() ? NeonArsenal::Profiles()[P].ID : Source,Direct);
         if(auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());G && G->SpellImpactDirector)
             G->SpellImpactDirector->ConfirmDamage(ENeonSpellStyle(6+P),Enemy,FMath::Max(0.f,Before-FMath::Max(0.f,Enemy->Health)));
     }
@@ -149,7 +153,7 @@ void ANeonArsenalDirector::Area(int32 P,FVector Position,float Radius,float Dama
 {
     TArray<FOverlapResult> Found;GetWorld()->OverlapMultiByObjectType(Found,Position,FQuat::Identity,FCollisionObjectQueryParams(ECC_GameTraceChannel1),FCollisionShape::MakeSphere(Radius));
     TSet<AMVPEnemy*> Seen;
-    for(const auto& R:Found) if(auto* E=Cast<AMVPEnemy>(R.GetActor());E && E->IsPoolActive() && !Seen.Contains(E) && Clear(Position,E->GetActorLocation())) {Seen.Add(E);++AreaHits;DamageEnemy(P,E,Damage,(E->GetActorLocation()-Position).GetSafeNormal());}
+    for(const auto& R:Found) if(auto* E=Cast<AMVPEnemy>(R.GetActor());E && E->IsPoolActive() && !Seen.Contains(E) && Clear(Position,E->GetActorLocation())) {Seen.Add(E);++AreaHits;DamageEnemy(P,E,Damage,(E->GetActorLocation()-Position).GetSafeNormal(),NAME_None,false);}
 }
 void ANeonArsenalDirector::Streak(int32 P,FVector A,FVector B,float Lifetime)
 {
@@ -180,7 +184,7 @@ void ANeonArsenalDirector::Chain(int32 P,FVector Origin,AMVPEnemy* First,float D
     {Streak(P,Origin,First->GetActorLocation(),0.3f);DamageEnemy(P,First,InitialDamage*0.6f,(First->GetActorLocation()-Origin).GetSafeNormal());}
     if(P==1 && Snapshot.Evolution==2) if(auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());G && G->DecoySpirit) G->DecoySpirit->ActivateDecoy(Origin,2.f);
 }
-void ANeonArsenalDirector::FirePattern(int32 P,AActor* Caster,AMVPEnemy* Target,float Damage,const FSpellModifiers& Snapshot)
+void ANeonArsenalDirector::FirePattern(int32 P,AActor* Caster,AMVPEnemy* Target,float Damage,const FSpellModifiers& Snapshot,int32 FirstShotExtraPierces)
 {
     if(!NeonArsenal::Profiles().IsValidIndex(P) || !IsValid(Caster) || !IsValid(Target) || !Target->IsPoolActive()) return;
     const auto& Profile=NeonArsenal::Profiles()[P];const FVector Origin=Caster->GetActorLocation(),Goal=Target->GetActorLocation(),Aim=(Goal-Origin).GetSafeNormal();
@@ -216,7 +220,8 @@ void ANeonArsenalDirector::FirePattern(int32 P,AActor* Caster,AMVPEnemy* Target,
     {
         const float Angle=P==6 ? J*360.f/Count : (J-(Count-1)*0.5f)*12;
         S->Position=S->Start=Origin;S->Direction=Aim.RotateAngleAxis(Angle,FVector::UpVector);S->Power=Damage;S->Owner=Caster;S->Life=P==3 ? 1.35f : 1.7f;S->Modifiers=Snapshot;
-        S->Remaining=(P==3 ? 4 : P==4 ? 4 : 1)+Snapshot.PiercingCount;S->Radius=J*2.f*PI/FMath::Max(1,Count);
+        S->Modifiers.PiercingCount+=J==0 ? FirstShotExtraPierces : 0;
+        S->Remaining=(P==3 ? 4 : P==4 ? 4 : 1)+S->Modifiers.PiercingCount;S->Radius=J*2.f*PI/FMath::Max(1,Count);
     }
 }
 void ANeonArsenalDirector::ProjectileStep(FShot& S,float Dt)
@@ -256,7 +261,7 @@ void ANeonArsenalDirector::ProjectileStep(FShot& S,float Dt)
         S.HitLives.Add(E,E->Generation);const FVector Impact=E->GetActorLocation();
         float Power=S.Power;if(P==9 && S.Modifiers.Evolution==1 && E->EnemyTier>=2) Power*=1.35f;
         if(P==9 && S.Modifiers.Evolution==2 && E->Health/E->MaxHealth<0.3f) Power*=1.6f;
-        DamageEnemy(P,E,Power,S.Direction);Burst(P,Impact);--S.Remaining;
+        DamageEnemy(P,E,Power,S.Direction,S.Modifiers.ProgramID);Burst(P,Impact);--S.Remaining;
         if(S.Modifiers.ExplodeOnImpact) Area(P,Impact,100*S.Modifiers.RadiusMultiplier,S.Power*0.4f);
         if(P==8 && !S.Fragment)
         {

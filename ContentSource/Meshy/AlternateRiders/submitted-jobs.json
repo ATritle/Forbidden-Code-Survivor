@@ -1,0 +1,198 @@
+{
+  "approvedCredits": 248,
+  "submittedCredits": 248,
+  "paidRetries": 0,
+  "format": "fbx",
+  "characters": [
+    {
+      "id": "Vex",
+      "concept": "Vex-GhostCourier-v1.png",
+      "bodyReference": "ContentSource/Concepts/AlternateRiders/RigReferences/Vex-Body-v1.png",
+      "plannedCredits": 62,
+      "tasks": {
+        "body": {
+          "id": "01a1569e-6cfd-7758-ae93-b1643f777bcd",
+          "type": "image-to-3d",
+          "credits": 30
+        },
+        "board": {
+          "id": "01a156a1-1c24-775d-a9a2-ebe591ace2f4",
+          "type": "image-to-3d",
+          "credits": 15
+        },
+        "rig": {
+          "id": "01a156a2-6d6a-74ca-b64b-3d7ae44dee07",
+          "type": "rigging",
+          "credits": 5
+        },
+        "IdleA": {
+          "id": "01a156a3-de43-752d-ac1f-b3d449d100b0",
+          "type": "animation",
+          "action": 0,
+          "credits": 3
+        },
+        "IdleB": {
+          "id": "01a156a4-1077-7772-b019-cdb5ee0c4412",
+          "type": "animation",
+          "action": 250,
+          "credits": 3
+        },
+        "AttackA": {
+          "id": "01a156a4-5476-7716-b108-2c4d6913fb7a",
+          "type": "animation",
+          "action": 133,
+          "credits": 3
+        },
+        "AttackB": {
+          "id": "01a156a4-64c3-77ed-8474-48b201a4d227",
+          "type": "animation",
+          "action": 135,
+          "credits": 3
+        }
+      }
+    },
+    {
+      "id": "Rook",
+      "concept": "Rook-SignalWarden-v1.png",
+      "bodyReference": "ContentSource/Concepts/AlternateRiders/RigReferences/Rook-Body-v1.png",
+      "plannedCredits": 62,
+      "tasks": {
+        "body": {
+          "id": "01a1569e-8dfb-74f3-b71e-8347c3504cf3",
+          "type": "image-to-3d",
+          "credits": 30
+        },
+        "board": {
+          "id": "01a156a1-3225-7398-b668-fc59d863af27",
+          "type": "image-to-3d",
+          "credits": 15
+        },
+        "rig": {
+          "id": "01a156a2-a1e6-70b3-b831-04c6c186f21d",
+          "type": "rigging",
+          "credits": 5
+        },
+        "IdleA": {
+          "id": "01a156a4-0449-701a-b54d-e5733303874f",
+          "type": "animation",
+          "action": 11,
+          "credits": 3
+        },
+        "IdleB": {
+          "id": "01a156a4-423d-77de-87a6-fcf1d90f42e6",
+          "type": "animation",
+          "action": 246,
+          "credits": 3
+        },
+        "AttackA": {
+          "id": "01a156a4-8677-7691-adcf-5f6ab6136f3e",
+          "type": "animation",
+          "action": 125,
+          "credits": 3
+        },
+        "AttackB": {
+          "id": "01a156a4-93a7-70ed-a7ed-eab34c5b5f55",
+          "type": "animation",
+          "action": 127,
+          "credits": 3
+        }
+      }
+    },
+    {
+      "id": "Zero",
+      "concept": "Zero-PrecisionAssassin-v3.png",
+      "bodyReference": "ContentSource/Concepts/AlternateRiders/RigReferences/Zero-Body-v1.png",
+      "plannedCredits": 62,
+      "tasks": {
+        "body": {
+          "id": "01a1569e-a3ca-7275-853e-8dec6fa42bf8",
+          "type": "image-to-3d",
+          "credits": 30
+        },
+        "board": {
+          "id": "01a156a1-4093-71d5-8dfb-547acb3a863d",
+          "type": "image-to-3d",
+          "credits": 15
+        },
+        "rig": {
+          "id": "01a156a2-be11-711a-a940-cbc4369f3f3b",
+          "type": "rigging",
+          "credits": 5
+        },
+        "IdleA": {
+          "id": "01a156a3-f8b7-7153-b5c0-61f9b9d4388e",
+          "type": "animation",
+          "action": 12,
+          "credits": 3
+        },
+        "IdleB": {
+          "id": "01a156a4-2f45-761c-8843-13a27ce35836",
+          "type": "animation",
+          "action": 247,
+          "credits": 3
+        },
+        "AttackA": {
+          "id": "01a156a4-762a-7552-b7cf-df1271203e06",
+          "type": "animation",
+          "action": 129,
+          "credits": 3
+        },
+        "AttackB": {
+          "id": "01a156a4-81c7-72fe-8166-a6f06d94b723",
+          "type": "animation",
+          "action": 131,
+          "credits": 3
+        }
+      }
+    },
+    {
+      "id": "Mira",
+      "concept": "Mira-NeonConductor-v2.png",
+      "bodyReference": "ContentSource/Concepts/AlternateRiders/RigReferences/Mira-Body-v1.png",
+      "plannedCredits": 62,
+      "tasks": {
+        "body": {
+          "id": "01a1569e-b0d2-71e6-89b3-2f3eb737c71e",
+          "type": "image-to-3d",
+          "credits": 30
+        },
+        "board": {
+          "id": "01a156a1-4e44-7360-8b18-5d92f53faf7a",
+          "type": "image-to-3d",
+          "credits": 15
+        },
+        "rig": {
+          "id": "01a156a2-51e1-74d9-ac06-ff590e10e753",
+          "type": "rigging",
+          "credits": 5
+        },
+        "IdleA": {
+          "id": "01a156a3-ed85-7179-9015-5e672fad3262",
+          "type": "animation",
+          "action": 248,
+          "credits": 3
+        },
+        "IdleB": {
+          "id": "01a156a4-2237-77fc-be5f-4c3636ed0a89",
+          "type": "animation",
+          "action": 250,
+          "credits": 3
+        },
+        "AttackA": {
+          "id": "01a156a4-6573-7558-b414-d192cb847081",
+          "type": "animation",
+          "action": 134,
+          "credits": 3
+        },
+        "AttackB": {
+          "id": "01a156a4-73b7-74a7-8138-3be205b94fce",
+          "type": "animation",
+          "action": 136,
+          "credits": 3
+        }
+      }
+    }
+  ],
+  "status": "All 28 paid Meshy tasks succeeded: four bodies, four boards, four rigs and 16 custom animations.",
+  "spentCredits": 248
+}

@@ -53,6 +53,7 @@ public:
     UPROPERTY() TMap<FName, int32> Research;
     UPROPERTY() TArray<FForbiddenDeckPreset> Decks;
     UPROPERTY() int32 SelectedDeck = 0;
+    UPROPERTY() FName SelectedRider = TEXT("NeonExorcist");
     UPROPERTY() TArray<FForbiddenRunRecord> History;
     UPROPERTY() TMap<FName, float> Settings;
     UPROPERTY() TMap<FName, FKey> Bindings;

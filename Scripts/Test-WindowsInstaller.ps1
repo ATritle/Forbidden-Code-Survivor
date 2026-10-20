@@ -1,4 +1,4 @@
-param([string]$TargetName='InstallerFinalSmoke-0.3.9',[ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version='0.3.9')
+param([string]$TargetName='InstallerFinalSmoke-0.4.0',[ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version='0.4.0')
 $ErrorActionPreference='Stop'
 $projectRoot=Split-Path -Parent $PSScriptRoot
 $artifacts=[IO.Path]::GetFullPath((Join-Path $projectRoot 'Artifacts'))+'\'

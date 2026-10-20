@@ -5,6 +5,8 @@
 #include "EngineUtils.h"
 #include "CodexLoadoutSave.h"
 #include "ForbiddenProfile.h"
+#include "ForbiddenRiderPreview.h"
+#include "ForbiddenRiderSubsystem.h"
 #include "ForbiddenScoreService.h"
 #include "CardDataAsset.h"
 #include "CodexDeckComponent.h"
@@ -123,7 +125,9 @@ bool AMVPArenaGameMode::StartSelectedRun()
     }
     Player->Deck->EquippedDeck.Reset();
     for(UCardDataAsset* Card:Player->Deck->UnlockedCards) if(Card && DraftPool.Contains(Card->CardID)) Player->Deck->EquippedDeck.Add(Card);
-    bInCodex = false;
+    bInCodex = false;bCharacterSelectionOpen=false;
+    if(RiderPreview) RiderPreview->SetPreviewVisible(false);
+    if(auto* Rider=GetWorld()->GetSubsystem<UForbiddenRiderSubsystem>()) Rider->BeginRun(Player);
     RunRecord.ID=FGuid::NewGuid().ToString(EGuidFormats::Digits);
     if(auto* Scores=GetGameInstance()->GetSubsystem<UForbiddenScoreService>()) Scores->BeginRun();
     if(Player->Challenges) Player->Challenges->BeginRun();

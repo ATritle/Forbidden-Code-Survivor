@@ -3,7 +3,7 @@ Unicode true
 !define PACKAGE_ROOT "..\Artifacts\Windows"
 !endif
 !ifndef BUILD_VERSION
-!define BUILD_VERSION "0.3.9"
+!define BUILD_VERSION "0.4.0"
 !endif
 !ifndef OUTPUT_DIRECTORY
 !define OUTPUT_DIRECTORY "..\Artifacts\Installer-${BUILD_VERSION}"

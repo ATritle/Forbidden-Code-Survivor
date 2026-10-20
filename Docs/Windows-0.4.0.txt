@@ -1,0 +1,29 @@
+Forbidden Code: Survivor — Windows 0.4.0 / Forbidden Riders
+
+Four approved Meshy riders join the original Neon Exorcist:
+
+VEX / Ghost Courier
+Boost leaves a 1.5-second decoy that attracts nearby basic enemies. Six-second cooldown. Chain attacks gain one target and 15% jump reach, within existing chain safety caps. Maximum health is reduced by 20%.
+
+ROOK / Signal Warden
+Each 25 essence restores a shield worth 15% maximum health, capped at 30%. Shield absorbs enemy contact damage, not contract health costs. Boost emits a 35-damage, 350cm repulsor with a six-second cooldown. Movement speed is reduced by 10%.
+
+ZERO / Precision Assassin
+Three direct weapon hits on one enemy within two seconds create a four-second target lock for 25% extra weapon damage. Every third projectile cast adds two pierces to its first shot. Damage areas are 20% smaller. Secondary area hits cannot build locks; recycled enemies cannot inherit a mark.
+
+MIRA / Neon Conductor
+A permanent digital familiar fires every 1.2 seconds for 12 + 2 per player level after level one. Every 20 direct summon hits earns an eight-second basic-enemy possession, with a ten-second cooldown and one possessed ally at a time. Conversion awards no kill, XP or objective credit. Own-weapon damage is reduced by 15%; summon damage is retained.
+
+Main menu
+The initial screen now shows a lit, full-body 3D character turntable. Drag the model to rotate, toggle automatic spin, reset the view, and preview two idle and two attack clips. Continue to Deck opens the existing deckbuilder. Change Rider returns to selection. The selected rider is saved in the existing recoverable profile. Unknown saved IDs fall back to the original rider. Signal Dock, How To, Settings, Close and leaderboard remain accessible.
+
+Art and rigging
+Approved budget: 248 Meshy credits; 28 successful jobs; no paid retries or extras. Four Meshy 7.1 bodies with 4K base-color/normal sources, four separate textured T2 boards, four humanoid rigs and sixteen custom clips. Meshy's roughness/metallic source maps are 2K. Source FBX, textures, task IDs and editable Blender assembly projects are retained under ContentSource/Meshy. The boards are rigid bones on the character skeleton; Blender leg IK bakes foot contacts for fourteen runtime states. Two idle and two attack sources drive the shared hoverboard movement/combat state architecture. The models are generated interpretations of the approved illustrations.
+
+MIRA's floating spirits and ROOK's translucent shield are independent runtime effects. Loose accessories remain excluded from Meshy body rigging. The original rider and its attack rotation remain available.
+
+Performance architecture
+Only one preview capture runs, capped at 30Hz and stopped outside character selection or behind modal menus. Rider companions use three preallocated actors and eight pooled homing shots. Enemy references include pool generation IDs. Card testing suspends rider companions, perk progress and stat modifiers so the range continues to measure the selected cards in isolation. Actual gameplay collision remains on the existing pawn, not the visual body or board. This is a Windows feature; the browser edition has not been changed.
+
+Build and revert
+Play-Forbidden-Routines.cmd launches the new version. Play-Windows-0.3.9.cmd retains the previous build. Versioned package/installer folders and the original pre-overhaul baseline remain separate. Build using Scripts/Package-Windows.ps1 -Installer; validate with Scripts/Test-RiderSelection.ps1 against the editor or packaged executable.

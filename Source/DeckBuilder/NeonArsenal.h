@@ -51,7 +51,7 @@ public:
     ANeonArsenalDirector();
     virtual void BeginPlay() override;
     virtual void Tick(float Dt) override;
-    void FirePattern(int32 Profile,AActor* Caster,AMVPEnemy* Target,float Damage,const FSpellModifiers& Snapshot);
+    void FirePattern(int32 Profile,AActor* Caster,AMVPEnemy* Target,float Damage,const FSpellModifiers& Snapshot,int32 FirstShotExtraPierces=0);
     bool IsReady() const;
     int32 Casts[10]={};
     int32 Hits[10]={};
@@ -74,7 +74,7 @@ private:
     void Streak(int32 Profile,FVector A,FVector B,float Lifetime=0.18f);
     void Burst(int32 Profile,FVector Location);
     void Area(int32 Profile,FVector Location,float Radius,float Damage);
-    void DamageEnemy(int32 Profile,AMVPEnemy* Enemy,float Damage,FVector Direction,FName Source=NAME_None);
+    void DamageEnemy(int32 Profile,AMVPEnemy* Enemy,float Damage,FVector Direction,FName Source=NAME_None,bool Direct=true);
     AMVPEnemy* Nearest(FVector Origin,float Range,const TMap<TWeakObjectPtr<AMVPEnemy>,uint32>& Excluded) const;
     void Chain(int32 Profile,FVector Origin,AMVPEnemy* First,float Damage,int32 Count,float Jump,float Falloff,const FSpellModifiers& Snapshot);
     bool Clear(FVector A,FVector B) const;

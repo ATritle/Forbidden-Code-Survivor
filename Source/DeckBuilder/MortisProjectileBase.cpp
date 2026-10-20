@@ -133,6 +133,7 @@ void AMortisProjectileBase::Deactivate()
     Visual->SetRelativeLocation(FVector::ZeroVector);Visual->SetRelativeRotation(FRotator::ZeroRotator);
     Collision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     ProjectileMovement->StopMovementImmediately(); ProjectileMovement->Deactivate();
+    ProjectileMovement->bIsHomingProjectile=false;ProjectileMovement->HomingTargetComponent.Reset();
     ProjectileMovement->SetComponentTickEnabled(false); Trail->DeactivateImmediate(); HitLives.Reset();
 }
 void AMortisProjectileBase::Stopped(const FHitResult& Hit)

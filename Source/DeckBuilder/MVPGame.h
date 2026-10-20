@@ -16,6 +16,7 @@ class AForbiddenDistrictDirector;
 class AMVPEnemy;
 class UForbiddenChoiceWidget;
 class AForbiddenSpirit;
+class AForbiddenRiderPreview;
 class UForbiddenScoreWidget;
 class UNeonChallengeComponent;
 class ANeonAudioDirector;
@@ -62,6 +63,7 @@ public:
     void UpdateGroundPhysics(float Dt);
     void TriggerSpellCastVisual(FName Style=NAME_None);
     void InitializeNeonVFX();
+    bool ApplySelectedRider();
     void UpdateNeonVFX(float Dt,bool bVisible);
     /** Fixed prewarmed charges; refills occur only through deck selections. */
     UFUNCTION(BlueprintCallable,Category="Talismans") int32 AddTalismans(int32 Count);
@@ -352,6 +354,10 @@ private:
     void CenteredText(const FString& Value, float Y, float Size, FLinearColor Color);
     void Box(float X, float Y, float W, float H, FLinearColor Color);
     void DrawCodex(AMVPArenaGameMode* Game);
+    void DrawRiderSelection(AMVPArenaGameMode* Game);
+    bool ClickRiderSelection(float X,float Y,AMVPArenaGameMode* Game);
+    bool bDraggingRider=false;
+    float PreviousRiderMouseX=0;
     void DrawMusicPlayer(AMVPArenaGameMode* Game);
     bool ClickMusicPlayer(float X,float Y,AMVPArenaGameMode* Game);
     bool bMusicPlaylistOpen=false,bDraggingMusicVolume=false,bDraggingMusicScroll=false,bDraggingMusicSeek=false;
@@ -432,6 +438,11 @@ public:
     bool bSuppressBossSelection=false;
     /** Pre-run loadout: one or two starting spells; all unlocked spells remain level-up offers. */
     bool StartSelectedRun();
+    bool SelectRider(FName ID);
+    void ContinueToDeck();
+    void OpenRiderSelection();
+    bool bCharacterSelectionOpen=true;
+    UPROPERTY(Transient) TObjectPtr<AForbiddenRiderPreview> RiderPreview;
     bool ToggleStartingCard(FName ID);
     bool SaveStartingDeck();
     void LoadStartingDeck();

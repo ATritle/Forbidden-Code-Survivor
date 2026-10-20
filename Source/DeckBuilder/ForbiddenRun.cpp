@@ -1,4 +1,5 @@
 #include "MVPGame.h"
+#include "ForbiddenRiderSubsystem.h"
 #include "ForbiddenDistrictDirector.h"
 #include "ForbiddenProfile.h"
 #include "CyberEnemyRoster.h"
@@ -35,11 +36,12 @@ void AMVPArenaGameMode::OnArchetypeKilled(int32 Archetype,FVector Position)
 void AMVPPlayer::Boost()
 {
     auto* G=Cast<AMVPArenaGameMode>(GetWorld()->GetAuthGameMode());
-    if(G && G->bInCodex) {G->StartSelectedRun();return;}
+    if(G && G->bInCodex) {if(G->bCharacterSelectionOpen) G->ContinueToDeck();else G->StartSelectedRun();return;}
     if(!G || G->bInCodex || G->bRunEnded || G->bChoosingCard || BoostCooldown>0 || bFalling || UGameplayStatics::IsGamePaused(this)) return;
     BoostDirection=Movement->Velocity.GetSafeNormal2D();
     if(BoostDirection.IsNearlyZero()) BoostDirection=GetActorForwardVector();
     BoostRemaining=0.22f;BoostCooldown=3.f;
+    if(auto* Rider=GetWorld()->GetSubsystem<UForbiddenRiderSubsystem>()) Rider->OnBoost();
     // A swept acceleration burst, not a teleport: walls and arena boundaries still stop the board.
 }
 void AMVPPlayer::CycleTargetPriority()

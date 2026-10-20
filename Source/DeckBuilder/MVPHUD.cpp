@@ -1,4 +1,6 @@
 #include "MVPGame.h"
+#include "ForbiddenRiderRoster.h"
+#include "ForbiddenRiderSubsystem.h"
 #include "ForbiddenCodeBranding.h"
 #include "CardDataAsset.h"
 #include "CodexDeckComponent.h"
@@ -147,10 +149,11 @@ void AMVPHUD::DrawHUD()
     Box(28, 24, 400, 132, Palette::Ink);
     Box(28, 24, 4, 132, Palette::Mint);
     Text(ForbiddenCode::DisplayTitle, 50, 39, 0.76f, Palette::White);
-    Text(TEXT("CYBERPUNK SURVIVAL  /  ENERGY DECK"), 50, 68, 0.72f, Palette::Muted);
+    if(const auto* Rider=ForbiddenRiders::Find(ForbiddenRiders::Selected(this))) Text(Rider->Name+TEXT(" / ")+Rider->Role,50,68,.65f,Rider->Color);
     Text(FString::Printf(TEXT("VITALITY  %d / %d"), FMath::CeilToInt(Player->Health), FMath::CeilToInt(Player->MaxHealth)), 50, 101, 0.8f, Palette::White);
     Box(50, 130, 350, 6, Palette::Panel);
     Box(50, 130, 350 * Player->Health / FMath::Max(1.f, Player->MaxHealth), 6, FLinearColor(0.88f, 0.24f, 0.34f));
+    if(const auto* Rider=GetWorld()->GetSubsystem<UForbiddenRiderSubsystem>();Rider && Rider->RiderID()=="Rook") Text(FString::Printf(TEXT("WARD SHIELD / %.0f"),Rider->GetShield()),50,142,.55f,Palette::Gold);
 
     Box(1200, 24, 372, 108, Palette::Ink);
     Text(FString::Printf(TEXT("%02d:%02d"), FMath::FloorToInt(Game->RunSeconds) / 60, FMath::FloorToInt(Game->RunSeconds) % 60), 1224, 36, 1.7f, Palette::Gold);
@@ -290,9 +293,11 @@ void AMVPHUD::ClickAt(float X, float Y)
     const float LocalX = (X - OffsetX) / UIScale;
     const float LocalY = (Y - OffsetY) / UIScale;
     if(!Game->bInCodex && InChamfer(LocalX,LocalY,1360,142,190,36)) {if(PC) PC->ToggleSettings();return;}
-    if((!Game->bInCodex && InChamfer(LocalX,LocalY,1360,186,190,36)) || (Game->bInCodex && InChamfer(LocalX,LocalY,920,182,230,46)) || (Game->bRunEnded && InChamfer(LocalX,LocalY,490,580,620,36))) {if(PC) PC->OpenLeaderboard();return;}
+    if((!Game->bInCodex && InChamfer(LocalX,LocalY,1360,186,190,36)) || (Game->bInCodex && !Game->bCharacterSelectionOpen && InChamfer(LocalX,LocalY,920,182,230,46)) || (Game->bRunEnded && InChamfer(LocalX,LocalY,490,580,620,36))) {if(PC) PC->OpenLeaderboard();return;}
     if (Game->bInCodex)
     {
+        if(Game->bCharacterSelectionOpen) {ClickRiderSelection(LocalX,LocalY,Game);return;}
+        if(InChamfer(LocalX,LocalY,850,145,255,34)) {Game->OpenRiderSelection();return;}
         if(ClickMusicPlayer(LocalX,LocalY,Game)) return;
         if(InChamfer(LocalX,LocalY,80,145,255,34)) {if(PC) PC->OpenHelp();return;}
         if(InChamfer(LocalX,LocalY,350,145,255,34)) {if(PC) PC->ToggleSettings();return;}
